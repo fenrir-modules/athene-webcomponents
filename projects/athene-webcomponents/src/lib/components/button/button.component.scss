@@ -14,17 +14,17 @@
   cursor: pointer;
   transition: all var(--ath-transition-fast);
   white-space: nowrap;
-  
+
   &:focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px var(--ath-bg-primary), 0 0 0 4px var(--ath-color-primary);
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
-  
+
   // -------------------------------------------
   // Sizes
   // -------------------------------------------
@@ -33,84 +33,84 @@
     padding: 0 var(--ath-space-3);
     font-size: var(--ath-font-size-sm);
   }
-  
+
   &--md {
     height: 40px;
     padding: 0 var(--ath-space-4);
     font-size: var(--ath-font-size-md);
   }
-  
+
   &--lg {
     height: 48px;
     padding: 0 var(--ath-space-6);
     font-size: var(--ath-font-size-lg);
   }
-  
+
   // -------------------------------------------
   // Variants
   // -------------------------------------------
   &--primary {
     background-color: var(--ath-color-primary);
     color: var(--ath-text-inverse);
-    
+
     &:hover:not(:disabled) {
       background-color: var(--ath-color-primary-hover);
     }
-    
+
     &:active:not(:disabled) {
       background-color: var(--ath-color-primary-active);
     }
   }
-  
+
   &--secondary {
     background-color: var(--ath-bg-tertiary);
     color: var(--ath-text-primary);
-    
+
     &:hover:not(:disabled) {
       background-color: var(--ath-border-color);
     }
   }
-  
+
   &--outline {
     background-color: transparent;
     border-color: var(--ath-border-color);
     color: var(--ath-text-primary);
-    
+
     &:hover:not(:disabled) {
       background-color: var(--ath-bg-tertiary);
       border-color: var(--ath-border-color-hover);
     }
   }
-  
+
   &--ghost {
     background-color: transparent;
     color: var(--ath-text-primary);
-    
+
     &:hover:not(:disabled) {
       background-color: var(--ath-bg-tertiary);
     }
   }
-  
+
   &--danger {
     background-color: var(--ath-color-error);
     color: var(--ath-text-inverse);
-    
+
     &:hover:not(:disabled) {
       background-color: var(--ath-color-error-hover);
     }
   }
-  
+
   // -------------------------------------------
   // Modifiers
   // -------------------------------------------
   &--full-width {
     width: 100%;
   }
-  
+
   &--loading {
     position: relative;
   }
-  
+
   // -------------------------------------------
   // Elements
   // -------------------------------------------
@@ -119,12 +119,12 @@
     height: 16px;
     animation: ath-spin 1s linear infinite;
   }
-  
+
   &__content {
     display: inline-flex;
     align-items: center;
     gap: var(--ath-space-2);
-    
+
     &--hidden {
       visibility: hidden;
     }

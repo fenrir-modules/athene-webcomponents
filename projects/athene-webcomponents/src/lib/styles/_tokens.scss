@@ -47,7 +47,7 @@ $color-info-600: #2563eb;
   --ath-color-primary-hover: #{$color-primary-600};
   --ath-color-primary-active: #{$color-primary-700};
   --ath-color-primary-light: #{$color-primary-100};
-  
+
   --ath-color-success: #{$color-success-500};
   --ath-color-success-hover: #{$color-success-600};
   --ath-color-warning: #{$color-warning-500};
@@ -56,14 +56,14 @@ $color-info-600: #2563eb;
   --ath-color-error-hover: #{$color-error-600};
   --ath-color-info: #{$color-info-500};
   --ath-color-info-hover: #{$color-info-600};
-  
+
   // Background
   --ath-bg-primary: #{$color-neutral-50};
   --ath-bg-secondary: #ffffff;
   --ath-bg-tertiary: #{$color-neutral-100};
   --ath-bg-elevated: #ffffff;
   --ath-bg-overlay: rgba(0, 0, 0, 0.5);
-  
+
   // Text
   --ath-text-primary: #{$color-neutral-900};
   --ath-text-secondary: #{$color-neutral-600};
@@ -71,7 +71,7 @@ $color-info-600: #2563eb;
   --ath-text-inverse: #ffffff;
   --ath-text-link: #{$color-primary-500};
   --ath-text-link-hover: #{$color-primary-600};
-  
+
   // Border
   --ath-border-color: #{$color-neutral-200};
   --ath-border-color-hover: #{$color-neutral-300};
@@ -81,7 +81,7 @@ $color-info-600: #2563eb;
   --ath-border-radius-lg: 12px;
   --ath-border-radius-xl: 16px;
   --ath-border-radius-full: 9999px;
-  
+
   // Spacing
   --ath-space-0: 0;
   --ath-space-1: 4px;
@@ -94,11 +94,11 @@ $color-info-600: #2563eb;
   --ath-space-10: 40px;
   --ath-space-12: 48px;
   --ath-space-16: 64px;
-  
+
   // Typography
   --ath-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --ath-font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  
+
   --ath-font-size-xs: 12px;
   --ath-font-size-sm: 14px;
   --ath-font-size-md: 16px;
@@ -107,27 +107,27 @@ $color-info-600: #2563eb;
   --ath-font-size-2xl: 24px;
   --ath-font-size-3xl: 30px;
   --ath-font-size-4xl: 36px;
-  
+
   --ath-font-weight-normal: 400;
   --ath-font-weight-medium: 500;
   --ath-font-weight-semibold: 600;
   --ath-font-weight-bold: 700;
-  
+
   --ath-line-height-tight: 1.25;
   --ath-line-height-normal: 1.5;
   --ath-line-height-relaxed: 1.75;
-  
+
   // Shadows
   --ath-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --ath-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
   --ath-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
   --ath-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  
+
   // Transitions
   --ath-transition-fast: 150ms ease;
   --ath-transition-normal: 200ms ease;
   --ath-transition-slow: 300ms ease;
-  
+
   // Z-Index
   --ath-z-dropdown: 1000;
   --ath-z-sticky: 1020;
@@ -150,16 +150,16 @@ $color-info-600: #2563eb;
   --ath-bg-tertiary: #{$color-neutral-700};
   --ath-bg-elevated: #{$color-neutral-800};
   --ath-bg-overlay: rgba(0, 0, 0, 0.7);
-  
+
   // Text
   --ath-text-primary: #{$color-neutral-50};
   --ath-text-secondary: #{$color-neutral-300};
   --ath-text-tertiary: #{$color-neutral-500};
-  
+
   // Border
   --ath-border-color: #{$color-neutral-700};
   --ath-border-color-hover: #{$color-neutral-600};
-  
+
   // Shadows (subtler in dark mode)
   --ath-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --ath-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
@@ -177,16 +177,16 @@ $color-info-600: #2563eb;
     --ath-bg-tertiary: #{$color-neutral-700};
     --ath-bg-elevated: #{$color-neutral-800};
     --ath-bg-overlay: rgba(0, 0, 0, 0.7);
-    
+
     // Text
     --ath-text-primary: #{$color-neutral-50};
     --ath-text-secondary: #{$color-neutral-300};
     --ath-text-tertiary: #{$color-neutral-500};
-    
+
     // Border
     --ath-border-color: #{$color-neutral-700};
     --ath-border-color-hover: #{$color-neutral-600};
-    
+
     // Shadows
     --ath-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --ath-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);

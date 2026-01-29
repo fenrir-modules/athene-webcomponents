@@ -10,7 +10,7 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
 
 /**
  * Athene Input Component
- * 
+ *
  * @example
  * <ath-input label="Email" type="email" [(ngModel)]="email" />
  * <ath-input label="Password" type="password" [error]="errorMessage" />
@@ -37,7 +37,7 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
           }
         </label>
       }
-      
+
       <div class="ath-input__wrapper">
         <input
           [id]="inputId"
@@ -51,7 +51,7 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
           (blur)="onTouched()"
           class="ath-input__field"
         />
-        
+
         @if (type === 'password') {
           <button
             type="button"
@@ -63,14 +63,14 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
           </button>
         }
       </div>
-      
+
       @if (error) {
         <div class="ath-input__error">
           <lucide-icon [img]="alertIcon" [size]="14" />
           {{ error }}
         </div>
       }
-      
+
       @if (hint && !error) {
         <div class="ath-input__hint">{{ hint }}</div>
       }
@@ -81,66 +81,66 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
 export class AthInputComponent implements ControlValueAccessor {
   /** Input label */
   @Input() label = '';
-  
+
   /** Input type */
   @Input() type: InputType = 'text';
-  
+
   /** Placeholder text */
   @Input() placeholder = '';
-  
+
   /** Error message */
   @Input() error = '';
-  
+
   /** Hint text */
   @Input() hint = '';
-  
+
   /** Disabled state */
   @Input() disabled = false;
-  
+
   /** Readonly state */
   @Input() readonly = false;
-  
+
   /** Required field */
   @Input() required = false;
-  
+
   /** Autocomplete attribute */
   @Input() autocomplete = 'off';
-  
+
   /** Unique input ID */
   @Input() inputId = `ath-input-${Math.random().toString(36).substr(2, 9)}`;
-  
+
   protected value = '';
   protected showPassword = false;
-  
+
   protected readonly eyeIcon = Eye;
   protected readonly eyeOffIcon = EyeOff;
   protected readonly alertIcon = AlertCircle;
-  
+
   private onChange: (value: string) => void = () => {};
   protected onTouched: () => void = () => {};
-  
+
   writeValue(value: string): void {
     this.value = value ?? '';
   }
-  
+
   registerOnChange(fn: (value: string) => void): void {
     this.onChange = fn;
   }
-  
+
   registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
-  
+
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
-  
+
   onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.value = target.value;
     this.onChange(this.value);
   }
-  
+
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }

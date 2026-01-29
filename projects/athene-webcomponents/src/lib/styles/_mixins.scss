@@ -91,7 +91,7 @@
   font: inherit;
   color: inherit;
   cursor: pointer;
-  
+
   &:focus-visible {
     @include focus-ring;
   }
@@ -107,20 +107,20 @@
   border: 1px solid var(--ath-border-color);
   border-radius: var(--ath-border-radius-md);
   transition: border-color var(--ath-transition-fast), box-shadow var(--ath-transition-fast);
-  
+
   &::placeholder {
     color: var(--ath-text-tertiary);
   }
-  
+
   &:hover:not(:disabled) {
     border-color: var(--ath-border-color-hover);
   }
-  
+
   &:focus {
     @include focus-ring;
     border-color: var(--ath-color-primary);
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
