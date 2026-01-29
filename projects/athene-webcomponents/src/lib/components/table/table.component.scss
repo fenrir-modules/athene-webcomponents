@@ -1,0 +1,51 @@
+// ===========================================
+// ATH-TABLE STYLES
+// ===========================================
+
+.ath-table {
+  width: 100%;
+  border-radius: var(--ath-border-radius-lg);
+  border: 1px solid var(--ath-border-color);
+  background: var(--ath-bg-panel);
+  overflow: hidden;
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--ath-font-size-sm);
+  }
+
+  thead {
+    background-color: rgba(255, 255, 255, 0.02);
+
+    th {
+      text-align: left;
+      padding: var(--ath-space-3) var(--ath-space-4);
+      color: var(--ath-text-secondary);
+      font-weight: var(--ath-font-weight-semibold);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      font-size: 11px;
+      border-bottom: 1px solid var(--ath-border-color);
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid var(--ath-border-color);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.03);
+      }
+    }
+
+    td {
+      padding: var(--ath-space-3) var(--ath-space-4);
+      color: var(--ath-text-primary);
+    }
+  }
+}

@@ -1,0 +1,22 @@
+<button
+  type="button"
+  class="ath-toggle"
+  [class.ath-toggle--checked]="checked"
+  [class.ath-toggle--disabled]="disabled"
+  role="switch"
+  [attr.aria-checked]="checked"
+  [disabled]="disabled"
+  (click)="toggle()"
+>
+  <span class="ath-toggle__track">
+    <span class="ath-toggle__thumb"></span>
+  </span>
+  <span class="ath-toggle__content">
+    @if (label) {
+      <span class="ath-toggle__label">{{ label }}</span>
+    }
+    @if (description) {
+      <span class="ath-toggle__description">{{ description }}</span>
+    }
+  </span>
+</button>
