@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+out-tsc/
+.angular/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Testing
+coverage/
+
+# Storybook
+storybook-static/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local

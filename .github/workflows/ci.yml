@@ -1,0 +1,370 @@
+name: Build Fenrir Module
+
+on:
+  push:
+    branches: [main, develop, '**']
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [main, develop]
+
+# Grant write permissions to GITHUB_TOKEN for creating releases and tags
+permissions:
+  contents: write  # Required for creating releases and tags
+  pull-requests: read
+  issues: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  build:
+    name: Build Module (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            archive_ext: tar.gz
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            archive_ext: tar.gz
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+          targets: ${{ matrix.target }}
+
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Build module
+        run: |
+          cargo build --release --target ${{ matrix.target }}
+          echo "Build completed successfully"
+
+      - name: Extract module name from Cargo.toml
+        id: module_info
+        run: |
+          MODULE_NAME=$(grep '^name =' Cargo.toml | head -1 | sed 's/name = "\(.*\)"/\1/')
+          MODULE_VERSION=$(grep '^version =' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          echo "name=$MODULE_NAME" >> $GITHUB_OUTPUT
+          echo "version=$MODULE_VERSION" >> $GITHUB_OUTPUT
+          echo "Module: $MODULE_NAME, Version: $MODULE_VERSION"
+
+      - name: Detect Git version info
+        id: git_version
+        run: |
+          # Get current branch
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          if [ "$GITHUB_REF" = "refs/tags/"* ]; then
+            BRANCH_NAME=${GITHUB_REF#refs/tags/}
+            IS_TAG=true
+          else
+            IS_TAG=false
+          fi
+
+          # Get base version from branch name, tag, or Cargo.toml
+          BASE_VERSION="${{ steps.module_info.outputs.version }}"
+
+          # If it's a tag, extract version from tag name
+          if [ "$IS_TAG" = "true" ]; then
+            TAG_NAME=${GITHUB_REF#refs/tags/}
+            # Remove 'v' prefix if present
+            BASE_VERSION=$(echo "$TAG_NAME" | sed 's/^v//')
+          fi
+
+          # Count commits since last tag (for pre-release versioning)
+          # Find the last tag that matches the base version pattern
+          LAST_TAG=$(git tag -l "v${BASE_VERSION}-*" | sort -V | tail -1)
+          if [ -z "$LAST_TAG" ]; then
+            # No pre-release tag found, check for release tag
+            LAST_TAG=$(git tag -l "v${BASE_VERSION}" | head -1)
+            if [ -z "$LAST_TAG" ]; then
+              # No tag found at all for this version
+              COMMITS_SINCE_TAG=1
+            else
+              # Release tag exists, count commits since then
+              COMMITS_SINCE_TAG=$(git rev-list --count ${LAST_TAG}..HEAD 2>/dev/null || echo "1")
+            fi
+          else
+            # Pre-release tag exists, extract the pre-release number
+            LAST_PRERELEASE=$(echo "$LAST_TAG" | sed "s/^v${BASE_VERSION}-//" | head -1)
+            if [ -n "$LAST_PRERELEASE" ] && [ "$LAST_PRERELEASE" -ge 0 ] 2>/dev/null; then
+              # Increment the pre-release number
+              COMMITS_SINCE_TAG=$((LAST_PRERELEASE + 1))
+            else
+              # Couldn't parse, count commits since tag
+              COMMITS_SINCE_TAG=$(git rev-list --count ${LAST_TAG}..HEAD 2>/dev/null || echo "1")
+            fi
+          fi
+
+          # If current commit is tagged, it's a release (prerelease = 0)
+          if [ "$IS_TAG" = "true" ]; then
+            PRERELEASE=0
+            FULL_VERSION="$BASE_VERSION"
+          else
+            PRERELEASE=$COMMITS_SINCE_TAG
+            FULL_VERSION="${BASE_VERSION}-${PRERELEASE}"
+          fi
+
+          COMMIT_HASH=$(git rev-parse HEAD)
+          COMMIT_SHORT=$(git rev-parse --short HEAD)
+
+          # Sanitize tag name (GitHub doesn't allow certain characters in tags)
+          # Replace invalid characters with dots, but keep the version format
+          TAG_NAME="v${FULL_VERSION}"
+
+          echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
+          echo "prerelease=$PRERELEASE" >> $GITHUB_OUTPUT
+          echo "full_version=$FULL_VERSION" >> $GITHUB_OUTPUT
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "commit=$COMMIT_HASH" >> $GITHUB_OUTPUT
+          echo "commit_short=$COMMIT_SHORT" >> $GITHUB_OUTPUT
+          echo "is_tag=$IS_TAG" >> $GITHUB_OUTPUT
+
+          echo "Version Info:"
+          echo "  Branch: $BRANCH_NAME"
+          echo "  Base Version: $BASE_VERSION"
+          echo "  Pre-release: $PRERELEASE"
+          echo "  Full Version: $FULL_VERSION"
+          echo "  Tag Name: $TAG_NAME"
+          echo "  Commit: $COMMIT_SHORT"
+
+      - name: Create artifact archive
+        run: |
+          MODULE_NAME="${{ steps.module_info.outputs.name }}"
+          FULL_VERSION="${{ steps.git_version.outputs.full_version }}"
+
+          mkdir -p artifacts package
+
+          BIN_PATH="target/${{ matrix.target }}/release/${MODULE_NAME}"
+          if [ ! -f "$BIN_PATH" ]; then
+            echo "Error: Could not find built binary at $BIN_PATH"
+            exit 1
+          fi
+
+          # Stage binary
+          cp "$BIN_PATH" package/
+
+          # Include .fenrir/config if present to ship declared services
+          if [ -d ".fenrir" ]; then
+            cp -r .fenrir package/.fenrir
+          elif [ -f ".fenrir/config.toml" ]; then
+            mkdir -p package/.fenrir
+            cp .fenrir/config.toml package/.fenrir/
+          fi
+
+          ARCHIVE_NAME="${MODULE_NAME}-${FULL_VERSION}-${{ matrix.target }}.${{ matrix.archive_ext }}"
+          tar -czf "artifacts/${ARCHIVE_NAME}" -C package .
+
+          echo "Artifact created: artifacts/${ARCHIVE_NAME}"
+          ls -lh artifacts/
+
+      - name: Generate manifest (v2.0)
+        id: generate_manifest
+        run: |
+          MODULE_NAME="${{ steps.module_info.outputs.name }}"
+          MODULE_VERSION="${{ steps.module_info.outputs.version }}"
+          FULL_VERSION="${{ steps.git_version.outputs.full_version }}"
+          BASE_VERSION="${{ steps.git_version.outputs.base_version }}"
+          PRERELEASE="${{ steps.git_version.outputs.prerelease }}"
+          BRANCH="${{ steps.git_version.outputs.branch }}"
+          COMMIT="${{ steps.git_version.outputs.commit }}"
+          COMMIT_SHORT="${{ steps.git_version.outputs.commit_short }}"
+          IS_TAG="${{ steps.git_version.outputs.is_tag }}"
+          TAG_NAME="${{ steps.git_version.outputs.tag_name }}"
+
+          DESCRIPTION=$(grep -A 1 '^\[package\]' Cargo.toml | grep '^description =' | sed 's/description = "\(.*\)"/\1/' || echo "Fenrir module")
+          HOMEPAGE=$(grep '^homepage =' Cargo.toml | sed 's/homepage = "\(.*\)"/\1/' || \
+                     grep '^repository =' Cargo.toml | sed 's/repository = "\(.*\)"/\1/' || \
+                     echo "https://github.com/${{ github.repository }}")
+          KEYWORDS=$(grep -A 10 '^\[package\]' Cargo.toml | grep '^keywords =' | sed 's/keywords = \[\(.*\)\]/\1/' | tr -d '"' | tr ',' ' ' || echo "")
+
+          if [ -f ".fenrir/config.toml" ]; then
+            FENRIR_MIN=$(grep 'fenrir_min_version' .fenrir/config.toml | sed 's/.*= "\(.*\)"/\1/' || echo "1.0.0")
+            FENRIR_MAX=$(grep 'fenrir_max_version' .fenrir/config.toml | sed 's/.*= "\(.*\)"/\1/' || echo "99.99.99")
+          else
+            FENRIR_MIN="1.0.0"
+            FENRIR_MAX="99.99.99"
+          fi
+
+          if [ "$PRERELEASE" = "0" ]; then
+            STATUS="release"
+          else
+            STATUS="development"
+          fi
+
+          ARCHIVE_NAME="${MODULE_NAME}-${FULL_VERSION}-${{ matrix.target }}.${{ matrix.archive_ext }}"
+          cat > "artifacts/manifest-${{ matrix.target }}.json" <<EOF
+          {
+            "schema_version": "2.0",
+            "module": {
+              "id": "$MODULE_NAME",
+              "name": "$MODULE_NAME",
+              "description": "$DESCRIPTION",
+              "homepage": "$HOMEPAGE",
+              "keywords": [$(echo "$KEYWORDS" | sed 's/^/"/;s/$/"/;s/ /", "/g')]
+            },
+            "version": {
+              "base": "$BASE_VERSION",
+              "prerelease": $PRERELEASE,
+              "full": "$FULL_VERSION",
+              "commit": "$COMMIT",
+              "commit_short": "$COMMIT_SHORT",
+              "branch": "$BRANCH",
+              "tag": $([ "$IS_TAG" = "true" ] && echo "\"${TAG_NAME}\"" || echo "null")
+            },
+            "compatibility": {
+              "fenrir_min_version": "$FENRIR_MIN",
+              "fenrir_max_version": "$FENRIR_MAX"
+            },
+            "dependencies": [],
+            "artifact": {
+              "source": "ci",
+              "path": "https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/${ARCHIVE_NAME}",
+              "build_commit": "$COMMIT",
+              "build_date": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            },
+            "metadata": {
+              "generated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+              "generated_by": "github-actions",
+              "repository": "${{ github.repository }}",
+              "status": "$STATUS"
+            }
+          }
+          EOF
+
+          echo "Manifest generated:"
+          cat "artifacts/manifest-${{ matrix.target }}.json" | jq '.'
+
+          # Also provide a generic manifest.json for registry scanners.
+          # We prefer macOS artifact as default to support local dev on macOS.
+          if [ "${{ matrix.target }}" = "x86_64-apple-darwin" ]; then
+            cp "artifacts/manifest-${{ matrix.target }}.json" artifacts/manifest.json
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.module_info.outputs.name }}-${{ steps.git_version.outputs.full_version }}-${{ matrix.target }}
+          path: |
+            artifacts/*.tar.gz
+            artifacts/manifest*.json
+          retention-days: 90
+
+      - name: Create Git Tag (if not exists)
+        id: create_tag
+        run: |
+          TAG_NAME="${{ steps.git_version.outputs.tag_name }}"
+
+          # Check if tag already exists on remote
+          if git ls-remote --tags origin "$TAG_NAME" | grep -q "$TAG_NAME"; then
+            echo "Tag $TAG_NAME already exists on remote, skipping creation"
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Check if tag already exists locally
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag $TAG_NAME already exists locally, deleting and recreating"
+            git tag -d "$TAG_NAME" 2>/dev/null || true
+          fi
+
+          echo "Creating tag $TAG_NAME"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG_NAME" -m "Release ${{ steps.git_version.outputs.full_version }}"
+          echo "tag_exists=false" >> $GITHUB_OUTPUT
+
+          # Push tag
+          git push origin "$TAG_NAME"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        continue-on-error: true
+        with:
+          files: |
+            artifacts/*.tar.gz
+            artifacts/manifest*.json
+          tag_name: ${{ steps.git_version.outputs.tag_name }}
+          name: Release ${{ steps.git_version.outputs.full_version }}
+          body: |
+            ## Module: ${{ steps.module_info.outputs.name }}
+
+            **Version:** ${{ steps.git_version.outputs.full_version }}
+            **Branch:** ${{ steps.git_version.outputs.branch }}
+            **Commit:** ${{ steps.git_version.outputs.commit_short }}
+            **Status:** $([ "${{ steps.git_version.outputs.prerelease }}" = "0" ] && echo "Release" || echo "Development")
+
+            ### Artifacts
+            - Module binary (Linux): `${{ steps.module_info.outputs.name }}-${{ steps.git_version.outputs.full_version }}-x86_64-unknown-linux-gnu.tar.gz`
+            - Module binary (macOS): `${{ steps.module_info.outputs.name }}-${{ steps.git_version.outputs.full_version }}-x86_64-apple-darwin.tar.gz`
+            - Manifeste: `manifest-*.json`
+
+            ### Installation
+            ```bash
+            # Download and extract the platform-specific binary
+            wget https://github.com/${{ github.repository }}/releases/download/${{ steps.git_version.outputs.tag_name }}/${{ steps.module_info.outputs.name }}-${{ steps.git_version.outputs.full_version }}-<target>.tar.gz
+            tar -xzf ${{ steps.module_info.outputs.name }}-${{ steps.git_version.outputs.full_version }}-<target>.tar.gz
+            ```
+          draft: false
+          prerelease: ${{ steps.git_version.outputs.prerelease != '0' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prune older prerelease releases for this base version (keep tags)
+        if: steps.git_version.outputs.prerelease != '0'
+        env:
+          BASE_VERSION: ${{ steps.git_version.outputs.base_version }}
+          KEEP_TAG: ${{ steps.git_version.outputs.tag_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Delete GitHub releases for older prereleases of the same base version; keep tags
+          RELEASES=$(gh release list --limit 100 --json tagName | jq -r '.[].tagName' | grep "^v${BASE_VERSION}-" | grep -v "^${KEEP_TAG}$" || true)
+          if [ -z "$RELEASES" ]; then
+            echo "No older prerelease releases to delete for base ${BASE_VERSION}"
+            exit 0
+          fi
+
+          echo "Deleting old prerelease releases (keeping tags):"
+          for rel in $RELEASES; do
+            echo " - $rel"
+            gh release delete "$rel" -y || true
+          done
+
+      - name: Summary
+        run: |
+          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Module:** ${{ steps.module_info.outputs.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** ${{ steps.git_version.outputs.full_version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ steps.git_version.outputs.branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ steps.git_version.outputs.commit_short }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** $([ "${{ steps.git_version.outputs.prerelease }}" = "0" ] && echo "Release" || echo "Development")" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- Binary: \`${{ steps.module_info.outputs.name }}-${{ steps.git_version.outputs.full_version }}.tar.zst\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Manifest: \`manifest.json\`" >> $GITHUB_STEP_SUMMARY

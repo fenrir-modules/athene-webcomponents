@@ -1,0 +1,46 @@
+// ===========================================
+// ATH-SKELETON STYLES
+// ===========================================
+
+.ath-skeleton {
+  background-color: var(--ath-bg-tertiary);
+  
+  // -------------------------------------------
+  // Variants
+  // -------------------------------------------
+  &--text {
+    height: 1em;
+    border-radius: var(--ath-border-radius-sm);
+  }
+  
+  &--circular {
+    border-radius: var(--ath-border-radius-full);
+  }
+  
+  &--rectangular {
+    border-radius: var(--ath-border-radius-md);
+  }
+  
+  // -------------------------------------------
+  // Animation
+  // -------------------------------------------
+  &--animated {
+    background: linear-gradient(
+      90deg,
+      var(--ath-bg-tertiary) 25%,
+      var(--ath-bg-secondary) 50%,
+      var(--ath-bg-tertiary) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
