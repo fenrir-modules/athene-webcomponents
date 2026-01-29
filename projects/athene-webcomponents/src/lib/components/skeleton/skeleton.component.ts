@@ -86,19 +86,19 @@ export class AthSkeletonComponent {
       display: flex;
       flex-direction: column;
       gap: var(--ath-space-3);
-      
-      &__header {
-        display: flex;
-        gap: var(--ath-space-4);
-        padding-bottom: var(--ath-space-3);
-        border-bottom: 1px solid var(--ath-border-color);
-      }
-      
-      &__row {
-        display: flex;
-        gap: var(--ath-space-4);
-        padding: var(--ath-space-2) 0;
-      }
+    }
+    
+    .ath-skeleton-table__header {
+      display: flex;
+      gap: var(--ath-space-4);
+      padding-bottom: var(--ath-space-3);
+      border-bottom: 1px solid var(--ath-border-color);
+    }
+    
+    .ath-skeleton-table__row {
+      display: flex;
+      gap: var(--ath-space-4);
+      padding: var(--ath-space-2) 0;
     }
   `],
 })
@@ -147,19 +147,19 @@ export class AthSkeletonTableComponent {
       border: 1px solid var(--ath-border-color);
       border-radius: var(--ath-border-radius-lg);
       overflow: hidden;
-      
-      &__content {
-        display: flex;
-        flex-direction: column;
-        gap: var(--ath-space-2);
-        padding: var(--ath-space-4);
-      }
-      
-      &__actions {
-        display: flex;
-        gap: var(--ath-space-2);
-        margin-top: var(--ath-space-2);
-      }
+    }
+    
+    .ath-skeleton-card__content {
+      display: flex;
+      flex-direction: column;
+      gap: var(--ath-space-2);
+      padding: var(--ath-space-4);
+    }
+    
+    .ath-skeleton-card__actions {
+      display: flex;
+      gap: var(--ath-space-2);
+      margin-top: var(--ath-space-2);
     }
   `],
 })
