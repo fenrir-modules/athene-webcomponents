@@ -14,7 +14,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
 
 /**
  * Athene Button Component
- * 
+ *
  * @example
  * <ath-button variant="primary" (clicked)="handleClick()">Click me</ath-button>
  * <ath-button variant="outline" size="sm" [loading]="true">Loading...</ath-button>
@@ -44,27 +44,27 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
 export class AthButtonComponent {
   /** Button variant */
   @Input() variant: ButtonVariant = 'primary';
-  
+
   /** Button size */
   @Input() size: ButtonSize = 'md';
-  
+
   /** Button type attribute */
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
-  
+
   /** Disabled state */
   @Input() disabled = false;
-  
+
   /** Loading state */
   @Input() loading = false;
-  
+
   /** Full width button */
   @Input() fullWidth = false;
-  
+
   /** Click event emitter */
   @Output() clicked = new EventEmitter<MouseEvent>();
-  
+
   protected readonly loaderIcon = Loader2;
-  
+
   get buttonClasses(): string {
     return [
       'ath-button',
@@ -74,7 +74,7 @@ export class AthButtonComponent {
       this.loading ? 'ath-button--loading' : '',
     ].filter(Boolean).join(' ');
   }
-  
+
   handleClick(event: MouseEvent): void {
     if (!this.disabled && !this.loading) {
       this.clicked.emit(event);

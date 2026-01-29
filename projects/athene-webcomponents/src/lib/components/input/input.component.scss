@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--ath-space-1);
-  
+
   // -------------------------------------------
   // Label
   // -------------------------------------------
@@ -15,12 +15,12 @@
     font-weight: var(--ath-font-weight-medium);
     color: var(--ath-text-primary);
   }
-  
+
   &__required {
     color: var(--ath-color-error);
     margin-left: 2px;
   }
-  
+
   // -------------------------------------------
   // Wrapper
   // -------------------------------------------
@@ -29,43 +29,43 @@
     display: flex;
     align-items: center;
   }
-  
+
   // -------------------------------------------
   // Field
   // -------------------------------------------
   &__field {
     width: 100%;
-    height: 40px;
-    padding: 0 var(--ath-space-3);
+    height: 44px;
+    padding: 0 var(--ath-space-4);
     font-family: var(--ath-font-family);
     font-size: var(--ath-font-size-md);
     color: var(--ath-text-primary);
-    background-color: var(--ath-bg-secondary);
+    background-color: var(--ath-bg-input);
     border: 1px solid var(--ath-border-color);
     border-radius: var(--ath-border-radius-md);
-    transition: border-color var(--ath-transition-fast), box-shadow var(--ath-transition-fast);
-    
+    transition: border-color var(--ath-transition-fast), box-shadow var(--ath-transition-fast), background-color var(--ath-transition-fast);
+
     &::placeholder {
       color: var(--ath-text-tertiary);
     }
-    
+
     &:hover:not(:disabled):not(:focus) {
       border-color: var(--ath-border-color-hover);
     }
-    
+
     &:focus {
       outline: none;
-      border-color: var(--ath-color-primary);
-      box-shadow: 0 0 0 2px var(--ath-bg-primary), 0 0 0 4px var(--ath-color-primary);
+      border-color: var(--ath-border-color-focus);
+      box-shadow: 0 0 0 1px var(--ath-border-color-focus), 0 0 12px rgba(201, 150, 58, 0.25);
     }
-    
+
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
       background-color: var(--ath-bg-tertiary);
     }
   }
-  
+
   // -------------------------------------------
   // Password Toggle
   // -------------------------------------------
@@ -84,13 +84,13 @@
     border-radius: var(--ath-border-radius-sm);
     cursor: pointer;
     transition: color var(--ath-transition-fast), background-color var(--ath-transition-fast);
-    
+
     &:hover {
       color: var(--ath-text-secondary);
       background-color: var(--ath-bg-tertiary);
     }
   }
-  
+
   // -------------------------------------------
   // Error & Hint
   // -------------------------------------------
@@ -101,25 +101,25 @@
     font-size: var(--ath-font-size-sm);
     color: var(--ath-color-error);
   }
-  
+
   &__hint {
     font-size: var(--ath-font-size-sm);
     color: var(--ath-text-tertiary);
   }
-  
+
   // -------------------------------------------
   // States
   // -------------------------------------------
   &--error {
     .ath-input__field {
       border-color: var(--ath-color-error);
-      
+
       &:focus {
-        box-shadow: 0 0 0 2px var(--ath-bg-primary), 0 0 0 4px var(--ath-color-error);
+        box-shadow: 0 0 0 1px var(--ath-color-error), 0 0 12px rgba(239, 68, 68, 0.2);
       }
     }
   }
-  
+
   &--disabled {
     .ath-input__label {
       opacity: 0.5;

@@ -16,3 +16,9 @@ export * from './skeleton';
 
 // Kbd
 export * from './kbd';
+
+// Table
+export * from './table';
+
+// Toggle
+export * from './toggle';

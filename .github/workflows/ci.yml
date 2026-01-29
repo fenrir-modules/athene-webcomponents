@@ -1,4 +1,4 @@
-name: Build Fenrir Module
+name: Build Athene Webcomponents Module
 
 on:
   push:
@@ -8,30 +8,14 @@ on:
   pull_request:
     branches: [main, develop]
 
-# Grant write permissions to GITHUB_TOKEN for creating releases and tags
 permissions:
-  contents: write  # Required for creating releases and tags
+  contents: write
   pull-requests: read
   issues: read
 
-env:
-  CARGO_TERM_COLOR: always
-  RUST_BACKTRACE: 1
-
 jobs:
   build:
-    name: Build Module (${{ matrix.target }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            archive_ext: tar.gz
-          - os: macos-latest
-            target: x86_64-apple-darwin
-            archive_ext: tar.gz
-
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -39,89 +23,61 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          toolchain: stable
-          components: rustfmt, clippy
-          targets: ${{ matrix.target }}
+          node-version: '20'
 
-      - name: Cache Cargo dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
+      - name: Install dependencies
+        run: npm install --include=dev
 
-      - name: Build module
+      - name: Run tests
+        run: node node_modules/@angular/cli/bin/ng.js test --watch=false
+        continue-on-error: true
+
+      - name: Build Angular library
+        run: node node_modules/@angular/cli/bin/ng.js build athene-webcomponents --configuration production
+        env:
+          NODE_ENV: production
+
+      - name: Collect package metadata
+        id: pkg
         run: |
-          cargo build --release --target ${{ matrix.target }}
-          echo "Build completed successfully"
+          PKG_NAME=$(node -p "require('./package.json').name")
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          DESCRIPTION=$(node -p "require('./package.json').description || ''")
+          HOMEPAGE=$(node -p "require('./package.json').homepage || ''")
+          KEYWORDS=$(node -p "JSON.stringify(require('./package.json').keywords || [])")
+          echo "name=$PKG_NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$PKG_VERSION" >> "$GITHUB_OUTPUT"
+          echo "description=$DESCRIPTION" >> "$GITHUB_OUTPUT"
+          echo "homepage=$HOMEPAGE" >> "$GITHUB_OUTPUT"
+          echo "keywords=$KEYWORDS" >> "$GITHUB_OUTPUT"
 
-      - name: Extract module name from Cargo.toml
-        id: module_info
-        run: |
-          MODULE_NAME=$(grep '^name =' Cargo.toml | head -1 | sed 's/name = "\(.*\)"/\1/')
-          MODULE_VERSION=$(grep '^version =' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
-          echo "name=$MODULE_NAME" >> $GITHUB_OUTPUT
-          echo "version=$MODULE_VERSION" >> $GITHUB_OUTPUT
-          echo "Module: $MODULE_NAME, Version: $MODULE_VERSION"
-
-      - name: Detect Git version info
+      - name: Detect git version info
         id: git_version
         run: |
-          # Get current branch
-          BRANCH_NAME=${GITHUB_REF#refs/heads/}
-          if [ "$GITHUB_REF" = "refs/tags/"* ]; then
-            BRANCH_NAME=${GITHUB_REF#refs/tags/}
+          BASE_VERSION="${{ steps.pkg.outputs.version }}"
+          REF_NAME="${GITHUB_REF#refs/*/}"
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            BASE_VERSION=${REF_NAME#v}
             IS_TAG=true
           else
             IS_TAG=false
           fi
 
-          # Get base version from branch name, tag, or Cargo.toml
-          BASE_VERSION="${{ steps.module_info.outputs.version }}"
-
-          # If it's a tag, extract version from tag name
-          if [ "$IS_TAG" = "true" ]; then
-            TAG_NAME=${GITHUB_REF#refs/tags/}
-            # Remove 'v' prefix if present
-            BASE_VERSION=$(echo "$TAG_NAME" | sed 's/^v//')
-          fi
-
-          # Count commits since last tag (for pre-release versioning)
-          # Find the last tag that matches the base version pattern
           LAST_TAG=$(git tag -l "v${BASE_VERSION}-*" | sort -V | tail -1)
-          if [ -z "$LAST_TAG" ]; then
-            # No pre-release tag found, check for release tag
-            LAST_TAG=$(git tag -l "v${BASE_VERSION}" | head -1)
-            if [ -z "$LAST_TAG" ]; then
-              # No tag found at all for this version
-              COMMITS_SINCE_TAG=1
-            else
-              # Release tag exists, count commits since then
-              COMMITS_SINCE_TAG=$(git rev-list --count ${LAST_TAG}..HEAD 2>/dev/null || echo "1")
-            fi
-          else
-            # Pre-release tag exists, extract the pre-release number
-            LAST_PRERELEASE=$(echo "$LAST_TAG" | sed "s/^v${BASE_VERSION}-//" | head -1)
-            if [ -n "$LAST_PRERELEASE" ] && [ "$LAST_PRERELEASE" -ge 0 ] 2>/dev/null; then
-              # Increment the pre-release number
-              COMMITS_SINCE_TAG=$((LAST_PRERELEASE + 1))
-            else
-              # Couldn't parse, count commits since tag
-              COMMITS_SINCE_TAG=$(git rev-list --count ${LAST_TAG}..HEAD 2>/dev/null || echo "1")
-            fi
+          if [[ -z "$LAST_TAG" ]]; then
+            LAST_TAG=$(git tag -l "v${BASE_VERSION}" | tail -1)
           fi
 
-          # If current commit is tagged, it's a release (prerelease = 0)
-          if [ "$IS_TAG" = "true" ]; then
+          if [[ -n "$LAST_TAG" ]]; then
+            COMMITS_SINCE_TAG=$(git rev-list --count ${LAST_TAG}..HEAD 2>/dev/null || echo 1)
+          else
+            COMMITS_SINCE_TAG=$(git rev-list --count HEAD 2>/dev/null || echo 1)
+          fi
+
+          if [[ "$IS_TAG" == true ]]; then
             PRERELEASE=0
             FULL_VERSION="$BASE_VERSION"
           else
@@ -131,78 +87,78 @@ jobs:
 
           COMMIT_HASH=$(git rev-parse HEAD)
           COMMIT_SHORT=$(git rev-parse --short HEAD)
-
-          # Sanitize tag name (GitHub doesn't allow certain characters in tags)
-          # Replace invalid characters with dots, but keep the version format
           TAG_NAME="v${FULL_VERSION}"
 
-          echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
-          echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
-          echo "prerelease=$PRERELEASE" >> $GITHUB_OUTPUT
-          echo "full_version=$FULL_VERSION" >> $GITHUB_OUTPUT
-          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
-          echo "commit=$COMMIT_HASH" >> $GITHUB_OUTPUT
-          echo "commit_short=$COMMIT_SHORT" >> $GITHUB_OUTPUT
-          echo "is_tag=$IS_TAG" >> $GITHUB_OUTPUT
+          echo "branch=$REF_NAME" >> "$GITHUB_OUTPUT"
+          echo "base_version=$BASE_VERSION" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
+          echo "full_version=$FULL_VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
+          echo "commit=$COMMIT_HASH" >> "$GITHUB_OUTPUT"
+          echo "commit_short=$COMMIT_SHORT" >> "$GITHUB_OUTPUT"
+          echo "is_tag=$IS_TAG" >> "$GITHUB_OUTPUT"
 
           echo "Version Info:"
-          echo "  Branch: $BRANCH_NAME"
+          echo "  Branch: $REF_NAME"
           echo "  Base Version: $BASE_VERSION"
           echo "  Pre-release: $PRERELEASE"
           echo "  Full Version: $FULL_VERSION"
           echo "  Tag Name: $TAG_NAME"
           echo "  Commit: $COMMIT_SHORT"
 
-      - name: Create artifact archive
+      - name: Package artifacts
+        id: package_artifact
         run: |
-          MODULE_NAME="${{ steps.module_info.outputs.name }}"
+          MODULE_NAME="${{ steps.pkg.outputs.name }}"
           FULL_VERSION="${{ steps.git_version.outputs.full_version }}"
+          ARCHIVE_NAME="${MODULE_NAME}-${FULL_VERSION}.tar.gz"
 
-          mkdir -p artifacts package
+          mkdir -p artifacts/package
 
-          BIN_PATH="target/${{ matrix.target }}/release/${MODULE_NAME}"
-          if [ ! -f "$BIN_PATH" ]; then
-            echo "Error: Could not find built binary at $BIN_PATH"
+          if [ ! -d "dist/athene-webcomponents" ]; then
+            echo "::error::Angular build output not found at dist/athene-webcomponents"
             exit 1
           fi
 
-          # Stage binary
-          cp "$BIN_PATH" package/
+          cp -R dist/athene-webcomponents artifacts/package/dist
 
-          # Include .fenrir/config if present to ship declared services
           if [ -d ".fenrir" ]; then
-            cp -r .fenrir package/.fenrir
-          elif [ -f ".fenrir/config.toml" ]; then
-            mkdir -p package/.fenrir
-            cp .fenrir/config.toml package/.fenrir/
+            cp -R .fenrir artifacts/package/.fenrir
+          fi
+          if [ -f "README.md" ]; then
+            cp README.md artifacts/package/
           fi
 
-          ARCHIVE_NAME="${MODULE_NAME}-${FULL_VERSION}-${{ matrix.target }}.${{ matrix.archive_ext }}"
-          tar -czf "artifacts/${ARCHIVE_NAME}" -C package .
+          tar -czf "artifacts/${ARCHIVE_NAME}" -C artifacts/package .
+          echo "archive=${ARCHIVE_NAME}" >> "$GITHUB_OUTPUT"
 
           echo "Artifact created: artifacts/${ARCHIVE_NAME}"
           ls -lh artifacts/
 
-      - name: Generate manifest (v2.0)
-        id: generate_manifest
+      - name: Generate manifest
         run: |
-          MODULE_NAME="${{ steps.module_info.outputs.name }}"
-          MODULE_VERSION="${{ steps.module_info.outputs.version }}"
+          MODULE_NAME="${{ steps.pkg.outputs.name }}"
+          DESCRIPTION="${{ steps.pkg.outputs.description }}"
+          HOMEPAGE="${{ steps.pkg.outputs.homepage }}"
+          KEYWORDS='${{ steps.pkg.outputs.keywords }}'
           FULL_VERSION="${{ steps.git_version.outputs.full_version }}"
           BASE_VERSION="${{ steps.git_version.outputs.base_version }}"
           PRERELEASE="${{ steps.git_version.outputs.prerelease }}"
-          BRANCH="${{ steps.git_version.outputs.branch }}"
           COMMIT="${{ steps.git_version.outputs.commit }}"
           COMMIT_SHORT="${{ steps.git_version.outputs.commit_short }}"
-          IS_TAG="${{ steps.git_version.outputs.is_tag }}"
+          BRANCH="${{ steps.git_version.outputs.branch }}"
           TAG_NAME="${{ steps.git_version.outputs.tag_name }}"
+          IS_TAG="${{ steps.git_version.outputs.is_tag }}"
+          ARCHIVE_NAME="${{ steps.package_artifact.outputs.archive }}"
 
-          DESCRIPTION=$(grep -A 1 '^\[package\]' Cargo.toml | grep '^description =' | sed 's/description = "\(.*\)"/\1/' || echo "Fenrir module")
-          HOMEPAGE=$(grep '^homepage =' Cargo.toml | sed 's/homepage = "\(.*\)"/\1/' || \
-                     grep '^repository =' Cargo.toml | sed 's/repository = "\(.*\)"/\1/' || \
-                     echo "https://github.com/${{ github.repository }}")
-          KEYWORDS=$(grep -A 10 '^\[package\]' Cargo.toml | grep '^keywords =' | sed 's/keywords = \[\(.*\)\]/\1/' | tr -d '"' | tr ',' ' ' || echo "")
+          # Determine status
+          if [ "$PRERELEASE" = "0" ]; then
+            STATUS="release"
+          else
+            STATUS="development"
+          fi
 
+          # Read fenrir compatibility if available
           if [ -f ".fenrir/config.toml" ]; then
             FENRIR_MIN=$(grep 'fenrir_min_version' .fenrir/config.toml | sed 's/.*= "\(.*\)"/\1/' || echo "1.0.0")
             FENRIR_MAX=$(grep 'fenrir_max_version' .fenrir/config.toml | sed 's/.*= "\(.*\)"/\1/' || echo "99.99.99")
@@ -211,72 +167,59 @@ jobs:
             FENRIR_MAX="99.99.99"
           fi
 
-          if [ "$PRERELEASE" = "0" ]; then
-            STATUS="release"
+          # Generate tag value (null if not a tag)
+          if [ "$IS_TAG" = "true" ]; then
+            TAG_VALUE="\"${TAG_NAME}\""
           else
-            STATUS="development"
+            TAG_VALUE="null"
           fi
 
-          ARCHIVE_NAME="${MODULE_NAME}-${FULL_VERSION}-${{ matrix.target }}.${{ matrix.archive_ext }}"
-          cat > "artifacts/manifest-${{ matrix.target }}.json" <<EOF
-          {
-            "schema_version": "2.0",
-            "module": {
-              "id": "$MODULE_NAME",
-              "name": "$MODULE_NAME",
-              "description": "$DESCRIPTION",
-              "homepage": "$HOMEPAGE",
-              "keywords": [$(echo "$KEYWORDS" | sed 's/^/"/;s/$/"/;s/ /", "/g')]
-            },
-            "version": {
-              "base": "$BASE_VERSION",
-              "prerelease": $PRERELEASE,
-              "full": "$FULL_VERSION",
-              "commit": "$COMMIT",
-              "commit_short": "$COMMIT_SHORT",
-              "branch": "$BRANCH",
-              "tag": $([ "$IS_TAG" = "true" ] && echo "\"${TAG_NAME}\"" || echo "null")
-            },
-            "compatibility": {
-              "fenrir_min_version": "$FENRIR_MIN",
-              "fenrir_max_version": "$FENRIR_MAX"
-            },
-            "dependencies": [],
-            "artifact": {
-              "source": "ci",
-              "path": "https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/${ARCHIVE_NAME}",
-              "build_commit": "$COMMIT",
-              "build_date": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            },
-            "metadata": {
-              "generated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-              "generated_by": "github-actions",
-              "repository": "${{ github.repository }}",
-              "status": "$STATUS"
-            }
-          }
-          EOF
+          jq -n \
+            --arg schema_version "2.0" \
+            --arg module_id "$MODULE_NAME" \
+            --arg module_name "$MODULE_NAME" \
+            --arg description "$DESCRIPTION" \
+            --arg homepage "$HOMEPAGE" \
+            --argjson keywords "$KEYWORDS" \
+            --arg base_version "$BASE_VERSION" \
+            --argjson prerelease "$PRERELEASE" \
+            --arg full_version "$FULL_VERSION" \
+            --arg commit "$COMMIT" \
+            --arg commit_short "$COMMIT_SHORT" \
+            --arg branch "$BRANCH" \
+            --argjson tag "$TAG_VALUE" \
+            --arg fenrir_min "$FENRIR_MIN" \
+            --arg fenrir_max "$FENRIR_MAX" \
+            --arg artifact_path "https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/${ARCHIVE_NAME}" \
+            --arg build_date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg generated_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg repository "${{ github.repository }}" \
+            --arg status "$STATUS" \
+            '{
+              schema_version: $schema_version,
+              module: {id: $module_id, name: $module_name, description: $description, homepage: $homepage, keywords: $keywords},
+              version: {base: $base_version, prerelease: $prerelease, full: $full_version, commit: $commit, commit_short: $commit_short, branch: $branch, tag: $tag},
+              compatibility: {fenrir_min_version: $fenrir_min, fenrir_max_version: $fenrir_max},
+              dependencies: [],
+              artifact: {source: "ci", path: $artifact_path, build_commit: $commit, build_date: $build_date},
+              metadata: {generated_at: $generated_at, generated_by: "github-actions", repository: $repository, status: $status}
+            }' > artifacts/manifest.json
 
           echo "Manifest generated:"
-          cat "artifacts/manifest-${{ matrix.target }}.json" | jq '.'
-
-          # Also provide a generic manifest.json for registry scanners.
-          # We prefer macOS artifact as default to support local dev on macOS.
-          if [ "${{ matrix.target }}" = "x86_64-apple-darwin" ]; then
-            cp "artifacts/manifest-${{ matrix.target }}.json" artifacts/manifest.json
-          fi
+          cat artifacts/manifest.json
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.module_info.outputs.name }}-${{ steps.git_version.outputs.full_version }}-${{ matrix.target }}
+          name: athene-webcomponents-${{ steps.git_version.outputs.full_version }}
           path: |
             artifacts/*.tar.gz
-            artifacts/manifest*.json
+            artifacts/manifest.json
           retention-days: 90
 
-      - name: Create Git Tag (if not exists)
+      - name: Create Git tag (if not exists)
         id: create_tag
+        if: steps.git_version.outputs.is_tag != 'true'
         run: |
           TAG_NAME="${{ steps.git_version.outputs.tag_name }}"
 
@@ -302,40 +245,38 @@ jobs:
           # Push tag
           git push origin "$TAG_NAME"
 
-      - name: Create Release
+      - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         continue-on-error: true
         with:
           files: |
             artifacts/*.tar.gz
-            artifacts/manifest*.json
+            artifacts/manifest.json
           tag_name: ${{ steps.git_version.outputs.tag_name }}
           name: Release ${{ steps.git_version.outputs.full_version }}
           body: |
-            ## Module: ${{ steps.module_info.outputs.name }}
+            ## Module: ${{ steps.pkg.outputs.name }}
 
             **Version:** ${{ steps.git_version.outputs.full_version }}
             **Branch:** ${{ steps.git_version.outputs.branch }}
             **Commit:** ${{ steps.git_version.outputs.commit_short }}
-            **Status:** $([ "${{ steps.git_version.outputs.prerelease }}" = "0" ] && echo "Release" || echo "Development")
+            **Status:** ${{ steps.git_version.outputs.prerelease == '0' && 'Release' || 'Development' }}
 
-            ### Artifacts
-            - Module binary (Linux): `${{ steps.module_info.outputs.name }}-${{ steps.git_version.outputs.full_version }}-x86_64-unknown-linux-gnu.tar.gz`
-            - Module binary (macOS): `${{ steps.module_info.outputs.name }}-${{ steps.git_version.outputs.full_version }}-x86_64-apple-darwin.tar.gz`
-            - Manifeste: `manifest-*.json`
+            ### Artifact
+            - `${{ steps.package_artifact.outputs.archive }}`
+            - `manifest.json`
 
             ### Installation
             ```bash
-            # Download and extract the platform-specific binary
-            wget https://github.com/${{ github.repository }}/releases/download/${{ steps.git_version.outputs.tag_name }}/${{ steps.module_info.outputs.name }}-${{ steps.git_version.outputs.full_version }}-<target>.tar.gz
-            tar -xzf ${{ steps.module_info.outputs.name }}-${{ steps.git_version.outputs.full_version }}-<target>.tar.gz
+            wget https://github.com/${{ github.repository }}/releases/download/${{ steps.git_version.outputs.tag_name }}/${{ steps.package_artifact.outputs.archive }}
+            tar -xzf ${{ steps.package_artifact.outputs.archive }}
             ```
           draft: false
           prerelease: ${{ steps.git_version.outputs.prerelease != '0' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Prune older prerelease releases for this base version (keep tags)
+      - name: Prune older prerelease releases (keep tags)
         if: steps.git_version.outputs.prerelease != '0'
         env:
           BASE_VERSION: ${{ steps.git_version.outputs.base_version }}
@@ -359,12 +300,12 @@ jobs:
         run: |
           echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Module:** ${{ steps.module_info.outputs.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Module:** ${{ steps.pkg.outputs.name }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Version:** ${{ steps.git_version.outputs.full_version }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch:** ${{ steps.git_version.outputs.branch }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Commit:** ${{ steps.git_version.outputs.commit_short }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Status:** $([ "${{ steps.git_version.outputs.prerelease }}" = "0" ] && echo "Release" || echo "Development")" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ${{ steps.git_version.outputs.prerelease == '0' && 'Release' || 'Development' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Artifacts" >> $GITHUB_STEP_SUMMARY
-          echo "- Binary: \`${{ steps.module_info.outputs.name }}-${{ steps.git_version.outputs.full_version }}.tar.zst\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Archive: \`${{ steps.package_artifact.outputs.archive }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- Manifest: \`manifest.json\`" >> $GITHUB_STEP_SUMMARY

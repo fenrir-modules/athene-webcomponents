@@ -14,17 +14,18 @@
   cursor: pointer;
   transition: all var(--ath-transition-fast);
   white-space: nowrap;
-  
+  letter-spacing: 0.2px;
+
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--ath-bg-primary), 0 0 0 4px var(--ath-color-primary);
+    box-shadow: 0 0 0 1px var(--ath-border-color-focus), 0 0 12px rgba(201, 150, 58, 0.25);
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
-  
+
   // -------------------------------------------
   // Sizes
   // -------------------------------------------
@@ -33,84 +34,88 @@
     padding: 0 var(--ath-space-3);
     font-size: var(--ath-font-size-sm);
   }
-  
+
   &--md {
     height: 40px;
     padding: 0 var(--ath-space-4);
     font-size: var(--ath-font-size-md);
   }
-  
+
   &--lg {
     height: 48px;
     padding: 0 var(--ath-space-6);
     font-size: var(--ath-font-size-lg);
   }
-  
+
   // -------------------------------------------
   // Variants
   // -------------------------------------------
   &--primary {
-    background-color: var(--ath-color-primary);
+    background: linear-gradient(135deg, var(--ath-color-primary), #e5c27a);
     color: var(--ath-text-inverse);
-    
+    border-color: rgba(201, 150, 58, 0.5);
+    box-shadow: var(--ath-shadow-glow);
+
     &:hover:not(:disabled) {
-      background-color: var(--ath-color-primary-hover);
+      filter: brightness(1.05);
     }
-    
+
     &:active:not(:disabled) {
-      background-color: var(--ath-color-primary-active);
+      filter: brightness(0.98);
     }
   }
-  
+
   &--secondary {
-    background-color: var(--ath-bg-tertiary);
+    background-color: var(--ath-bg-secondary);
     color: var(--ath-text-primary);
-    
+    border-color: var(--ath-border-color);
+
     &:hover:not(:disabled) {
-      background-color: var(--ath-border-color);
+      border-color: var(--ath-border-color-hover);
+      background-color: var(--ath-bg-tertiary);
     }
   }
-  
+
   &--outline {
     background-color: transparent;
-    border-color: var(--ath-border-color);
-    color: var(--ath-text-primary);
-    
+    border-color: rgba(201, 150, 58, 0.5);
+    color: var(--ath-color-primary);
+
     &:hover:not(:disabled) {
-      background-color: var(--ath-bg-tertiary);
-      border-color: var(--ath-border-color-hover);
+      background-color: rgba(201, 150, 58, 0.12);
+      border-color: rgba(201, 150, 58, 0.8);
     }
   }
-  
+
   &--ghost {
     background-color: transparent;
     color: var(--ath-text-primary);
-    
+
     &:hover:not(:disabled) {
-      background-color: var(--ath-bg-tertiary);
+      background-color: rgba(255, 255, 255, 0.04);
     }
   }
-  
+
   &--danger {
     background-color: var(--ath-color-error);
     color: var(--ath-text-inverse);
-    
+
     &:hover:not(:disabled) {
       background-color: var(--ath-color-error-hover);
     }
   }
-  
+
   // -------------------------------------------
   // Modifiers
   // -------------------------------------------
   &--full-width {
     width: 100%;
   }
-  
+
   &--loading {
     position: relative;
   }
-  
+
   // -------------------------------------------
   // Elements
   // -------------------------------------------
@@ -119,12 +124,12 @@
     height: 16px;
     animation: ath-spin 1s linear infinite;
   }
-  
+
   &__content {
     display: inline-flex;
     align-items: center;
     gap: var(--ath-space-2);
-    
+
     &--hidden {
       visibility: hidden;
     }
