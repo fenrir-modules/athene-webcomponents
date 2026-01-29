@@ -1,72 +1,60 @@
-// ===========================================
-// ATH-CARD STYLES
-// ===========================================
+/* ===========================================
+   ATH-CARD STYLES
+   =========================================== */
 
 .ath-card {
-  background-color: var(--ath-bg-elevated);
+  background-color: var(--ath-bg-panel);
   border-radius: var(--ath-border-radius-lg);
-  transition: box-shadow var(--ath-transition-fast), transform var(--ath-transition-fast);
-  
-  // -------------------------------------------
-  // Padding
-  // -------------------------------------------
-  &--padding-none {
-    .ath-card__body {
-      padding: 0;
-    }
-  }
-  
-  &--padding-sm {
-    .ath-card__body {
-      padding: var(--ath-space-3);
-    }
-  }
-  
-  &--padding-md {
-    .ath-card__body {
-      padding: var(--ath-space-4);
-    }
-  }
-  
-  &--padding-lg {
-    .ath-card__body {
-      padding: var(--ath-space-6);
-    }
-  }
-  
-  // -------------------------------------------
-  // Modifiers
-  // -------------------------------------------
-  &--bordered {
-    border: 1px solid var(--ath-border-color);
-  }
-  
-  &--hoverable {
-    cursor: pointer;
-    
-    &:hover {
-      box-shadow: var(--ath-shadow-md);
-      transform: translateY(-2px);
-    }
-  }
-  
-  // -------------------------------------------
-  // Elements
-  // -------------------------------------------
-  &__header {
-    padding: var(--ath-space-4);
-    border-bottom: 1px solid var(--ath-border-color);
-    font-weight: var(--ath-font-weight-semibold);
-  }
-  
-  &__body {
-    // Padding set by modifier
-  }
-  
-  &__footer {
-    padding: var(--ath-space-4);
-    border-top: 1px solid var(--ath-border-color);
-    background-color: var(--ath-bg-tertiary);
-    border-radius: 0 0 var(--ath-border-radius-lg) var(--ath-border-radius-lg);
-  }
+  backdrop-filter: blur(14px);
+  transition: box-shadow var(--ath-transition-fast), transform var(--ath-transition-fast), border-color var(--ath-transition-fast);
+}
+
+/* Padding Variants */
+.ath-card--padding-none .ath-card__body {
+  padding: 0;
+}
+
+.ath-card--padding-sm .ath-card__body {
+  padding: var(--ath-space-3);
+}
+
+.ath-card--padding-md .ath-card__body {
+  padding: var(--ath-space-4);
+}
+
+.ath-card--padding-lg .ath-card__body {
+  padding: var(--ath-space-6);
+}
+
+/* Modifiers */
+.ath-card--bordered {
+  border: 1px solid var(--ath-border-color);
+}
+
+.ath-card--hoverable {
+  cursor: pointer;
+}
+
+.ath-card--hoverable:hover {
+  box-shadow: var(--ath-shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--ath-border-color-hover);
+}
+
+/* Elements */
+.ath-card__header {
+  padding: var(--ath-space-4);
+  border-bottom: 1px solid var(--ath-border-color);
+  font-weight: var(--ath-font-weight-semibold);
+}
+
+.ath-card__body {
+  /* Padding set by modifier */
+}
+
+.ath-card__footer {
+  padding: var(--ath-space-4);
+  border-top: 1px solid var(--ath-border-color);
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 0 0 var(--ath-border-radius-lg) var(--ath-border-radius-lg);
 }

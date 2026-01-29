@@ -31,9 +31,9 @@ const meta: Meta<AthButtonComponent> = {
   },
   render: (args) => ({
     props: args,
-    template: `<ath-button 
-      [variant]="variant" 
-      [size]="size" 
+    template: `<ath-button
+      [variant]="variant"
+      [size]="size"
       [disabled]="disabled"
       [loading]="loading"
       [fullWidth]="fullWidth"

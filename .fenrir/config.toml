@@ -1,0 +1,11 @@
+# Fenrir Module Configuration
+# Module: athene-webcomponents (UI Library)
+
+[module]
+id = "athene-webcomponents"
+name = "Athene Web Components"
+description = "Athene Ticketing System UI Component Library"
+
+[compatibility]
+fenrir_min_version = "0.1.0"
+fenrir_max_version = "99.99.99"

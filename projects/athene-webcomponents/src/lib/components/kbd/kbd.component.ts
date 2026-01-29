@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 
 /**
  * Athene Kbd (Keyboard) Component
- * 
+ *
  * Displays keyboard shortcuts in a styled badge
- * 
+ *
  * @example
  * <ath-kbd>Ctrl</ath-kbd>
  * <ath-kbd>⌘</ath-kbd>
@@ -36,29 +36,28 @@ import { CommonModule } from '@angular/common';
       border-radius: var(--ath-border-radius-sm);
       box-shadow: 0 1px 0 var(--ath-border-color);
       white-space: nowrap;
-      
-      // Sizes
-      &--sm {
-        font-size: var(--ath-font-size-xs);
-        padding: 1px 4px;
-      }
-      
-      &--md {
-        font-size: var(--ath-font-size-sm);
-        padding: 2px 6px;
-      }
-      
-      &--lg {
-        font-size: var(--ath-font-size-md);
-        padding: 4px 8px;
-      }
+    }
+
+    .ath-kbd--sm {
+      font-size: var(--ath-font-size-xs);
+      padding: 1px 4px;
+    }
+
+    .ath-kbd--md {
+      font-size: var(--ath-font-size-sm);
+      padding: 2px 6px;
+    }
+
+    .ath-kbd--lg {
+      font-size: var(--ath-font-size-md);
+      padding: 4px 8px;
     }
   `],
 })
 export class AthKbdComponent {
   /** Size variant */
   @Input() size: 'sm' | 'md' | 'lg' = 'md';
-  
+
   get kbdClasses(): string {
     return `ath-kbd ath-kbd--${this.size}`;
   }
