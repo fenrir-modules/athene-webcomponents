@@ -16,43 +16,8 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <kbd [class]="kbdClasses">
-      <ng-content />
-    </kbd>
-  `,
-  styles: [`
-    .ath-kbd {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 1.5em;
-      padding: 2px 6px;
-      font-family: var(--ath-font-family);
-      font-weight: var(--ath-font-weight-medium);
-      color: var(--ath-text-secondary);
-      background-color: var(--ath-bg-tertiary);
-      border: 1px solid var(--ath-border-color);
-      border-radius: var(--ath-border-radius-sm);
-      box-shadow: 0 1px 0 var(--ath-border-color);
-      white-space: nowrap;
-    }
-
-    .ath-kbd--sm {
-      font-size: var(--ath-font-size-xs);
-      padding: 1px 4px;
-    }
-
-    .ath-kbd--md {
-      font-size: var(--ath-font-size-sm);
-      padding: 2px 6px;
-    }
-
-    .ath-kbd--lg {
-      font-size: var(--ath-font-size-md);
-      padding: 4px 8px;
-    }
-  `],
+  templateUrl: './kbd.component.html',
+  styleUrl: './kbd.component.scss',
 })
 export class AthKbdComponent {
   /** Size variant */

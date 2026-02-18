@@ -24,21 +24,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
   standalone: true,
   imports: [CommonModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <button
-      [type]="type"
-      [disabled]="disabled || loading"
-      [class]="buttonClasses"
-      (click)="handleClick($event)"
-    >
-      @if (loading) {
-        <lucide-icon [img]="loaderIcon" class="ath-button__loader" />
-      }
-      <span class="ath-button__content" [class.ath-button__content--hidden]="loading">
-        <ng-content />
-      </span>
-    </button>
-  `,
+  templateUrl: './button.component.html',
   styleUrl: './button.component.scss',
 })
 export class AthButtonComponent {

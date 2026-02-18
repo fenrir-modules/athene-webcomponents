@@ -1,0 +1,8 @@
+<span [class]="chipClasses">
+  <ng-content />
+  @if (removable) {
+    <button type="button" class="ath-chip__remove" (click)="remove($event)">
+      <lucide-icon [img]="removeIcon" [size]="12" />
+    </button>
+  }
+</span>

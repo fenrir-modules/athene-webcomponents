@@ -1,0 +1,29 @@
+// ===========================================
+// ATH-EMPTY-STATE STYLES
+// ===========================================
+
+.ath-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ath-space-2);
+  padding: var(--ath-space-10) var(--ath-space-6);
+  text-align: center;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: var(--ath-border-radius-lg);
+  background: rgba(255, 255, 255, 0.01);
+
+  &__message {
+    margin: 0;
+    font-size: var(--ath-font-size-sm);
+    font-weight: var(--ath-font-weight-medium);
+    color: var(--ath-text-secondary);
+  }
+
+  &__sub {
+    margin: 0;
+    font-size: var(--ath-font-size-xs);
+    color: var(--ath-text-tertiary);
+  }
+}

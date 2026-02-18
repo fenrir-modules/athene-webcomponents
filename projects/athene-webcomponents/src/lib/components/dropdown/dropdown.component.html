@@ -1,0 +1,33 @@
+<div class="ath-dropdown">
+  <div class="ath-dropdown__trigger" (click)="toggle()">
+    <ng-content />
+  </div>
+
+  @if (isOpen) {
+    <div
+      class="ath-dropdown__menu"
+      [class.ath-dropdown__menu--left]="placementX === 'left'"
+      [class.ath-dropdown__menu--right]="placementX === 'right'"
+      [class.ath-dropdown__menu--down]="placementY === 'down'"
+      [class.ath-dropdown__menu--up]="placementY === 'up'"
+    >
+      @for (item of items; track item.id) {
+        @if (item.divider) {
+          <div class="ath-dropdown__divider"></div>
+        } @else {
+          <button
+            type="button"
+            [class]="getItemClasses(item)"
+            [disabled]="item.disabled"
+            (click)="selectItem(item)"
+          >
+            @if (item.icon) {
+              <lucide-icon [img]="item.icon" [size]="16" class="ath-dropdown__item-icon" />
+            }
+            <span>{{ item.label }}</span>
+          </button>
+        }
+      }
+    </div>
+  }
+</div>

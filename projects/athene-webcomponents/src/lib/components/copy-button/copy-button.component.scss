@@ -1,0 +1,38 @@
+// ===========================================
+// ATH-COPY-BUTTON STYLES
+// ===========================================
+
+.ath-copy-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: var(--ath-text-tertiary);
+  background: none;
+  border: 1px solid var(--ath-border-color);
+  border-radius: var(--ath-border-radius-sm);
+  cursor: pointer;
+  transition: all var(--ath-transition-fast);
+
+  &:hover {
+    color: var(--ath-text-primary);
+    border-color: var(--ath-border-color-hover);
+    background-color: var(--ath-bg-tertiary);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--ath-border-color-focus);
+  }
+
+  &--copied {
+    color: var(--ath-color-success);
+    border-color: var(--ath-color-success);
+
+    &:hover {
+      color: var(--ath-color-success);
+    }
+  }
+}

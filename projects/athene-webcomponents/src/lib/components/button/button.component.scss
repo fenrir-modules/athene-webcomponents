@@ -12,13 +12,18 @@
   border-radius: var(--ath-border-radius-md);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all var(--ath-transition-fast);
   white-space: nowrap;
   letter-spacing: 0.2px;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease,
+    opacity 150ms ease;
 
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 1px var(--ath-border-color-focus), 0 0 12px rgba(201, 150, 58, 0.25);
+    box-shadow: 0 0 0 2px var(--ath-bg-primary), 0 0 0 4px var(--ath-color-primary);
   }
 
   &:disabled {
@@ -48,20 +53,21 @@
   }
 
   // -------------------------------------------
-  // Variants
+  // Variants — all palette-aware, no hardcoded hex
   // -------------------------------------------
   &--primary {
-    background: linear-gradient(135deg, var(--ath-color-primary), #e5c27a);
-    color: var(--ath-text-inverse);
-    border-color: rgba(201, 150, 58, 0.5);
-    box-shadow: var(--ath-shadow-glow);
+    background: var(--ath-color-primary);
+    color: #fff;
+    border-color: var(--ath-color-primary);
 
     &:hover:not(:disabled) {
-      filter: brightness(1.05);
+      background: var(--ath-color-primary-hover);
+      border-color: var(--ath-color-primary-hover);
     }
 
     &:active:not(:disabled) {
-      filter: brightness(0.98);
+      background: var(--ath-color-primary-active);
+      border-color: var(--ath-color-primary-active);
     }
   }
 
@@ -78,12 +84,12 @@
 
   &--outline {
     background-color: transparent;
-    border-color: rgba(201, 150, 58, 0.5);
+    border-color: var(--ath-border-color);
     color: var(--ath-color-primary);
 
     &:hover:not(:disabled) {
-      background-color: rgba(201, 150, 58, 0.12);
-      border-color: rgba(201, 150, 58, 0.8);
+      background-color: rgba(var(--ath-color-primary-rgb), 0.08);
+      border-color: var(--ath-color-primary);
     }
   }
 
@@ -92,16 +98,18 @@
     color: var(--ath-text-primary);
 
     &:hover:not(:disabled) {
-      background-color: rgba(255, 255, 255, 0.04);
+      background-color: var(--ath-hover-bg);
     }
   }
 
   &--danger {
     background-color: var(--ath-color-error);
-    color: var(--ath-text-inverse);
+    color: #fff;
+    border-color: var(--ath-color-error);
 
     &:hover:not(:disabled) {
       background-color: var(--ath-color-error-hover);
+      border-color: var(--ath-color-error-hover);
     }
   }
 
@@ -114,14 +122,21 @@
 
   &--loading {
     position: relative;
+    pointer-events: none;
   }
 
   // -------------------------------------------
   // Elements
   // -------------------------------------------
+  &__loader-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   &__loader {
-    width: 16px;
-    height: 16px;
     animation: ath-spin 1s linear infinite;
   }
 
@@ -137,10 +152,6 @@
 }
 
 @keyframes ath-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }

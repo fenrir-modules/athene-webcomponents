@@ -1,0 +1,17 @@
+<div class="ath-skeleton-table">
+  <!-- Header -->
+  <div class="ath-skeleton-table__header">
+    @for (col of columns; track col) {
+      <ath-skeleton variant="text" [width]="col + '%'" height="20px" />
+    }
+  </div>
+
+  <!-- Rows -->
+  @for (row of rowsArray; track row) {
+    <div class="ath-skeleton-table__row">
+      @for (col of columns; track col) {
+        <ath-skeleton variant="text" [width]="col + '%'" height="16px" />
+      }
+    </div>
+  }
+</div>

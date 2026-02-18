@@ -1,0 +1,55 @@
+// ===========================================
+// ATH-AVATAR STYLES
+// ===========================================
+
+.ath-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ath-border-radius-full);
+  background: linear-gradient(135deg, var(--ath-color-primary), var(--ath-color-primary-hover));
+  color: var(--ath-text-inverse);
+  font-weight: var(--ath-font-weight-semibold);
+  overflow: hidden;
+  flex-shrink: 0;
+  user-select: none;
+
+  &--sm {
+    width: 28px;
+    height: 28px;
+    font-size: var(--ath-font-size-xs);
+  }
+
+  &--md {
+    width: 36px;
+    height: 36px;
+    font-size: var(--ath-font-size-sm);
+  }
+
+  &--lg {
+    width: 44px;
+    height: 44px;
+    font-size: var(--ath-font-size-md);
+  }
+
+  &--xl {
+    width: 56px;
+    height: 56px;
+    font-size: var(--ath-font-size-lg);
+  }
+
+  &__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__initials {
+    position: relative;
+    z-index: 1;
+    letter-spacing: 0.5px;
+  }
+}

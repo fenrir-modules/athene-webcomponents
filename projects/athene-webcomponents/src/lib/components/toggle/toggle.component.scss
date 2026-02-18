@@ -13,18 +13,20 @@
   background: rgba(255, 255, 255, 0.02);
   color: var(--ath-text-primary);
   text-align: left;
+  cursor: pointer;
   transition: border-color var(--ath-transition-fast), background-color var(--ath-transition-fast);
 
-  &:hover:not(:disabled) {
+  &:hover:not(.ath-toggle--disabled) {
     border-color: var(--ath-border-color-hover);
     background: rgba(255, 255, 255, 0.04);
   }
 
   &__track {
     position: relative;
-    width: 40px;
-    height: 22px;
-    border-radius: 999px;
+    flex-shrink: 0;
+    width: 36px;
+    height: 20px;
+    border-radius: var(--ath-border-radius-full);
     background: var(--ath-bg-tertiary);
     border: 1px solid var(--ath-border-color);
     transition: background-color var(--ath-transition-fast), border-color var(--ath-transition-fast);
@@ -34,10 +36,10 @@
     position: absolute;
     top: 2px;
     left: 2px;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--ath-text-secondary);
+    width: 14px;
+    height: 14px;
+    border-radius: var(--ath-border-radius-full);
+    background: var(--ath-text-tertiary);
     transition: transform var(--ath-transition-fast), background-color var(--ath-transition-fast);
   }
 
@@ -49,7 +51,8 @@
 
   &__label {
     font-size: var(--ath-font-size-sm);
-    font-weight: var(--ath-font-weight-semibold);
+    font-weight: var(--ath-font-weight-medium);
+    color: var(--ath-text-primary);
   }
 
   &__description {
@@ -57,22 +60,30 @@
     color: var(--ath-text-tertiary);
   }
 
+  // -------------------------------------------
+  // Checked State
+  // -------------------------------------------
   &--checked {
-    border-color: rgba(201, 150, 58, 0.6);
-    background: rgba(201, 150, 58, 0.08);
+    border-color: var(--ath-border-color);
+
+    &:hover:not(.ath-toggle--disabled) {
+      border-color: var(--ath-border-color-hover);
+    }
 
     .ath-toggle__track {
-      background: rgba(201, 150, 58, 0.3);
-      border-color: rgba(201, 150, 58, 0.6);
+      background: var(--ath-color-primary);
+      border-color: var(--ath-color-primary);
     }
 
     .ath-toggle__thumb {
-      transform: translateX(18px);
-      background: var(--ath-color-primary);
-      box-shadow: 0 0 10px rgba(201, 150, 58, 0.35);
+      transform: translateX(16px);
+      background: #fff;
     }
   }
 
+  // -------------------------------------------
+  // Disabled State
+  // -------------------------------------------
   &--disabled {
     opacity: 0.5;
     cursor: not-allowed;

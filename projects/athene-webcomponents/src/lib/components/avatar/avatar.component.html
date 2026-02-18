@@ -1,0 +1,6 @@
+<div [class]="avatarClasses" [attr.aria-label]="name">
+  @if (src) {
+    <img [src]="src" [alt]="name" class="ath-avatar__image" (error)="onImageError($event)" />
+  }
+  <span class="ath-avatar__initials">{{ initials }}</span>
+</div>

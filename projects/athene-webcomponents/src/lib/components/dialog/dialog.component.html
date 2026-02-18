@@ -1,0 +1,31 @@
+@if (open) {
+  <div class="ath-dialog__backdrop" (click)="onBackdropClick()"></div>
+  <div class="ath-dialog__container">
+    <div [class]="dialogClasses" role="dialog" aria-modal="true">
+      <!-- Header -->
+      <div class="ath-dialog__header">
+        <div class="ath-dialog__header-text">
+          @if (title) {
+            <h2 class="ath-dialog__title">{{ title }}</h2>
+          }
+          @if (description) {
+            <p class="ath-dialog__description">{{ description }}</p>
+          }
+        </div>
+        <button class="ath-dialog__close" type="button" (click)="close()">
+          <lucide-icon [img]="closeIcon" [size]="18" />
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="ath-dialog__body">
+        <ng-content />
+      </div>
+
+      <!-- Footer -->
+      <div class="ath-dialog__footer">
+        <ng-content select="[slot=footer]" />
+      </div>
+    </div>
+  </div>
+}

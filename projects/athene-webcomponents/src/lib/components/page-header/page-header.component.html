@@ -1,0 +1,11 @@
+<header class="ath-page-header">
+  <div class="ath-page-header__text">
+    <h1 class="ath-page-header__title">{{ title }}</h1>
+    @if (description) {
+      <p class="ath-page-header__description">{{ description }}</p>
+    }
+  </div>
+  <div class="ath-page-header__actions">
+    <ng-content />
+  </div>
+</header>

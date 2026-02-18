@@ -1,0 +1,8 @@
+<div [class]="alertClasses" role="alert">
+  <span class="ath-alert__message">{{ message }}</span>
+  @if (dismissible) {
+    <button class="ath-alert__dismiss" (click)="dismiss()" aria-label="Dismiss">
+      ×
+    </button>
+  }
+</div>

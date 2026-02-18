@@ -2,11 +2,25 @@
   "name": "athene-webcomponents",
   "version": "0.1.0",
   "description": "Athene UI Component Library",
+  "module": "dist/athene-webcomponents/fesm2022/athene-webcomponents.mjs",
+  "typings": "dist/athene-webcomponents/index.d.ts",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/athene-webcomponents/index.d.ts",
+      "esm2022": "./dist/athene-webcomponents/esm2022/athene-webcomponents.mjs",
+      "esm": "./dist/athene-webcomponents/esm2022/athene-webcomponents.mjs",
+      "default": "./dist/athene-webcomponents/fesm2022/athene-webcomponents.mjs"
+    }
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "build:lib": "ng build athene-webcomponents",
+    "prepare": "ng build athene-webcomponents",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",

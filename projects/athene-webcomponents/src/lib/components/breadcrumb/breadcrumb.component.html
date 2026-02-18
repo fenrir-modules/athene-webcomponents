@@ -1,0 +1,16 @@
+<nav class="ath-breadcrumb" aria-label="Breadcrumb">
+  <ol class="ath-breadcrumb__list">
+    @for (item of items; track item.label; let last = $last) {
+      <li class="ath-breadcrumb__item">
+        @if (item.link && !last) {
+          <a [routerLink]="item.link" class="ath-breadcrumb__link">{{ item.label }}</a>
+        } @else {
+          <span class="ath-breadcrumb__current" [attr.aria-current]="last ? 'page' : null">{{ item.label }}</span>
+        }
+        @if (!last) {
+          <lucide-icon [img]="separatorIcon" [size]="14" class="ath-breadcrumb__separator" />
+        }
+      </li>
+    }
+  </ol>
+</nav>

@@ -24,25 +24,7 @@ export type CardPadding = 'none' | 'sm' | 'md' | 'lg';
   standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div [class]="cardClasses">
-      @if (header) {
-        <div class="ath-card__header">
-          <ng-content select="[slot=header]" />
-        </div>
-      }
-
-      <div class="ath-card__body">
-        <ng-content />
-      </div>
-
-      @if (footer) {
-        <div class="ath-card__footer">
-          <ng-content select="[slot=footer]" />
-        </div>
-      }
-    </div>
-  `,
+  templateUrl: './card.component.html',
   styleUrl: './card.component.scss',
 })
 export class AthCardComponent {

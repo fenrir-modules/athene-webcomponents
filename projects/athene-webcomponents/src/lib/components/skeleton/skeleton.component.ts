@@ -21,13 +21,7 @@ export type SkeletonVariant = 'text' | 'circular' | 'rectangular';
   standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div
-      [class]="skeletonClasses"
-      [style.width]="width"
-      [style.height]="height"
-    ></div>
-  `,
+  templateUrl: './skeleton.component.html',
   styleUrl: './skeleton.component.scss',
 })
 export class AthSkeletonComponent {
@@ -41,13 +35,13 @@ export class AthSkeletonComponent {
   @Input() height = '';
 
   /** Animation enabled */
-  @Input() animation = true;
+  @Input() animated = true;
 
   get skeletonClasses(): string {
     return [
       'ath-skeleton',
       `ath-skeleton--${this.variant}`,
-      this.animation ? 'ath-skeleton--animated' : '',
+      this.animated ? 'ath-skeleton--animated' : '',
     ].filter(Boolean).join(' ');
   }
 }
@@ -62,45 +56,8 @@ export class AthSkeletonComponent {
   standalone: true,
   imports: [CommonModule, AthSkeletonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div class="ath-skeleton-table">
-      <!-- Header -->
-      <div class="ath-skeleton-table__header">
-        @for (col of columns; track col) {
-          <ath-skeleton variant="text" [width]="col + '%'" height="20px" />
-        }
-      </div>
-
-      <!-- Rows -->
-      @for (row of rowsArray; track row) {
-        <div class="ath-skeleton-table__row">
-          @for (col of columns; track col) {
-            <ath-skeleton variant="text" [width]="col + '%'" height="16px" />
-          }
-        </div>
-      }
-    </div>
-  `,
-  styles: [`
-    .ath-skeleton-table {
-      display: flex;
-      flex-direction: column;
-      gap: var(--ath-space-3);
-    }
-
-    .ath-skeleton-table__header {
-      display: flex;
-      gap: var(--ath-space-4);
-      padding-bottom: var(--ath-space-3);
-      border-bottom: 1px solid var(--ath-border-color);
-    }
-
-    .ath-skeleton-table__row {
-      display: flex;
-      gap: var(--ath-space-4);
-      padding: var(--ath-space-2) 0;
-    }
-  `],
+  templateUrl: './skeleton-table.component.html',
+  styleUrl: './skeleton-table.component.scss',
 })
 export class AthSkeletonTableComponent {
   /** Number of rows */
@@ -124,44 +81,8 @@ export class AthSkeletonTableComponent {
   standalone: true,
   imports: [CommonModule, AthSkeletonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div class="ath-skeleton-card">
-      @if (showImage) {
-        <ath-skeleton variant="rectangular" height="160px" />
-      }
-      <div class="ath-skeleton-card__content">
-        <ath-skeleton variant="text" width="70%" height="24px" />
-        <ath-skeleton variant="text" width="100%" height="16px" />
-        <ath-skeleton variant="text" width="90%" height="16px" />
-        @if (showActions) {
-          <div class="ath-skeleton-card__actions">
-            <ath-skeleton variant="rectangular" width="80px" height="32px" />
-            <ath-skeleton variant="rectangular" width="80px" height="32px" />
-          </div>
-        }
-      </div>
-    </div>
-  `,
-  styles: [`
-    .ath-skeleton-card {
-      border: 1px solid var(--ath-border-color);
-      border-radius: var(--ath-border-radius-lg);
-      overflow: hidden;
-    }
-
-    .ath-skeleton-card__content {
-      display: flex;
-      flex-direction: column;
-      gap: var(--ath-space-2);
-      padding: var(--ath-space-4);
-    }
-
-    .ath-skeleton-card__actions {
-      display: flex;
-      gap: var(--ath-space-2);
-      margin-top: var(--ath-space-2);
-    }
-  `],
+  templateUrl: './skeleton-card.component.html',
+  styleUrl: './skeleton-card.component.scss',
 })
 export class AthSkeletonCardComponent {
   /** Show image placeholder */

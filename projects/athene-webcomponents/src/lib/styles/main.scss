@@ -9,3 +9,6 @@
 @import 'typography';
 @import 'animations';
 @import 'mixins';
+
+// Global component styles (for directives that render outside component scope)
+@import 'tooltip';

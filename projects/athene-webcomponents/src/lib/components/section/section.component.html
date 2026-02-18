@@ -1,0 +1,18 @@
+<section class="ath-section" [class.ath-section--collapsed]="collapsible && !expanded">
+  <header class="ath-section__header" (click)="toggle()">
+    <div class="ath-section__text">
+      <h2 class="ath-section__title">{{ title }}</h2>
+      @if (description) {
+        <p class="ath-section__description">{{ description }}</p>
+      }
+    </div>
+    <div class="ath-section__actions">
+      <ng-content select="[slot=actions]" />
+    </div>
+  </header>
+  @if (!collapsible || expanded) {
+    <div class="ath-section__content">
+      <ng-content />
+    </div>
+  }
+</section>

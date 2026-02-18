@@ -1,0 +1,64 @@
+// ===========================================
+// ATH-CHIP STYLES
+// ===========================================
+
+.ath-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ath-space-1);
+  padding: 2px var(--ath-space-2);
+  font-size: var(--ath-font-size-xs);
+  font-weight: var(--ath-font-weight-medium);
+  border-radius: var(--ath-border-radius-full);
+  white-space: nowrap;
+
+  &--default {
+    color: var(--ath-text-secondary);
+    background-color: var(--ath-bg-tertiary);
+    border: 1px solid var(--ath-border-color);
+  }
+
+  &--primary {
+    color: var(--ath-color-primary);
+    background-color: rgba(201, 150, 58, 0.12);
+    border: 1px solid rgba(201, 150, 58, 0.3);
+  }
+
+  &--success {
+    color: var(--ath-color-success);
+    background-color: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+
+  &--warning {
+    color: var(--ath-color-warning);
+    background-color: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  &--error {
+    color: var(--ath-color-error);
+    background-color: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  &__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    color: inherit;
+    background: none;
+    border: none;
+    border-radius: var(--ath-border-radius-full);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity var(--ath-transition-fast);
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}

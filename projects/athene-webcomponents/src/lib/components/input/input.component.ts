@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, forwardRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { LucideAngularModule, Eye, EyeOff, AlertCircle } from 'lucide-angular';
@@ -27,55 +27,7 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
       multi: true,
     },
   ],
-  template: `
-    <div class="ath-input" [class.ath-input--error]="error" [class.ath-input--disabled]="disabled">
-      @if (label) {
-        <label class="ath-input__label" [for]="inputId">
-          {{ label }}
-          @if (required) {
-            <span class="ath-input__required">*</span>
-          }
-        </label>
-      }
-
-      <div class="ath-input__wrapper">
-        <input
-          [id]="inputId"
-          [type]="showPassword ? 'text' : type"
-          [placeholder]="placeholder"
-          [disabled]="disabled"
-          [readonly]="readonly"
-          [autocomplete]="autocomplete"
-          [value]="value"
-          (input)="onInput($event)"
-          (blur)="onTouched()"
-          class="ath-input__field"
-        />
-
-        @if (type === 'password') {
-          <button
-            type="button"
-            class="ath-input__toggle"
-            (click)="togglePassword()"
-            tabindex="-1"
-          >
-            <lucide-icon [img]="showPassword ? eyeOffIcon : eyeIcon" [size]="18" />
-          </button>
-        }
-      </div>
-
-      @if (error) {
-        <div class="ath-input__error">
-          <lucide-icon [img]="alertIcon" [size]="14" />
-          {{ error }}
-        </div>
-      }
-
-      @if (hint && !error) {
-        <div class="ath-input__hint">{{ hint }}</div>
-      }
-    </div>
-  `,
+  templateUrl: './input.component.html',
   styleUrl: './input.component.scss',
 })
 export class AthInputComponent implements ControlValueAccessor {

@@ -1,0 +1,17 @@
+<div [class]="cardClasses">
+  @if (header) {
+    <div class="ath-card__header">
+      <ng-content select="[slot=header]" />
+    </div>
+  }
+
+  <div class="ath-card__body">
+    <ng-content />
+  </div>
+
+  @if (footer) {
+    <div class="ath-card__footer">
+      <ng-content select="[slot=footer]" />
+    </div>
+  }
+</div>

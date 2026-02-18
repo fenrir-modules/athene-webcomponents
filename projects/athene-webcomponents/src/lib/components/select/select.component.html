@@ -1,0 +1,40 @@
+<div class="ath-select" [class.ath-select--error]="error" [class.ath-select--disabled]="disabled">
+  @if (label) {
+    <label class="ath-select__label" [for]="selectId">
+      {{ label }}
+      @if (required) {
+        <span class="ath-select__required">*</span>
+      }
+    </label>
+  }
+
+  <div class="ath-select__wrapper">
+    <select
+      [id]="selectId"
+      [disabled]="disabled"
+      [value]="value"
+      (change)="onSelectionChange($event)"
+      (blur)="onTouched()"
+      class="ath-select__field"
+    >
+      @if (placeholder) {
+        <option value="" disabled [selected]="!value">{{ placeholder }}</option>
+      }
+      @for (option of options; track option.value) {
+        <option [value]="option.value" [disabled]="option.disabled">{{ option.label }}</option>
+      }
+    </select>
+    <lucide-icon [img]="chevronIcon" [size]="16" class="ath-select__chevron" />
+  </div>
+
+  @if (error) {
+    <div class="ath-select__error">
+      <lucide-icon [img]="alertIcon" [size]="14" />
+      {{ error }}
+    </div>
+  }
+
+  @if (hint && !error) {
+    <div class="ath-select__hint">{{ hint }}</div>
+  }
+</div>

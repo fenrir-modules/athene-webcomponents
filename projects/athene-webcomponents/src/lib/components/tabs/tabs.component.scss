@@ -1,0 +1,51 @@
+// ===========================================
+// ATH-TABS STYLES
+// ===========================================
+
+.ath-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--ath-border-color);
+
+  &__tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: var(--ath-space-3) var(--ath-space-4);
+    font-family: var(--ath-font-family);
+    font-size: var(--ath-font-size-sm);
+    font-weight: var(--ath-font-weight-medium);
+    color: var(--ath-text-tertiary);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+    transition: all var(--ath-transition-fast);
+    white-space: nowrap;
+
+    &:hover:not(:disabled) {
+      color: var(--ath-text-primary);
+    }
+
+    &--active {
+      color: var(--ath-color-primary);
+      border-bottom-color: var(--ath-color-primary);
+
+      &:hover:not(:disabled) {
+        color: var(--ath-color-primary);
+      }
+    }
+
+    &--disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: inset 0 0 0 2px var(--ath-border-color-focus);
+      border-radius: var(--ath-border-radius-sm) var(--ath-border-radius-sm) 0 0;
+    }
+  }
+}

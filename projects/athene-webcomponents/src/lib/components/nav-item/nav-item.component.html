@@ -1,0 +1,18 @@
+<a
+  class="ath-nav-item"
+  [routerLink]="link"
+  routerLinkActive="ath-nav-item--active"
+  [routerLinkActiveOptions]="{ exact: false }"
+  [class.ath-nav-item--collapsed]="collapsed"
+  [attr.title]="collapsed ? label : null"
+>
+  @if (icon) {
+    <lucide-icon [img]="icon" [size]="20" class="ath-nav-item__icon" />
+  }
+  @if (!collapsed) {
+    <span class="ath-nav-item__label">{{ label }}</span>
+    @if (badgeCount !== null) {
+      <span class="ath-nav-item__badge">{{ badgeCount }}</span>
+    }
+  }
+</a>

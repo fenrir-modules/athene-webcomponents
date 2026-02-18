@@ -1,0 +1,16 @@
+<aside [class]="sidebarClasses">
+  <div class="ath-sidebar__header">
+    <ng-content select="[slot=header]" />
+  </div>
+
+  <nav class="ath-sidebar__nav">
+    <ng-content />
+  </nav>
+
+  <div class="ath-sidebar__footer">
+    <ng-content select="[slot=footer]" />
+    <button class="ath-sidebar__toggle" type="button" (click)="toggleCollapse()">
+      <lucide-icon [img]="collapsed ? expandIcon : collapseIcon" [size]="18" />
+    </button>
+  </div>
+</aside>

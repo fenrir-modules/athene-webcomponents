@@ -1,0 +1,98 @@
+// ===========================================
+// ATH-TEXTAREA STYLES
+// ===========================================
+
+.ath-textarea {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-1);
+
+  &__label {
+    font-size: var(--ath-font-size-sm);
+    font-weight: var(--ath-font-weight-medium);
+    color: var(--ath-text-primary);
+  }
+
+  &__required {
+    color: var(--ath-color-error);
+    margin-left: 2px;
+  }
+
+  &__field {
+    width: 100%;
+    padding: var(--ath-space-3) var(--ath-space-4);
+    font-family: var(--ath-font-family);
+    font-size: var(--ath-font-size-md);
+    color: var(--ath-text-primary);
+    background-color: var(--ath-bg-input);
+    border: 1px solid var(--ath-border-color);
+    border-radius: var(--ath-border-radius-md);
+    line-height: var(--ath-line-height-normal);
+    transition: border-color var(--ath-transition-fast), box-shadow var(--ath-transition-fast);
+
+    &::placeholder {
+      color: var(--ath-text-tertiary);
+    }
+
+    &:hover:not(:disabled):not(:focus) {
+      border-color: var(--ath-border-color-hover);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--ath-border-color-focus);
+      box-shadow: 0 0 0 1px var(--ath-border-color-focus), 0 0 12px rgba(201, 150, 58, 0.25);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background-color: var(--ath-bg-tertiary);
+    }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ath-space-2);
+  }
+
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: var(--ath-space-1);
+    font-size: var(--ath-font-size-sm);
+    color: var(--ath-color-error);
+  }
+
+  &__hint {
+    font-size: var(--ath-font-size-sm);
+    color: var(--ath-text-tertiary);
+  }
+
+  &__count {
+    font-size: var(--ath-font-size-xs);
+    color: var(--ath-text-tertiary);
+
+    &--near-limit {
+      color: var(--ath-color-warning);
+    }
+  }
+
+  &--error {
+    .ath-textarea__field {
+      border-color: var(--ath-color-error);
+
+      &:focus {
+        box-shadow: 0 0 0 1px var(--ath-color-error), 0 0 12px rgba(239, 68, 68, 0.2);
+      }
+    }
+  }
+
+  &--disabled {
+    .ath-textarea__label {
+      opacity: 0.5;
+    }
+  }
+}

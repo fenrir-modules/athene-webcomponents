@@ -1,0 +1,70 @@
+// ===========================================
+// ATH-SECTION STYLES
+// ===========================================
+
+.ath-section {
+  background: var(--ath-bg-panel);
+  border: 1px solid var(--ath-border-color);
+  border-radius: var(--ath-border-radius-lg);
+  overflow: hidden;
+
+  // -------------------------------------------
+  // Header
+  // -------------------------------------------
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--ath-space-4);
+    padding: var(--ath-space-4) var(--ath-space-5);
+    border-bottom: 1px solid var(--ath-border-color);
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--ath-font-size-sm);
+    font-weight: var(--ath-font-weight-semibold);
+    color: var(--ath-text-primary);
+    line-height: var(--ath-line-height-tight);
+  }
+
+  &__description {
+    margin: 2px 0 0;
+    font-size: var(--ath-font-size-sm);
+    color: var(--ath-text-tertiary);
+    line-height: var(--ath-line-height-tight);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--ath-space-2);
+    flex-shrink: 0;
+  }
+
+  // -------------------------------------------
+  // Content
+  // -------------------------------------------
+  &__content {
+    padding: var(--ath-space-5);
+  }
+
+  // -------------------------------------------
+  // Collapsed State
+  // -------------------------------------------
+  &--collapsed {
+    .ath-section__header {
+      border-bottom: none;
+      cursor: pointer;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+    }
+  }
+}

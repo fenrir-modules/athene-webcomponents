@@ -1,0 +1,83 @@
+// ===========================================
+// ATH-NAV-ITEM STYLES
+// ===========================================
+
+.ath-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ath-space-3);
+  padding: 10px var(--ath-space-3);
+  border-radius: var(--ath-border-radius-md);
+  color: var(--ath-text-tertiary);
+  text-decoration: none;
+  font-size: var(--ath-font-size-sm);
+  font-weight: var(--ath-font-weight-medium);
+  transition: all 0.15s ease;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+
+  &:hover {
+    color: var(--ath-text-primary);
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+
+  // Active state with left accent bar
+  &--active {
+    color: var(--ath-color-primary);
+    background-color: rgba(201, 150, 58, 0.08);
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 6px;
+      bottom: 6px;
+      width: 3px;
+      border-radius: 0 2px 2px 0;
+      background: var(--ath-color-primary);
+    }
+
+    &:hover {
+      color: var(--ath-color-primary);
+      background-color: rgba(201, 150, 58, 0.12);
+    }
+
+    .ath-nav-item__icon {
+      color: var(--ath-color-primary);
+    }
+  }
+
+  &--collapsed {
+    justify-content: center;
+    padding: var(--ath-space-2);
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    color: inherit;
+  }
+
+  &__label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__badge {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 var(--ath-space-1);
+    font-size: var(--ath-font-size-xs);
+    font-weight: var(--ath-font-weight-semibold);
+    color: var(--ath-text-inverse);
+    background-color: var(--ath-color-primary);
+    border-radius: var(--ath-border-radius-full);
+  }
+}

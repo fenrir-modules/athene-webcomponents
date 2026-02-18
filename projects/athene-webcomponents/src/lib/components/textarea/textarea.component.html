@@ -1,0 +1,42 @@
+<div class="ath-textarea" [class.ath-textarea--error]="error" [class.ath-textarea--disabled]="disabled">
+  @if (label) {
+    <label class="ath-textarea__label" [for]="textareaId">
+      {{ label }}
+      @if (required) {
+        <span class="ath-textarea__required">*</span>
+      }
+    </label>
+  }
+
+  <textarea
+    [id]="textareaId"
+    [rows]="rows"
+    [placeholder]="placeholder"
+    [disabled]="disabled"
+    [value]="value"
+    [attr.maxlength]="maxLength"
+    [style.resize]="resize"
+    (input)="onInput($event)"
+    (blur)="onTouched()"
+    class="ath-textarea__field"
+  ></textarea>
+
+  <div class="ath-textarea__meta">
+    @if (error) {
+      <div class="ath-textarea__error">
+        <lucide-icon [img]="alertIcon" [size]="14" />
+        {{ error }}
+      </div>
+    } @else if (hint) {
+      <div class="ath-textarea__hint">{{ hint }}</div>
+    } @else {
+      <div></div>
+    }
+
+    @if (maxLength) {
+      <div class="ath-textarea__count" [class.ath-textarea__count--near-limit]="characterCount > maxLength * 0.9">
+        {{ characterCount }}/{{ maxLength }}
+      </div>
+    }
+  </div>
+</div>

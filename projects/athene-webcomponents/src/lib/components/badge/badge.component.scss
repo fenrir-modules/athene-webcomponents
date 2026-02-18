@@ -1,0 +1,83 @@
+// ===========================================
+// ATH-BADGE STYLES
+// ===========================================
+
+.ath-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: var(--ath-font-weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+  padding: 4px 10px;
+  border-radius: var(--ath-border-radius-full);
+  letter-spacing: 0.2px;
+
+  // -------------------------------------------
+  // Dot Indicator
+  // -------------------------------------------
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--ath-border-radius-full);
+    flex-shrink: 0;
+  }
+
+  // -------------------------------------------
+  // Variants
+  // -------------------------------------------
+  &--default {
+    color: var(--ath-text-secondary);
+    background: rgba(255, 255, 255, 0.06);
+
+    .ath-badge__dot {
+      background: var(--ath-text-tertiary);
+    }
+  }
+
+  &--success {
+    color: var(--ath-color-success);
+    background: rgba(74, 222, 128, 0.1);
+
+    .ath-badge__dot {
+      background: var(--ath-color-success);
+    }
+  }
+
+  &--warning {
+    color: var(--ath-color-primary);
+    background: rgba(201, 150, 58, 0.12);
+
+    .ath-badge__dot {
+      background: var(--ath-color-primary);
+    }
+  }
+
+  &--error {
+    color: var(--ath-color-error);
+    background: rgba(248, 113, 113, 0.1);
+
+    .ath-badge__dot {
+      background: var(--ath-color-error);
+    }
+  }
+
+  &--info {
+    color: var(--ath-color-info);
+    background: rgba(96, 165, 250, 0.1);
+
+    .ath-badge__dot {
+      background: var(--ath-color-info);
+    }
+  }
+
+  &--muted {
+    color: var(--ath-text-tertiary);
+    background: rgba(255, 255, 255, 0.04);
+
+    .ath-badge__dot {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}

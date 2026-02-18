@@ -1,0 +1,65 @@
+// ===========================================
+// ATH-STAT-CARD STYLES
+// ===========================================
+
+.ath-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-2);
+  padding: var(--ath-space-4) var(--ath-space-5);
+  background: var(--ath-bg-panel);
+  border: 1px solid var(--ath-border-color);
+  border-radius: var(--ath-border-radius-lg);
+
+  // -------------------------------------------
+  // Label
+  // -------------------------------------------
+  &__label {
+    font-size: var(--ath-font-size-xs);
+    font-weight: var(--ath-font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--ath-text-tertiary);
+  }
+
+  // -------------------------------------------
+  // Value Row
+  // -------------------------------------------
+  &__value-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--ath-space-2);
+  }
+
+  &__value {
+    font-size: var(--ath-font-size-3xl);
+    font-weight: var(--ath-font-weight-semibold);
+    color: var(--ath-text-primary);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // -------------------------------------------
+  // Trend
+  // -------------------------------------------
+  &__trend {
+    font-size: var(--ath-font-size-sm);
+    font-weight: var(--ath-font-weight-medium);
+
+    &--up {
+      color: var(--ath-color-success);
+    }
+
+    &--down {
+      color: var(--ath-color-error);
+    }
+  }
+
+  // -------------------------------------------
+  // Sub Value
+  // -------------------------------------------
+  &__sub {
+    font-size: var(--ath-font-size-xs);
+    color: var(--ath-text-tertiary);
+  }
+}

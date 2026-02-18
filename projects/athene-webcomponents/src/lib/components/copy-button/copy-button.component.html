@@ -1,0 +1,9 @@
+<button
+  type="button"
+  class="ath-copy-button"
+  [class.ath-copy-button--copied]="copied"
+  [attr.aria-label]="copied ? 'Copied' : label"
+  (click)="copy()"
+>
+  <lucide-icon [img]="copied ? checkIcon : copyIcon" [size]="16" />
+</button>

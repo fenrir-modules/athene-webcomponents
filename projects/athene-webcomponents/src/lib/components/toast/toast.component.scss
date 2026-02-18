@@ -1,0 +1,104 @@
+// ===========================================
+// ATH-TOAST STYLES
+// ===========================================
+
+.ath-toast-container {
+  position: fixed;
+  top: var(--ath-space-4);
+  right: var(--ath-space-4);
+  z-index: var(--ath-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-2);
+  max-width: 420px;
+  width: 100%;
+  pointer-events: none;
+}
+
+.ath-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ath-space-3);
+  padding: var(--ath-space-3) var(--ath-space-4);
+  background-color: var(--ath-bg-elevated);
+  border: 1px solid var(--ath-border-color);
+  border-radius: var(--ath-border-radius-md);
+  box-shadow: var(--ath-shadow-lg);
+  pointer-events: auto;
+  animation: ath-toast-in 200ms ease;
+
+  &--success {
+    border-left: 3px solid var(--ath-color-success);
+
+    .ath-toast__icon {
+      color: var(--ath-color-success);
+    }
+  }
+
+  &--error {
+    border-left: 3px solid var(--ath-color-error);
+
+    .ath-toast__icon {
+      color: var(--ath-color-error);
+    }
+  }
+
+  &--warning {
+    border-left: 3px solid var(--ath-color-warning);
+
+    .ath-toast__icon {
+      color: var(--ath-color-warning);
+    }
+  }
+
+  &--info {
+    border-left: 3px solid var(--ath-color-info);
+
+    .ath-toast__icon {
+      color: var(--ath-color-info);
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  &__message {
+    flex: 1;
+    font-size: var(--ath-font-size-sm);
+    color: var(--ath-text-primary);
+    line-height: var(--ath-line-height-normal);
+  }
+
+  &__close {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    color: var(--ath-text-tertiary);
+    background: none;
+    border: none;
+    border-radius: var(--ath-border-radius-sm);
+    cursor: pointer;
+    transition: color var(--ath-transition-fast);
+
+    &:hover {
+      color: var(--ath-text-primary);
+    }
+  }
+}
+
+@keyframes ath-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

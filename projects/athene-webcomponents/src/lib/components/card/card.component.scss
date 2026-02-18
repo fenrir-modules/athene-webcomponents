@@ -5,6 +5,7 @@
 .ath-card {
   background-color: var(--ath-bg-panel);
   border-radius: var(--ath-border-radius-lg);
+  box-shadow: var(--ath-shadow-sm);
   backdrop-filter: blur(14px);
   transition: box-shadow var(--ath-transition-fast), transform var(--ath-transition-fast), border-color var(--ath-transition-fast);
 }
@@ -55,6 +56,6 @@
 .ath-card__footer {
   padding: var(--ath-space-4);
   border-top: 1px solid var(--ath-border-color);
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: var(--ath-bg-tertiary);
   border-radius: 0 0 var(--ath-border-radius-lg) var(--ath-border-radius-lg);
 }
