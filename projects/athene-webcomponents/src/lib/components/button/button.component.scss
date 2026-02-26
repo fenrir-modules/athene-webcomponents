@@ -3,10 +3,11 @@
 // ===========================================
 
 .ath-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--ath-space-2);
+  display: inline-grid;
+  place-items: center;
+  position: relative;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
   font-family: var(--ath-font-family);
   font-weight: var(--ath-font-weight-medium);
   border-radius: var(--ath-border-radius-md);
@@ -57,8 +58,9 @@
   // -------------------------------------------
   &--primary {
     background: var(--ath-color-primary);
-    color: #fff;
+    color: var(--ath-text-inverse);
     border-color: var(--ath-color-primary);
+    font-weight: var(--ath-font-weight-semibold);
 
     &:hover:not(:disabled) {
       background: var(--ath-color-primary-hover);
@@ -68,6 +70,10 @@
     &:active:not(:disabled) {
       background: var(--ath-color-primary-active);
       border-color: var(--ath-color-primary-active);
+    }
+
+    .ath-button__loader-wrap {
+      color: var(--ath-text-inverse);
     }
   }
 
@@ -121,7 +127,6 @@
   }
 
   &--loading {
-    position: relative;
     pointer-events: none;
   }
 
@@ -129,11 +134,10 @@
   // Elements
   // -------------------------------------------
   &__loader-wrap {
-    position: absolute;
-    inset: 0;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    grid-area: 1 / 1;
   }
 
   &__loader {
@@ -142,6 +146,7 @@
 
   &__content {
     display: inline-flex;
+    grid-area: 1 / 1;
     align-items: center;
     gap: var(--ath-space-2);
 

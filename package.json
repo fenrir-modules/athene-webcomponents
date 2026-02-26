@@ -1,5 +1,5 @@
 {
-  "name": "athene-webcomponents",
+  "name": "@athene/webcomponents",
   "version": "0.1.0",
   "description": "Athene UI Component Library",
   "module": "dist/athene-webcomponents/fesm2022/athene-webcomponents.mjs",
@@ -30,7 +30,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@angular/animations": "^18.2.0",
     "@angular/common": "^18.2.0",
@@ -49,25 +49,31 @@
     "@angular-devkit/build-angular": "^18.2.0",
     "@angular/cli": "^18.2.0",
     "@angular/compiler-cli": "^18.2.0",
-    "@storybook/addon-essentials": "^8.4.0",
-    "@storybook/addon-interactions": "^8.4.0",
-    "@storybook/addon-links": "^8.4.0",
-    "@storybook/angular": "^8.4.0",
-    "@storybook/blocks": "^8.4.0",
-    "@storybook/test": "^8.4.0",
+
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/addon-interactions": "^8.6.14",
+    "@storybook/addon-links": "^8.6.14",
+    "@storybook/angular": "^8.6.14",
+    "@storybook/blocks": "^8.6.14",
+    "@storybook/test": "^8.6.14",
+    "storybook": "^8.6.14",
+
     "@types/jasmine": "~5.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
     "jasmine-core": "~5.4.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+
     "ng-packagr": "^18.2.0",
-    "storybook": "^8.4.0",
-    "typescript": "~5.5.2",
     "prettier": "^3.4.0",
-    "eslint": "^9.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0"
+    "typescript": "~5.5.2"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }

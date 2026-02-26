@@ -1,5 +1,5 @@
 {
-  "name": "athene-webcomponents",
+  "name": "@athene/webcomponents",
   "version": "0.1.0",
   "description": "Athene UI Component Library",
   "sideEffects": false,
