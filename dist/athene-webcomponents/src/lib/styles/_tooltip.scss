@@ -1,0 +1,44 @@
+// ===========================================
+// ATH-TOOLTIP GLOBAL STYLES
+// ===========================================
+// Tooltip is a directive that renders elements in document.body,
+// so its styles must be global.
+
+.ath-tooltip {
+  position: fixed;
+  z-index: var(--ath-z-tooltip);
+  max-width: 260px;
+  padding: var(--ath-space-1) var(--ath-space-2);
+  font-family: var(--ath-font-family);
+  font-size: var(--ath-font-size-xs);
+  font-weight: var(--ath-font-weight-medium);
+  color: var(--ath-text-primary);
+  background-color: var(--ath-bg-elevated);
+  border: 1px solid var(--ath-border-color);
+  border-radius: var(--ath-border-radius-sm);
+  box-shadow: var(--ath-shadow-md);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+
+  &--visible {
+    opacity: 1;
+  }
+
+  &--top {
+    transform-origin: center bottom;
+  }
+
+  &--bottom {
+    transform-origin: center top;
+  }
+
+  &--left {
+    transform-origin: right center;
+  }
+
+  &--right {
+    transform-origin: left center;
+  }
+}

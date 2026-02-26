@@ -1,0 +1,112 @@
+// ===========================================
+// ATHENE TYPOGRAPHY
+// ===========================================
+
+// -------------------------------------------
+// Font Import (Inter + JetBrains Mono)
+// -------------------------------------------
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+// -------------------------------------------
+// Typography Classes
+// -------------------------------------------
+.ath-text-xs {
+  font-size: var(--ath-font-size-xs);
+  line-height: var(--ath-line-height-normal);
+}
+
+.ath-text-sm {
+  font-size: var(--ath-font-size-sm);
+  line-height: var(--ath-line-height-normal);
+}
+
+.ath-text-md {
+  font-size: var(--ath-font-size-md);
+  line-height: var(--ath-line-height-normal);
+}
+
+.ath-text-lg {
+  font-size: var(--ath-font-size-lg);
+  line-height: var(--ath-line-height-normal);
+}
+
+.ath-text-xl {
+  font-size: var(--ath-font-size-xl);
+  line-height: var(--ath-line-height-tight);
+}
+
+// Headings
+.ath-h1 {
+  font-size: var(--ath-font-size-4xl);
+  font-weight: var(--ath-font-weight-bold);
+  line-height: var(--ath-line-height-tight);
+  color: var(--ath-text-primary);
+}
+
+.ath-h2 {
+  font-size: var(--ath-font-size-3xl);
+  font-weight: var(--ath-font-weight-bold);
+  line-height: var(--ath-line-height-tight);
+  color: var(--ath-text-primary);
+}
+
+.ath-h3 {
+  font-size: var(--ath-font-size-2xl);
+  font-weight: var(--ath-font-weight-semibold);
+  line-height: var(--ath-line-height-tight);
+  color: var(--ath-text-primary);
+}
+
+.ath-h4 {
+  font-size: var(--ath-font-size-xl);
+  font-weight: var(--ath-font-weight-semibold);
+  line-height: var(--ath-line-height-tight);
+  color: var(--ath-text-primary);
+}
+
+// Text Colors
+.ath-text-primary {
+  color: var(--ath-text-primary);
+}
+
+.ath-text-secondary {
+  color: var(--ath-text-secondary);
+}
+
+.ath-text-tertiary {
+  color: var(--ath-text-tertiary);
+}
+
+.ath-text-success {
+  color: var(--ath-color-success);
+}
+
+.ath-text-warning {
+  color: var(--ath-color-warning);
+}
+
+.ath-text-error {
+  color: var(--ath-color-error);
+}
+
+// Font Weights
+.ath-font-normal {
+  font-weight: var(--ath-font-weight-normal);
+}
+
+.ath-font-medium {
+  font-weight: var(--ath-font-weight-medium);
+}
+
+.ath-font-semibold {
+  font-weight: var(--ath-font-weight-semibold);
+}
+
+.ath-font-bold {
+  font-weight: var(--ath-font-weight-bold);
+}
+
+// Monospace
+.ath-mono {
+  font-family: var(--ath-font-family-mono);
+}
