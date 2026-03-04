@@ -1,0 +1,33 @@
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import * as i0 from "@angular/core";
+/**
+ * Athene Page Header Component
+ *
+ * Consistent page header with title, description and action slot.
+ *
+ * @example
+ * <ath-page-header title="Settings" description="Manage your preferences">
+ *   <ath-button variant="outline" size="sm">Refresh</ath-button>
+ * </ath-page-header>
+ */
+export class AthPageHeaderComponent {
+    constructor() {
+        /** Page title */
+        this.title = '';
+        /** Page description */
+        this.description = '';
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthPageHeaderComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthPageHeaderComponent, isStandalone: true, selector: "ath-page-header", inputs: { title: "title", description: "description" }, ngImport: i0, template: "<header class=\"ath-page-header\">\n  <div class=\"ath-page-header__text\">\n    <h1 class=\"ath-page-header__title\">{{ title }}</h1>\n    @if (description) {\n      <p class=\"ath-page-header__description\">{{ description }}</p>\n    }\n  </div>\n  <div class=\"ath-page-header__actions\">\n    <ng-content />\n  </div>\n</header>\n", styles: [".ath-page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--ath-space-6);padding-bottom:var(--ath-space-5)}.ath-page-header__text{flex:1;min-width:0}.ath-page-header__title{margin:0;font-size:var(--ath-font-size-xl);font-weight:var(--ath-font-weight-semibold);color:var(--ath-text-primary);line-height:var(--ath-line-height-tight);letter-spacing:-.01em}.ath-page-header__description{margin:var(--ath-space-1) 0 0;font-size:var(--ath-font-size-sm);color:var(--ath-text-tertiary);line-height:var(--ath-line-height-normal);max-width:560px}.ath-page-header__actions{display:flex;align-items:center;gap:var(--ath-space-2);flex-shrink:0}@media (max-width: 640px){.ath-page-header{flex-direction:column;align-items:stretch;gap:var(--ath-space-4)}.ath-page-header__actions{justify-content:flex-start}}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthPageHeaderComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-page-header', standalone: true, imports: [CommonModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "<header class=\"ath-page-header\">\n  <div class=\"ath-page-header__text\">\n    <h1 class=\"ath-page-header__title\">{{ title }}</h1>\n    @if (description) {\n      <p class=\"ath-page-header__description\">{{ description }}</p>\n    }\n  </div>\n  <div class=\"ath-page-header__actions\">\n    <ng-content />\n  </div>\n</header>\n", styles: [".ath-page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--ath-space-6);padding-bottom:var(--ath-space-5)}.ath-page-header__text{flex:1;min-width:0}.ath-page-header__title{margin:0;font-size:var(--ath-font-size-xl);font-weight:var(--ath-font-weight-semibold);color:var(--ath-text-primary);line-height:var(--ath-line-height-tight);letter-spacing:-.01em}.ath-page-header__description{margin:var(--ath-space-1) 0 0;font-size:var(--ath-font-size-sm);color:var(--ath-text-tertiary);line-height:var(--ath-line-height-normal);max-width:560px}.ath-page-header__actions{display:flex;align-items:center;gap:var(--ath-space-2);flex-shrink:0}@media (max-width: 640px){.ath-page-header{flex-direction:column;align-items:stretch;gap:var(--ath-space-4)}.ath-page-header__actions{justify-content:flex-start}}\n"] }]
+        }], propDecorators: { title: [{
+                type: Input,
+                args: [{ required: true }]
+            }], description: [{
+                type: Input
+            }] } });
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicGFnZS1oZWFkZXIuY29tcG9uZW50LmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vLi4vLi4vLi4vcHJvamVjdHMvYXRoZW5lLXdlYmNvbXBvbmVudHMvc3JjL2xpYi9jb21wb25lbnRzL3BhZ2UtaGVhZGVyL3BhZ2UtaGVhZGVyLmNvbXBvbmVudC50cyIsIi4uLy4uLy4uLy4uLy4uLy4uL3Byb2plY3RzL2F0aGVuZS13ZWJjb21wb25lbnRzL3NyYy9saWIvY29tcG9uZW50cy9wYWdlLWhlYWRlci9wYWdlLWhlYWRlci5jb21wb25lbnQuaHRtbCJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxPQUFPLEVBQUUsU0FBUyxFQUFFLEtBQUssRUFBRSx1QkFBdUIsRUFBRSxNQUFNLGVBQWUsQ0FBQztBQUMxRSxPQUFPLEVBQUUsWUFBWSxFQUFFLE1BQU0saUJBQWlCLENBQUM7O0FBRS9DOzs7Ozs7Ozs7R0FTRztBQVNILE1BQU0sT0FBTyxzQkFBc0I7SUFSbkM7UUFTRSxpQkFBaUI7UUFDVSxVQUFLLEdBQUcsRUFBRSxDQUFDO1FBRXRDLHVCQUF1QjtRQUNkLGdCQUFXLEdBQUcsRUFBRSxDQUFDO0tBQzNCOytHQU5ZLHNCQUFzQjttR0FBdEIsc0JBQXNCLG1JQ3JCbkMsZ1ZBV0EscTNCREtZLFlBQVk7OzRGQUtYLHNCQUFzQjtrQkFSbEMsU0FBUzsrQkFDRSxpQkFBaUIsY0FDZixJQUFJLFdBQ1AsQ0FBQyxZQUFZLENBQUMsbUJBQ04sdUJBQXVCLENBQUMsTUFBTTs4QkFNcEIsS0FBSztzQkFBL0IsS0FBSzt1QkFBQyxFQUFFLFFBQVEsRUFBRSxJQUFJLEVBQUU7Z0JBR2hCLFdBQVc7c0JBQW5CLEtBQUsiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBDb21wb25lbnQsIElucHV0LCBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneSB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgQ29tbW9uTW9kdWxlIH0gZnJvbSAnQGFuZ3VsYXIvY29tbW9uJztcblxuLyoqXG4gKiBBdGhlbmUgUGFnZSBIZWFkZXIgQ29tcG9uZW50XG4gKlxuICogQ29uc2lzdGVudCBwYWdlIGhlYWRlciB3aXRoIHRpdGxlLCBkZXNjcmlwdGlvbiBhbmQgYWN0aW9uIHNsb3QuXG4gKlxuICogQGV4YW1wbGVcbiAqIDxhdGgtcGFnZS1oZWFkZXIgdGl0bGU9XCJTZXR0aW5nc1wiIGRlc2NyaXB0aW9uPVwiTWFuYWdlIHlvdXIgcHJlZmVyZW5jZXNcIj5cbiAqICAgPGF0aC1idXR0b24gdmFyaWFudD1cIm91dGxpbmVcIiBzaXplPVwic21cIj5SZWZyZXNoPC9hdGgtYnV0dG9uPlxuICogPC9hdGgtcGFnZS1oZWFkZXI+XG4gKi9cbkBDb21wb25lbnQoe1xuICBzZWxlY3RvcjogJ2F0aC1wYWdlLWhlYWRlcicsXG4gIHN0YW5kYWxvbmU6IHRydWUsXG4gIGltcG9ydHM6IFtDb21tb25Nb2R1bGVdLFxuICBjaGFuZ2VEZXRlY3Rpb246IENoYW5nZURldGVjdGlvblN0cmF0ZWd5Lk9uUHVzaCxcbiAgdGVtcGxhdGVVcmw6ICcuL3BhZ2UtaGVhZGVyLmNvbXBvbmVudC5odG1sJyxcbiAgc3R5bGVVcmw6ICcuL3BhZ2UtaGVhZGVyLmNvbXBvbmVudC5zY3NzJyxcbn0pXG5leHBvcnQgY2xhc3MgQXRoUGFnZUhlYWRlckNvbXBvbmVudCB7XG4gIC8qKiBQYWdlIHRpdGxlICovXG4gIEBJbnB1dCh7IHJlcXVpcmVkOiB0cnVlIH0pIHRpdGxlID0gJyc7XG5cbiAgLyoqIFBhZ2UgZGVzY3JpcHRpb24gKi9cbiAgQElucHV0KCkgZGVzY3JpcHRpb24gPSAnJztcbn1cbiIsIjxoZWFkZXIgY2xhc3M9XCJhdGgtcGFnZS1oZWFkZXJcIj5cbiAgPGRpdiBjbGFzcz1cImF0aC1wYWdlLWhlYWRlcl9fdGV4dFwiPlxuICAgIDxoMSBjbGFzcz1cImF0aC1wYWdlLWhlYWRlcl9fdGl0bGVcIj57eyB0aXRsZSB9fTwvaDE+XG4gICAgQGlmIChkZXNjcmlwdGlvbikge1xuICAgICAgPHAgY2xhc3M9XCJhdGgtcGFnZS1oZWFkZXJfX2Rlc2NyaXB0aW9uXCI+e3sgZGVzY3JpcHRpb24gfX08L3A+XG4gICAgfVxuICA8L2Rpdj5cbiAgPGRpdiBjbGFzcz1cImF0aC1wYWdlLWhlYWRlcl9fYWN0aW9uc1wiPlxuICAgIDxuZy1jb250ZW50IC8+XG4gIDwvZGl2PlxuPC9oZWFkZXI+XG4iXX0=

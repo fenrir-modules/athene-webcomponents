@@ -74,4 +74,15 @@ export class AthDialogComponent {
       this.close();
     }
   }
+
+  onBackdropKeydown(event: KeyboardEvent): void {
+    if (!this.closeOnBackdrop) {
+      return;
+    }
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.close();
+    }
+  }
 }

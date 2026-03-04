@@ -46,6 +46,9 @@ export class AthButtonComponent {
   /** Full width button */
   @Input() fullWidth = false;
 
+  /** Optional aria-label for icon-only usage */
+  @Input() ariaLabel: string | null = null;
+
   /** Click event emitter */
   @Output() clicked = new EventEmitter<MouseEvent>();
 

@@ -4,6 +4,12 @@
   "lib": {
     "entryFile": "src/public-api.ts"
   },
-  "assets": ["src/lib/styles"],
+  "assets": [
+    {
+      "glob": "**/*",
+      "input": "src/lib/styles",
+      "output": "styles"
+    }
+  ],
   "allowedNonPeerDependencies": ["lucide-angular"]
 }

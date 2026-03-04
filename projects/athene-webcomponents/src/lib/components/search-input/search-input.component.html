@@ -8,7 +8,7 @@
     (input)="onInput($event)"
   />
   @if (value) {
-    <button type="button" class="ath-search-input__clear" (click)="clear()">
+    <button type="button" class="ath-search-input__clear" aria-label="Clear search" (click)="clear()">
       <lucide-icon [img]="clearIcon" [size]="16" />
     </button>
   }

@@ -1,11 +1,20 @@
 <div class="ath-dropdown">
-  <div class="ath-dropdown__trigger" (click)="toggle()">
+  <div
+    class="ath-dropdown__trigger"
+    role="button"
+    tabindex="0"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="isOpen"
+    (click)="toggle()"
+    (keydown)="onTriggerKeydown($event)"
+  >
     <ng-content />
   </div>
 
   @if (isOpen) {
     <div
       class="ath-dropdown__menu"
+      role="menu"
       [class.ath-dropdown__menu--left]="placementX === 'left'"
       [class.ath-dropdown__menu--right]="placementX === 'right'"
       [class.ath-dropdown__menu--down]="placementY === 'down'"
@@ -20,6 +29,7 @@
             [class]="getItemClasses(item)"
             [disabled]="item.disabled"
             (click)="selectItem(item)"
+            role="menuitem"
           >
             @if (item.icon) {
               <lucide-icon [img]="item.icon" [size]="16" class="ath-dropdown__item-icon" />

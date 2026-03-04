@@ -13,6 +13,12 @@
       "esm2022": "./dist/athene-webcomponents/esm2022/athene-webcomponents.mjs",
       "esm": "./dist/athene-webcomponents/esm2022/athene-webcomponents.mjs",
       "default": "./dist/athene-webcomponents/fesm2022/athene-webcomponents.mjs"
+    },
+    "./styles": {
+      "default": "./dist/athene-webcomponents/styles/main.scss"
+    },
+    "./styles/*": {
+      "default": "./dist/athene-webcomponents/styles/*"
     }
   },
   "files": [
@@ -26,7 +32,9 @@
     "prepare": "ng build athene-webcomponents",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint",
+    "lint": "npm run lint:ts && npm run lint:a11y",
+    "lint:ts": "tsc -p projects/athene-webcomponents/tsconfig.lib.json --noEmit && tsc -p projects/athene-webcomponents/tsconfig.spec.json --noEmit",
+    "lint:a11y": "node scripts/lint-a11y.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

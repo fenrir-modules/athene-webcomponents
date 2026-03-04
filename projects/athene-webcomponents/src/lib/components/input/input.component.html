@@ -27,6 +27,8 @@
         type="button"
         class="ath-input__toggle"
         (click)="togglePassword()"
+        [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+        [attr.aria-pressed]="showPassword"
         tabindex="-1"
       >
         <lucide-icon [img]="showPassword ? eyeOffIcon : eyeIcon" [size]="18" />

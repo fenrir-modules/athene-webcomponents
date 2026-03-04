@@ -1,5 +1,12 @@
 @if (open) {
-  <div class="ath-dialog__backdrop" (click)="onBackdropClick()"></div>
+  <div
+    class="ath-dialog__backdrop"
+    (click)="onBackdropClick()"
+    (keydown)="onBackdropKeydown($event)"
+    role="button"
+    tabindex="0"
+    aria-label="Close dialog"
+  ></div>
   <div class="ath-dialog__container">
     <div [class]="dialogClasses" role="dialog" aria-modal="true">
       <!-- Header -->
@@ -12,7 +19,7 @@
             <p class="ath-dialog__description">{{ description }}</p>
           }
         </div>
-        <button class="ath-dialog__close" type="button" (click)="close()">
+        <button class="ath-dialog__close" type="button" aria-label="Close dialog" (click)="close()">
           <lucide-icon [img]="closeIcon" [size]="18" />
         </button>
       </div>

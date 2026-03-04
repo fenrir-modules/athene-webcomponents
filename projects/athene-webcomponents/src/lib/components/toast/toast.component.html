@@ -3,7 +3,12 @@
     <div class="ath-toast" [class]="'ath-toast ath-toast--' + toast.variant">
       <lucide-icon [img]="getIcon(toast.variant)" [size]="18" class="ath-toast__icon" />
       <span class="ath-toast__message">{{ toast.message }}</span>
-      <button type="button" class="ath-toast__close" (click)="dismiss(toast.id)">
+      <button
+        type="button"
+        class="ath-toast__close"
+        [attr.aria-label]="'Dismiss notification: ' + toast.message"
+        (click)="dismiss(toast.id)"
+      >
         <lucide-icon [img]="closeIcon" [size]="14" />
       </button>
     </div>

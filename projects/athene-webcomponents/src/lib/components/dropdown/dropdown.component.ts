@@ -101,6 +101,13 @@ export class AthDropdownComponent {
     }
   }
 
+  onTriggerKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.toggle();
+    }
+  }
+
   selectItem(item: DropdownItem): void {
     if (item.disabled || item.divider) return;
     this.itemClicked.emit(item.id);

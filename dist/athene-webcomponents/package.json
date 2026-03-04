@@ -1,0 +1,29 @@
+{
+  "name": "@athene/webcomponents",
+  "version": "0.1.0",
+  "description": "Athene UI Component Library",
+  "sideEffects": false,
+  "peerDependencies": {
+    "@angular/common": "^18.2.0",
+    "@angular/core": "^18.2.0",
+    "@angular/forms": "^18.2.0",
+    "@angular/router": "^18.2.0"
+  },
+  "dependencies": {
+    "lucide-angular": "^0.469.0",
+    "tslib": "^2.3.0"
+  },
+  "module": "fesm2022/athene-webcomponents.mjs",
+  "typings": "index.d.ts",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./index.d.ts",
+      "esm2022": "./esm2022/athene-webcomponents.mjs",
+      "esm": "./esm2022/athene-webcomponents.mjs",
+      "default": "./fesm2022/athene-webcomponents.mjs"
+    }
+  }
+}
