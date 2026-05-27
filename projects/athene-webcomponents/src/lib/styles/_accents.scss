@@ -1,0 +1,149 @@
+// ===========================================
+// ATHENE ACCENT PRESETS
+// ===========================================
+// Set on <html> via data-accent. Subtle, professional.
+// Affects buttons / links / focus rings / selected states only.
+//
+// Usage:
+//   document.documentElement.setAttribute('data-accent', 'violet');
+//
+// Default (no data-accent) = violet, set by _tokens.scss.
+
+// ===========================================
+// LIGHT MODE PRESETS
+// ===========================================
+
+[data-accent="violet"] {
+  --accent:        #4f46e5;
+  --accent-2:      #4338ca;
+  --accent-3:      #6366f1;
+  --accent-dim:    #818cf8;
+  --accent-faint:  #4f46e50f;
+  --accent-ring:   #4f46e526;
+
+  --ath-color-primary-rgb: 79, 70, 229;
+}
+
+[data-accent="blue"] {
+  --accent:        #2563eb;
+  --accent-2:      #1d4ed8;
+  --accent-3:      #3b82f6;
+  --accent-dim:    #60a5fa;
+  --accent-faint:  #2563eb0f;
+  --accent-ring:   #2563eb26;
+
+  --ath-color-primary-rgb: 37, 99, 235;
+}
+
+[data-accent="green"] {
+  --accent:        #059669;
+  --accent-2:      #047857;
+  --accent-3:      #10b981;
+  --accent-dim:    #34d399;
+  --accent-faint:  #0596690f;
+  --accent-ring:   #05966926;
+
+  --ath-color-primary-rgb: 5, 150, 105;
+}
+
+[data-accent="orange"] {
+  --accent:        #ea580c;
+  --accent-2:      #c2410c;
+  --accent-3:      #f97316;
+  --accent-dim:    #fb923c;
+  --accent-faint:  #ea580c0f;
+  --accent-ring:   #ea580c26;
+
+  --ath-color-primary-rgb: 234, 88, 12;
+}
+
+[data-accent="neutral"] {
+  --accent:        #0a0a0b;
+  --accent-2:      #27272a;
+  --accent-3:      #3f3f46;
+  --accent-dim:    #71717a;
+  --accent-faint:  #0a0a0b0f;
+  --accent-ring:   #0a0a0b1f;
+
+  --ath-color-primary-rgb: 10, 10, 11;
+}
+
+// ===========================================
+// DARK MODE PRESETS
+// ===========================================
+// Softer than light; never glow on dark backgrounds.
+
+[data-theme="dark"][data-accent="violet"] {
+  --accent:        #8280e8;
+  --accent-2:      #9d9bf0;
+  --accent-3:      #6b69d8;
+  --accent-faint:  #8280e820;
+  --accent-ring:   #8280e83a;
+
+  --ath-color-primary-rgb: 130, 128, 232;
+}
+
+[data-theme="dark"][data-accent="blue"] {
+  --accent:        #5b80d4;
+  --accent-2:      #7a9ae0;
+  --accent-3:      #4268bc;
+  --accent-faint:  #5b80d420;
+  --accent-ring:   #5b80d43a;
+
+  --ath-color-primary-rgb: 91, 128, 212;
+}
+
+[data-theme="dark"][data-accent="green"] {
+  --accent:        #46a86e;
+  --accent-2:      #5cba82;
+  --accent-3:      #37895a;
+  --accent-faint:  #46a86e20;
+  --accent-ring:   #46a86e3a;
+
+  --ath-color-primary-rgb: 70, 168, 110;
+}
+
+[data-theme="dark"][data-accent="orange"] {
+  --accent:        #d4824a;
+  --accent-2:      #e09862;
+  --accent-3:      #bc6c38;
+  --accent-faint:  #d4824a20;
+  --accent-ring:   #d4824a3a;
+
+  --ath-color-primary-rgb: 212, 130, 74;
+}
+
+[data-theme="dark"][data-accent="neutral"] {
+  --accent:        #dcdce2;
+  --accent-2:      #c4c4cc;
+  --accent-3:      #9898a4;
+  --accent-faint:  #ffffff0e;
+  --accent-ring:   #ffffff22;
+
+  --ath-color-primary-rgb: 220, 220, 226;
+}
+
+// ===========================================
+// DARK-MODE BUTTON OVERRIDES
+// ===========================================
+// Primary buttons in dark mode should look soft, not glaring.
+// (Components opt in by using these classes.)
+
+[data-theme="dark"] {
+  .btn-primary,
+  .ath-button--primary {
+    background: #e8e8ec;
+    color: #111113;
+    border-color: #e8e8ec;
+
+    &:hover {
+      background: #f2f2f5;
+      border-color: #f2f2f5;
+    }
+  }
+
+  .btn-accent,
+  .ath-button--accent {
+    color: #0e0e10;
+  }
+}

@@ -1,0 +1,16 @@
+@if (response) {
+  <div class="ath-sla__row">
+    <span class="ath-sla__name">{{ response.label }}</span>
+    <span class="ath-sla__text" [style.color]="statusColor(response.status)">{{ response.text }}</span>
+  </div>
+}
+@if (resolution) {
+  <div class="ath-sla__row">
+    <span class="ath-sla__name">{{ resolution.label }}</span>
+    <span class="ath-sla__text" [style.color]="statusColor(resolution.status)">{{ resolution.text }}</span>
+  </div>
+}
+<div class="ath-sla__track" role="progressbar"
+     [attr.aria-valuenow]="progressPct" aria-valuemin="0" aria-valuemax="100">
+  <div class="ath-sla__fill" [style.width.%]="progressPct"></div>
+</div>

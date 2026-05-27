@@ -1,0 +1,88 @@
+:host {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 10px;
+  position: relative;
+  padding: 6px 0;
+}
+
+.ath-tl-entry__avatar {
+  position: relative;
+  z-index: 1;
+  // Subtle ring so avatar visually breaks the rail
+  ath-avatar {
+    box-shadow: 0 0 0 2px var(--bg-0);
+    border-radius: 999px;
+    display: inline-flex;
+  }
+}
+
+.ath-tl-entry__body {
+  min-width: 0;
+}
+
+.ath-tl-entry__meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.ath-tl-entry__author {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.ath-tl-entry__internal {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--amber);
+  background: var(--amber-tint);
+  border-radius: var(--r-xs);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+.ath-tl-entry__when {
+  color: var(--fg-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.ath-tl-entry__content {
+  color: var(--fg-2);
+  font-size: 13px;
+  line-height: 1.55;
+
+  ::ng-deep p {
+    margin: 0 0 6px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  ::ng-deep code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 1px 5px;
+    background: var(--surface-3);
+    border-radius: var(--r-xs);
+    color: var(--fg);
+  }
+}
+
+// Internal-note background tint on the whole entry
+:host([data-internal='true']) {
+  padding: 8px 10px;
+  background: var(--amber-tint);
+  border-radius: var(--r);
+  margin-left: -10px;
+  margin-right: -10px;
+}

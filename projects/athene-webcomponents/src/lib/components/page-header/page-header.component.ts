@@ -2,13 +2,15 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
- * Athene Page Header Component
+ * Page header with optional eyebrow, title, sub-row chips, description, and action slot.
  *
- * Consistent page header with title, description and action slot.
+ * Sub-rows: pass `subItems` as an array of strings; they render with bullet separators.
  *
  * @example
- * <ath-page-header title="Settings" description="Manage your preferences">
- *   <ath-button variant="outline" size="sm">Refresh</ath-button>
+ * <ath-page-header eyebrow="Work" title="Tickets"
+ *                  [subItems]="['12 of 45', 'across 6 projects']">
+ *   <button ath-button variant="secondary" size="sm">Filter</button>
+ *   <button ath-button variant="primary" size="sm">+ New ticket</button>
  * </ath-page-header>
  */
 @Component({
@@ -20,9 +22,15 @@ import { CommonModule } from '@angular/common';
   styleUrl: './page-header.component.scss',
 })
 export class AthPageHeaderComponent {
-  /** Page title */
+  /** Small uppercase eyebrow above the title (e.g., "Work", "Personal"). */
+  @Input() eyebrow = '';
+
+  /** Page title. */
   @Input({ required: true }) title = '';
 
-  /** Page description */
+  /** Multi-segment sub-row, rendered with bullet (•) separators. */
+  @Input() subItems: string[] = [];
+
+  /** Legacy free-form description (single paragraph). Falls back if subItems empty. */
   @Input() description = '';
 }

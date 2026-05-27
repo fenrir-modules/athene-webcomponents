@@ -14,13 +14,41 @@
     min-width: 0;
   }
 
+  &__eyebrow {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--fg-3);
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+
   &__title {
     margin: 0;
-    font-size: var(--ath-font-size-xl);
-    font-weight: var(--ath-font-weight-semibold);
-    color: var(--ath-text-primary);
-    line-height: var(--ath-line-height-tight);
-    letter-spacing: -0.01em;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  &__sub {
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--fg-3);
+    line-height: 1.4;
+  }
+
+  &__sub-item {
+    font-weight: 400;
+  }
+
+  &__sub-sep {
+    color: var(--fg-4);
   }
 
   &__description {

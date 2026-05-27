@@ -1,0 +1,24 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ath-sparkline {
+  display: block;
+  overflow: visible;
+}
+
+.ath-sparkline__area {
+  opacity: 0.1;
+  stroke: none;
+}
+
+.ath-sparkline__line {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ath-sparkline__dot {
+  // Inherits from inline fill="color"
+}

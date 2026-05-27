@@ -1,0 +1,80 @@
+@if (mode === 'numbered') {
+  <button
+    type="button"
+    class="ath-page__btn ath-page__btn--nav"
+    [disabled]="page <= 1"
+    [attr.aria-label]="'First page'"
+    (click)="goFirst()"
+  >
+    <lucide-icon [img]="firstIcon" [size]="14" />
+  </button>
+  <button
+    type="button"
+    class="ath-page__btn ath-page__btn--nav"
+    [disabled]="page <= 1"
+    [attr.aria-label]="'Previous page'"
+    (click)="goPrev()"
+  >
+    <lucide-icon [img]="prevIcon" [size]="14" />
+  </button>
+
+  @for (item of pages(); track $index) {
+    @if (item === 'ellipsis') {
+      <span class="ath-page__ellipsis" aria-hidden="true">
+        <lucide-icon [img]="ellipsisIcon" [size]="12" />
+      </span>
+    } @else {
+      <button
+        type="button"
+        class="ath-page__btn"
+        [class.ath-page__btn--active]="item === page"
+        [attr.aria-current]="item === page ? 'page' : null"
+        [attr.aria-label]="'Page ' + item"
+        (click)="goTo(item)"
+      >
+        {{ item }}
+      </button>
+    }
+  }
+
+  <button
+    type="button"
+    class="ath-page__btn ath-page__btn--nav"
+    [disabled]="page >= totalPages"
+    [attr.aria-label]="'Next page'"
+    (click)="goNext()"
+  >
+    <lucide-icon [img]="nextIcon" [size]="14" />
+  </button>
+  <button
+    type="button"
+    class="ath-page__btn ath-page__btn--nav"
+    [disabled]="page >= totalPages"
+    [attr.aria-label]="'Last page'"
+    (click)="goLast()"
+  >
+    <lucide-icon [img]="lastIcon" [size]="14" />
+  </button>
+} @else {
+  <button
+    type="button"
+    class="ath-page__btn ath-page__btn--cursor"
+    [disabled]="!hasPrev"
+    (click)="goPrev()"
+  >
+    <lucide-icon [img]="prevIcon" [size]="14" />
+    <span>Previous</span>
+  </button>
+  @if (summary) {
+    <span class="ath-page__summary">{{ summary }}</span>
+  }
+  <button
+    type="button"
+    class="ath-page__btn ath-page__btn--cursor"
+    [disabled]="!hasNext"
+    (click)="goNext()"
+  >
+    <span>Next</span>
+    <lucide-icon [img]="nextIcon" [size]="14" />
+  </button>
+}

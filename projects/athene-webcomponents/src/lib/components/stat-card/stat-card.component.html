@@ -1,8 +1,13 @@
 <div class="ath-stat-card">
-  <span class="ath-stat-card__label">{{ label }}</span>
+  <div class="ath-stat-card__head">
+    <span class="ath-stat-card__label">{{ label }}</span>
+    @if (delta != null && deltaDirection) {
+      <span class="ath-stat-card__delta" [attr.data-direction]="deltaDirection">{{ delta }}</span>
+    }
+  </div>
   <div class="ath-stat-card__value-row">
     <span class="ath-stat-card__value">{{ value }}</span>
-    @if (trend) {
+    @if (trend && delta == null) {
       <span
         class="ath-stat-card__trend"
         [class.ath-stat-card__trend--up]="trend === 'up'"
@@ -10,6 +15,15 @@
       >
         {{ trend === 'up' ? '↑' : '↓' }}
       </span>
+    }
+    @if (sparkData && sparkData.length >= 2) {
+      <ath-sparkline
+        class="ath-stat-card__spark"
+        [data]="sparkData"
+        [color]="sparkColor"
+        [width]="70"
+        [height]="22"
+      />
     }
   </div>
   @if (subValue) {

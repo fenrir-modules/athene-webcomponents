@@ -1,0 +1,6 @@
+@for (user of visible(); track trackByName($index, user)) {
+  <ath-avatar [name]="user.name" [src]="user.src ?? ''" [size]="size" class="ath-stack__item" />
+}
+@if (overflowCount() > 0) {
+  <span class="ath-stack__more">+{{ overflowCount() }}</span>
+}

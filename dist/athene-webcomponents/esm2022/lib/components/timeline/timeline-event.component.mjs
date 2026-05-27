@@ -1,0 +1,27 @@
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import * as i0 from "@angular/core";
+/**
+ * Compact timeline marker for status changes, assignments etc.
+ * (Lighter weight than <ath-timeline-entry>.)
+ *
+ * @example
+ * <ath-timeline-event statusColor="var(--green)">
+ *   <b>Mira</b> moved to In Progress · 2d ago
+ * </ath-timeline-event>
+ */
+export class AthTimelineEventComponent {
+    constructor() {
+        /** Dot color — any CSS color (e.g., `var(--green)`, `#f59e0b`). */
+        this.statusColor = 'var(--fg-4)';
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthTimelineEventComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "14.0.0", version: "18.2.14", type: AthTimelineEventComponent, isStandalone: true, selector: "ath-timeline-event", inputs: { statusColor: "statusColor" }, ngImport: i0, template: "<div class=\"ath-tl-event__dot-wrap\">\n  <span class=\"ath-tl-event__dot\" [style.background]=\"statusColor\"></span>\n</div>\n<div class=\"ath-tl-event__text\">\n  <ng-content />\n</div>\n", styles: [":host{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:center;padding:4px 0;font-family:var(--font-sans);font-size:12.5px;color:var(--fg-3);line-height:1.4}.ath-tl-event__dot-wrap{display:flex;align-items:center;justify-content:center;position:relative;z-index:1}.ath-tl-event__dot{width:8px;height:8px;border-radius:999px;box-shadow:0 0 0 3px var(--bg-0)}.ath-tl-event__text{min-width:0}.ath-tl-event__text ::ng-deep b{color:var(--fg);font-weight:600}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthTimelineEventComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-timeline-event', standalone: true, imports: [CommonModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "<div class=\"ath-tl-event__dot-wrap\">\n  <span class=\"ath-tl-event__dot\" [style.background]=\"statusColor\"></span>\n</div>\n<div class=\"ath-tl-event__text\">\n  <ng-content />\n</div>\n", styles: [":host{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:center;padding:4px 0;font-family:var(--font-sans);font-size:12.5px;color:var(--fg-3);line-height:1.4}.ath-tl-event__dot-wrap{display:flex;align-items:center;justify-content:center;position:relative;z-index:1}.ath-tl-event__dot{width:8px;height:8px;border-radius:999px;box-shadow:0 0 0 3px var(--bg-0)}.ath-tl-event__text{min-width:0}.ath-tl-event__text ::ng-deep b{color:var(--fg);font-weight:600}\n"] }]
+        }], propDecorators: { statusColor: [{
+                type: Input
+            }] } });
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGltZWxpbmUtZXZlbnQuY29tcG9uZW50LmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vLi4vLi4vLi4vcHJvamVjdHMvYXRoZW5lLXdlYmNvbXBvbmVudHMvc3JjL2xpYi9jb21wb25lbnRzL3RpbWVsaW5lL3RpbWVsaW5lLWV2ZW50LmNvbXBvbmVudC50cyIsIi4uLy4uLy4uLy4uLy4uLy4uL3Byb2plY3RzL2F0aGVuZS13ZWJjb21wb25lbnRzL3NyYy9saWIvY29tcG9uZW50cy90aW1lbGluZS90aW1lbGluZS1ldmVudC5jb21wb25lbnQuaHRtbCJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxPQUFPLEVBQUUsdUJBQXVCLEVBQUUsU0FBUyxFQUFFLEtBQUssRUFBRSxNQUFNLGVBQWUsQ0FBQztBQUMxRSxPQUFPLEVBQUUsWUFBWSxFQUFFLE1BQU0saUJBQWlCLENBQUM7O0FBRS9DOzs7Ozs7OztHQVFHO0FBU0gsTUFBTSxPQUFPLHlCQUF5QjtJQVJ0QztRQVNFLG1FQUFtRTtRQUMxRCxnQkFBVyxHQUFHLGFBQWEsQ0FBQztLQUN0QzsrR0FIWSx5QkFBeUI7bUdBQXpCLHlCQUF5QixzSENwQnRDLGdNQU1BLCtnQkRTWSxZQUFZOzs0RkFLWCx5QkFBeUI7a0JBUnJDLFNBQVM7K0JBQ0Usb0JBQW9CLGNBQ2xCLElBQUksV0FDUCxDQUFDLFlBQVksQ0FBQyxtQkFDTix1QkFBdUIsQ0FBQyxNQUFNOzhCQU10QyxXQUFXO3NCQUFuQixLQUFLIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3ksIENvbXBvbmVudCwgSW5wdXQgfSBmcm9tICdAYW5ndWxhci9jb3JlJztcbmltcG9ydCB7IENvbW1vbk1vZHVsZSB9IGZyb20gJ0Bhbmd1bGFyL2NvbW1vbic7XG5cbi8qKlxuICogQ29tcGFjdCB0aW1lbGluZSBtYXJrZXIgZm9yIHN0YXR1cyBjaGFuZ2VzLCBhc3NpZ25tZW50cyBldGMuXG4gKiAoTGlnaHRlciB3ZWlnaHQgdGhhbiA8YXRoLXRpbWVsaW5lLWVudHJ5Pi4pXG4gKlxuICogQGV4YW1wbGVcbiAqIDxhdGgtdGltZWxpbmUtZXZlbnQgc3RhdHVzQ29sb3I9XCJ2YXIoLS1ncmVlbilcIj5cbiAqICAgPGI+TWlyYTwvYj4gbW92ZWQgdG8gSW4gUHJvZ3Jlc3MgwrcgMmQgYWdvXG4gKiA8L2F0aC10aW1lbGluZS1ldmVudD5cbiAqL1xuQENvbXBvbmVudCh7XG4gIHNlbGVjdG9yOiAnYXRoLXRpbWVsaW5lLWV2ZW50JyxcbiAgc3RhbmRhbG9uZTogdHJ1ZSxcbiAgaW1wb3J0czogW0NvbW1vbk1vZHVsZV0sXG4gIGNoYW5nZURldGVjdGlvbjogQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3kuT25QdXNoLFxuICB0ZW1wbGF0ZVVybDogJy4vdGltZWxpbmUtZXZlbnQuY29tcG9uZW50Lmh0bWwnLFxuICBzdHlsZVVybDogJy4vdGltZWxpbmUtZXZlbnQuY29tcG9uZW50LnNjc3MnLFxufSlcbmV4cG9ydCBjbGFzcyBBdGhUaW1lbGluZUV2ZW50Q29tcG9uZW50IHtcbiAgLyoqIERvdCBjb2xvciDigJQgYW55IENTUyBjb2xvciAoZS5nLiwgYHZhcigtLWdyZWVuKWAsIGAjZjU5ZTBiYCkuICovXG4gIEBJbnB1dCgpIHN0YXR1c0NvbG9yID0gJ3ZhcigtLWZnLTQpJztcbn1cbiIsIjxkaXYgY2xhc3M9XCJhdGgtdGwtZXZlbnRfX2RvdC13cmFwXCI+XG4gIDxzcGFuIGNsYXNzPVwiYXRoLXRsLWV2ZW50X19kb3RcIiBbc3R5bGUuYmFja2dyb3VuZF09XCJzdGF0dXNDb2xvclwiPjwvc3Bhbj5cbjwvZGl2PlxuPGRpdiBjbGFzcz1cImF0aC10bC1ldmVudF9fdGV4dFwiPlxuICA8bmctY29udGVudCAvPlxuPC9kaXY+XG4iXX0=

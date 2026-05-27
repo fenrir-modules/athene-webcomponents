@@ -1,0 +1,17 @@
+<div class="ath-tl-entry__avatar">
+  <ath-avatar [name]="effectiveAvatarName" [src]="avatarSrc" size="sm" />
+</div>
+<div class="ath-tl-entry__body">
+  <div class="ath-tl-entry__meta">
+    <b class="ath-tl-entry__author">{{ author }}</b>
+    @if (internal) {
+      <span class="ath-tl-entry__internal" title="Internal note">internal</span>
+    }
+    @if (timeLabel) {
+      <span class="ath-tl-entry__when">{{ timeLabel }}</span>
+    }
+  </div>
+  <div class="ath-tl-entry__content">
+    <ng-content />
+  </div>
+</div>

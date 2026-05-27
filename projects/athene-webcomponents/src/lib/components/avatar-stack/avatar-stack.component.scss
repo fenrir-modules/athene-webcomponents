@@ -1,0 +1,59 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ath-stack__item {
+  display: inline-flex;
+
+  // Overlap subsequent avatars with a clean outline that adapts to background
+  & + .ath-stack__item,
+  & + .ath-stack__more {
+    margin-left: -6px;
+  }
+}
+
+// Inner ring on stacked avatars so they "pop" off each other.
+// We can't reach into the avatar's element, but we can use box-shadow as a
+// faux border on the host of each stacked avatar via ::ng-deep-style attribute selectors.
+// Cleaner: apply ring via host class.
+:host ath-avatar {
+  border-radius: 999px;
+  box-shadow: 0 0 0 1.5px var(--bg-1);
+}
+
+.ath-stack__more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -6px;
+  border-radius: 999px;
+  background: var(--bg-2);
+  color: var(--fg-3);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  border: 1.5px solid var(--bg-1);
+  letter-spacing: 0;
+}
+
+// Size mapping — match the avatar component sizes
+:host([data-size='sm']) .ath-stack__more {
+  width: 20px;
+  height: 20px;
+  font-size: 9px;
+}
+:host([data-size='md']) .ath-stack__more {
+  width: 24px;
+  height: 24px;
+  font-size: 10px;
+}
+:host([data-size='lg']) .ath-stack__more {
+  width: 36px;
+  height: 36px;
+  font-size: 12px;
+}
+:host([data-size='xl']) .ath-stack__more {
+  width: 48px;
+  height: 48px;
+  font-size: 14px;
+}

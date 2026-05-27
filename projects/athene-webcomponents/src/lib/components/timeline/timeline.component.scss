@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  position: relative;
+
+  // Vertical rail behind dots — aligned with avatar centers (12px in)
+  &::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: var(--border-faint);
+    pointer-events: none;
+  }
+}
+
+::ng-deep ath-timeline-entry,
+::ng-deep ath-timeline-event {
+  display: block;
+  position: relative;
+
+  & + ath-timeline-entry,
+  & + ath-timeline-event {
+    margin-top: 12px;
+  }
+}

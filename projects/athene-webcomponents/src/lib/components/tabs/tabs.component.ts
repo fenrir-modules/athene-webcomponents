@@ -7,6 +7,8 @@ import { CommonModule } from '@angular/common';
 export interface TabItem {
   id: string;
   label: string;
+  /** Optional inline count badge after the label (e.g., `12`, `'3/5'`). */
+  count?: number | string;
   disabled?: boolean;
 }
 

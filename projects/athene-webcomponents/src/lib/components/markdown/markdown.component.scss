@@ -1,0 +1,201 @@
+:host {
+  display: block;
+  font-family: var(--font-sans);
+  color: var(--fg-2);
+  font-size: 14px;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+}
+
+.ath-md {
+  // Headings
+  ::ng-deep h1 {
+    margin: 0 0 16px;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+  ::ng-deep h2 {
+    margin: 28px 0 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
+  ::ng-deep h3 {
+    margin: 22px 0 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1.35;
+  }
+  ::ng-deep h4,
+  ::ng-deep h5,
+  ::ng-deep h6 {
+    margin: 18px 0 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--fg);
+  }
+
+  // Paragraphs + spacing
+  ::ng-deep p {
+    margin: 0 0 12px;
+  }
+
+  ::ng-deep > *:first-child {
+    margin-top: 0;
+  }
+  ::ng-deep > *:last-child {
+    margin-bottom: 0;
+  }
+
+  // Lists
+  ::ng-deep ul,
+  ::ng-deep ol {
+    margin: 0 0 12px;
+    padding-left: 22px;
+  }
+  ::ng-deep li {
+    margin: 4px 0;
+  }
+  ::ng-deep li > ul,
+  ::ng-deep li > ol {
+    margin: 4px 0;
+  }
+
+  // Inline code
+  ::ng-deep code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    padding: 1px 5px;
+    background: var(--surface-3);
+    border-radius: var(--r-xs);
+    color: var(--fg);
+  }
+
+  // Fenced code blocks
+  ::ng-deep pre {
+    margin: 0 0 14px;
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--fg);
+  }
+  ::ng-deep pre code {
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    font-size: inherit;
+    color: inherit;
+  }
+
+  // Blockquotes
+  ::ng-deep blockquote {
+    margin: 0 0 12px;
+    padding: 4px 0 4px 14px;
+    border-left: 3px solid var(--border-strong);
+    color: var(--fg-3);
+    font-style: italic;
+  }
+
+  // Links
+  ::ng-deep a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--t-fast);
+
+    &:hover {
+      border-bottom-color: var(--accent);
+    }
+  }
+
+  // Horizontal rule
+  ::ng-deep hr {
+    margin: 24px 0;
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  // Tables
+  ::ng-deep table {
+    width: 100%;
+    margin: 0 0 14px;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  ::ng-deep th,
+  ::ng-deep td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-faint);
+    text-align: left;
+    vertical-align: top;
+  }
+  ::ng-deep th {
+    background: var(--surface-2);
+    font-weight: 600;
+    color: var(--fg);
+    font-size: 12px;
+  }
+  ::ng-deep tr:last-child td {
+    border-bottom: 0;
+  }
+
+  // Images
+  ::ng-deep img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--r-sm);
+  }
+
+  // Callouts — emit by parser as <div class="ath-callout ath-callout--warn"> etc.
+  ::ng-deep .ath-callout {
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    border-left: 3px solid;
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+
+    &--info {
+      border-left-color: var(--blue);
+      background: var(--blue-tint);
+    }
+    &--warn {
+      border-left-color: var(--amber);
+      background: var(--amber-tint);
+    }
+    &--ok {
+      border-left-color: var(--green);
+      background: var(--green-tint);
+    }
+    &--error {
+      border-left-color: var(--red);
+      background: var(--red-tint);
+    }
+
+    > p {
+      margin: 0;
+    }
+  }
+
+  // Inline ticket-references (parser emits <span class="ath-ticket-ref" data-key="WEB-128">…</span>)
+  ::ng-deep .ath-ticket-ref {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 5px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    background: var(--accent-faint);
+    border-radius: var(--r-xs);
+    text-decoration: none;
+  }
+}

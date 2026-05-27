@@ -1,0 +1,109 @@
+:host {
+  display: inline-block;
+}
+
+.ath-tpill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition:
+    background var(--t-fast),
+    border-color var(--t-fast),
+    color var(--t-fast),
+    box-shadow var(--t-fast);
+  color: var(--fg-2);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+
+  &:hover {
+    background: var(--bg-2);
+    border-color: var(--border-strong);
+    color: var(--fg);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--accent-ring);
+    border-color: var(--accent);
+  }
+}
+
+.ath-tpill__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--fg-4);
+  flex-shrink: 0;
+}
+
+.ath-tpill__time {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum';
+  font-size: 11.5px;
+  color: var(--fg);
+  letter-spacing: 0;
+}
+
+.ath-tpill__sep {
+  color: var(--fg-4);
+  margin: 0 -1px;
+}
+
+.ath-tpill__key {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum';
+  font-size: 11px;
+  color: var(--fg-3);
+  letter-spacing: 0;
+}
+
+// Active = green pulsing dot
+:host([data-active='true']) {
+  .ath-tpill {
+    background: var(--green-tint);
+    border-color: color-mix(in srgb, var(--green) 30%, transparent);
+  }
+
+  .ath-tpill__dot {
+    background: var(--green);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 18%, transparent);
+    animation: ath-tpill-pulse 1.6s ease-in-out infinite;
+  }
+}
+
+// Warn / Alert tones (after 8h / 24h)
+:host([data-warning='warn']) {
+  .ath-tpill {
+    background: var(--amber-tint);
+    border-color: color-mix(in srgb, var(--amber) 30%, transparent);
+    color: var(--fg);
+  }
+  .ath-tpill__dot { background: var(--amber); }
+}
+:host([data-warning='alert']) {
+  .ath-tpill {
+    background: var(--red-tint);
+    border-color: color-mix(in srgb, var(--red) 35%, transparent);
+    color: var(--fg);
+    animation: ath-tpill-alert 1.2s ease-in-out infinite;
+  }
+  .ath-tpill__dot { background: var(--red); }
+}
+
+@keyframes ath-tpill-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 18%, transparent); }
+  50%      { box-shadow: 0 0 0 5px color-mix(in srgb, var(--green) 10%, transparent); }
+}
+
+@keyframes ath-tpill-alert {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.02); }
+}

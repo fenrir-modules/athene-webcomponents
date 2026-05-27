@@ -1,0 +1,85 @@
+@if (!bare) {
+  <button
+    type="button"
+    class="ath-cb__trigger"
+    [class.ath-cb__trigger--open]="open()"
+    [disabled]="disabled"
+    [attr.aria-expanded]="open()"
+    [attr.aria-haspopup]="'listbox'"
+    (click)="toggle()"
+  >
+    <span class="ath-cb__value" [class.ath-cb__value--placeholder]="!selectedOption()">
+      {{ selectedOption()?.label ?? placeholder }}
+    </span>
+    @if (clearable && selectedOption()) {
+      <button
+        type="button"
+        class="ath-cb__clear"
+        [attr.aria-label]="'Clear selection'"
+        (click)="clearValue($event)"
+      >
+        <lucide-icon [img]="clearIcon" [size]="12" />
+      </button>
+    }
+    <lucide-icon [img]="chevronIcon" [size]="14" class="ath-cb__chevron" />
+  </button>
+}
+
+@if (open()) {
+  <div class="ath-cb__panel" role="listbox">
+    <div class="ath-cb__search">
+      <lucide-icon [img]="searchIcon" [size]="13" class="ath-cb__search-icon" />
+      <input
+        #searchInput
+        type="text"
+        class="ath-cb__search-input"
+        [placeholder]="searchPlaceholder"
+        [ngModel]="query()"
+        (ngModelChange)="onQueryInput($event)"
+        (keydown)="onSearchKey($event)"
+        autocomplete="off"
+        spellcheck="false"
+      />
+    </div>
+
+    <div class="ath-cb__items">
+      @if (loading) {
+        <div class="ath-cb__loading">Loading…</div>
+      } @else if (grouped().length === 0) {
+        <div class="ath-cb__empty">No matches</div>
+      } @else {
+        @for (item of grouped(); track trackByValue($index, item)) {
+          @if (isOption(item)) {
+            <button
+              type="button"
+              role="option"
+              class="ath-cb__option"
+              [class.ath-cb__option--selected]="item.value === value"
+              [class.ath-cb__option--highlighted]="isHighlighted($index, item)"
+              [class.ath-cb__option--disabled]="item.disabled"
+              [attr.aria-selected]="item.value === value"
+              [disabled]="item.disabled"
+              (click)="select(item)"
+            >
+              @if (optionTpl) {
+                <ng-container *ngTemplateOutlet="optionTpl; context: { $implicit: item }" />
+              } @else {
+                <div class="ath-cb__option-text">
+                  <span class="ath-cb__option-label">{{ item.label }}</span>
+                  @if (item.sublabel) {
+                    <span class="ath-cb__option-sub">{{ item.sublabel }}</span>
+                  }
+                </div>
+                @if (item.value === value) {
+                  <lucide-icon [img]="checkIcon" [size]="13" class="ath-cb__option-check" />
+                }
+              }
+            </button>
+          } @else {
+            <div class="ath-cb__group">{{ item._group }}</div>
+          }
+        }
+      }
+    </div>
+  </div>
+}

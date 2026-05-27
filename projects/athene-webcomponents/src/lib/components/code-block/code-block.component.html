@@ -1,0 +1,39 @@
+@if (language || filename || copyable) {
+  <div class="ath-code__head">
+    <div class="ath-code__meta">
+      @if (language) {
+        <span class="ath-code__lang">{{ language }}</span>
+      }
+      @if (filename) {
+        <span class="ath-code__filename">{{ filename }}</span>
+      }
+    </div>
+    @if (copyable) {
+      <button
+        type="button"
+        class="ath-code__copy"
+        [class.ath-code__copy--copied]="copied()"
+        [attr.aria-label]="copied() ? 'Copied' : 'Copy code'"
+        (click)="copy()"
+      >
+        @if (copied()) {
+          <lucide-icon [img]="checkIcon" [size]="12" />
+          <span>Copied</span>
+        } @else {
+          <lucide-icon [img]="copyIcon" [size]="12" />
+          <span>Copy</span>
+        }
+      </button>
+    }
+  </div>
+}
+<pre class="ath-code__pre"><code class="ath-code__code"><!--
+  -->@if (showLineNumbers) {<!--
+    --><span class="ath-code__gutter" aria-hidden="true"><!--
+      -->@for (line of lines; track $index) {<!--
+        --><span class="ath-code__lineno">{{ $index + 1 }}</span><!--
+      -->}<!--
+    --></span><!--
+  -->}<!--
+  --><span class="ath-code__body">{{ code }}</span><!--
+--></code></pre>

@@ -1,0 +1,106 @@
+:host {
+  display: inline-flex;
+}
+
+.ath-fchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 8px;
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--fg-2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background var(--t-fast),
+    border-color var(--t-fast),
+    color var(--t-fast),
+    box-shadow var(--t-fast);
+  letter-spacing: -0.005em;
+
+  &:hover:not(:disabled) {
+    background: var(--bg-2);
+    border-color: var(--border-strong);
+    color: var(--fg);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--accent-ring);
+    border-color: var(--accent);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.ath-fchip__label {
+  color: var(--fg-3);
+  font-weight: 500;
+}
+
+.ath-fchip__sep {
+  color: var(--fg-4);
+  margin: 0 -1px;
+}
+
+.ath-fchip__value {
+  color: var(--fg);
+}
+
+.ath-fchip__chevron {
+  color: var(--fg-4);
+  margin-left: 2px;
+}
+
+.ath-fchip__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 -2px 0 2px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: var(--fg-3);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast);
+
+  &:hover {
+    background: var(--hover-strong);
+    color: var(--fg);
+  }
+}
+
+// Active state — filter has a value
+:host([data-active='true']) .ath-fchip {
+  background: var(--accent-faint);
+  border-color: var(--accent-ring);
+  color: var(--fg);
+
+  .ath-fchip__label {
+    color: var(--accent);
+  }
+
+  &:hover {
+    background: var(--accent-faint);
+    border-color: var(--accent);
+  }
+}
+
+// Density-aware
+body.compact .ath-fchip {
+  height: 22px;
+  padding: 0 7px;
+  font-size: 11.5px;
+}

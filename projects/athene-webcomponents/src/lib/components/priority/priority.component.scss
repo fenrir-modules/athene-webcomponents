@@ -1,0 +1,51 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--fg-3);
+  line-height: 1;
+}
+
+.ath-priority__bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 1.5px;
+  height: 11px;
+
+  i {
+    display: block;
+    width: 2.5px;
+    background: var(--fg-disabled);
+    border-radius: 1px;
+
+    &:nth-child(1) { height: 4px;  }
+    &:nth-child(2) { height: 7px;  }
+    &:nth-child(3) { height: 11px; }
+  }
+}
+
+.ath-priority__label {
+  color: var(--fg-2);
+  font-family: var(--font-sans);
+}
+
+// Color-coding per priority level
+:host([data-priority='low']) {
+  .ath-priority__bars i:nth-child(1) { background: var(--fg-3); }
+}
+:host([data-priority='medium']) {
+  .ath-priority__bars i:nth-child(-n+2) { background: var(--fg-2); }
+}
+:host([data-priority='high']) {
+  .ath-priority__bars i { background: var(--amber); }
+}
+:host([data-priority='crit']) {
+  .ath-priority__bars i { background: var(--red); }
+
+  .ath-priority__label {
+    color: var(--red);
+    font-weight: 600;
+  }
+}

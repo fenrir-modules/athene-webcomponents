@@ -8,7 +8,10 @@
       [disabled]="tab.disabled"
       (click)="selectTab(tab)"
     >
-      {{ tab.label }}
+      <span class="ath-tabs__label">{{ tab.label }}</span>
+      @if (tab.count != null && tab.count !== 0 && tab.count !== '') {
+        <span class="ath-tabs__count">{{ tab.count }}</span>
+      }
     </button>
   }
 </div>

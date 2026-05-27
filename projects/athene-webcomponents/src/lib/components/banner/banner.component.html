@@ -1,0 +1,22 @@
+<span class="ath-banner__icon" aria-hidden="true">
+  <lucide-icon [img]="icon" [size]="16" />
+</span>
+<div class="ath-banner__body">
+  @if (title) {
+    <strong class="ath-banner__title">{{ title }}</strong>
+  }
+  <span class="ath-banner__message"><ng-content /></span>
+</div>
+<div class="ath-banner__actions">
+  <ng-content select="[banner-action]" />
+  @if (dismissible) {
+    <button
+      type="button"
+      class="ath-banner__close"
+      aria-label="Dismiss"
+      (click)="onDismiss()"
+    >
+      <lucide-icon [img]="closeIcon" [size]="14" />
+    </button>
+  }
+</div>

@@ -1,0 +1,55 @@
+import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { AthAvatarComponent } from '../avatar';
+import * as i0 from "@angular/core";
+/**
+ * A full timeline item (comment, note, change-with-content).
+ * Use inside <ath-timeline>.
+ *
+ * @example
+ * <ath-timeline-entry
+ *   author="Mira Voss"
+ *   avatarName="Mira Voss"
+ *   timeLabel="48m ago"
+ *   [internal]="false">
+ *   <p>Pushed first pass.</p>
+ * </ath-timeline-entry>
+ */
+export class AthTimelineEntryComponent {
+    constructor() {
+        /** Defaults to `author` for initials/colors. Override if avatar should differ. */
+        this.avatarName = null;
+        this.avatarSrc = '';
+        /** Pre-formatted relative time (e.g., "5m ago"). */
+        this.timeLabel = '';
+        /** Marks the entry as internal (only visible to operators/admins). */
+        this.internal = false;
+    }
+    get hostInternal() {
+        return this.internal ? 'true' : null;
+    }
+    get effectiveAvatarName() {
+        return this.avatarName ?? this.author;
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthTimelineEntryComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthTimelineEntryComponent, isStandalone: true, selector: "ath-timeline-entry", inputs: { author: "author", avatarName: "avatarName", avatarSrc: "avatarSrc", timeLabel: "timeLabel", internal: "internal" }, host: { properties: { "attr.data-internal": "this.hostInternal" } }, ngImport: i0, template: "<div class=\"ath-tl-entry__avatar\">\n  <ath-avatar [name]=\"effectiveAvatarName\" [src]=\"avatarSrc\" size=\"sm\" />\n</div>\n<div class=\"ath-tl-entry__body\">\n  <div class=\"ath-tl-entry__meta\">\n    <b class=\"ath-tl-entry__author\">{{ author }}</b>\n    @if (internal) {\n      <span class=\"ath-tl-entry__internal\" title=\"Internal note\">internal</span>\n    }\n    @if (timeLabel) {\n      <span class=\"ath-tl-entry__when\">{{ timeLabel }}</span>\n    }\n  </div>\n  <div class=\"ath-tl-entry__content\">\n    <ng-content />\n  </div>\n</div>\n", styles: [":host{display:grid;grid-template-columns:24px 1fr;gap:10px;position:relative;padding:6px 0}.ath-tl-entry__avatar{position:relative;z-index:1}.ath-tl-entry__avatar ath-avatar{box-shadow:0 0 0 2px var(--bg-0);border-radius:999px;display:inline-flex}.ath-tl-entry__body{min-width:0}.ath-tl-entry__meta{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;font-family:var(--font-sans);font-size:12.5px;line-height:1.4}.ath-tl-entry__author{color:var(--fg);font-weight:600}.ath-tl-entry__internal{display:inline-flex;align-items:center;padding:1px 6px;font-size:10.5px;font-weight:500;color:var(--amber);background:var(--amber-tint);border-radius:var(--r-xs);text-transform:lowercase;letter-spacing:.02em}.ath-tl-entry__when{color:var(--fg-3);font-family:var(--font-mono);font-size:11px}.ath-tl-entry__content{color:var(--fg-2);font-size:13px;line-height:1.55}.ath-tl-entry__content ::ng-deep p{margin:0 0 6px}.ath-tl-entry__content ::ng-deep p:last-child{margin-bottom:0}.ath-tl-entry__content ::ng-deep code{font-family:var(--font-mono);font-size:12px;padding:1px 5px;background:var(--surface-3);border-radius:var(--r-xs);color:var(--fg)}:host([data-internal=true]){padding:8px 10px;background:var(--amber-tint);border-radius:var(--r);margin-left:-10px;margin-right:-10px}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "component", type: AthAvatarComponent, selector: "ath-avatar", inputs: ["name", "src", "size"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthTimelineEntryComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-timeline-entry', standalone: true, imports: [CommonModule, AthAvatarComponent], changeDetection: ChangeDetectionStrategy.OnPush, template: "<div class=\"ath-tl-entry__avatar\">\n  <ath-avatar [name]=\"effectiveAvatarName\" [src]=\"avatarSrc\" size=\"sm\" />\n</div>\n<div class=\"ath-tl-entry__body\">\n  <div class=\"ath-tl-entry__meta\">\n    <b class=\"ath-tl-entry__author\">{{ author }}</b>\n    @if (internal) {\n      <span class=\"ath-tl-entry__internal\" title=\"Internal note\">internal</span>\n    }\n    @if (timeLabel) {\n      <span class=\"ath-tl-entry__when\">{{ timeLabel }}</span>\n    }\n  </div>\n  <div class=\"ath-tl-entry__content\">\n    <ng-content />\n  </div>\n</div>\n", styles: [":host{display:grid;grid-template-columns:24px 1fr;gap:10px;position:relative;padding:6px 0}.ath-tl-entry__avatar{position:relative;z-index:1}.ath-tl-entry__avatar ath-avatar{box-shadow:0 0 0 2px var(--bg-0);border-radius:999px;display:inline-flex}.ath-tl-entry__body{min-width:0}.ath-tl-entry__meta{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;font-family:var(--font-sans);font-size:12.5px;line-height:1.4}.ath-tl-entry__author{color:var(--fg);font-weight:600}.ath-tl-entry__internal{display:inline-flex;align-items:center;padding:1px 6px;font-size:10.5px;font-weight:500;color:var(--amber);background:var(--amber-tint);border-radius:var(--r-xs);text-transform:lowercase;letter-spacing:.02em}.ath-tl-entry__when{color:var(--fg-3);font-family:var(--font-mono);font-size:11px}.ath-tl-entry__content{color:var(--fg-2);font-size:13px;line-height:1.55}.ath-tl-entry__content ::ng-deep p{margin:0 0 6px}.ath-tl-entry__content ::ng-deep p:last-child{margin-bottom:0}.ath-tl-entry__content ::ng-deep code{font-family:var(--font-mono);font-size:12px;padding:1px 5px;background:var(--surface-3);border-radius:var(--r-xs);color:var(--fg)}:host([data-internal=true]){padding:8px 10px;background:var(--amber-tint);border-radius:var(--r);margin-left:-10px;margin-right:-10px}\n"] }]
+        }], propDecorators: { author: [{
+                type: Input,
+                args: [{ required: true }]
+            }], avatarName: [{
+                type: Input
+            }], avatarSrc: [{
+                type: Input
+            }], timeLabel: [{
+                type: Input
+            }], internal: [{
+                type: Input
+            }], hostInternal: [{
+                type: HostBinding,
+                args: ['attr.data-internal']
+            }] } });
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGltZWxpbmUtZW50cnkuY29tcG9uZW50LmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vLi4vLi4vLi4vcHJvamVjdHMvYXRoZW5lLXdlYmNvbXBvbmVudHMvc3JjL2xpYi9jb21wb25lbnRzL3RpbWVsaW5lL3RpbWVsaW5lLWVudHJ5LmNvbXBvbmVudC50cyIsIi4uLy4uLy4uLy4uLy4uLy4uL3Byb2plY3RzL2F0aGVuZS13ZWJjb21wb25lbnRzL3NyYy9saWIvY29tcG9uZW50cy90aW1lbGluZS90aW1lbGluZS1lbnRyeS5jb21wb25lbnQuaHRtbCJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxPQUFPLEVBQUUsdUJBQXVCLEVBQUUsU0FBUyxFQUFFLFdBQVcsRUFBRSxLQUFLLEVBQUUsTUFBTSxlQUFlLENBQUM7QUFDdkYsT0FBTyxFQUFFLFlBQVksRUFBRSxNQUFNLGlCQUFpQixDQUFDO0FBQy9DLE9BQU8sRUFBRSxrQkFBa0IsRUFBRSxNQUFNLFdBQVcsQ0FBQzs7QUFFL0M7Ozs7Ozs7Ozs7OztHQVlHO0FBU0gsTUFBTSxPQUFPLHlCQUF5QjtJQVJ0QztRQVdFLGtGQUFrRjtRQUN6RSxlQUFVLEdBQWtCLElBQUksQ0FBQztRQUVqQyxjQUFTLEdBQUcsRUFBRSxDQUFDO1FBRXhCLG9EQUFvRDtRQUMzQyxjQUFTLEdBQUcsRUFBRSxDQUFDO1FBRXhCLHNFQUFzRTtRQUM3RCxhQUFRLEdBQUcsS0FBSyxDQUFDO0tBUzNCO0lBUEMsSUFBdUMsWUFBWTtRQUNqRCxPQUFPLElBQUksQ0FBQyxRQUFRLENBQUMsQ0FBQyxDQUFDLE1BQU0sQ0FBQyxDQUFDLENBQUMsSUFBSSxDQUFDO0lBQ3ZDLENBQUM7SUFFRCxJQUFjLG1CQUFtQjtRQUMvQixPQUFPLElBQUksQ0FBQyxVQUFVLElBQUksSUFBSSxDQUFDLE1BQU0sQ0FBQztJQUN4QyxDQUFDOytHQXBCVSx5QkFBeUI7bUdBQXpCLHlCQUF5QixpUkN6QnRDLDhpQkFpQkEsdXpDREdZLFlBQVksK0JBQUUsa0JBQWtCOzs0RkFLL0IseUJBQXlCO2tCQVJyQyxTQUFTOytCQUNFLG9CQUFvQixjQUNsQixJQUFJLFdBQ1AsQ0FBQyxZQUFZLEVBQUUsa0JBQWtCLENBQUMsbUJBQzFCLHVCQUF1QixDQUFDLE1BQU07OEJBS3BCLE1BQU07c0JBQWhDLEtBQUs7dUJBQUMsRUFBRSxRQUFRLEVBQUUsSUFBSSxFQUFFO2dCQUdoQixVQUFVO3NCQUFsQixLQUFLO2dCQUVHLFNBQVM7c0JBQWpCLEtBQUs7Z0JBR0csU0FBUztzQkFBakIsS0FBSztnQkFHRyxRQUFRO3NCQUFoQixLQUFLO2dCQUVpQyxZQUFZO3NCQUFsRCxXQUFXO3VCQUFDLG9CQUFvQiIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IENoYW5nZURldGVjdGlvblN0cmF0ZWd5LCBDb21wb25lbnQsIEhvc3RCaW5kaW5nLCBJbnB1dCB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgQ29tbW9uTW9kdWxlIH0gZnJvbSAnQGFuZ3VsYXIvY29tbW9uJztcbmltcG9ydCB7IEF0aEF2YXRhckNvbXBvbmVudCB9IGZyb20gJy4uL2F2YXRhcic7XG5cbi8qKlxuICogQSBmdWxsIHRpbWVsaW5lIGl0ZW0gKGNvbW1lbnQsIG5vdGUsIGNoYW5nZS13aXRoLWNvbnRlbnQpLlxuICogVXNlIGluc2lkZSA8YXRoLXRpbWVsaW5lPi5cbiAqXG4gKiBAZXhhbXBsZVxuICogPGF0aC10aW1lbGluZS1lbnRyeVxuICogICBhdXRob3I9XCJNaXJhIFZvc3NcIlxuICogICBhdmF0YXJOYW1lPVwiTWlyYSBWb3NzXCJcbiAqICAgdGltZUxhYmVsPVwiNDhtIGFnb1wiXG4gKiAgIFtpbnRlcm5hbF09XCJmYWxzZVwiPlxuICogICA8cD5QdXNoZWQgZmlyc3QgcGFzcy48L3A+XG4gKiA8L2F0aC10aW1lbGluZS1lbnRyeT5cbiAqL1xuQENvbXBvbmVudCh7XG4gIHNlbGVjdG9yOiAnYXRoLXRpbWVsaW5lLWVudHJ5JyxcbiAgc3RhbmRhbG9uZTogdHJ1ZSxcbiAgaW1wb3J0czogW0NvbW1vbk1vZHVsZSwgQXRoQXZhdGFyQ29tcG9uZW50XSxcbiAgY2hhbmdlRGV0ZWN0aW9uOiBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneS5PblB1c2gsXG4gIHRlbXBsYXRlVXJsOiAnLi90aW1lbGluZS1lbnRyeS5jb21wb25lbnQuaHRtbCcsXG4gIHN0eWxlVXJsOiAnLi90aW1lbGluZS1lbnRyeS5jb21wb25lbnQuc2NzcycsXG59KVxuZXhwb3J0IGNsYXNzIEF0aFRpbWVsaW5lRW50cnlDb21wb25lbnQge1xuICBASW5wdXQoeyByZXF1aXJlZDogdHJ1ZSB9KSBhdXRob3IhOiBzdHJpbmc7XG5cbiAgLyoqIERlZmF1bHRzIHRvIGBhdXRob3JgIGZvciBpbml0aWFscy9jb2xvcnMuIE92ZXJyaWRlIGlmIGF2YXRhciBzaG91bGQgZGlmZmVyLiAqL1xuICBASW5wdXQoKSBhdmF0YXJOYW1lOiBzdHJpbmcgfCBudWxsID0gbnVsbDtcblxuICBASW5wdXQoKSBhdmF0YXJTcmMgPSAnJztcblxuICAvKiogUHJlLWZvcm1hdHRlZCByZWxhdGl2ZSB0aW1lIChlLmcuLCBcIjVtIGFnb1wiKS4gKi9cbiAgQElucHV0KCkgdGltZUxhYmVsID0gJyc7XG5cbiAgLyoqIE1hcmtzIHRoZSBlbnRyeSBhcyBpbnRlcm5hbCAob25seSB2aXNpYmxlIHRvIG9wZXJhdG9ycy9hZG1pbnMpLiAqL1xuICBASW5wdXQoKSBpbnRlcm5hbCA9IGZhbHNlO1xuXG4gIEBIb3N0QmluZGluZygnYXR0ci5kYXRhLWludGVybmFsJykgZ2V0IGhvc3RJbnRlcm5hbCgpOiBzdHJpbmcgfCBudWxsIHtcbiAgICByZXR1cm4gdGhpcy5pbnRlcm5hbCA/ICd0cnVlJyA6IG51bGw7XG4gIH1cblxuICBwcm90ZWN0ZWQgZ2V0IGVmZmVjdGl2ZUF2YXRhck5hbWUoKTogc3RyaW5nIHtcbiAgICByZXR1cm4gdGhpcy5hdmF0YXJOYW1lID8/IHRoaXMuYXV0aG9yO1xuICB9XG59XG4iLCI8ZGl2IGNsYXNzPVwiYXRoLXRsLWVudHJ5X19hdmF0YXJcIj5cbiAgPGF0aC1hdmF0YXIgW25hbWVdPVwiZWZmZWN0aXZlQXZhdGFyTmFtZVwiIFtzcmNdPVwiYXZhdGFyU3JjXCIgc2l6ZT1cInNtXCIgLz5cbjwvZGl2PlxuPGRpdiBjbGFzcz1cImF0aC10bC1lbnRyeV9fYm9keVwiPlxuICA8ZGl2IGNsYXNzPVwiYXRoLXRsLWVudHJ5X19tZXRhXCI+XG4gICAgPGIgY2xhc3M9XCJhdGgtdGwtZW50cnlfX2F1dGhvclwiPnt7IGF1dGhvciB9fTwvYj5cbiAgICBAaWYgKGludGVybmFsKSB7XG4gICAgICA8c3BhbiBjbGFzcz1cImF0aC10bC1lbnRyeV9faW50ZXJuYWxcIiB0aXRsZT1cIkludGVybmFsIG5vdGVcIj5pbnRlcm5hbDwvc3Bhbj5cbiAgICB9XG4gICAgQGlmICh0aW1lTGFiZWwpIHtcbiAgICAgIDxzcGFuIGNsYXNzPVwiYXRoLXRsLWVudHJ5X193aGVuXCI+e3sgdGltZUxhYmVsIH19PC9zcGFuPlxuICAgIH1cbiAgPC9kaXY+XG4gIDxkaXYgY2xhc3M9XCJhdGgtdGwtZW50cnlfX2NvbnRlbnRcIj5cbiAgICA8bmctY29udGVudCAvPlxuICA8L2Rpdj5cbjwvZGl2PlxuIl19

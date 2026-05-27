@@ -1,0 +1,13 @@
+<button
+  type="button"
+  class="ath-tpill"
+  [title]="effectiveTooltip"
+  (click)="onToggle()"
+>
+  <span class="ath-tpill__dot" aria-hidden="true"></span>
+  <span class="ath-tpill__time">{{ time() }}</span>
+  @if (ticketKey) {
+    <span class="ath-tpill__sep" aria-hidden="true">·</span>
+    <span class="ath-tpill__key">{{ ticketKey }}</span>
+  }
+</button>

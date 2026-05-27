@@ -1,0 +1,13 @@
+<div
+  class="ath-progress__track"
+  role="progressbar"
+  [attr.aria-label]="ariaLabel"
+  [attr.aria-valuenow]="pct()"
+  aria-valuemin="0"
+  aria-valuemax="100"
+>
+  <div class="ath-progress__fill" [style.width.%]="pct()"></div>
+</div>
+@if (showLabel) {
+  <span class="ath-progress__label">{{ label() }}</span>
+}

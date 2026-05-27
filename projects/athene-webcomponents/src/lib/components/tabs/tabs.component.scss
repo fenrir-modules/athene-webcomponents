@@ -48,4 +48,32 @@
       border-radius: var(--ath-border-radius-sm) var(--ath-border-radius-sm) 0 0;
     }
   }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 16px;
+    margin-left: 6px;
+    padding: 0 5px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--fg-3);
+    background: var(--bg-2);
+    border-radius: 999px;
+    transition: color var(--t-fast), background var(--t-fast);
+  }
+
+  &__tab--active &__count {
+    color: var(--accent);
+    background: var(--accent-faint);
+  }
 }

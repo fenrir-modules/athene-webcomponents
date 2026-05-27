@@ -1,7 +1,19 @@
 <header class="ath-page-header">
   <div class="ath-page-header__text">
+    @if (eyebrow) {
+      <div class="ath-page-header__eyebrow">{{ eyebrow }}</div>
+    }
     <h1 class="ath-page-header__title">{{ title }}</h1>
-    @if (description) {
+    @if (subItems && subItems.length > 0) {
+      <div class="ath-page-header__sub">
+        @for (item of subItems; track $index; let last = $last) {
+          <span class="ath-page-header__sub-item">{{ item }}</span>
+          @if (!last) {
+            <span class="ath-page-header__sub-sep" aria-hidden="true">•</span>
+          }
+        }
+      </div>
+    } @else if (description) {
       <p class="ath-page-header__description">{{ description }}</p>
     }
   </div>

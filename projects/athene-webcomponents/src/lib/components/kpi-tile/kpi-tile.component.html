@@ -1,0 +1,18 @@
+<div class="ath-kpi__row">
+  <span class="ath-kpi__label">{{ label }}</span>
+  @if (delta != null && deltaDirection) {
+    <span class="ath-kpi__delta" [attr.data-direction]="deltaDirection">{{ delta }}</span>
+  }
+</div>
+<div class="ath-kpi__bottom">
+  <span class="ath-kpi__value">{{ value }}</span>
+  @if (sparkData && sparkData.length >= 2) {
+    <ath-sparkline
+      class="ath-kpi__spark"
+      [data]="sparkData"
+      [color]="sparkColor"
+      [width]="70"
+      [height]="22"
+    />
+  }
+</div>

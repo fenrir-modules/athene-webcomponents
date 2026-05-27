@@ -1,0 +1,23 @@
+<button
+  type="button"
+  class="ath-fchip"
+  [disabled]="disabled"
+  (click)="onClick()"
+>
+  <span class="ath-fchip__label">{{ label }}</span>
+  <span class="ath-fchip__sep" aria-hidden="true">:</span>
+  <span class="ath-fchip__value">{{ value }}</span>
+
+  @if (clearable && active) {
+    <button
+      type="button"
+      class="ath-fchip__clear"
+      [attr.aria-label]="'Clear ' + label + ' filter'"
+      (click)="onClear($event)"
+    >
+      <lucide-icon [img]="clearIcon" [size]="11" />
+    </button>
+  } @else {
+    <lucide-icon [img]="chevronIcon" [size]="11" class="ath-fchip__chevron" />
+  }
+</button>

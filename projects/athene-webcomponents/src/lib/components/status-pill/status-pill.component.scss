@@ -1,0 +1,67 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--fg-2);
+  white-space: nowrap;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+:host([data-size='sm']) {
+  font-size: 11.5px;
+  gap: 5px;
+
+  .ath-status-pill__dot {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+.ath-status-pill__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  // Inner white ring on top of color = elegant donut effect
+  background: var(--fg-4);
+  box-shadow: inset 0 0 0 2px var(--bg-1), 0 0 0 1px currentColor;
+  color: var(--fg-4);
+}
+
+.ath-status-pill__label {
+  font-family: var(--font-sans);
+}
+
+// Status colors — match the design tokens
+:host([data-status='open']) {
+  .ath-status-pill__dot { background: var(--red);    color: var(--red);    }
+}
+:host([data-status='prog']) {
+  .ath-status-pill__dot { background: var(--amber);  color: var(--amber);  }
+}
+:host([data-status='review']) {
+  .ath-status-pill__dot { background: var(--blue);   color: var(--blue);   }
+}
+:host([data-status='done']) {
+  .ath-status-pill__dot { background: var(--green);  color: var(--green);  }
+}
+:host([data-status='blocked']) {
+  .ath-status-pill__dot { background: var(--purple); color: var(--purple); }
+}
+:host([data-status='closed']) {
+  color: var(--fg-3);
+  .ath-status-pill__dot {
+    background: var(--fg-4);
+    color: var(--fg-4);
+  }
+}
+
+// In dark mode the inner ring needs to match the dark surface
+[data-theme='dark'] :host {
+  .ath-status-pill__dot {
+    box-shadow: inset 0 0 0 2px var(--bg-1), 0 0 0 1px currentColor;
+  }
+}
