@@ -29,7 +29,7 @@
     "start": "ng serve",
     "build": "ng build",
     "build:lib": "ng build athene-webcomponents",
-    "prepare": "ng build athene-webcomponents",
+    "prepublishOnly": "ng build athene-webcomponents",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "npm run lint:ts && npm run lint:a11y",
