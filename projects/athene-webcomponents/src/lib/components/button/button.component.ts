@@ -5,7 +5,15 @@ import { LucideAngularModule, Loader2 } from 'lucide-angular';
 /**
  * Button variant types
  */
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'ghost'
+  | 'danger'
+  // Quiet destructive: reads as a neutral ghost until hovered, for
+  // per-row actions where a solid red button would shout.
+  | 'danger-ghost';
 
 /**
  * Button size types

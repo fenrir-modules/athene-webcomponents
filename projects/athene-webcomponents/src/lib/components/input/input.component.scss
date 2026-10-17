@@ -56,7 +56,7 @@
     &:focus {
       outline: none;
       border-color: var(--ath-border-color-focus);
-      box-shadow: 0 0 0 1px var(--ath-border-color-focus), 0 0 12px rgba(201, 150, 58, 0.25);
+      box-shadow: 0 0 0 3px var(--accent-ring);
     }
 
     &:disabled {
@@ -115,7 +115,7 @@
       border-color: var(--ath-color-error);
 
       &:focus {
-        box-shadow: 0 0 0 1px var(--ath-color-error), 0 0 12px rgba(239, 68, 68, 0.2);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--red) 20%, transparent);
       }
     }
   }

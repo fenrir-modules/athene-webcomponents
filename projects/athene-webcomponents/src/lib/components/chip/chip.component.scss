@@ -20,26 +20,26 @@
 
   &--primary {
     color: var(--ath-color-primary);
-    background-color: rgba(201, 150, 58, 0.12);
-    border: 1px solid rgba(201, 150, 58, 0.3);
+    background-color: var(--accent-ring);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
   }
 
   &--success {
     color: var(--ath-color-success);
-    background-color: rgba(34, 197, 94, 0.12);
-    border: 1px solid rgba(34, 197, 94, 0.3);
+    background-color: var(--green-tint);
+    border: 1px solid color-mix(in srgb, var(--green) 30%, transparent);
   }
 
   &--warning {
     color: var(--ath-color-warning);
-    background-color: rgba(245, 158, 11, 0.12);
-    border: 1px solid rgba(245, 158, 11, 0.3);
+    background-color: var(--amber-tint);
+    border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent);
   }
 
   &--error {
     color: var(--ath-color-error);
-    background-color: rgba(239, 68, 68, 0.12);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background-color: var(--red-tint);
+    border: 1px solid color-mix(in srgb, var(--red) 30%, transparent);
   }
 
   &__remove {

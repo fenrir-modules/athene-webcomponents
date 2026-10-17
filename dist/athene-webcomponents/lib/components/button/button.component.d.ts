@@ -3,7 +3,7 @@ import * as i0 from "@angular/core";
 /**
  * Button variant types
  */
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'danger-ghost';
 /**
  * Button size types
  */

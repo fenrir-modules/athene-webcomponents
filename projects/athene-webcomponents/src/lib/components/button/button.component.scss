@@ -94,7 +94,10 @@
     color: var(--ath-color-primary);
 
     &:hover:not(:disabled) {
-      background-color: rgba(var(--ath-color-primary-rgb), 0.08);
+      // The accent's own faint fill, not an rgba() rebuilt from a
+      // separately-maintained rgb triple that has to be kept in step
+      // with the accent by hand.
+      background-color: var(--accent-faint);
       border-color: var(--ath-color-primary);
     }
   }
@@ -114,8 +117,34 @@
     border-color: var(--ath-color-error);
 
     &:hover:not(:disabled) {
-      background-color: var(--ath-color-error-hover);
-      border-color: var(--ath-color-error-hover);
+      // `--ath-color-error-hover` aliases plain `--red`, so going through
+      // it leaves the button visually inert on hover. Deepening the red
+      // itself works in both themes without a second colour token.
+      background-color: color-mix(in srgb, var(--ath-color-error) 86%, #000);
+      border-color: color-mix(in srgb, var(--ath-color-error) 86%, #000);
+    }
+  }
+
+  // A destructive action that is not the point of the screen: revoking
+  // one session out of eight, removing one member out of thirty. Solid
+  // red on every row turns a list into a warning sign, so the weight
+  // only arrives on hover — where the pointer has already committed.
+  &--danger-ghost {
+    background-color: transparent;
+    color: var(--fg-3);
+    border-color: transparent;
+
+    &:hover:not(:disabled) {
+      background-color: var(--red-tint);
+      color: var(--red);
+    }
+
+    &:active:not(:disabled) {
+      background-color: color-mix(in srgb, var(--red) 16%, transparent);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 2px var(--ath-bg-primary), 0 0 0 4px var(--red);
     }
   }
 

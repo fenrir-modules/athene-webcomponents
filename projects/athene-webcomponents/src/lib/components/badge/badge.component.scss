@@ -47,7 +47,7 @@
 
   &--warning {
     color: var(--ath-color-primary);
-    background: rgba(201, 150, 58, 0.12);
+    background: var(--accent-ring);
 
     .ath-badge__dot {
       background: var(--ath-color-primary);

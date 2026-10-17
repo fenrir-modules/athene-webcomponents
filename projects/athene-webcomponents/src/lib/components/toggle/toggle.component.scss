@@ -2,23 +2,44 @@
 // ATH-TOGGLE STYLES
 // ===========================================
 
+// The switch itself carries no chrome. The bordered row below is a
+// separate, opt-in shape — without it, a toggle dropped beside a label
+// that the page already renders drew an empty box around a 36px pill.
 .ath-toggle {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: var(--ath-space-3);
-  width: 100%;
-  padding: var(--ath-space-3) var(--ath-space-4);
-  border-radius: var(--ath-border-radius-md);
-  border: 1px solid var(--ath-border-color);
-  background: rgba(255, 255, 255, 0.02);
+  padding: 0;
+  border: 0;
+  background: none;
   color: var(--ath-text-primary);
   text-align: left;
   cursor: pointer;
   transition: border-color var(--ath-transition-fast), background-color var(--ath-transition-fast);
 
-  &:hover:not(.ath-toggle--disabled) {
-    border-color: var(--ath-border-color-hover);
-    background: rgba(255, 255, 255, 0.04);
+  &:focus-visible {
+    outline: none;
+
+    .ath-toggle__track {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-ring);
+    }
+  }
+
+  // Self-labelling form: the whole row is the hit target, so it gets the
+  // bordered-row treatment and fills its container.
+  &--boxed {
+    display: flex;
+    width: 100%;
+    padding: var(--ath-space-3) var(--ath-space-4);
+    border-radius: var(--ath-border-radius-md);
+    border: 1px solid var(--ath-border-color);
+    background: var(--surface);
+
+    &:hover:not(.ath-toggle--disabled) {
+      border-color: var(--ath-border-color-hover);
+      background: var(--hover);
+    }
   }
 
   &__track {
@@ -64,12 +85,6 @@
   // Checked State
   // -------------------------------------------
   &--checked {
-    border-color: var(--ath-border-color);
-
-    &:hover:not(.ath-toggle--disabled) {
-      border-color: var(--ath-border-color-hover);
-    }
-
     .ath-toggle__track {
       background: var(--ath-color-primary);
       border-color: var(--ath-color-primary);

@@ -1,6 +1,7 @@
 <button
   type="button"
   class="ath-toggle"
+  [class.ath-toggle--boxed]="label || description"
   [class.ath-toggle--checked]="checked"
   [class.ath-toggle--disabled]="disabled"
   role="switch"
@@ -11,12 +12,14 @@
   <span class="ath-toggle__track">
     <span class="ath-toggle__thumb"></span>
   </span>
-  <span class="ath-toggle__content">
-    @if (label) {
-      <span class="ath-toggle__label">{{ label }}</span>
-    }
-    @if (description) {
-      <span class="ath-toggle__description">{{ description }}</span>
-    }
-  </span>
+  @if (label || description) {
+    <span class="ath-toggle__content">
+      @if (label) {
+        <span class="ath-toggle__label">{{ label }}</span>
+      }
+      @if (description) {
+        <span class="ath-toggle__description">{{ description }}</span>
+      }
+    </span>
+  }
 </button>

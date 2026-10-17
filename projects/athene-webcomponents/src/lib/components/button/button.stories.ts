@@ -8,7 +8,7 @@ const meta: Meta<AthButtonComponent> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'outline', 'ghost', 'danger'],
+      options: ['primary', 'secondary', 'outline', 'ghost', 'danger', 'danger-ghost'],
       description: 'Button style variant',
     },
     size: {
@@ -126,6 +126,7 @@ export const AllVariants: Story = {
           <ath-button variant="outline">Outline</ath-button>
           <ath-button variant="ghost">Ghost</ath-button>
           <ath-button variant="danger">Danger</ath-button>
+          <ath-button variant="danger-ghost">Danger ghost</ath-button>
         </div>
         <div style="display: flex; gap: 16px;">
           <ath-button variant="primary" [disabled]="true">Disabled</ath-button>

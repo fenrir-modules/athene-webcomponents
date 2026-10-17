@@ -26,7 +26,7 @@
   // Active state with left accent bar
   &--active {
     color: var(--ath-color-primary);
-    background-color: rgba(201, 150, 58, 0.08);
+    background-color: var(--accent-faint);
 
     &::before {
       content: '';
@@ -41,7 +41,7 @@
 
     &:hover {
       color: var(--ath-color-primary);
-      background-color: rgba(201, 150, 58, 0.12);
+      background-color: var(--accent-ring);
     }
 
     .ath-nav-item__icon {
