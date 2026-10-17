@@ -1,29 +1,48 @@
 // ===========================================
 // ATH-EMPTY-STATE STYLES
 // ===========================================
+//
+// The frame used to be drawn in `rgba(255, 255, 255, …)` — a dark-mode
+// value hard-coded into both themes, so in light mode the dashed border
+// was white on white and the fill did nothing. An empty state rendered
+// as bare centred text with no container at all.
 
 .ath-empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--ath-space-2);
-  padding: var(--ath-space-10) var(--ath-space-6);
+  gap: var(--space-2);
+  padding: var(--space-10) var(--space-6);
   text-align: center;
-  border: 1px dashed rgba(255, 255, 255, 0.08);
-  border-radius: var(--ath-border-radius-lg);
-  background: rgba(255, 255, 255, 0.01);
+  border: 1px dashed var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-bottom: var(--space-1);
+    border-radius: var(--r-full);
+    background: var(--surface-3);
+    color: var(--fg-3);
+  }
 
   &__message {
     margin: 0;
-    font-size: var(--ath-font-size-sm);
-    font-weight: var(--ath-font-weight-medium);
-    color: var(--ath-text-secondary);
+    font-size: var(--text-md);
+    font-weight: var(--weight-medium);
+    color: var(--fg);
   }
 
   &__sub {
     margin: 0;
-    font-size: var(--ath-font-size-xs);
-    color: var(--ath-text-tertiary);
+    max-width: 44ch;
+    font-size: var(--text-base);
+    line-height: var(--line-normal);
+    color: var(--fg-3);
   }
 }

@@ -20,6 +20,15 @@ export declare class AthPageHeaderComponent {
     subItems: string[];
     /** Legacy free-form description (single paragraph). Falls back if subItems empty. */
     description: string;
+    /**
+     * The sub-items worth separating.
+     *
+     * Callers build this array inline from conditionals, so a fact that
+     * does not apply arrives as `''` rather than being left out — and a
+     * blank segment still earned its bullet, leaving headers reading
+     * "All open tickets ·" with nothing after the separator.
+     */
+    protected get visibleSubItems(): string[];
     static ɵfac: i0.ɵɵFactoryDeclaration<AthPageHeaderComponent, never>;
     static ɵcmp: i0.ɵɵComponentDeclaration<AthPageHeaderComponent, "ath-page-header", never, { "eyebrow": { "alias": "eyebrow"; "required": false; }; "title": { "alias": "title"; "required": true; }; "subItems": { "alias": "subItems"; "required": false; }; "description": { "alias": "description"; "required": false; }; }, {}, never, ["*"], true, never>;
 }

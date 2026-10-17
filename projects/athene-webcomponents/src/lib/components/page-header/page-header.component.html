@@ -4,9 +4,9 @@
       <div class="ath-page-header__eyebrow">{{ eyebrow }}</div>
     }
     <h1 class="ath-page-header__title">{{ title }}</h1>
-    @if (subItems && subItems.length > 0) {
+    @if (visibleSubItems.length > 0) {
       <div class="ath-page-header__sub">
-        @for (item of subItems; track $index; let last = $last) {
+        @for (item of visibleSubItems; track $index; let last = $last) {
           <span class="ath-page-header__sub-item">{{ item }}</span>
           @if (!last) {
             <span class="ath-page-header__sub-sep" aria-hidden="true">•</span>

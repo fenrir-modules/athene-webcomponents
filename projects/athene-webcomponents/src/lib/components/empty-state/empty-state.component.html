@@ -1,4 +1,9 @@
 <div class="ath-empty-state">
+  @if (icon) {
+    <span class="ath-empty-state__icon">
+      <lucide-icon [img]="icon" [size]="18" />
+    </span>
+  }
   <p class="ath-empty-state__message">{{ message }}</p>
   @if (subMessage) {
     <p class="ath-empty-state__sub">{{ subMessage }}</p>
