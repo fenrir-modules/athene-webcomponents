@@ -7,7 +7,10 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-6);
-  padding-bottom: var(--space-5);
+  // No space of its own below: every page already spaces its sections, and
+  // the two together left a band of nothing between a page's title and
+  // its first row of content.
+  padding-bottom: 0;
 
   &__text {
     flex: 1;
