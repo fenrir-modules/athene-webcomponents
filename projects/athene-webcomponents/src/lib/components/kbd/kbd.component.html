@@ -1,3 +1,6 @@
 <kbd [class]="kbdClasses">
+  @if (label) {
+    {{ label }}
+  }
   <ng-content />
 </kbd>

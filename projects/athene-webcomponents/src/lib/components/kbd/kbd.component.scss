@@ -2,33 +2,40 @@
 // ATH-KBD STYLES
 // ===========================================
 
+// A raised key on whatever it sits on. It used to fill with the recessed
+// `bg-2`, which is also the fill of the nav search pill — so inside that
+// pill the chip had no edge and its glyphs vanished into an empty bar.
 .ath-kbd {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 1px;
   min-width: 1.5em;
-  padding: var(--ath-space-1);
-  font-family: var(--ath-font-family);
-  font-weight: var(--ath-font-weight-medium);
-  color: var(--ath-text-secondary);
-  background-color: var(--ath-bg-tertiary);
-  border: 1px solid var(--ath-border-color);
-  border-radius: var(--ath-border-radius-sm);
-  box-shadow: 0 1px 0 var(--ath-border-color);
+  font-family: var(--font-mono);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  color: var(--fg-2);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xs);
+  box-shadow: 0 1px 0 var(--border);
   white-space: nowrap;
 
   &--sm {
-    font-size: var(--ath-font-size-xs);
-    padding: 1px var(--ath-space-1);
+    font-size: 10.5px;
+    height: 18px;
+    padding: 0 5px;
   }
 
   &--md {
-    font-size: var(--ath-font-size-sm);
-    padding: 2px var(--ath-space-1);
+    font-size: var(--text-xs);
+    height: 20px;
+    padding: 0 6px;
   }
 
   &--lg {
-    font-size: var(--ath-font-size-md);
-    padding: var(--ath-space-1) var(--ath-space-2);
+    font-size: var(--text-sm);
+    height: 24px;
+    padding: 0 var(--space-2);
   }
 }

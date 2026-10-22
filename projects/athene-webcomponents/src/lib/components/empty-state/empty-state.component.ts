@@ -36,4 +36,10 @@ export class AthEmptyStateComponent {
 
   /** Optional lucide icon shown above the message. */
   @Input() icon: EmptyStateIcon | null = null;
+
+  /**
+   * No frame of its own, for an empty state that already sits inside a
+   * panel; the dashed box inside a white panel drew a card in a card.
+   */
+  @Input() bare = false;
 }

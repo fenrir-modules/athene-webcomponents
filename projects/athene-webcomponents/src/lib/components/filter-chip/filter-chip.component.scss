@@ -2,18 +2,20 @@
   display: inline-flex;
 }
 
+// A quiet grey-fill pill, `Status Any`: the fill is the affordance, so it
+// needs no outline, and the value carries the weight rather than a colon.
 .ath-fchip {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  height: 26px;
-  padding: 0 8px;
-  background: var(--bg-1);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
+  height: 28px;
+  padding: 0 10px;
+  background: var(--bg-2);
+  border: 1px solid transparent;
+  border-radius: var(--r);
   font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 500;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-normal);
   color: var(--fg-2);
   cursor: pointer;
   white-space: nowrap;
@@ -25,8 +27,7 @@
   letter-spacing: -0.005em;
 
   &:hover:not(:disabled) {
-    background: var(--bg-2);
-    border-color: var(--border-strong);
+    background: var(--hover-strong);
     color: var(--fg);
   }
 
@@ -44,16 +45,12 @@
 
 .ath-fchip__label {
   color: var(--fg-3);
-  font-weight: 500;
-}
-
-.ath-fchip__sep {
-  color: var(--fg-4);
-  margin: 0 -1px;
+  font-weight: var(--weight-normal);
 }
 
 .ath-fchip__value {
   color: var(--fg);
+  font-weight: var(--weight-semibold);
 }
 
 .ath-fchip__chevron {
@@ -82,19 +79,13 @@
   }
 }
 
-// Active state — filter has a value
+// Active state — filter has a value. Same quiet pill, with a hairline edge
+// so a set filter reads apart from a default one without a colour wash.
 :host([data-active='true']) .ath-fchip {
-  background: var(--chip-active-bg);
   border-color: var(--chip-active-border);
-  color: var(--fg);
 
   .ath-fchip__label {
-    color: var(--chip-active-fg);
-  }
-
-  &:hover {
-    background: var(--chip-active-bg);
-    border-color: var(--chip-active-fg);
+    color: var(--fg-2);
   }
 }
 

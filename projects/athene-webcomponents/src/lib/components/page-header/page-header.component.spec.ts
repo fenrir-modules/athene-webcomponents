@@ -1,0 +1,68 @@
+import { Component } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { AthPageHeaderComponent } from './page-header.component';
+
+@Component({
+  standalone: true,
+  imports: [AthPageHeaderComponent],
+  template: `
+    <ath-page-header title="Project" [subItems]="['Sprint 2', '', 'No lead']" [divider]="divider">
+      <span athPageLeading class="key">FP</span>
+      <span athPageMeta class="pill">On track</span>
+      <button type="button" class="act">More</button>
+    </ath-page-header>
+  `,
+})
+class HostComponent {
+  divider = true;
+}
+
+describe('AthPageHeaderComponent', () => {
+  let fixture: ComponentFixture<HostComponent>;
+  let el: HTMLElement;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({ imports: [HostComponent] }).compileComponents();
+    fixture = TestBed.createComponent(HostComponent);
+    fixture.detectChanges();
+    el = fixture.nativeElement as HTMLElement;
+  });
+
+  it('renders the title as the page h1', () => {
+    expect(el.querySelector('h1')?.textContent?.trim()).toBe('Project');
+  });
+
+  it('drops blank meta items; each item leads with its own separator', () => {
+    // The row clips the first separator-width of every line, so the
+    // leading dot of the first item on a line is never seen.
+    const items = Array.from(el.querySelectorAll('.ath-page-header__sub-item')).map((n) =>
+      n.textContent?.replace(/\s+/g, ' ').trim()
+    );
+    expect(items).toEqual(['· Sprint 2', '· No lead']);
+  });
+
+  it('projects leading, meta and actions into their slots', () => {
+    expect(el.querySelector('.ath-page-header__leading .key')).not.toBeNull();
+    expect(el.querySelector('.ath-page-header__sub .pill')).not.toBeNull();
+    expect(el.querySelector('.ath-page-header__actions .act')).not.toBeNull();
+  });
+
+  it('draws the hairline by default and lets a page opt out', () => {
+    const header = () => el.querySelector('.ath-page-header') as HTMLElement;
+    expect(header().classList).toContain('ath-page-header--divided');
+    fixture.componentInstance.divider = false;
+    fixture.detectChanges();
+    expect(header().classList).not.toContain('ath-page-header--divided');
+  });
+
+  it('renders an h2 when it heads a section inside a page', () => {
+    const f = TestBed.createComponent(AthPageHeaderComponent);
+    f.componentRef.setInput('title', 'Labels');
+    f.componentRef.setInput('level', 2);
+    f.detectChanges();
+    const root = f.nativeElement as HTMLElement;
+    expect(root.querySelector('h1')).toBeNull();
+    expect(root.querySelector('h2')?.textContent?.trim()).toBe('Labels');
+  });
+});

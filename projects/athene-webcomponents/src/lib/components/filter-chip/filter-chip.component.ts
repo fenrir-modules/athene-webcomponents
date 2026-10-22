@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { LucideAngularModule, ChevronDown, X } from 'lucide-angular';
 
 /**
- * Filter chip in the style `Label : Value ▾`. Optional clearable.
+ * Filter pill in the style `Label Value ▾`: quiet grey fill, muted label,
+ * semibold value, no separator. Optional clearable.
  * Typically used in toolbars to compose query filters.
  *
  * @example
