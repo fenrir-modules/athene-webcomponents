@@ -1,4 +1,5 @@
-import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { ATH_DEFAULT_LABELS, ATH_LABELS } from '../../i18n/labels';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { LucideAngularModule, Eye, EyeOff, AlertCircle } from 'lucide-angular';
@@ -32,6 +33,23 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
 })
 export class AthInputComponent implements ControlValueAccessor {
   /** Input label */
+  /** Field height: `md` 44px (default), `sm` 33px (compact settings rows). */
+  @Input() size: 'sm' | 'md' = 'md';
+
+  private readonly labels = inject(ATH_LABELS, { optional: true });
+
+  /** Accessible names of the password reveal toggle; default `ATH_LABELS`. */
+  @Input() showPasswordLabel: string | null = null;
+  @Input() hidePasswordLabel: string | null = null;
+
+  protected get showPasswordText(): string {
+    return this.showPasswordLabel ?? (this.labels?.showPassword ?? ATH_DEFAULT_LABELS.showPassword)();
+  }
+
+  protected get hidePasswordText(): string {
+    return this.hidePasswordLabel ?? (this.labels?.hidePassword ?? ATH_DEFAULT_LABELS.hidePassword)();
+  }
+
   @Input() label = '';
 
   /** Input type */
@@ -71,8 +89,13 @@ export class AthInputComponent implements ControlValueAccessor {
   private onChange: (value: string) => void = () => {};
   protected onTouched: () => void = () => {};
 
+  // OnPush: values written by the forms API (e.g. a setValue after an async
+  // lookup) arrive outside an input change, so the view must be told.
+  private readonly cdr = inject(ChangeDetectorRef);
+
   writeValue(value: string): void {
     this.value = value ?? '';
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -85,6 +108,7 @@ export class AthInputComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
+    this.cdr.markForCheck();
   }
 
   onInput(event: Event): void {

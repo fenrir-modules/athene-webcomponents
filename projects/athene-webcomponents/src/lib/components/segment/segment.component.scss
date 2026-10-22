@@ -13,13 +13,14 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  height: 26px;
+  // Track = control-h (32px).
+  height: calc(var(--control-h) - 6px);
   padding: 0 10px;
   background: transparent;
   border: 0;
   border-radius: var(--r-sm);
   font-family: var(--font-sans);
-  font-size: 12.5px;
+  font-size: var(--control-font);
   font-weight: 500;
   color: var(--fg-3);
   cursor: pointer;
@@ -77,8 +78,9 @@
 :host([data-size='sm']),
 body.compact :host {
   .ath-seg__item {
-    height: 22px;
-    padding: 0 8px;
-    font-size: 11.5px;
+    // Track = 22 + 2×2 padding + 2×1 border = control-h-sm (28px).
+    height: calc(var(--control-h-sm) - 6px);
+    padding: 0 9px;
+    font-size: 12.5px;
   }
 }

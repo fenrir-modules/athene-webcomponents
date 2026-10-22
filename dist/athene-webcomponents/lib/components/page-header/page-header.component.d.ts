@@ -1,18 +1,30 @@
 import * as i0 from "@angular/core";
 /**
- * Page header with optional eyebrow, title, sub-row chips, description, and action slot.
+ * The page head every app page uses: H1, one muted meta line, actions on
+ * the right, a hairline underneath. The breadcrumb lives in the shell's
+ * topbar, so this component starts at the page gutter like every other.
  *
- * Sub-rows: pass `subItems` as an array of strings; they render with bullet separators.
+ * - Meta: `subItems` strings render with `·` separators. Anything richer
+ *   (a health pill, an avatar) goes in an `[athPageMeta]` child, which
+ *   continues the same line.
+ * - Leading: an `[athPageLeading]` child (e.g. a project key tile) sits
+ *   left of the title block.
+ * - Actions: default content. At most one primary; the topbar's "New" is
+ *   already the view's primary on most pages.
+ * - `divider`: the hairline. Turn it off only when the next element draws
+ *   its own rule directly under the head (an underline tab bar).
  *
  * @example
- * <ath-page-header eyebrow="Work" title="Tickets"
- *                  [subItems]="['12 of 45', 'across 6 projects']">
- *   <button ath-button variant="secondary" size="sm">Filter</button>
- *   <button ath-button variant="primary" size="sm">+ New ticket</button>
+ * <ath-page-header title="Tickets" [subItems]="['12 of 45', 'across 6 projects']">
+ *   <ath-button variant="secondary" size="sm">Filter</ath-button>
  * </ath-page-header>
  */
 export declare class AthPageHeaderComponent {
-    /** Small uppercase eyebrow above the title (e.g., "Work", "Personal"). */
+    /**
+     * Small eyebrow above the title.
+     * @deprecated App pages carry their location in the topbar breadcrumb;
+     * kept only for the admin console.
+     */
     eyebrow: string;
     /** Page title. */
     title: string;
@@ -20,6 +32,13 @@ export declare class AthPageHeaderComponent {
     subItems: string[];
     /** Legacy free-form description (single paragraph). Falls back if subItems empty. */
     description: string;
+    /** Hairline under the head. On by default: it is part of the contract. */
+    divider: boolean;
+    /**
+     * Heading level of the title. 1 for a page; 2 for a section head inside a
+     * page that already has its h1 (the settings sub-pages under "Settings").
+     */
+    level: 1 | 2;
     /**
      * The sub-items worth separating.
      *
@@ -30,5 +49,5 @@ export declare class AthPageHeaderComponent {
      */
     protected get visibleSubItems(): string[];
     static ɵfac: i0.ɵɵFactoryDeclaration<AthPageHeaderComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthPageHeaderComponent, "ath-page-header", never, { "eyebrow": { "alias": "eyebrow"; "required": false; }; "title": { "alias": "title"; "required": true; }; "subItems": { "alias": "subItems"; "required": false; }; "description": { "alias": "description"; "required": false; }; }, {}, never, ["*"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthPageHeaderComponent, "ath-page-header", never, { "eyebrow": { "alias": "eyebrow"; "required": false; }; "title": { "alias": "title"; "required": true; }; "subItems": { "alias": "subItems"; "required": false; }; "description": { "alias": "description"; "required": false; }; "divider": { "alias": "divider"; "required": false; }; "level": { "alias": "level"; "required": false; }; }, {}, never, ["[athPageLeading]", "[athPageMeta]", "*"], true, never>;
 }

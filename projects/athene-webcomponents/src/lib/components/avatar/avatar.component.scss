@@ -15,10 +15,18 @@
   flex-shrink: 0;
   user-select: none;
 
+  // Topbar and dense rows (ref 20px).
+  &--xs {
+    width: var(--avatar-xs);
+    height: var(--avatar-xs);
+    font-size: 9px;
+  }
+
+  // Row avatar (ref: ~21px in tables and the topbar).
   &--sm {
-    width: 28px;
-    height: 28px;
-    font-size: var(--ath-font-size-xs);
+    width: var(--avatar-sm);
+    height: var(--avatar-sm);
+    font-size: 9.5px;
   }
 
   &--md {

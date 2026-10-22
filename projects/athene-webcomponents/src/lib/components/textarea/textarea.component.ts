@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { LucideAngularModule, AlertCircle } from 'lucide-angular';
@@ -69,8 +69,13 @@ export class AthTextareaComponent implements ControlValueAccessor {
     return this.value?.length ?? 0;
   }
 
+  // OnPush: values written by the forms API (e.g. a setValue after an async
+  // lookup) arrive outside an input change, so the view must be told.
+  private readonly cdr = inject(ChangeDetectorRef);
+
   writeValue(value: string): void {
     this.value = value ?? '';
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -83,6 +88,7 @@ export class AthTextareaComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
+    this.cdr.markForCheck();
   }
 
   onInput(event: Event): void {

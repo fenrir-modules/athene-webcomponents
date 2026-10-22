@@ -126,3 +126,11 @@
     }
   }
 }
+
+// Compact field (settings rows, toolbars).
+.ath-input--sm .ath-input__field {
+  height: var(--field-h-sm);
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 13.5px;
+}

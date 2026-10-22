@@ -35,6 +35,7 @@ export declare class AthTextareaComponent implements ControlValueAccessor {
     private onChange;
     protected onTouched: () => void;
     get characterCount(): number;
+    private readonly cdr;
     writeValue(value: string): void;
     registerOnChange(fn: (value: string) => void): void;
     registerOnTouched(fn: () => void): void;

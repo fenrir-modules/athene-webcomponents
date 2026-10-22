@@ -96,3 +96,11 @@
     }
   }
 }
+
+// Compact field (settings rows, toolbars).
+.ath-select--sm .ath-select__field {
+  height: var(--field-h-sm);
+  padding-left: 10px;
+  padding-right: 32px;
+  font-size: 13.5px;
+}

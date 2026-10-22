@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { LucideAngularModule, ChevronDown, AlertCircle } from 'lucide-angular';
@@ -37,6 +37,9 @@ export interface SelectOption {
 })
 export class AthSelectComponent implements ControlValueAccessor {
   /** Select label */
+  /** Field height: `md` 44px (default), `sm` 33px (compact settings rows). */
+  @Input() size: 'sm' | 'md' = 'md';
+
   @Input() label = '';
 
   /** Placeholder text */
@@ -68,8 +71,13 @@ export class AthSelectComponent implements ControlValueAccessor {
   private onChange: (value: string) => void = () => {};
   protected onTouched: () => void = () => {};
 
+  // OnPush: values written by the forms API (e.g. a setValue after an async
+  // lookup) arrive outside an input change, so the view must be told.
+  private readonly cdr = inject(ChangeDetectorRef);
+
   writeValue(value: string): void {
     this.value = value ?? '';
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -82,6 +90,7 @@ export class AthSelectComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
+    this.cdr.markForCheck();
   }
 
   onSelectionChange(event: Event): void {

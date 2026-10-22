@@ -5,7 +5,7 @@
     (keydown)="onBackdropKeydown($event)"
     role="button"
     tabindex="0"
-    aria-label="Close dialog"
+    [attr.aria-label]="closeText"
   ></div>
   <div class="ath-dialog__container">
     <div [class]="dialogClasses" role="dialog" aria-modal="true">
@@ -19,7 +19,7 @@
             <p class="ath-dialog__description">{{ description }}</p>
           }
         </div>
-        <button class="ath-dialog__close" type="button" aria-label="Close dialog" (click)="close()">
+        <button class="ath-dialog__close" type="button" [attr.aria-label]="closeText" (click)="close()">
           <lucide-icon [img]="closeIcon" [size]="18" />
         </button>
       </div>

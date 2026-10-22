@@ -1,4 +1,5 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, HostListener } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, HostListener, inject } from '@angular/core';
+import { ATH_DEFAULT_LABELS, ATH_LABELS } from '../../i18n/labels';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, X } from 'lucide-angular';
 import { AthButtonComponent } from '../button/button.component';
@@ -32,6 +33,15 @@ export type DialogSize = 'sm' | 'md' | 'lg' | 'xl';
 })
 export class AthDialogComponent {
   /** Whether the dialog is open */
+  private readonly labels = inject(ATH_LABELS, { optional: true });
+
+  /** Accessible name of the close controls; defaults to `ATH_LABELS`. */
+  @Input() closeLabel: string | null = null;
+
+  protected get closeText(): string {
+    return this.closeLabel ?? (this.labels?.closeDialog ?? ATH_DEFAULT_LABELS.closeDialog)();
+  }
+
   @Input() open = false;
 
   /** Dialog title */

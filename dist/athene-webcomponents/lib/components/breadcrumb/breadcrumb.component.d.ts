@@ -15,9 +15,13 @@ export interface BreadcrumbItem {
  * <ath-breadcrumb [items]="[{ label: 'Admin', link: '/admin' }, { label: 'Settings' }]" />
  */
 export declare class AthBreadcrumbComponent {
+    private readonly labels;
     /** Breadcrumb items */
     items: BreadcrumbItem[];
+    /** Accessible name of the landmark; defaults to `ATH_LABELS`. */
+    ariaLabel: string | null;
+    protected get navLabel(): string;
     protected readonly separatorIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthBreadcrumbComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthBreadcrumbComponent, "ath-breadcrumb", never, { "items": { "alias": "items"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthBreadcrumbComponent, "ath-breadcrumb", never, { "items": { "alias": "items"; "required": false; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; }; }, {}, never, never, true, never>;
 }

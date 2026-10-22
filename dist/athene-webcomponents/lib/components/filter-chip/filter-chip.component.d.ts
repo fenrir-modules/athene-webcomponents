@@ -1,7 +1,8 @@
 import { EventEmitter } from '@angular/core';
 import * as i0 from "@angular/core";
 /**
- * Filter chip in the style `Label : Value ▾`. Optional clearable.
+ * Filter pill in the style `Label Value ▾`: quiet grey fill, muted label,
+ * semibold value, no separator. Optional clearable.
  * Typically used in toolbars to compose query filters.
  *
  * @example

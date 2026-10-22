@@ -20,6 +20,10 @@ export type DialogSize = 'sm' | 'md' | 'lg' | 'xl';
  */
 export declare class AthDialogComponent {
     /** Whether the dialog is open */
+    private readonly labels;
+    /** Accessible name of the close controls; defaults to `ATH_LABELS`. */
+    closeLabel: string | null;
+    protected get closeText(): string;
     open: boolean;
     /** Dialog title */
     title: string;
@@ -40,5 +44,5 @@ export declare class AthDialogComponent {
     onBackdropClick(): void;
     onBackdropKeydown(event: KeyboardEvent): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthDialogComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthDialogComponent, "ath-dialog", never, { "open": { "alias": "open"; "required": false; }; "title": { "alias": "title"; "required": false; }; "description": { "alias": "description"; "required": false; }; "size": { "alias": "size"; "required": false; }; "closeOnBackdrop": { "alias": "closeOnBackdrop"; "required": false; }; "closeOnEscape": { "alias": "closeOnEscape"; "required": false; }; }, { "closed": "closed"; }, never, ["*", "[slot=footer]"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthDialogComponent, "ath-dialog", never, { "closeLabel": { "alias": "closeLabel"; "required": false; }; "open": { "alias": "open"; "required": false; }; "title": { "alias": "title"; "required": false; }; "description": { "alias": "description"; "required": false; }; "size": { "alias": "size"; "required": false; }; "closeOnBackdrop": { "alias": "closeOnBackdrop"; "required": false; }; "closeOnEscape": { "alias": "closeOnEscape"; "required": false; }; }, { "closed": "closed"; }, never, ["*", "[slot=footer]"], true, never>;
 }

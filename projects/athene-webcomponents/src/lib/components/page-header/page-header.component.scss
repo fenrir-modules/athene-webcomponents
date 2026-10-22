@@ -7,10 +7,25 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-6);
-  // No space of its own below: every page already spaces its sections, and
-  // the two together left a band of nothing between a page's title and
-  // its first row of content.
+  // No space of its own below unless divided: every page already spaces its
+  // sections, and the two together left a band of nothing between a page's
+  // title and its first row of content.
   padding-bottom: 0;
+
+  &--divided {
+    padding-bottom: var(--page-head-pad-bottom);
+    border-bottom: 1px solid var(--page-head-rule);
+  }
+
+  &__leading {
+    flex-shrink: 0;
+    // Sits closer to its title than the actions do.
+    margin-right: calc(var(--space-4) - var(--space-6));
+
+    &:empty {
+      display: none;
+    }
+  }
 
   &__text {
     flex: 1;
@@ -28,37 +43,64 @@
 
   &__title {
     margin: 0;
-    font-size: var(--text-2xl);
+    font-size: var(--page-title-size);
     font-weight: var(--weight-semibold);
     color: var(--fg);
     line-height: var(--line-tight);
-    // Large type needs negative tracking or it reads loose above the
-    // body text under it.
-    letter-spacing: -0.02em;
+    // Display type needs a little negative tracking or it reads loose
+    // above the body text under it.
+    letter-spacing: -0.015em;
   }
 
   &__sub {
-    margin-top: 6px;
+    // Width of one leading separator: the dot plus the space either side.
+    --sep-w: 16px;
+
+    margin-top: var(--page-head-gap);
+    // Pulled left by one separator and clipped back, so the separator that
+    // leads the first item on every line falls outside the visible area.
+    margin-left: calc(-1 * var(--sep-w));
+    clip-path: inset(0 0 0 var(--sep-w));
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 6px;
-    font-size: var(--text-base);
+    row-gap: 2px;
+    font-size: var(--page-meta-size);
     color: var(--fg-3);
     line-height: var(--line-normal);
   }
 
+  &__sub:not(:has(.ath-page-header__sub-item)):has(.ath-page-header__sub-slot:empty) {
+    display: none;
+  }
+
   &__sub-item {
-    font-weight: 400;
+    display: inline-flex;
+    align-items: center;
+    font-weight: var(--weight-normal);
   }
 
   &__sub-sep {
+    display: inline-block;
+    width: var(--sep-w);
+    text-align: center;
     color: var(--fg-4);
   }
 
+  // Rich meta (pills, avatars) starts like an item: one separator-width in.
+  &__sub-slot {
+    display: inline-flex;
+    align-items: center;
+    padding-left: var(--sep-w);
+
+    &:empty {
+      display: none;
+    }
+  }
+
   &__description {
-    margin: 6px 0 0;
-    font-size: var(--text-base);
+    margin: var(--page-head-gap) 0 0;
+    font-size: var(--page-meta-size);
     color: var(--fg-3);
     line-height: var(--line-normal);
     // A measure, not a pixel width: the line breaks where it becomes
@@ -66,23 +108,34 @@
     max-width: 62ch;
   }
 
+  // Centred on the title block, not hung from its top edge (ref 01/05).
   &__actions {
     display: flex;
     align-items: center;
+    align-self: center;
     gap: var(--space-2);
     flex-shrink: 0;
   }
 }
 
-// Responsive
+// Responsive: title block (and its leading tile) keep one row; the
+// actions drop to a full-width row of their own beneath it.
 @media (max-width: 640px) {
   .ath-page-header {
-    flex-direction: column;
-    align-items: stretch;
+    flex-wrap: wrap;
     gap: var(--space-4);
 
+    &__text {
+      flex: 1 1 0;
+    }
+
     &__actions {
+      flex-basis: 100%;
       justify-content: flex-start;
+    }
+
+    &__actions:empty {
+      display: none;
     }
   }
 }

@@ -5,7 +5,7 @@ import { avatarInitials, avatarTone } from './avatar-tone';
 /**
  * Avatar size variants
  */
-export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
+export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 /**
  * Athene Avatar Component

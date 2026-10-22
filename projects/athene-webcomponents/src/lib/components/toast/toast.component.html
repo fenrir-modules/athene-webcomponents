@@ -3,6 +3,11 @@
     <div class="ath-toast" [class]="'ath-toast ath-toast--' + toast.variant">
       <lucide-icon [img]="getIcon(toast.variant)" [size]="18" class="ath-toast__icon" />
       <span class="ath-toast__message">{{ toast.message }}</span>
+      @if (toast.action; as action) {
+        <button type="button" class="ath-toast__action" (click)="runAction(toast.id)">
+          {{ action.label }}
+        </button>
+      }
       <button
         type="button"
         class="ath-toast__close"

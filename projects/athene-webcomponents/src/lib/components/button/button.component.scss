@@ -14,7 +14,7 @@
   border: 1px solid transparent;
   cursor: pointer;
   white-space: nowrap;
-  letter-spacing: 0.2px;
+  letter-spacing: 0;
   transition:
     background-color 150ms ease,
     border-color 150ms ease,
@@ -35,22 +35,38 @@
   // -------------------------------------------
   // Sizes
   // -------------------------------------------
+  // Heights come from the control scale (ref: page-head and topbar
+  // buttons are 28px, form buttons 32px).
+  // Topbar "+ New" (ref: 63×26).
+  &--xs {
+    height: var(--control-h-xs);
+    padding: 0 10px;
+    font-size: var(--control-font);
+    border-radius: var(--r-sm);
+
+    .ath-button__content {
+      gap: 5px;
+    }
+  }
+
+  // Ref "New ticket" is 103.5px wide: 8px side padding, 6px icon gap.
   &--sm {
-    height: 32px;
-    padding: 0 var(--ath-space-3);
-    font-size: var(--ath-font-size-sm);
+    height: var(--control-h-sm);
+    padding: 0 8px;
+    font-size: var(--control-font);
+    border-radius: var(--r-sm);
   }
 
   &--md {
-    height: 40px;
-    padding: 0 var(--ath-space-4);
-    font-size: var(--ath-font-size-md);
+    height: var(--control-h);
+    padding: 0 var(--ath-space-3);
+    font-size: var(--control-font);
   }
 
   &--lg {
-    height: 48px;
-    padding: 0 var(--ath-space-6);
-    font-size: var(--ath-font-size-lg);
+    height: var(--control-h-lg);
+    padding: 0 var(--ath-space-5);
+    font-size: var(--ath-font-size-md);
   }
 
   // -------------------------------------------
@@ -61,7 +77,19 @@
     background: var(--action-primary-bg);
     color: var(--action-primary-fg);
     border-color: var(--action-primary-bg);
-    font-weight: var(--ath-font-weight-semibold);
+    // Medium, like every other button: the fill carries the emphasis (ref).
+    font-weight: var(--ath-font-weight-medium);
+
+    // Disabled comes from tokens: light fades the ink itself (40%), dark
+    // uses a neutral well with muted text — a faded accent went brown.
+    // A loading button is disabled too, but keeps its colour so the
+    // spinner stays visible on it.
+    &:disabled:not(.ath-button--loading) {
+      background: var(--action-primary-disabled-bg);
+      border-color: var(--action-primary-disabled-border);
+      color: var(--action-primary-disabled-fg);
+      opacity: var(--action-primary-disabled-opacity);
+    }
 
     &:hover:not(:disabled) {
       background: var(--action-primary-bg-hover);
@@ -78,10 +106,30 @@
     }
   }
 
+  // The global "+ New" in the topbar: green in the reference, so it does
+  // not compete with the one ink primary in the page head below it.
+  &--create {
+    background: var(--action-create-bg);
+    color: var(--action-create-fg);
+    border-color: var(--action-create-border);
+
+    &:hover:not(:disabled) {
+      background: var(--action-create-bg-hover);
+    }
+
+    &:active:not(:disabled) {
+      background: var(--action-create-bg-active);
+    }
+
+    .ath-button__loader-wrap {
+      color: var(--action-create-fg);
+    }
+  }
+
   &--secondary {
     background-color: var(--ath-bg-secondary);
     color: var(--ath-text-primary);
-    border-color: var(--ath-border-color);
+    border-color: var(--action-outline-border);
 
     &:hover:not(:disabled) {
       border-color: var(--ath-border-color-hover);
@@ -91,8 +139,15 @@
 
   &--outline {
     background-color: transparent;
-    border-color: var(--ath-border-color);
+    border-color: var(--action-outline-border);
     color: var(--action-outline-fg);
+
+    // Disabled reads neutral in every theme — dark mode's accent outline
+    // must not survive into the disabled state (QA D11).
+    &:disabled {
+      color: var(--fg-3);
+      border-color: var(--border);
+    }
 
     &:hover:not(:disabled) {
       background-color: var(--action-outline-hover-bg);
@@ -153,6 +208,12 @@
     width: 100%;
   }
 
+  // Toggle buttons (aria-pressed): a sunken fill, the same as a hover held.
+  &--pressed:not(.ath-button--primary):not(.ath-button--create) {
+    background-color: var(--hover-strong);
+    border-color: var(--action-outline-hover-border);
+  }
+
   &--loading {
     pointer-events: none;
   }
@@ -175,7 +236,7 @@
     display: inline-flex;
     grid-area: 1 / 1;
     align-items: center;
-    gap: var(--ath-space-2);
+    gap: 6px;
 
     &--hidden {
       visibility: hidden;

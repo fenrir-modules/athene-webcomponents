@@ -46,6 +46,10 @@
   // quieter than fg-3. Disabled text is fg-disabled, which is exempt.
   --fg-3:        #5c5c65;           // 6.6:1 white · 6.0 canvas · 5.8 bg-2
   --fg-4:        #6c6c76;           // 5.2:1 white · 4.7 canvas · 4.5 bg-2
+  // Tertiary label grey (ref ≈ #8b8b90): section labels, weekday names,
+  // time-gutter labels, card keys. Decorative/secondary labels only — it
+  // is 3.4:1 on white, so never the only carrier of body text.
+  --fg-label:    #8b8b90;
   --fg-disabled: #c8c8d0;
 
   // -----------------------------------------------------------------
@@ -72,6 +76,12 @@
   --action-primary-bg-hover:  var(--ink-hover);
   --action-primary-bg-active: #000000;
   --action-primary-fg:        #ffffff;
+  // Disabled primary: the black button at ~0.38 — clearly "not yet",
+  // still recognisably the primary (QA D12, Design Director).
+  --action-primary-disabled-bg:      var(--action-primary-bg);
+  --action-primary-disabled-fg:      var(--action-primary-fg);
+  --action-primary-disabled-border:  var(--action-primary-bg);
+  --action-primary-disabled-opacity: 0.38;
 
   // Selected navigation row (rail, settings nav, filter lists)
   --nav-active-bg:        #00000017;   // ~9% black — reads as a pill on white chrome
@@ -103,6 +113,8 @@
   --action-outline-fg:           var(--fg);
   --action-outline-hover-bg:     var(--hover);
   --action-outline-hover-border: var(--border-strong);
+  // Outline / secondary button border (ref ≈ #ccccd0).
+  --action-outline-border:       var(--border-strong);
   --chip-primary-bg:     var(--bg-2);
   --chip-primary-fg:     var(--fg);
   --chip-primary-border: var(--border-strong);
@@ -116,9 +128,25 @@
   --selection-bar-fg:     var(--fg);
   --row-selected-bg:      var(--hover-strong);
 
-  // Brand mark in the shell
-  --brand-mark-bg: var(--ink);
+  // Brand mark in the shell — black tile, white glyph (ref 01/02).
+  --brand-mark-bg: #0a0a0b;
   --brand-mark-fg: #ffffff;
+
+  // Create action — the topbar "+ New" (ref 01: green, not ink). Page-head
+  // primaries stay ink; this is the one global "make something" button.
+  --action-create-bg:        #43946c;
+  --action-create-bg-hover:  #3a8560;
+  --action-create-bg-active: #347659;
+  --action-create-border:    #347659;
+  --action-create-fg:        #ffffff;
+
+  // Unread marker (topbar bell, rail inbox) — green in the reference.
+  --notify-dot: #43946c;
+
+  // Rail / sidebar selected row — a flat grey tile, the same fill as the
+  // rail's search tile (ref 01: both #efeff2).
+  --rail-active-bg: var(--bg-2);
+  --rail-tile-bg:   var(--bg-2);
 
   // Person avatars — deterministic per person (avatarTone()), muted
   // mid-tones with white initials (all >= 4.5:1).
@@ -137,14 +165,15 @@
   // Status — muted, used as dots + subtle fills
   // -----------------------------------------------------------------
   --red:    #dc2626;
-  --amber:  #d97706;
+  // Measured on the reference's in-progress icons and due text.
+  --amber:  #cc7c2e;
   --blue:   #2563eb;
   --green:  #16a34a;
   --purple: #7c3aed;
   --pink:   #db2777;
 
   --red-tint:    #dc26260f;
-  --amber-tint:  #d970060f;
+  --amber-tint:  #cc7c2e0f;
   --blue-tint:   #2563eb0f;
   --green-tint:  #16a34a0f;
   --purple-tint: #7c3aed0f;
@@ -193,6 +222,84 @@
   --line-tight:   1.2;
   --line-normal:  1.5;
   --line-relaxed: 1.7;
+
+  // -----------------------------------------------------------------
+  // Scale & density — measured from the reference screens at 1110×760.
+  // Pages read these instead of hard-coding their own heights, so the
+  // whole product moves together when the density changes.
+  // -----------------------------------------------------------------
+  // Page head (ath-page-header)
+  // Measured on ref 01 (2224px @2x): the H1 cap height is 12 CSS px and
+  // "Good evening, Joel" sets 149px wide — 17px semibold Geist; the meta
+  // line sets at 12px; the hairline sits 12px under it.
+  --page-title-size:      17px;      // H1, semibold
+  --page-meta-size:       12px;      // muted meta line under the title
+  --page-head-gap:        4px;       // title → meta
+  --page-head-pad-bottom: 12px;      // meta → hairline
+  --page-head-rule:       var(--border-faint);
+  // Shell content frame (first element starts 16px under the topbar)
+  --content-pad-top:      16px;
+  --content-pad-x:        28px;
+  // Section rhythm below the page head (hairline → first panel)
+  --section-gap:          16px;
+
+  // Controls (ath-button, segment, filter pills, toolbar inputs)
+  --control-h-xs:  26px;           // topbar "+ New" (ref 25–26px)
+  --control-h-sm:  28px;
+  --control-h:     32px;
+  --control-h-lg:  40px;
+  --field-h-sm:    33px;           // compact form field (settings rows)
+  --control-font:  13px;
+
+  // Panels & tables
+  --panel-radius:     var(--r-lg);
+  --panel-pad-x:      16px;
+  --panel-pad-y:      12px;
+  --panel-head-h:     40px;          // title row of a panel
+  --panel-title-size: 14px;
+  --table-head-h:     36px;
+  --table-head-bg:    var(--bg-2);   // filled grey band (ref 01 focus table)
+  --table-head-size:  12.5px;
+  --row-h:            44px;          // body row in a panel table
+  --row-h-compact:    36px;          // agenda / member lists
+
+  // Avatars in rows and the topbar
+  --avatar-xs: 20px;               // topbar, dense rows (ref 20px)
+  --avatar-sm: 22px;
+
+  // Icons — thin strokes (ref ≈1.25–1.5 at 13–14px).
+  --icon-stroke: 1.5;
+  --icon-size-nav: 14px;
+
+  // Decorative status marks (board column bars, ticket-group dots, sidebar
+  // project-key chips): the status hue at ~60% strength over the surface.
+  // Status icons and due text keep the full colour.
+  --deco-mix:          60%;
+  --red-muted:         color-mix(in srgb, var(--red) var(--deco-mix), var(--surface));
+  --amber-muted:       color-mix(in srgb, var(--amber) var(--deco-mix), var(--surface));
+  --blue-muted:        color-mix(in srgb, var(--blue) var(--deco-mix), var(--surface));
+  --green-muted:       color-mix(in srgb, var(--green) var(--deco-mix), var(--surface));
+  --purple-muted:      color-mix(in srgb, var(--purple) var(--deco-mix), var(--surface));
+  --pink-muted:        color-mix(in srgb, var(--pink) var(--deco-mix), var(--surface));
+  --grey-muted:        color-mix(in srgb, var(--fg-4) var(--deco-mix), var(--surface));
+
+  // Toasts live bottom-right, away from the topbar's "+ New" and avatar
+  // entirely (Design Director: under-the-bar still read as covering it).
+  --toast-offset-top:    auto;
+  --toast-offset-bottom: 16px;
+  --toast-offset-right:  16px;
+
+  // Text selection — neutral ink wash, never the accent.
+  --selection-bg: rgba(23, 23, 26, 0.16);
+  --selection-fg: inherit;
+
+  // Shadow of the hover-expanded sidebar drawer (ref 02: soft, ≈20px).
+  --shadow-drawer: 6px 0 20px -6px rgba(15, 23, 42, 0.12);
+
+  // Chips (labels, project keys)
+  --chip-h:      20px;
+  --chip-radius: var(--r-xs);
+  --chip-font:   11.5px;
 
   // -----------------------------------------------------------------
   // Spacing scale
@@ -366,6 +473,7 @@
   --fg-2:        #b0b0bc;
   --fg-3:        #9a9aa6;           // 6.1:1 surface · 6.8 bg-0 · 5.7 bg-2
   --fg-4:        #8c8c98;           // 5.1:1 surface · 5.7 bg-0 · 4.8 bg-2
+  --fg-label:    #74747f;
   --fg-disabled: #38383f;
 
   // Accent (default violet for dark — softer than light)
@@ -385,6 +493,13 @@
   --action-primary-bg-hover:  var(--accent-2);
   --action-primary-bg-active: var(--accent-3);
   --action-primary-fg:        #111113;
+  // Disabled primary in dark: a faded accent over a dark surface turns a
+  // muddy brown with dark text on it — illegible, and it read as a hover
+  // state. A neutral well with muted text says "unavailable" plainly.
+  --action-primary-disabled-bg:      var(--surface-3);
+  --action-primary-disabled-fg:      var(--fg-4);
+  --action-primary-disabled-border:  var(--border);
+  --action-primary-disabled-opacity: 1;
 
   --nav-active-bg:        color-mix(in srgb, var(--accent) 12%, transparent);
   --nav-active-bg-hover:  color-mix(in srgb, var(--accent) 18%, transparent);
@@ -420,8 +535,19 @@
   --selection-bar-fg:     var(--accent);
   --row-selected-bg:      color-mix(in srgb, var(--accent) 7%, transparent);
 
-  --brand-mark-bg: color-mix(in srgb, var(--accent) 14%, transparent);
-  --brand-mark-fg: var(--accent);
+  // Inverted tile in dark: light square, dark glyph — same mark, same weight.
+  --brand-mark-bg: var(--fg);
+  --brand-mark-fg: var(--bg-0);
+
+  --action-create-bg:        var(--green);
+  --action-create-bg-hover:  color-mix(in srgb, var(--green) 88%, #fff);
+  --action-create-bg-active: color-mix(in srgb, var(--green) 88%, #000);
+  --action-create-border:    var(--green);
+  --action-create-fg:        #111113;
+  --notify-dot:              var(--green);
+  --rail-active-bg:          var(--nav-active-bg);
+  --rail-tile-bg:            var(--bg-2);
+  --page-head-rule:          var(--border);
 
   // Avatars — same hues, lifted for dark surfaces, dark initials.
   --avatar-1-bg: #d0915e;  --avatar-1-fg: #111113;
@@ -452,6 +578,10 @@
   --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-2: 0 4px 16px -2px rgba(0, 0, 0, 0.5), 0 2px 5px -1px rgba(0, 0, 0, 0.3);
   --shadow-3: 0 20px 52px -12px rgba(0, 0, 0, 0.7), 0 8px 16px -4px rgba(0, 0, 0, 0.4);
+
+  --shadow-drawer: 8px 0 24px -6px rgba(0, 0, 0, 0.55);
+  --selection-bg:  rgba(230, 230, 235, 0.24);
+  --action-outline-border: var(--border-strong);
 
   // Overlay (dark backdrop is more opaque)
   --ath-bg-overlay: rgba(0, 0, 0, 0.7);

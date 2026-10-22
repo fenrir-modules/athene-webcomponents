@@ -85,3 +85,15 @@ table {
     scroll-behavior: auto !important;
   }
 }
+
+// Lucide icons draw at stroke 2 by default; the reference's icons are thin
+// (≈1.25–1.5). Only the library default is re-pointed at the token — an
+// icon given an explicit strokeWidth keeps it.
+svg.lucide[stroke-width='2'] {
+  stroke-width: var(--icon-stroke, 1.5);
+}
+
+::selection {
+  background: var(--selection-bg);
+  color: var(--selection-fg);
+}

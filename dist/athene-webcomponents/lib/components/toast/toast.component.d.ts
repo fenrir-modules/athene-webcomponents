@@ -11,6 +11,21 @@ export interface ToastMessage {
     variant: ToastVariant;
     message: string;
     duration?: number;
+    action?: ToastAction;
+}
+/** A quiet text button in the toast ("Öffnen"). Runs, then closes the toast. */
+export interface ToastAction {
+    label: string;
+    run: () => void;
+}
+/**
+ * Second argument of the toast methods: a duration in ms (the old form,
+ * still accepted), or options. A toast with an action stays a little
+ * longer by default (8s) so there is time to reach the button.
+ */
+export interface ToastOptions {
+    duration?: number;
+    action?: ToastAction;
 }
 /**
  * Toast Service
@@ -25,10 +40,12 @@ export interface ToastMessage {
 export declare class AthToastService {
     private toastsSignal;
     readonly toasts: import("@angular/core").Signal<ToastMessage[]>;
-    success(message: string, duration?: number): void;
-    error(message: string, duration?: number): void;
-    warning(message: string, duration?: number): void;
-    info(message: string, duration?: number): void;
+    success(message: string, options?: number | ToastOptions): void;
+    error(message: string, options?: number | ToastOptions): void;
+    warning(message: string, options?: number | ToastOptions): void;
+    info(message: string, options?: number | ToastOptions): void;
+    /** Run a toast's action, then close the toast. */
+    runAction(id: string): void;
     remove(id: string): void;
     private add;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthToastService, never>;
@@ -55,6 +72,7 @@ export declare class AthToastContainerComponent {
     get toasts(): ToastMessage[];
     getIcon(variant: ToastVariant): import("node_modules/lucide-angular/icons/types").LucideIconData;
     dismiss(id: string): void;
+    runAction(id: string): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthToastContainerComponent, never>;
     static ɵcmp: i0.ɵɵComponentDeclaration<AthToastContainerComponent, "ath-toast-container", never, {}, {}, never, never, true, never>;
 }

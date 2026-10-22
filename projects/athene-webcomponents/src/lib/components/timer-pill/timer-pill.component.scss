@@ -10,8 +10,9 @@
   padding: 0 10px;
   background: var(--bg-1);
   border: 1px solid var(--border);
-  border-radius: 999px;
-  font-family: var(--font-sans);
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum';
   cursor: pointer;
   transition:
     background var(--t-fast),
@@ -36,18 +37,19 @@
   }
 }
 
+// Paused: a quiet grey dot. Running: the recording dot (ref 01 — red,
+// breathing), on the same white pill.
 .ath-tpill__dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 999px;
   background: var(--fg-4);
   flex-shrink: 0;
 }
 
 .ath-tpill__time {
-  font-family: var(--font-mono);
-  font-feature-settings: 'tnum';
-  font-size: 11.5px;
+  font-size: 12px;
+  font-weight: 400;
   color: var(--fg);
   letter-spacing: 0;
 }
@@ -58,24 +60,22 @@
 }
 
 .ath-tpill__key {
-  font-family: var(--font-mono);
-  font-feature-settings: 'tnum';
-  font-size: 11px;
+  font-size: 11.5px;
+  font-weight: 400;
   color: var(--fg-3);
   letter-spacing: 0;
 }
 
-// Active = green pulsing dot
 :host([data-active='true']) {
-  .ath-tpill {
-    background: var(--green-tint);
-    border-color: color-mix(in srgb, var(--green) 30%, transparent);
-  }
-
   .ath-tpill__dot {
-    background: var(--green);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 18%, transparent);
-    animation: ath-tpill-pulse 1.6s ease-in-out infinite;
+    background: var(--red);
+    animation: ath-tpill-rec 2s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host([data-active='true']) .ath-tpill__dot {
+    animation: none;
   }
 }
 
@@ -98,9 +98,9 @@
   .ath-tpill__dot { background: var(--red); }
 }
 
-@keyframes ath-tpill-pulse {
-  0%, 100% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 18%, transparent); }
-  50%      { box-shadow: 0 0 0 5px color-mix(in srgb, var(--green) 10%, transparent); }
+@keyframes ath-tpill-rec {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
 }
 
 @keyframes ath-tpill-alert {

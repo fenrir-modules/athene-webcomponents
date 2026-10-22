@@ -22,6 +22,11 @@ export declare class AthEmptyStateComponent {
     subMessage: string;
     /** Optional lucide icon shown above the message. */
     icon: EmptyStateIcon | null;
+    /**
+     * No frame of its own, for an empty state that already sits inside a
+     * panel; the dashed box inside a white panel drew a card in a card.
+     */
+    bare: boolean;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthEmptyStateComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthEmptyStateComponent, "ath-empty-state", never, { "message": { "alias": "message"; "required": true; }; "subMessage": { "alias": "subMessage"; "required": false; }; "icon": { "alias": "icon"; "required": false; }; }, {}, never, ["*"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthEmptyStateComponent, "ath-empty-state", never, { "message": { "alias": "message"; "required": true; }; "subMessage": { "alias": "subMessage"; "required": false; }; "icon": { "alias": "icon"; "required": false; }; "bare": { "alias": "bare"; "required": false; }; }, {}, never, ["*"], true, never>;
 }

@@ -15,7 +15,26 @@ export interface ToastMessage {
   variant: ToastVariant;
   message: string;
   duration?: number;
+  action?: ToastAction;
 }
+
+/** A quiet text button in the toast ("Öffnen"). Runs, then closes the toast. */
+export interface ToastAction {
+  label: string;
+  run: () => void;
+}
+
+/**
+ * Second argument of the toast methods: a duration in ms (the old form,
+ * still accepted), or options. A toast with an action stays a little
+ * longer by default (8s) so there is time to reach the button.
+ */
+export interface ToastOptions {
+  duration?: number;
+  action?: ToastAction;
+}
+
+const ACTION_MIN_DURATION = 8000;
 
 /**
  * Toast Service
@@ -32,34 +51,50 @@ export class AthToastService {
   private toastsSignal = signal<ToastMessage[]>([]);
   readonly toasts = this.toastsSignal.asReadonly();
 
-  success(message: string, duration = 4000): void {
-    this.add({ variant: 'success', message, duration });
+  success(message: string, options: number | ToastOptions = 4000): void {
+    this.add('success', message, options, 4000);
   }
 
-  error(message: string, duration = 6000): void {
-    this.add({ variant: 'error', message, duration });
+  error(message: string, options: number | ToastOptions = 6000): void {
+    this.add('error', message, options, 6000);
   }
 
-  warning(message: string, duration = 5000): void {
-    this.add({ variant: 'warning', message, duration });
+  warning(message: string, options: number | ToastOptions = 5000): void {
+    this.add('warning', message, options, 5000);
   }
 
-  info(message: string, duration = 4000): void {
-    this.add({ variant: 'info', message, duration });
+  info(message: string, options: number | ToastOptions = 4000): void {
+    this.add('info', message, options, 4000);
+  }
+
+  /** Run a toast's action, then close the toast. */
+  runAction(id: string): void {
+    const toast = this.toastsSignal().find((t) => t.id === id);
+    this.remove(id);
+    toast?.action?.run();
   }
 
   remove(id: string): void {
     this.toastsSignal.update(toasts => toasts.filter(t => t.id !== id));
   }
 
-  private add(options: Omit<ToastMessage, 'id'>): void {
-    const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
-    const toast: ToastMessage = { id, ...options };
+  private add(
+    variant: ToastVariant,
+    message: string,
+    options: number | ToastOptions,
+    fallback: number
+  ): void {
+    const opts: ToastOptions = typeof options === 'number' ? { duration: options } : options;
+    const action = opts.action;
+    const duration =
+      opts.duration ?? (action ? Math.max(fallback, ACTION_MIN_DURATION) : fallback);
+    const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const toast: ToastMessage = { id, variant, message, duration, action };
 
-    this.toastsSignal.update(toasts => [...toasts, toast]);
+    this.toastsSignal.update((toasts) => [...toasts, toast]);
 
-    if (options.duration && options.duration > 0) {
-      setTimeout(() => this.remove(id), options.duration);
+    if (duration > 0) {
+      setTimeout(() => this.remove(id), duration);
     }
   }
 }
@@ -106,5 +141,9 @@ export class AthToastContainerComponent {
 
   dismiss(id: string): void {
     this.toastService.remove(id);
+  }
+
+  runAction(id: string): void {
+    this.toastService.runAction(id);
   }
 }

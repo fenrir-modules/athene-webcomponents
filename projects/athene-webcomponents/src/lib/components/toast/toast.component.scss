@@ -4,8 +4,9 @@
 
 .ath-toast-container {
   position: fixed;
-  top: var(--ath-space-4);
-  right: var(--ath-space-4);
+  top: var(--toast-offset-top, auto);
+  bottom: var(--toast-offset-bottom, 16px);
+  right: var(--toast-offset-right, 16px);
   z-index: var(--ath-z-toast);
   display: flex;
   flex-direction: column;
@@ -69,6 +70,32 @@
     font-size: var(--ath-font-size-sm);
     color: var(--ath-text-primary);
     line-height: var(--ath-line-height-normal);
+  }
+
+  // Quiet text button ("Öffnen"): ink text, underline on hover/focus.
+  &__action {
+    flex-shrink: 0;
+    align-self: center;
+    padding: 2px 6px;
+    margin: -2px 0;
+    background: none;
+    border: none;
+    border-radius: var(--r-xs);
+    color: var(--fg);
+    font-family: inherit;
+    font-size: var(--ath-font-size-sm);
+    font-weight: var(--ath-font-weight-semibold);
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--accent-ring);
+    }
   }
 
   &__close {

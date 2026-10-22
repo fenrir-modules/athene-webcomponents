@@ -1,4 +1,4 @@
-<div class="ath-input" [class.ath-input--error]="error" [class.ath-input--disabled]="disabled">
+<div class="ath-input" [class.ath-input--sm]="size === 'sm'" [class.ath-input--error]="error" [class.ath-input--disabled]="disabled">
   @if (label) {
     <label class="ath-input__label" [for]="inputId">
       {{ label }}
@@ -27,7 +27,7 @@
         type="button"
         class="ath-input__toggle"
         (click)="togglePassword()"
-        [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+        [attr.aria-label]="showPassword ? hidePasswordText : showPasswordText"
         [attr.aria-pressed]="showPassword"
         tabindex="-1"
       >
