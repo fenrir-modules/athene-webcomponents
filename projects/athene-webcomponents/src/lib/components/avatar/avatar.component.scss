@@ -8,8 +8,8 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--ath-border-radius-full);
-  background: linear-gradient(135deg, var(--ath-color-primary), var(--ath-color-primary-hover));
-  color: var(--ath-text-inverse);
+  background: var(--avatar-neutral-bg);
+  color: var(--avatar-neutral-fg);
   font-weight: var(--ath-font-weight-semibold);
   overflow: hidden;
   flex-shrink: 0;
@@ -45,6 +45,14 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  // Per-person tone — see avatar-tone.ts and --avatar-N-* tokens.
+  @for $i from 1 through 8 {
+    &[data-tone='#{$i}'] {
+      background: var(--avatar-#{$i}-bg);
+      color: var(--avatar-#{$i}-fg);
+    }
   }
 
   &__initials {

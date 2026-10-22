@@ -21,6 +21,8 @@ export declare class AthAvatarComponent {
     size: AvatarSize;
     get avatarClasses(): string;
     get initials(): string;
+    /** Per-person colour tone; '?' (no name) stays on the neutral tone. */
+    get tone(): number | null;
     onImageError(event: Event): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthAvatarComponent, never>;
     static ɵcmp: i0.ɵɵComponentDeclaration<AthAvatarComponent, "ath-avatar", never, { "name": { "alias": "name"; "required": false; }; "src": { "alias": "src"; "required": false; }; "size": { "alias": "size"; "required": false; }; }, {}, never, never, true, never>;

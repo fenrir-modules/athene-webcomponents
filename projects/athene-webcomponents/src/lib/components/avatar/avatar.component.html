@@ -1,4 +1,4 @@
-<div [class]="avatarClasses" [attr.aria-label]="name">
+<div [class]="avatarClasses" [attr.data-tone]="tone" [attr.aria-label]="name">
   @if (src) {
     <img [src]="src" [alt]="name" class="ath-avatar__image" (error)="onImageError($event)" />
   }

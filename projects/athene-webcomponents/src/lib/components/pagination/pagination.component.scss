@@ -56,9 +56,9 @@
   }
 
   &--active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
+    background: var(--action-primary-bg);
+    border-color: var(--action-primary-bg);
+    color: var(--action-primary-fg);
     cursor: default;
   }
 }

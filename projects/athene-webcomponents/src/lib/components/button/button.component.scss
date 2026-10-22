@@ -56,24 +56,25 @@
   // -------------------------------------------
   // Variants — all palette-aware, no hardcoded hex
   // -------------------------------------------
+  // Ink in light, accent in dark — the role token decides, not the button.
   &--primary {
-    background: var(--ath-color-primary);
-    color: var(--ath-text-inverse);
-    border-color: var(--ath-color-primary);
+    background: var(--action-primary-bg);
+    color: var(--action-primary-fg);
+    border-color: var(--action-primary-bg);
     font-weight: var(--ath-font-weight-semibold);
 
     &:hover:not(:disabled) {
-      background: var(--ath-color-primary-hover);
-      border-color: var(--ath-color-primary-hover);
+      background: var(--action-primary-bg-hover);
+      border-color: var(--action-primary-bg-hover);
     }
 
     &:active:not(:disabled) {
-      background: var(--ath-color-primary-active);
-      border-color: var(--ath-color-primary-active);
+      background: var(--action-primary-bg-active);
+      border-color: var(--action-primary-bg-active);
     }
 
     .ath-button__loader-wrap {
-      color: var(--ath-text-inverse);
+      color: var(--action-primary-fg);
     }
   }
 
@@ -91,14 +92,11 @@
   &--outline {
     background-color: transparent;
     border-color: var(--ath-border-color);
-    color: var(--ath-color-primary);
+    color: var(--action-outline-fg);
 
     &:hover:not(:disabled) {
-      // The accent's own faint fill, not an rgba() rebuilt from a
-      // separately-maintained rgb triple that has to be kept in step
-      // with the accent by hand.
-      background-color: var(--accent-faint);
-      border-color: var(--ath-color-primary);
+      background-color: var(--action-outline-hover-bg);
+      border-color: var(--action-outline-hover-border);
     }
   }
 

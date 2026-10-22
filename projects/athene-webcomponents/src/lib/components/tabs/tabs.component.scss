@@ -29,11 +29,11 @@
     }
 
     &--active {
-      color: var(--ath-color-primary);
-      border-bottom-color: var(--ath-color-primary);
+      color: var(--tab-active-fg);
+      border-bottom-color: var(--tab-active-indicator);
 
       &:hover:not(:disabled) {
-        color: var(--ath-color-primary);
+        color: var(--tab-active-fg);
       }
     }
 
@@ -73,7 +73,7 @@
   }
 
   &__tab--active &__count {
-    color: var(--accent);
-    background: var(--accent-faint);
+    color: var(--segment-count-active-fg);
+    background: var(--segment-count-active-bg);
   }
 }

@@ -19,9 +19,9 @@
   }
 
   &--primary {
-    color: var(--ath-color-primary);
-    background-color: var(--accent-ring);
-    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    color: var(--chip-primary-fg);
+    background-color: var(--chip-primary-bg);
+    border: 1px solid var(--chip-primary-border);
   }
 
   &--success {

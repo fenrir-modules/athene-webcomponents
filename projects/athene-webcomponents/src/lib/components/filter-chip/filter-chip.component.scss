@@ -84,17 +84,17 @@
 
 // Active state — filter has a value
 :host([data-active='true']) .ath-fchip {
-  background: var(--accent-faint);
-  border-color: var(--accent-ring);
+  background: var(--chip-active-bg);
+  border-color: var(--chip-active-border);
   color: var(--fg);
 
   .ath-fchip__label {
-    color: var(--accent);
+    color: var(--chip-active-fg);
   }
 
   &:hover {
-    background: var(--accent-faint);
-    border-color: var(--accent);
+    background: var(--chip-active-bg);
+    border-color: var(--chip-active-fg);
   }
 }
 

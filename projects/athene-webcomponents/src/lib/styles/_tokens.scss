@@ -41,8 +41,11 @@
   // -----------------------------------------------------------------
   --fg:          #1a1a1e;
   --fg-2:        #3c3c44;
-  --fg-3:        #6e6e78;
-  --fg-4:        #9e9ea8;
+  // fg-3/fg-4 carry real small text (meta, keys, hints), so both clear
+  // 4.5:1 on white, the canvas (bg-0) and bg-2 fills; fg-4 stays a step
+  // quieter than fg-3. Disabled text is fg-disabled, which is exempt.
+  --fg-3:        #5c5c65;           // 6.6:1 white · 6.0 canvas · 5.8 bg-2
+  --fg-4:        #6c6c76;           // 5.2:1 white · 4.7 canvas · 4.5 bg-2
   --fg-disabled: #c8c8d0;
 
   // -----------------------------------------------------------------
@@ -54,6 +57,81 @@
   --accent-dim:    #818cf8;
   --accent-faint:  #4f46e50f;
   --accent-ring:   #4f46e526;
+
+  // -----------------------------------------------------------------
+  // Semantic roles — what a component should reach for instead of the
+  // raw accent. Light mode keeps the accent as a small signal (focus
+  // ring, links, markers): CTAs are ink, selection is neutral grey.
+  // Dark mode re-points the same roles at the accent (see below).
+  // -----------------------------------------------------------------
+  --ink:       #17171a;
+  --ink-hover: #2e2e34;
+
+  // Primary action (ath-button primary, link-buttons, toggles, active page)
+  --action-primary-bg:        var(--ink);
+  --action-primary-bg-hover:  var(--ink-hover);
+  --action-primary-bg-active: #000000;
+  --action-primary-fg:        #ffffff;
+
+  // Selected navigation row (rail, settings nav, filter lists)
+  --nav-active-bg:        #00000017;   // ~9% black — reads as a pill on white chrome
+  --nav-active-bg-hover:  #0000001f;
+  --nav-active-fg:        var(--fg);
+  --nav-active-icon:      var(--fg);
+  --nav-active-indicator: var(--fg);
+  --nav-badge-bg:         var(--bg-2);
+  --nav-badge-fg:         var(--fg-2);
+
+  // Tabs / segmented controls / progress
+  --tab-active-fg:        var(--fg);
+  --tab-active-indicator: var(--fg);
+  --segment-track-bg:     var(--bg-2);
+  --segment-active-bg:    var(--surface);
+  --segment-active-fg:    var(--fg);
+  --segment-count-active-bg: var(--surface-3);
+  --segment-count-active-fg: var(--fg-2);
+  --progress-fill:        var(--ink);
+  // Visible on the grey canvas too, not only inside white cards.
+  --progress-track:       var(--border);
+
+  // Selected filter / saved-view chip
+  --chip-active-bg:     var(--nav-active-bg);
+  --chip-active-fg:     var(--fg);
+  --chip-active-border: var(--border-strong);
+
+  // Secondary-emphasis actions (outline button, primary chip)
+  --action-outline-fg:           var(--fg);
+  --action-outline-hover-bg:     var(--hover);
+  --action-outline-hover-border: var(--border-strong);
+  --chip-primary-bg:     var(--bg-2);
+  --chip-primary-fg:     var(--fg);
+  --chip-primary-border: var(--border-strong);
+
+  // Checked native controls (checkbox / radio accent-color)
+  --control-checked: var(--ink);
+
+  // Bulk-selection bar
+  --selection-bar-bg:     var(--surface);
+  --selection-bar-border: var(--border-strong);
+  --selection-bar-fg:     var(--fg);
+  --row-selected-bg:      var(--hover-strong);
+
+  // Brand mark in the shell
+  --brand-mark-bg: var(--ink);
+  --brand-mark-fg: #ffffff;
+
+  // Person avatars — deterministic per person (avatarTone()), muted
+  // mid-tones with white initials (all >= 4.5:1).
+  --avatar-neutral-bg: var(--surface-3);
+  --avatar-neutral-fg: var(--fg-3);
+  --avatar-1-bg: #a95c25;  --avatar-1-fg: #ffffff;  // clay
+  --avatar-2-bg: #b8466f;  --avatar-2-fg: #ffffff;  // rose
+  --avatar-3-bg: #2f7f8f;  --avatar-3-fg: #ffffff;  // teal
+  --avatar-4-bg: #6a52c4;  --avatar-4-fg: #ffffff;  // violet
+  --avatar-5-bg: #3a7d55;  --avatar-5-fg: #ffffff;  // green
+  --avatar-6-bg: #3d64b8;  --avatar-6-fg: #ffffff;  // blue
+  --avatar-7-bg: #94509e;  --avatar-7-fg: #ffffff;  // plum
+  --avatar-8-bg: #5b6474;  --avatar-8-fg: #ffffff;  // slate
 
   // -----------------------------------------------------------------
   // Status — muted, used as dots + subtle fills
@@ -159,19 +237,12 @@
 
   // Semantic colors (legacy: --ath-color-*)
   --ath-color-primary:        var(--accent);
-  --ath-color-primary-hover:  var(--accent-2);
-  --ath-color-primary-active: var(--accent-2);
-  --ath-color-primary-light:  var(--accent-faint);
   --ath-color-primary-rgb:    79, 70, 229; // for legacy rgba() usage
 
   --ath-color-success:        var(--green);
-  --ath-color-success-hover:  var(--green);
   --ath-color-warning:        var(--amber);
-  --ath-color-warning-hover:  var(--amber);
   --ath-color-error:          var(--red);
-  --ath-color-error-hover:    var(--red);
   --ath-color-info:           var(--blue);
-  --ath-color-info-hover:     var(--blue);
 
   // Backgrounds (legacy: --ath-bg-*)
   --ath-bg-primary:    var(--bg-0);
@@ -187,7 +258,6 @@
   --ath-text-primary:    var(--fg);
   --ath-text-secondary:  var(--fg-2);
   --ath-text-tertiary:   var(--fg-3);
-  --ath-text-inverse:    #ffffff;
   --ath-text-link:       var(--accent);
   --ath-text-link-hover: var(--accent-2);
 
@@ -204,7 +274,6 @@
   --ath-border-radius-full: var(--r-full);
 
   // Spacing (legacy: --ath-space-*)
-  --ath-space-0:  var(--space-0);
   --ath-space-1:  var(--space-1);
   --ath-space-2:  var(--space-2);
   --ath-space-3:  var(--space-3);
@@ -213,7 +282,6 @@
   --ath-space-6:  var(--space-6);
   --ath-space-8:  var(--space-8);
   --ath-space-10: var(--space-10);
-  --ath-space-12: var(--space-12);
   --ath-space-16: var(--space-16);
 
   // Type (legacy)
@@ -237,14 +305,12 @@
 
   --ath-line-height-tight:   var(--line-tight);
   --ath-line-height-normal:  var(--line-normal);
-  --ath-line-height-relaxed: var(--line-relaxed);
 
   // Shadows (legacy)
   --ath-shadow-sm:   var(--shadow-1);
   --ath-shadow-md:   var(--shadow-2);
   --ath-shadow-lg:   var(--shadow-3);
   --ath-shadow-xl:   var(--shadow-3);
-  --ath-shadow-glow: 0 0 0 3px var(--accent-ring);
 
   // Transitions (legacy)
   --ath-transition-fast:   var(--t-fast);
@@ -258,22 +324,15 @@
 
   // Z-Index (legacy)
   --ath-z-dropdown:       var(--z-dropdown);
-  --ath-z-sticky:         var(--z-sticky);
   --ath-z-fixed:          var(--z-fixed);
   --ath-z-modal-backdrop: var(--z-overlay);
   --ath-z-modal:          var(--z-modal);
-  --ath-z-popover:        var(--z-popover);
   --ath-z-tooltip:        var(--z-tooltip);
   --ath-z-toast:          var(--z-toast);
 
   // Legacy gold-* tokens (some component code still references these).
   // Map them to accent so existing code keeps working with the new identity.
   --gold:        var(--accent);
-  --gold-2:      var(--accent-2);
-  --gold-3:      var(--accent-3);
-  --gold-dim:    var(--accent-dim);
-  --gold-faint:  var(--accent-faint);
-  --gold-ring:   var(--accent-ring);
 
   color-scheme: light;
 }
@@ -305,8 +364,8 @@
   // Text — never pure white; warm-neutral scale
   --fg:          #e6e6eb;
   --fg-2:        #b0b0bc;
-  --fg-3:        #74747f;
-  --fg-4:        #4e4e5a;
+  --fg-3:        #9a9aa6;           // 6.1:1 surface · 6.8 bg-0 · 5.7 bg-2
+  --fg-4:        #8c8c98;           // 5.1:1 surface · 5.7 bg-0 · 4.8 bg-2
   --fg-disabled: #38383f;
 
   // Accent (default violet for dark — softer than light)
@@ -316,6 +375,63 @@
   --accent-dim:    #6366f1;
   --accent-faint:  #8280e820;
   --accent-ring:   #8280e83a;
+
+  // Semantic roles — dark keeps its established accent-led identity:
+  // accent CTAs with dark text, accent-tinted selection.
+  --ink:       #e6e6eb;
+  --ink-hover: #f2f2f5;
+
+  --action-primary-bg:        var(--accent);
+  --action-primary-bg-hover:  var(--accent-2);
+  --action-primary-bg-active: var(--accent-3);
+  --action-primary-fg:        #111113;
+
+  --nav-active-bg:        color-mix(in srgb, var(--accent) 12%, transparent);
+  --nav-active-bg-hover:  color-mix(in srgb, var(--accent) 18%, transparent);
+  --nav-active-fg:        var(--accent);
+  --nav-active-icon:      var(--accent);
+  --nav-active-indicator: var(--accent);
+  --nav-badge-bg:         color-mix(in srgb, var(--accent) 14%, transparent);
+  --nav-badge-fg:         var(--accent);
+
+  --tab-active-fg:        var(--accent);
+  --tab-active-indicator: var(--accent);
+  --segment-active-bg:    var(--bg-1);
+  --segment-count-active-bg: var(--accent-faint);
+  --segment-count-active-fg: var(--accent);
+  --progress-fill:        var(--accent);
+  --progress-track:       var(--bg-2);
+
+  --chip-active-bg:     var(--accent-faint);
+  --chip-active-fg:     var(--accent);
+  --chip-active-border: var(--accent);
+
+  --action-outline-fg:           var(--accent);
+  --action-outline-hover-bg:     var(--accent-faint);
+  --action-outline-hover-border: var(--accent);
+  --chip-primary-bg:     var(--accent-ring);
+  --chip-primary-fg:     var(--accent);
+  --chip-primary-border: color-mix(in srgb, var(--accent) 30%, transparent);
+
+  --control-checked: var(--accent);
+
+  --selection-bar-bg:     var(--accent-faint);
+  --selection-bar-border: var(--accent);
+  --selection-bar-fg:     var(--accent);
+  --row-selected-bg:      color-mix(in srgb, var(--accent) 7%, transparent);
+
+  --brand-mark-bg: color-mix(in srgb, var(--accent) 14%, transparent);
+  --brand-mark-fg: var(--accent);
+
+  // Avatars — same hues, lifted for dark surfaces, dark initials.
+  --avatar-1-bg: #d0915e;  --avatar-1-fg: #111113;
+  --avatar-2-bg: #d27e9e;  --avatar-2-fg: #111113;
+  --avatar-3-bg: #64b0bf;  --avatar-3-fg: #111113;
+  --avatar-4-bg: #a291e0;  --avatar-4-fg: #111113;
+  --avatar-5-bg: #6db48a;  --avatar-5-fg: #111113;
+  --avatar-6-bg: #84a0e0;  --avatar-6-fg: #111113;
+  --avatar-7-bg: #c48ccc;  --avatar-7-fg: #111113;
+  --avatar-8-bg: #a2aab8;  --avatar-8-fg: #111113;
 
   // Status — calm, desaturated, readable on dark surfaces
   --red:    #cc6b6b;
@@ -343,10 +459,15 @@
   // RGB legacy: re-set for dark accent
   --ath-color-primary-rgb: 130, 128, 232;
 
-  // Inverse text on dark = dark text on light buttons (e.g., primary)
-  --ath-text-inverse: #111113;
 
   color-scheme: dark;
+}
+
+// Native checkboxes / radios follow the role token (ink in light,
+// accent in dark) instead of the browser's own blue or the raw accent.
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--control-checked);
 }
 
 // Dark-mode scrollbars — barely-there, soft

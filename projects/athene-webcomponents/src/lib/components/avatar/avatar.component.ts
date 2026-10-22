@@ -1,5 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { avatarInitials, avatarTone } from './avatar-tone';
 
 /**
  * Avatar size variants
@@ -38,12 +39,12 @@ export class AthAvatarComponent {
   }
 
   get initials(): string {
-    if (!this.name) return '?';
-    const parts = this.name.trim().split(/\s+/);
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-    return parts[0].substring(0, 2).toUpperCase();
+    return avatarInitials(this.name);
+  }
+
+  /** Per-person colour tone; '?' (no name) stays on the neutral tone. */
+  get tone(): number | null {
+    return this.name.trim() ? avatarTone(this.name) : null;
   }
 
   onImageError(event: Event): void {

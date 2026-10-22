@@ -3,7 +3,7 @@
   align-items: center;
   gap: 2px;
   padding: 2px;
-  background: var(--bg-2);
+  background: var(--segment-track-bg);
   border-radius: var(--r);
   border: 1px solid var(--border);
 }
@@ -42,8 +42,8 @@
 }
 
 .ath-seg__item--active {
-  background: var(--bg-1);
-  color: var(--fg);
+  background: var(--segment-active-bg);
+  color: var(--segment-active-fg);
   box-shadow: var(--shadow-1);
 }
 
@@ -69,8 +69,8 @@
 }
 
 .ath-seg__item--active .ath-seg__count {
-  background: var(--accent-faint);
-  color: var(--accent);
+  background: var(--segment-count-active-bg);
+  color: var(--segment-count-active-fg);
 }
 
 // Density support

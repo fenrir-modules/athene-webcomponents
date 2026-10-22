@@ -2,7 +2,9 @@
 // ATHENE ACCENT PRESETS
 // ===========================================
 // Set on <html> via data-accent. Subtle, professional.
-// Affects buttons / links / focus rings / selected states only.
+// Light mode: links, focus rings and small markers only — CTAs and
+// selection use the neutral role tokens in _tokens.scss.
+// Dark mode: the role tokens re-point at the accent.
 //
 // Usage:
 //   document.documentElement.setAttribute('data-accent', 'violet');
@@ -121,29 +123,4 @@
   --accent-ring:   #ffffff22;
 
   --ath-color-primary-rgb: 220, 220, 226;
-}
-
-// ===========================================
-// DARK-MODE BUTTON OVERRIDES
-// ===========================================
-// Primary buttons in dark mode should look soft, not glaring.
-// (Components opt in by using these classes.)
-
-[data-theme="dark"] {
-  .btn-primary,
-  .ath-button--primary {
-    background: #e8e8ec;
-    color: #111113;
-    border-color: #e8e8ec;
-
-    &:hover {
-      background: #f2f2f5;
-      border-color: #f2f2f5;
-    }
-  }
-
-  .btn-accent,
-  .ath-button--accent {
-    color: #0e0e10;
-  }
 }

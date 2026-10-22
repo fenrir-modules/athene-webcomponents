@@ -29,7 +29,7 @@
   // -------------------------------------------
   &--default {
     color: var(--ath-text-secondary);
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--bg-2);
 
     .ath-badge__dot {
       background: var(--ath-text-tertiary);
@@ -38,25 +38,27 @@
 
   &--success {
     color: var(--ath-color-success);
-    background: rgba(74, 222, 128, 0.1);
+    background: var(--green-tint);
 
     .ath-badge__dot {
       background: var(--ath-color-success);
     }
   }
 
+  // Warning is amber, not the user's accent — a violet or green accent
+  // would otherwise turn every warning into a "brand" badge.
   &--warning {
-    color: var(--ath-color-primary);
-    background: var(--accent-ring);
+    color: var(--ath-color-warning);
+    background: var(--amber-tint);
 
     .ath-badge__dot {
-      background: var(--ath-color-primary);
+      background: var(--ath-color-warning);
     }
   }
 
   &--error {
     color: var(--ath-color-error);
-    background: rgba(248, 113, 113, 0.1);
+    background: var(--red-tint);
 
     .ath-badge__dot {
       background: var(--ath-color-error);
@@ -65,7 +67,7 @@
 
   &--info {
     color: var(--ath-color-info);
-    background: rgba(96, 165, 250, 0.1);
+    background: var(--blue-tint);
 
     .ath-badge__dot {
       background: var(--ath-color-info);
@@ -74,10 +76,10 @@
 
   &--muted {
     color: var(--ath-text-tertiary);
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--hover);
 
     .ath-badge__dot {
-      background: rgba(255, 255, 255, 0.2);
+      background: var(--fg-4);
     }
   }
 }
