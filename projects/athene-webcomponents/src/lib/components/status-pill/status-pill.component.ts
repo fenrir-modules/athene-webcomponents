@@ -2,13 +2,20 @@ import {
   ChangeDetectionStrategy,
   Component,
   HostBinding,
-  InjectionToken,
   Input,
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ATH_STATUS_LABELS, type TicketStatus } from '@athene/webcomponents/core';
 
-export type TicketStatus = 'open' | 'prog' | 'review' | 'done' | 'blocked' | 'closed';
+// The status type and label token live in `@athene/webcomponents/core`, so an
+// app can provide the token at its root without loading the components.
+export {
+  ATH_STATUS_LABELS,
+  type StatusLabelResolver,
+  type TicketStatus,
+} from '@athene/webcomponents/core';
+
 export type StatusPillSize = 'sm' | 'md';
 
 const LABELS: Readonly<Record<TicketStatus, string>> = {
@@ -19,19 +26,6 @@ const LABELS: Readonly<Record<TicketStatus, string>> = {
   blocked: 'Blocked',
   closed: 'Closed',
 };
-
-/**
- * Names a status in the reader's language.
- *
- * The library stays free of any translation framework: the app provides
- * this once at the root, and every pill without an explicit `label` asks
- * it. Return `null` to fall back to the English default. A resolver that
- * reads a signal (the current language) keeps OnPush pills current when
- * the language changes.
- */
-export type StatusLabelResolver = (status: TicketStatus) => string | null;
-
-export const ATH_STATUS_LABELS = new InjectionToken<StatusLabelResolver>('ATH_STATUS_LABELS');
 
 /**
  * Status indicator for a ticket: colored inner-ring dot + label.

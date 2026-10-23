@@ -1,10 +1,13 @@
 import * as i0 from '@angular/core';
-import { Component, ChangeDetectionStrategy, Input, EventEmitter, Output, InjectionToken, inject, HostBinding, signal, computed, ViewEncapsulation, ChangeDetectorRef, forwardRef, ElementRef, HostListener, ViewChild, Injectable, Directive } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, EventEmitter, Output, inject, HostBinding, signal, computed, ViewEncapsulation, booleanAttribute, ChangeDetectorRef, forwardRef, ElementRef, HostListener, ViewChild, Directive } from '@angular/core';
 import * as i1$1 from '@angular/common';
 import { CommonModule } from '@angular/common';
 import * as i1 from 'lucide-angular';
-import { PanelLeftClose, PanelLeft, LucideAngularModule, ChevronRight, X, Copy, Check, Loader2, Eye, EyeOff, AlertCircle, ChevronDown, Search, Upload, CheckCircle, AlertTriangle, Info, CheckCircle2, AlertOctagon, ChevronLeft, ChevronsLeft, ChevronsRight, MoreHorizontal } from 'lucide-angular';
+import { PanelLeftClose, PanelLeft, LucideAngularModule, ChevronRight, X, Loader2, Copy, Check, Eye, EyeOff, AlertCircle, ChevronDown, Search, Upload, CheckCircle, AlertTriangle, Info, CheckCircle2, AlertOctagon, ChevronLeft, ChevronsLeft, ChevronsRight, MoreHorizontal } from 'lucide-angular';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import * as i1$2 from '@athene/webcomponents/core';
+import { ATH_LABELS, ATH_DEFAULT_LABELS, ATH_STATUS_LABELS, ATH_PRIORITY_LABELS } from '@athene/webcomponents/core';
+export { ATH_DEFAULT_LABELS, ATH_LABELS, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, AthToastService } from '@athene/webcomponents/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as i2 from '@angular/forms';
 import { NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
@@ -210,13 +213,8 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImpo
                 type: Input
             }] } });
 
-const ATH_DEFAULT_LABELS = {
-    closeDialog: () => 'Close dialog',
-    showPassword: () => 'Show password',
-    hidePassword: () => 'Hide password',
-    breadcrumb: () => 'Breadcrumb',
-};
-const ATH_LABELS = new InjectionToken('ATH_LABELS');
+// The labels live in the light `@athene/webcomponents/core` entry point so an
+// app can provide them at its root without loading every component.
 
 /**
  * Athene Breadcrumb Component
@@ -843,6 +841,92 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImpo
             }] } });
 
 /**
+ * Athene Button Component
+ *
+ * @example
+ * <ath-button variant="primary" (clicked)="handleClick()">Click me</ath-button>
+ * <ath-button variant="outline" size="sm" [loading]="true">Loading...</ath-button>
+ */
+class AthButtonComponent {
+    constructor() {
+        /** Button variant */
+        this.variant = 'primary';
+        /** Button size */
+        this.size = 'md';
+        /** Button type attribute */
+        this.type = 'button';
+        /** Disabled state */
+        this.disabled = false;
+        /** Loading state */
+        this.loading = false;
+        /** Full width button */
+        this.fullWidth = false;
+        /**
+         * Toggle state. `null` (default) renders a plain button; `true`/`false`
+         * make it a toggle button with `aria-pressed` and a sunken pressed look.
+         */
+        this.pressed = null;
+        /**
+         * Disclosure state for a button that opens a panel or menu. `null`
+         * (default) omits `aria-expanded`. Set this instead of
+         * `[attr.aria-expanded]` on the host: host attributes do not reach the
+         * focusable inner `<button>`.
+         */
+        this.expanded = null;
+        /** Id of the element this button controls (`aria-controls`). */
+        this.controls = null;
+        /** Optional aria-label for icon-only usage */
+        this.ariaLabel = null;
+        /** Click event emitter */
+        this.clicked = new EventEmitter();
+        this.loaderIcon = Loader2;
+    }
+    get buttonClasses() {
+        return [
+            'ath-button',
+            `ath-button--${this.variant}`,
+            `ath-button--${this.size}`,
+            this.fullWidth ? 'ath-button--full-width' : '',
+            this.loading ? 'ath-button--loading' : '',
+            this.pressed ? 'ath-button--pressed' : '',
+        ].filter(Boolean).join(' ');
+    }
+    handleClick(event) {
+        if (!this.disabled && !this.loading) {
+            this.clicked.emit(event);
+        }
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthButtonComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthButtonComponent, isStandalone: true, selector: "ath-button", inputs: { variant: "variant", size: "size", type: "type", disabled: "disabled", loading: "loading", fullWidth: "fullWidth", pressed: "pressed", expanded: "expanded", controls: "controls", ariaLabel: "ariaLabel" }, outputs: { clicked: "clicked" }, ngImport: i0, template: "<button\n  [type]=\"type\"\n  [disabled]=\"disabled || loading\"\n  [class]=\"buttonClasses\"\n  [attr.aria-label]=\"ariaLabel\"\n  [attr.aria-busy]=\"loading\"\n  [attr.aria-pressed]=\"pressed\"\n  [attr.aria-expanded]=\"expanded\"\n  [attr.aria-controls]=\"controls\"\n  (click)=\"handleClick($event)\"\n>\n  @if (loading) {\n    <span class=\"ath-button__loader-wrap\">\n      <lucide-icon [img]=\"loaderIcon\" class=\"ath-button__loader\" [size]=\"18\" />\n    </span>\n  }\n  <span class=\"ath-button__content\" [class.ath-button__content--hidden]=\"loading\">\n    <ng-content />\n  </span>\n</button>\n", styles: [".ath-button{display:inline-grid;place-items:center;position:relative;grid-template-columns:1fr;grid-template-rows:1fr;font-family:var(--ath-font-family);font-weight:var(--ath-font-weight-medium);border-radius:var(--ath-border-radius-md);border:1px solid transparent;cursor:pointer;white-space:nowrap;letter-spacing:0;transition:background-color .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease,opacity .15s ease}.ath-button:focus-visible{outline:none;box-shadow:0 0 0 2px var(--ath-bg-primary),0 0 0 4px var(--ath-color-primary)}.ath-button:disabled{opacity:.5;cursor:not-allowed}.ath-button--xs{height:var(--control-h-xs);padding:0 10px;font-size:var(--control-font);border-radius:var(--r-sm)}.ath-button--xs .ath-button__content{gap:5px}.ath-button--sm{height:var(--control-h-sm);padding:0 8px;font-size:var(--control-font);border-radius:var(--r-sm)}.ath-button--md{height:var(--control-h);padding:0 var(--ath-space-3);font-size:var(--control-font)}.ath-button--lg{height:var(--control-h-lg);padding:0 var(--ath-space-5);font-size:var(--ath-font-size-md)}.ath-button--primary{background:var(--action-primary-bg);color:var(--action-primary-fg);border-color:var(--action-primary-bg);font-weight:var(--ath-font-weight-medium)}.ath-button--primary:disabled:not(.ath-button--loading){background:var(--action-primary-disabled-bg);border-color:var(--action-primary-disabled-border);color:var(--action-primary-disabled-fg);opacity:var(--action-primary-disabled-opacity)}.ath-button--primary:hover:not(:disabled){background:var(--action-primary-bg-hover);border-color:var(--action-primary-bg-hover)}.ath-button--primary:active:not(:disabled){background:var(--action-primary-bg-active);border-color:var(--action-primary-bg-active)}.ath-button--primary .ath-button__loader-wrap{color:var(--action-primary-fg)}.ath-button--create{background:var(--action-create-bg);color:var(--action-create-fg);border-color:var(--action-create-border)}.ath-button--create:hover:not(:disabled){background:var(--action-create-bg-hover)}.ath-button--create:active:not(:disabled){background:var(--action-create-bg-active)}.ath-button--create .ath-button__loader-wrap{color:var(--action-create-fg)}.ath-button--secondary{background-color:var(--ath-bg-secondary);color:var(--ath-text-primary);border-color:var(--action-outline-border)}.ath-button--secondary:hover:not(:disabled){border-color:var(--ath-border-color-hover);background-color:var(--ath-bg-tertiary)}.ath-button--outline{background-color:transparent;border-color:var(--action-outline-border);color:var(--action-outline-fg)}.ath-button--outline:disabled{color:var(--fg-3);border-color:var(--border)}.ath-button--outline:hover:not(:disabled){background-color:var(--action-outline-hover-bg);border-color:var(--action-outline-hover-border)}.ath-button--ghost{background-color:transparent;color:var(--ath-text-primary)}.ath-button--ghost:hover:not(:disabled){background-color:var(--ath-hover-bg)}.ath-button--danger{background-color:var(--ath-color-error);color:#fff;border-color:var(--ath-color-error)}.ath-button--danger:hover:not(:disabled){background-color:color-mix(in srgb,var(--ath-color-error) 86%,#000);border-color:color-mix(in srgb,var(--ath-color-error) 86%,#000)}.ath-button--danger-ghost{background-color:transparent;color:var(--fg-3);border-color:transparent}.ath-button--danger-ghost:hover:not(:disabled){background-color:var(--red-tint);color:var(--red)}.ath-button--danger-ghost:active:not(:disabled){background-color:color-mix(in srgb,var(--red) 16%,transparent)}.ath-button--danger-ghost:focus-visible{box-shadow:0 0 0 2px var(--ath-bg-primary),0 0 0 4px var(--red)}.ath-button--full-width{width:100%}.ath-button--pressed:not(.ath-button--primary):not(.ath-button--create){background-color:var(--hover-strong);border-color:var(--action-outline-hover-border)}.ath-button--loading{pointer-events:none}.ath-button__loader-wrap{display:inline-flex;align-items:center;justify-content:center;grid-area:1/1}.ath-button__loader{animation:ath-spin 1s linear infinite}.ath-button__content{display:inline-flex;grid-area:1/1;align-items:center;gap:6px}.ath-button__content--hidden{visibility:hidden}@keyframes ath-spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthButtonComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-button', standalone: true, imports: [CommonModule, LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "<button\n  [type]=\"type\"\n  [disabled]=\"disabled || loading\"\n  [class]=\"buttonClasses\"\n  [attr.aria-label]=\"ariaLabel\"\n  [attr.aria-busy]=\"loading\"\n  [attr.aria-pressed]=\"pressed\"\n  [attr.aria-expanded]=\"expanded\"\n  [attr.aria-controls]=\"controls\"\n  (click)=\"handleClick($event)\"\n>\n  @if (loading) {\n    <span class=\"ath-button__loader-wrap\">\n      <lucide-icon [img]=\"loaderIcon\" class=\"ath-button__loader\" [size]=\"18\" />\n    </span>\n  }\n  <span class=\"ath-button__content\" [class.ath-button__content--hidden]=\"loading\">\n    <ng-content />\n  </span>\n</button>\n", styles: [".ath-button{display:inline-grid;place-items:center;position:relative;grid-template-columns:1fr;grid-template-rows:1fr;font-family:var(--ath-font-family);font-weight:var(--ath-font-weight-medium);border-radius:var(--ath-border-radius-md);border:1px solid transparent;cursor:pointer;white-space:nowrap;letter-spacing:0;transition:background-color .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease,opacity .15s ease}.ath-button:focus-visible{outline:none;box-shadow:0 0 0 2px var(--ath-bg-primary),0 0 0 4px var(--ath-color-primary)}.ath-button:disabled{opacity:.5;cursor:not-allowed}.ath-button--xs{height:var(--control-h-xs);padding:0 10px;font-size:var(--control-font);border-radius:var(--r-sm)}.ath-button--xs .ath-button__content{gap:5px}.ath-button--sm{height:var(--control-h-sm);padding:0 8px;font-size:var(--control-font);border-radius:var(--r-sm)}.ath-button--md{height:var(--control-h);padding:0 var(--ath-space-3);font-size:var(--control-font)}.ath-button--lg{height:var(--control-h-lg);padding:0 var(--ath-space-5);font-size:var(--ath-font-size-md)}.ath-button--primary{background:var(--action-primary-bg);color:var(--action-primary-fg);border-color:var(--action-primary-bg);font-weight:var(--ath-font-weight-medium)}.ath-button--primary:disabled:not(.ath-button--loading){background:var(--action-primary-disabled-bg);border-color:var(--action-primary-disabled-border);color:var(--action-primary-disabled-fg);opacity:var(--action-primary-disabled-opacity)}.ath-button--primary:hover:not(:disabled){background:var(--action-primary-bg-hover);border-color:var(--action-primary-bg-hover)}.ath-button--primary:active:not(:disabled){background:var(--action-primary-bg-active);border-color:var(--action-primary-bg-active)}.ath-button--primary .ath-button__loader-wrap{color:var(--action-primary-fg)}.ath-button--create{background:var(--action-create-bg);color:var(--action-create-fg);border-color:var(--action-create-border)}.ath-button--create:hover:not(:disabled){background:var(--action-create-bg-hover)}.ath-button--create:active:not(:disabled){background:var(--action-create-bg-active)}.ath-button--create .ath-button__loader-wrap{color:var(--action-create-fg)}.ath-button--secondary{background-color:var(--ath-bg-secondary);color:var(--ath-text-primary);border-color:var(--action-outline-border)}.ath-button--secondary:hover:not(:disabled){border-color:var(--ath-border-color-hover);background-color:var(--ath-bg-tertiary)}.ath-button--outline{background-color:transparent;border-color:var(--action-outline-border);color:var(--action-outline-fg)}.ath-button--outline:disabled{color:var(--fg-3);border-color:var(--border)}.ath-button--outline:hover:not(:disabled){background-color:var(--action-outline-hover-bg);border-color:var(--action-outline-hover-border)}.ath-button--ghost{background-color:transparent;color:var(--ath-text-primary)}.ath-button--ghost:hover:not(:disabled){background-color:var(--ath-hover-bg)}.ath-button--danger{background-color:var(--ath-color-error);color:#fff;border-color:var(--ath-color-error)}.ath-button--danger:hover:not(:disabled){background-color:color-mix(in srgb,var(--ath-color-error) 86%,#000);border-color:color-mix(in srgb,var(--ath-color-error) 86%,#000)}.ath-button--danger-ghost{background-color:transparent;color:var(--fg-3);border-color:transparent}.ath-button--danger-ghost:hover:not(:disabled){background-color:var(--red-tint);color:var(--red)}.ath-button--danger-ghost:active:not(:disabled){background-color:color-mix(in srgb,var(--red) 16%,transparent)}.ath-button--danger-ghost:focus-visible{box-shadow:0 0 0 2px var(--ath-bg-primary),0 0 0 4px var(--red)}.ath-button--full-width{width:100%}.ath-button--pressed:not(.ath-button--primary):not(.ath-button--create){background-color:var(--hover-strong);border-color:var(--action-outline-hover-border)}.ath-button--loading{pointer-events:none}.ath-button__loader-wrap{display:inline-flex;align-items:center;justify-content:center;grid-area:1/1}.ath-button__loader{animation:ath-spin 1s linear infinite}.ath-button__content{display:inline-flex;grid-area:1/1;align-items:center;gap:6px}.ath-button__content--hidden{visibility:hidden}@keyframes ath-spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}\n"] }]
+        }], propDecorators: { variant: [{
+                type: Input
+            }], size: [{
+                type: Input
+            }], type: [{
+                type: Input
+            }], disabled: [{
+                type: Input
+            }], loading: [{
+                type: Input
+            }], fullWidth: [{
+                type: Input
+            }], pressed: [{
+                type: Input
+            }], expanded: [{
+                type: Input
+            }], controls: [{
+                type: Input
+            }], ariaLabel: [{
+                type: Input
+            }], clicked: [{
+                type: Output
+            }] } });
+
+/**
  * Athene Empty State Component
  *
  * Display when lists or tables have no data.
@@ -850,6 +934,16 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImpo
  * @example
  * <ath-empty-state message="No items found" />
  * <ath-empty-state [icon]="Inbox" message="Nothing here" subMessage="…" />
+ *
+ * Compact: content-sized, for a panel that should end with its content.
+ * <ath-empty-state
+ *   size="compact" bare
+ *   [icon]="ic.inbox"
+ *   message="You're all caught up"
+ *   subMessage="Mentions, assignments and replies land here."
+ *   actionLabel="Notification settings" (action)="openPrefs()"
+ *   [hints]="[{ icon: ic.at, label: 'Mentions', sub: 'When someone @mentions you' }]"
+ * />
  */
 class AthEmptyStateComponent {
     constructor() {
@@ -864,13 +958,24 @@ class AthEmptyStateComponent {
          * panel; the dashed box inside a white panel drew a card in a card.
          */
         this.bare = false;
+        /** `compact`: icon tile left, auto height, optional hint rows. */
+        this.size = 'default';
+        /** 2–4 rows describing what will appear here (compact layout). */
+        this.hints = [];
+        /** Primary action label; emits `action` when clicked. */
+        this.actionLabel = '';
+        this.actionIcon = null;
+        /** Secondary (outline) action label; emits `secondaryAction`. */
+        this.secondaryActionLabel = '';
+        this.action = new EventEmitter();
+        this.secondaryAction = new EventEmitter();
     }
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthEmptyStateComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthEmptyStateComponent, isStandalone: true, selector: "ath-empty-state", inputs: { message: "message", subMessage: "subMessage", icon: "icon", bare: "bare" }, ngImport: i0, template: "<div class=\"ath-empty-state\" [class.ath-empty-state--bare]=\"bare\">\n  @if (icon) {\n    <span class=\"ath-empty-state__icon\">\n      <lucide-icon [img]=\"icon\" [size]=\"18\" />\n    </span>\n  }\n  <p class=\"ath-empty-state__message\">{{ message }}</p>\n  @if (subMessage) {\n    <p class=\"ath-empty-state__sub\">{{ subMessage }}</p>\n  }\n  <ng-content />\n</div>\n", styles: [".ath-empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-10) var(--space-6);text-align:center;border:1px dashed var(--border);border-radius:var(--r-lg);background:var(--surface)}.ath-empty-state--bare{border:0;background:transparent}.ath-empty-state__icon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;margin-bottom:var(--space-1);border-radius:var(--r-full);background:var(--surface-3);color:var(--fg-3)}.ath-empty-state__message{margin:0;font-size:var(--text-md);font-weight:var(--weight-medium);color:var(--fg)}.ath-empty-state__sub{margin:0;max-width:44ch;font-size:var(--text-base);line-height:var(--line-normal);color:var(--fg-3)}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthEmptyStateComponent, isStandalone: true, selector: "ath-empty-state", inputs: { message: "message", subMessage: "subMessage", icon: "icon", bare: ["bare", "bare", booleanAttribute], size: "size", hints: "hints", actionLabel: "actionLabel", actionIcon: "actionIcon", secondaryActionLabel: "secondaryActionLabel" }, outputs: { action: "action", secondaryAction: "secondaryAction" }, ngImport: i0, template: "@if (size === 'compact') {\n  <div class=\"ath-empty-state ath-empty-state--compact\" [class.ath-empty-state--bare]=\"bare\">\n    <div class=\"ath-empty-state__lead\">\n      @if (icon) {\n        <span class=\"ath-empty-state__tile\" aria-hidden=\"true\">\n          <lucide-icon [img]=\"icon\" [size]=\"16\" />\n        </span>\n      }\n      <div class=\"ath-empty-state__text\">\n        <p class=\"ath-empty-state__message\">{{ message }}</p>\n        @if (subMessage) {\n          <p class=\"ath-empty-state__sub\">{{ subMessage }}</p>\n        }\n      </div>\n      @if (actionLabel || secondaryActionLabel) {\n        <div class=\"ath-empty-state__actions\">\n          @if (secondaryActionLabel) {\n            <ath-button variant=\"secondary\" size=\"sm\" (clicked)=\"secondaryAction.emit()\">\n              {{ secondaryActionLabel }}\n            </ath-button>\n          }\n          @if (actionLabel) {\n            <ath-button variant=\"primary\" size=\"sm\" (clicked)=\"action.emit()\">\n              @if (actionIcon) {\n                <lucide-icon [img]=\"actionIcon\" [size]=\"13\" />\n              }\n              {{ actionLabel }}\n            </ath-button>\n          }\n        </div>\n      }\n    </div>\n    @if (hints.length > 0) {\n      <ul class=\"ath-empty-state__hints\">\n        @for (hint of hints; track hint.label) {\n          <li class=\"ath-empty-state__hint\">\n            <span class=\"ath-empty-state__hint-icon\" aria-hidden=\"true\">\n              @if (hint.icon) {\n                <lucide-icon [img]=\"hint.icon\" [size]=\"14\" />\n              }\n            </span>\n            <span class=\"ath-empty-state__hint-text\">\n              <span class=\"ath-empty-state__hint-label\">{{ hint.label }}</span>\n              @if (hint.sub) {\n                <span class=\"ath-empty-state__hint-sub\">{{ hint.sub }}</span>\n              }\n            </span>\n          </li>\n        }\n      </ul>\n    }\n    <ng-content />\n  </div>\n} @else {\n  <div class=\"ath-empty-state\" [class.ath-empty-state--bare]=\"bare\">\n    @if (icon) {\n      <span class=\"ath-empty-state__icon\">\n        <lucide-icon [img]=\"icon\" [size]=\"18\" />\n      </span>\n    }\n    <p class=\"ath-empty-state__message\">{{ message }}</p>\n    @if (subMessage) {\n      <p class=\"ath-empty-state__sub\">{{ subMessage }}</p>\n    }\n    @if (actionLabel || secondaryActionLabel) {\n      <div class=\"ath-empty-state__actions ath-empty-state__actions--center\">\n        @if (secondaryActionLabel) {\n          <ath-button variant=\"secondary\" size=\"sm\" (clicked)=\"secondaryAction.emit()\">\n            {{ secondaryActionLabel }}\n          </ath-button>\n        }\n        @if (actionLabel) {\n          <ath-button variant=\"primary\" size=\"sm\" (clicked)=\"action.emit()\">\n            {{ actionLabel }}\n          </ath-button>\n        }\n      </div>\n    }\n    <ng-content />\n  </div>\n}\n", styles: [".ath-empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-10) var(--space-6);text-align:center;border:1px dashed var(--border);border-radius:var(--r-lg);background:var(--surface)}.ath-empty-state--bare{border:0;background:transparent}.ath-empty-state__icon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;margin-bottom:var(--space-1);border-radius:var(--r-full);background:var(--surface-3);color:var(--fg-3)}.ath-empty-state__message{margin:0;font-size:var(--text-md);font-weight:var(--weight-medium);color:var(--fg)}.ath-empty-state__sub{margin:0;max-width:44ch;font-size:var(--text-base);line-height:var(--line-normal);color:var(--fg-3)}.ath-empty-state--compact{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:var(--space-3);padding:var(--space-4);text-align:left}.ath-empty-state--compact .ath-empty-state__lead{display:flex;align-items:flex-start;gap:var(--space-3)}.ath-empty-state--compact .ath-empty-state__text{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}.ath-empty-state--compact .ath-empty-state__message{font-size:var(--panel-title-size, 14px);font-weight:var(--weight-semibold)}.ath-empty-state--compact .ath-empty-state__sub{max-width:64ch;font-size:var(--control-font, 13px)}.ath-empty-state__tile{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--border-faint);border-radius:var(--r);background:var(--bg-2);color:var(--fg-3)}.ath-empty-state__actions{flex-shrink:0;display:flex;align-items:center;gap:var(--space-2)}.ath-empty-state__actions--center{justify-content:center;margin-top:var(--space-2)}.ath-empty-state__hints{display:flex;flex-direction:column;margin:0;padding:0;list-style:none;border-top:1px solid var(--border-faint)}.ath-empty-state__hint{display:flex;align-items:center;gap:var(--space-3);min-height:var(--row-h-compact, 36px);padding:var(--space-2) 0;border-bottom:1px solid var(--border-faint)}.ath-empty-state__hint:last-child{border-bottom:0;padding-bottom:0}.ath-empty-state__hint-icon{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:36px;color:var(--fg-4)}.ath-empty-state__hint-text{display:flex;flex-direction:column;min-width:0;line-height:1.35}.ath-empty-state__hint-label{font-size:var(--control-font, 13px);font-weight:var(--weight-medium);color:var(--fg)}.ath-empty-state__hint-sub{font-size:var(--text-sm);color:var(--fg-3)}@media (max-width: 640px){.ath-empty-state--compact .ath-empty-state__lead{flex-wrap:wrap}.ath-empty-state--compact .ath-empty-state__actions{flex-basis:100%;padding-left:48px}}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }, { kind: "component", type: AthButtonComponent, selector: "ath-button", inputs: ["variant", "size", "type", "disabled", "loading", "fullWidth", "pressed", "expanded", "controls", "ariaLabel"], outputs: ["clicked"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
 }
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthEmptyStateComponent, decorators: [{
             type: Component,
-            args: [{ selector: 'ath-empty-state', standalone: true, imports: [CommonModule, LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "<div class=\"ath-empty-state\" [class.ath-empty-state--bare]=\"bare\">\n  @if (icon) {\n    <span class=\"ath-empty-state__icon\">\n      <lucide-icon [img]=\"icon\" [size]=\"18\" />\n    </span>\n  }\n  <p class=\"ath-empty-state__message\">{{ message }}</p>\n  @if (subMessage) {\n    <p class=\"ath-empty-state__sub\">{{ subMessage }}</p>\n  }\n  <ng-content />\n</div>\n", styles: [".ath-empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-10) var(--space-6);text-align:center;border:1px dashed var(--border);border-radius:var(--r-lg);background:var(--surface)}.ath-empty-state--bare{border:0;background:transparent}.ath-empty-state__icon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;margin-bottom:var(--space-1);border-radius:var(--r-full);background:var(--surface-3);color:var(--fg-3)}.ath-empty-state__message{margin:0;font-size:var(--text-md);font-weight:var(--weight-medium);color:var(--fg)}.ath-empty-state__sub{margin:0;max-width:44ch;font-size:var(--text-base);line-height:var(--line-normal);color:var(--fg-3)}\n"] }]
+            args: [{ selector: 'ath-empty-state', standalone: true, imports: [CommonModule, LucideAngularModule, AthButtonComponent], changeDetection: ChangeDetectionStrategy.OnPush, template: "@if (size === 'compact') {\n  <div class=\"ath-empty-state ath-empty-state--compact\" [class.ath-empty-state--bare]=\"bare\">\n    <div class=\"ath-empty-state__lead\">\n      @if (icon) {\n        <span class=\"ath-empty-state__tile\" aria-hidden=\"true\">\n          <lucide-icon [img]=\"icon\" [size]=\"16\" />\n        </span>\n      }\n      <div class=\"ath-empty-state__text\">\n        <p class=\"ath-empty-state__message\">{{ message }}</p>\n        @if (subMessage) {\n          <p class=\"ath-empty-state__sub\">{{ subMessage }}</p>\n        }\n      </div>\n      @if (actionLabel || secondaryActionLabel) {\n        <div class=\"ath-empty-state__actions\">\n          @if (secondaryActionLabel) {\n            <ath-button variant=\"secondary\" size=\"sm\" (clicked)=\"secondaryAction.emit()\">\n              {{ secondaryActionLabel }}\n            </ath-button>\n          }\n          @if (actionLabel) {\n            <ath-button variant=\"primary\" size=\"sm\" (clicked)=\"action.emit()\">\n              @if (actionIcon) {\n                <lucide-icon [img]=\"actionIcon\" [size]=\"13\" />\n              }\n              {{ actionLabel }}\n            </ath-button>\n          }\n        </div>\n      }\n    </div>\n    @if (hints.length > 0) {\n      <ul class=\"ath-empty-state__hints\">\n        @for (hint of hints; track hint.label) {\n          <li class=\"ath-empty-state__hint\">\n            <span class=\"ath-empty-state__hint-icon\" aria-hidden=\"true\">\n              @if (hint.icon) {\n                <lucide-icon [img]=\"hint.icon\" [size]=\"14\" />\n              }\n            </span>\n            <span class=\"ath-empty-state__hint-text\">\n              <span class=\"ath-empty-state__hint-label\">{{ hint.label }}</span>\n              @if (hint.sub) {\n                <span class=\"ath-empty-state__hint-sub\">{{ hint.sub }}</span>\n              }\n            </span>\n          </li>\n        }\n      </ul>\n    }\n    <ng-content />\n  </div>\n} @else {\n  <div class=\"ath-empty-state\" [class.ath-empty-state--bare]=\"bare\">\n    @if (icon) {\n      <span class=\"ath-empty-state__icon\">\n        <lucide-icon [img]=\"icon\" [size]=\"18\" />\n      </span>\n    }\n    <p class=\"ath-empty-state__message\">{{ message }}</p>\n    @if (subMessage) {\n      <p class=\"ath-empty-state__sub\">{{ subMessage }}</p>\n    }\n    @if (actionLabel || secondaryActionLabel) {\n      <div class=\"ath-empty-state__actions ath-empty-state__actions--center\">\n        @if (secondaryActionLabel) {\n          <ath-button variant=\"secondary\" size=\"sm\" (clicked)=\"secondaryAction.emit()\">\n            {{ secondaryActionLabel }}\n          </ath-button>\n        }\n        @if (actionLabel) {\n          <ath-button variant=\"primary\" size=\"sm\" (clicked)=\"action.emit()\">\n            {{ actionLabel }}\n          </ath-button>\n        }\n      </div>\n    }\n    <ng-content />\n  </div>\n}\n", styles: [".ath-empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-10) var(--space-6);text-align:center;border:1px dashed var(--border);border-radius:var(--r-lg);background:var(--surface)}.ath-empty-state--bare{border:0;background:transparent}.ath-empty-state__icon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;margin-bottom:var(--space-1);border-radius:var(--r-full);background:var(--surface-3);color:var(--fg-3)}.ath-empty-state__message{margin:0;font-size:var(--text-md);font-weight:var(--weight-medium);color:var(--fg)}.ath-empty-state__sub{margin:0;max-width:44ch;font-size:var(--text-base);line-height:var(--line-normal);color:var(--fg-3)}.ath-empty-state--compact{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:var(--space-3);padding:var(--space-4);text-align:left}.ath-empty-state--compact .ath-empty-state__lead{display:flex;align-items:flex-start;gap:var(--space-3)}.ath-empty-state--compact .ath-empty-state__text{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}.ath-empty-state--compact .ath-empty-state__message{font-size:var(--panel-title-size, 14px);font-weight:var(--weight-semibold)}.ath-empty-state--compact .ath-empty-state__sub{max-width:64ch;font-size:var(--control-font, 13px)}.ath-empty-state__tile{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--border-faint);border-radius:var(--r);background:var(--bg-2);color:var(--fg-3)}.ath-empty-state__actions{flex-shrink:0;display:flex;align-items:center;gap:var(--space-2)}.ath-empty-state__actions--center{justify-content:center;margin-top:var(--space-2)}.ath-empty-state__hints{display:flex;flex-direction:column;margin:0;padding:0;list-style:none;border-top:1px solid var(--border-faint)}.ath-empty-state__hint{display:flex;align-items:center;gap:var(--space-3);min-height:var(--row-h-compact, 36px);padding:var(--space-2) 0;border-bottom:1px solid var(--border-faint)}.ath-empty-state__hint:last-child{border-bottom:0;padding-bottom:0}.ath-empty-state__hint-icon{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:36px;color:var(--fg-4)}.ath-empty-state__hint-text{display:flex;flex-direction:column;min-width:0;line-height:1.35}.ath-empty-state__hint-label{font-size:var(--control-font, 13px);font-weight:var(--weight-medium);color:var(--fg)}.ath-empty-state__hint-sub{font-size:var(--text-sm);color:var(--fg-3)}@media (max-width: 640px){.ath-empty-state--compact .ath-empty-state__lead{flex-wrap:wrap}.ath-empty-state--compact .ath-empty-state__actions{flex-basis:100%;padding-left:48px}}\n"] }]
         }], propDecorators: { message: [{
                 type: Input,
                 args: [{ required: true }]
@@ -879,7 +984,22 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImpo
             }], icon: [{
                 type: Input
             }], bare: [{
+                type: Input,
+                args: [{ transform: booleanAttribute }]
+            }], size: [{
                 type: Input
+            }], hints: [{
+                type: Input
+            }], actionLabel: [{
+                type: Input
+            }], actionIcon: [{
+                type: Input
+            }], secondaryActionLabel: [{
+                type: Input
+            }], action: [{
+                type: Output
+            }], secondaryAction: [{
+                type: Output
             }] } });
 
 const LABELS$1 = {
@@ -890,7 +1010,6 @@ const LABELS$1 = {
     blocked: 'Blocked',
     closed: 'Closed',
 };
-const ATH_STATUS_LABELS = new InjectionToken('ATH_STATUS_LABELS');
 /**
  * Status indicator for a ticket: colored inner-ring dot + label.
  *
@@ -948,11 +1067,6 @@ const LABELS = {
     high: 'High',
     crit: 'Critical',
 };
-/**
- * Optional resolver for priority labels. The app provides it once at the
- * root (with its translations); without it the labels are English.
- */
-const ATH_PRIORITY_LABELS = new InjectionToken('ATH_PRIORITY_LABELS');
 /**
  * Priority indicator with rising bars (low → critical).
  *
@@ -1387,92 +1501,6 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImpo
                 type: Input
             }], parse: [{
                 type: Input
-            }] } });
-
-/**
- * Athene Button Component
- *
- * @example
- * <ath-button variant="primary" (clicked)="handleClick()">Click me</ath-button>
- * <ath-button variant="outline" size="sm" [loading]="true">Loading...</ath-button>
- */
-class AthButtonComponent {
-    constructor() {
-        /** Button variant */
-        this.variant = 'primary';
-        /** Button size */
-        this.size = 'md';
-        /** Button type attribute */
-        this.type = 'button';
-        /** Disabled state */
-        this.disabled = false;
-        /** Loading state */
-        this.loading = false;
-        /** Full width button */
-        this.fullWidth = false;
-        /**
-         * Toggle state. `null` (default) renders a plain button; `true`/`false`
-         * make it a toggle button with `aria-pressed` and a sunken pressed look.
-         */
-        this.pressed = null;
-        /**
-         * Disclosure state for a button that opens a panel or menu. `null`
-         * (default) omits `aria-expanded`. Set this instead of
-         * `[attr.aria-expanded]` on the host: host attributes do not reach the
-         * focusable inner `<button>`.
-         */
-        this.expanded = null;
-        /** Id of the element this button controls (`aria-controls`). */
-        this.controls = null;
-        /** Optional aria-label for icon-only usage */
-        this.ariaLabel = null;
-        /** Click event emitter */
-        this.clicked = new EventEmitter();
-        this.loaderIcon = Loader2;
-    }
-    get buttonClasses() {
-        return [
-            'ath-button',
-            `ath-button--${this.variant}`,
-            `ath-button--${this.size}`,
-            this.fullWidth ? 'ath-button--full-width' : '',
-            this.loading ? 'ath-button--loading' : '',
-            this.pressed ? 'ath-button--pressed' : '',
-        ].filter(Boolean).join(' ');
-    }
-    handleClick(event) {
-        if (!this.disabled && !this.loading) {
-            this.clicked.emit(event);
-        }
-    }
-    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthButtonComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthButtonComponent, isStandalone: true, selector: "ath-button", inputs: { variant: "variant", size: "size", type: "type", disabled: "disabled", loading: "loading", fullWidth: "fullWidth", pressed: "pressed", expanded: "expanded", controls: "controls", ariaLabel: "ariaLabel" }, outputs: { clicked: "clicked" }, ngImport: i0, template: "<button\n  [type]=\"type\"\n  [disabled]=\"disabled || loading\"\n  [class]=\"buttonClasses\"\n  [attr.aria-label]=\"ariaLabel\"\n  [attr.aria-busy]=\"loading\"\n  [attr.aria-pressed]=\"pressed\"\n  [attr.aria-expanded]=\"expanded\"\n  [attr.aria-controls]=\"controls\"\n  (click)=\"handleClick($event)\"\n>\n  @if (loading) {\n    <span class=\"ath-button__loader-wrap\">\n      <lucide-icon [img]=\"loaderIcon\" class=\"ath-button__loader\" [size]=\"18\" />\n    </span>\n  }\n  <span class=\"ath-button__content\" [class.ath-button__content--hidden]=\"loading\">\n    <ng-content />\n  </span>\n</button>\n", styles: [".ath-button{display:inline-grid;place-items:center;position:relative;grid-template-columns:1fr;grid-template-rows:1fr;font-family:var(--ath-font-family);font-weight:var(--ath-font-weight-medium);border-radius:var(--ath-border-radius-md);border:1px solid transparent;cursor:pointer;white-space:nowrap;letter-spacing:0;transition:background-color .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease,opacity .15s ease}.ath-button:focus-visible{outline:none;box-shadow:0 0 0 2px var(--ath-bg-primary),0 0 0 4px var(--ath-color-primary)}.ath-button:disabled{opacity:.5;cursor:not-allowed}.ath-button--xs{height:var(--control-h-xs);padding:0 10px;font-size:var(--control-font);border-radius:var(--r-sm)}.ath-button--xs .ath-button__content{gap:5px}.ath-button--sm{height:var(--control-h-sm);padding:0 8px;font-size:var(--control-font);border-radius:var(--r-sm)}.ath-button--md{height:var(--control-h);padding:0 var(--ath-space-3);font-size:var(--control-font)}.ath-button--lg{height:var(--control-h-lg);padding:0 var(--ath-space-5);font-size:var(--ath-font-size-md)}.ath-button--primary{background:var(--action-primary-bg);color:var(--action-primary-fg);border-color:var(--action-primary-bg);font-weight:var(--ath-font-weight-medium)}.ath-button--primary:disabled:not(.ath-button--loading){background:var(--action-primary-disabled-bg);border-color:var(--action-primary-disabled-border);color:var(--action-primary-disabled-fg);opacity:var(--action-primary-disabled-opacity)}.ath-button--primary:hover:not(:disabled){background:var(--action-primary-bg-hover);border-color:var(--action-primary-bg-hover)}.ath-button--primary:active:not(:disabled){background:var(--action-primary-bg-active);border-color:var(--action-primary-bg-active)}.ath-button--primary .ath-button__loader-wrap{color:var(--action-primary-fg)}.ath-button--create{background:var(--action-create-bg);color:var(--action-create-fg);border-color:var(--action-create-border)}.ath-button--create:hover:not(:disabled){background:var(--action-create-bg-hover)}.ath-button--create:active:not(:disabled){background:var(--action-create-bg-active)}.ath-button--create .ath-button__loader-wrap{color:var(--action-create-fg)}.ath-button--secondary{background-color:var(--ath-bg-secondary);color:var(--ath-text-primary);border-color:var(--action-outline-border)}.ath-button--secondary:hover:not(:disabled){border-color:var(--ath-border-color-hover);background-color:var(--ath-bg-tertiary)}.ath-button--outline{background-color:transparent;border-color:var(--action-outline-border);color:var(--action-outline-fg)}.ath-button--outline:disabled{color:var(--fg-3);border-color:var(--border)}.ath-button--outline:hover:not(:disabled){background-color:var(--action-outline-hover-bg);border-color:var(--action-outline-hover-border)}.ath-button--ghost{background-color:transparent;color:var(--ath-text-primary)}.ath-button--ghost:hover:not(:disabled){background-color:var(--ath-hover-bg)}.ath-button--danger{background-color:var(--ath-color-error);color:#fff;border-color:var(--ath-color-error)}.ath-button--danger:hover:not(:disabled){background-color:color-mix(in srgb,var(--ath-color-error) 86%,#000);border-color:color-mix(in srgb,var(--ath-color-error) 86%,#000)}.ath-button--danger-ghost{background-color:transparent;color:var(--fg-3);border-color:transparent}.ath-button--danger-ghost:hover:not(:disabled){background-color:var(--red-tint);color:var(--red)}.ath-button--danger-ghost:active:not(:disabled){background-color:color-mix(in srgb,var(--red) 16%,transparent)}.ath-button--danger-ghost:focus-visible{box-shadow:0 0 0 2px var(--ath-bg-primary),0 0 0 4px var(--red)}.ath-button--full-width{width:100%}.ath-button--pressed:not(.ath-button--primary):not(.ath-button--create){background-color:var(--hover-strong);border-color:var(--action-outline-hover-border)}.ath-button--loading{pointer-events:none}.ath-button__loader-wrap{display:inline-flex;align-items:center;justify-content:center;grid-area:1/1}.ath-button__loader{animation:ath-spin 1s linear infinite}.ath-button__content{display:inline-flex;grid-area:1/1;align-items:center;gap:6px}.ath-button__content--hidden{visibility:hidden}@keyframes ath-spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
-}
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthButtonComponent, decorators: [{
-            type: Component,
-            args: [{ selector: 'ath-button', standalone: true, imports: [CommonModule, LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "<button\n  [type]=\"type\"\n  [disabled]=\"disabled || loading\"\n  [class]=\"buttonClasses\"\n  [attr.aria-label]=\"ariaLabel\"\n  [attr.aria-busy]=\"loading\"\n  [attr.aria-pressed]=\"pressed\"\n  [attr.aria-expanded]=\"expanded\"\n  [attr.aria-controls]=\"controls\"\n  (click)=\"handleClick($event)\"\n>\n  @if (loading) {\n    <span class=\"ath-button__loader-wrap\">\n      <lucide-icon [img]=\"loaderIcon\" class=\"ath-button__loader\" [size]=\"18\" />\n    </span>\n  }\n  <span class=\"ath-button__content\" [class.ath-button__content--hidden]=\"loading\">\n    <ng-content />\n  </span>\n</button>\n", styles: [".ath-button{display:inline-grid;place-items:center;position:relative;grid-template-columns:1fr;grid-template-rows:1fr;font-family:var(--ath-font-family);font-weight:var(--ath-font-weight-medium);border-radius:var(--ath-border-radius-md);border:1px solid transparent;cursor:pointer;white-space:nowrap;letter-spacing:0;transition:background-color .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease,opacity .15s ease}.ath-button:focus-visible{outline:none;box-shadow:0 0 0 2px var(--ath-bg-primary),0 0 0 4px var(--ath-color-primary)}.ath-button:disabled{opacity:.5;cursor:not-allowed}.ath-button--xs{height:var(--control-h-xs);padding:0 10px;font-size:var(--control-font);border-radius:var(--r-sm)}.ath-button--xs .ath-button__content{gap:5px}.ath-button--sm{height:var(--control-h-sm);padding:0 8px;font-size:var(--control-font);border-radius:var(--r-sm)}.ath-button--md{height:var(--control-h);padding:0 var(--ath-space-3);font-size:var(--control-font)}.ath-button--lg{height:var(--control-h-lg);padding:0 var(--ath-space-5);font-size:var(--ath-font-size-md)}.ath-button--primary{background:var(--action-primary-bg);color:var(--action-primary-fg);border-color:var(--action-primary-bg);font-weight:var(--ath-font-weight-medium)}.ath-button--primary:disabled:not(.ath-button--loading){background:var(--action-primary-disabled-bg);border-color:var(--action-primary-disabled-border);color:var(--action-primary-disabled-fg);opacity:var(--action-primary-disabled-opacity)}.ath-button--primary:hover:not(:disabled){background:var(--action-primary-bg-hover);border-color:var(--action-primary-bg-hover)}.ath-button--primary:active:not(:disabled){background:var(--action-primary-bg-active);border-color:var(--action-primary-bg-active)}.ath-button--primary .ath-button__loader-wrap{color:var(--action-primary-fg)}.ath-button--create{background:var(--action-create-bg);color:var(--action-create-fg);border-color:var(--action-create-border)}.ath-button--create:hover:not(:disabled){background:var(--action-create-bg-hover)}.ath-button--create:active:not(:disabled){background:var(--action-create-bg-active)}.ath-button--create .ath-button__loader-wrap{color:var(--action-create-fg)}.ath-button--secondary{background-color:var(--ath-bg-secondary);color:var(--ath-text-primary);border-color:var(--action-outline-border)}.ath-button--secondary:hover:not(:disabled){border-color:var(--ath-border-color-hover);background-color:var(--ath-bg-tertiary)}.ath-button--outline{background-color:transparent;border-color:var(--action-outline-border);color:var(--action-outline-fg)}.ath-button--outline:disabled{color:var(--fg-3);border-color:var(--border)}.ath-button--outline:hover:not(:disabled){background-color:var(--action-outline-hover-bg);border-color:var(--action-outline-hover-border)}.ath-button--ghost{background-color:transparent;color:var(--ath-text-primary)}.ath-button--ghost:hover:not(:disabled){background-color:var(--ath-hover-bg)}.ath-button--danger{background-color:var(--ath-color-error);color:#fff;border-color:var(--ath-color-error)}.ath-button--danger:hover:not(:disabled){background-color:color-mix(in srgb,var(--ath-color-error) 86%,#000);border-color:color-mix(in srgb,var(--ath-color-error) 86%,#000)}.ath-button--danger-ghost{background-color:transparent;color:var(--fg-3);border-color:transparent}.ath-button--danger-ghost:hover:not(:disabled){background-color:var(--red-tint);color:var(--red)}.ath-button--danger-ghost:active:not(:disabled){background-color:color-mix(in srgb,var(--red) 16%,transparent)}.ath-button--danger-ghost:focus-visible{box-shadow:0 0 0 2px var(--ath-bg-primary),0 0 0 4px var(--red)}.ath-button--full-width{width:100%}.ath-button--pressed:not(.ath-button--primary):not(.ath-button--create){background-color:var(--hover-strong);border-color:var(--action-outline-hover-border)}.ath-button--loading{pointer-events:none}.ath-button__loader-wrap{display:inline-flex;align-items:center;justify-content:center;grid-area:1/1}.ath-button__loader{animation:ath-spin 1s linear infinite}.ath-button__content{display:inline-flex;grid-area:1/1;align-items:center;gap:6px}.ath-button__content--hidden{visibility:hidden}@keyframes ath-spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}\n"] }]
-        }], propDecorators: { variant: [{
-                type: Input
-            }], size: [{
-                type: Input
-            }], type: [{
-                type: Input
-            }], disabled: [{
-                type: Input
-            }], loading: [{
-                type: Input
-            }], fullWidth: [{
-                type: Input
-            }], pressed: [{
-                type: Input
-            }], expanded: [{
-                type: Input
-            }], controls: [{
-                type: Input
-            }], ariaLabel: [{
-                type: Input
-            }], clicked: [{
-                type: Output
             }] } });
 
 /**
@@ -2603,6 +2631,7 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImpo
                 type: Output
             }] } });
 
+let nextDialogId = 0;
 /**
  * Athene Dialog Component
  *
@@ -2619,6 +2648,11 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImpo
  */
 class AthDialogComponent {
     constructor() {
+        this.host = inject(ElementRef);
+        this.returnFocus = null;
+        /** Ids that name and describe the dialog (`aria-labelledby/-describedby`). */
+        this.titleId = `ath-dialog-title-${++nextDialogId}`;
+        this.descriptionId = `ath-dialog-desc-${nextDialogId}`;
         /** Whether the dialog is open */
         this.labels = inject(ATH_LABELS, { optional: true });
         /** Accessible name of the close controls; defaults to `ATH_LABELS`. */
@@ -2646,6 +2680,51 @@ class AthDialogComponent {
             this.close();
         }
     }
+    ngOnChanges(changes) {
+        if (!changes['open'])
+            return;
+        if (this.open) {
+            // Move focus into the dialog once it has rendered; remember where it was.
+            this.returnFocus = document.activeElement;
+            setTimeout(() => {
+                const panel = this.panel();
+                if (!panel || panel.contains(document.activeElement))
+                    return;
+                (this.focusables()[0] ?? panel).focus();
+            });
+        }
+        else if (this.returnFocus && document.contains(this.returnFocus)) {
+            this.returnFocus.focus();
+            this.returnFocus = null;
+        }
+    }
+    /** Keep Tab inside the open dialog. */
+    onPanelKeydown(event) {
+        if (event.key !== 'Tab')
+            return;
+        const items = this.focusables();
+        if (items.length === 0)
+            return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        }
+        else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    }
+    panel() {
+        return this.host.nativeElement.querySelector('.ath-dialog__panel');
+    }
+    focusables() {
+        const panel = this.panel();
+        if (!panel)
+            return [];
+        return Array.from(panel.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'));
+    }
     get dialogClasses() {
         return `ath-dialog__panel ath-dialog__panel--${this.size}`;
     }
@@ -2667,11 +2746,11 @@ class AthDialogComponent {
         }
     }
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthDialogComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthDialogComponent, isStandalone: true, selector: "ath-dialog", inputs: { closeLabel: "closeLabel", open: "open", title: "title", description: "description", size: "size", closeOnBackdrop: "closeOnBackdrop", closeOnEscape: "closeOnEscape" }, outputs: { closed: "closed" }, host: { listeners: { "document:keydown.escape": "onEscapeKey()" } }, ngImport: i0, template: "@if (open) {\n  <div\n    class=\"ath-dialog__backdrop\"\n    (click)=\"onBackdropClick()\"\n    (keydown)=\"onBackdropKeydown($event)\"\n    role=\"button\"\n    tabindex=\"0\"\n    [attr.aria-label]=\"closeText\"\n  ></div>\n  <div class=\"ath-dialog__container\">\n    <div [class]=\"dialogClasses\" role=\"dialog\" aria-modal=\"true\">\n      <!-- Header -->\n      <div class=\"ath-dialog__header\">\n        <div class=\"ath-dialog__header-text\">\n          @if (title) {\n            <h2 class=\"ath-dialog__title\">{{ title }}</h2>\n          }\n          @if (description) {\n            <p class=\"ath-dialog__description\">{{ description }}</p>\n          }\n        </div>\n        <button class=\"ath-dialog__close\" type=\"button\" [attr.aria-label]=\"closeText\" (click)=\"close()\">\n          <lucide-icon [img]=\"closeIcon\" [size]=\"18\" />\n        </button>\n      </div>\n\n      <!-- Body -->\n      <div class=\"ath-dialog__body\">\n        <ng-content />\n      </div>\n\n      <!-- Footer -->\n      <div class=\"ath-dialog__footer\">\n        <ng-content select=\"[slot=footer]\" />\n      </div>\n    </div>\n  </div>\n}\n", styles: [".ath-dialog__backdrop{position:fixed;inset:0;z-index:var(--ath-z-modal-backdrop);background-color:var(--ath-bg-overlay);animation:ath-dialog-backdrop-in .2s ease}.ath-dialog__container{position:fixed;inset:0;z-index:var(--ath-z-modal);display:flex;align-items:center;justify-content:center;padding:var(--ath-space-4);pointer-events:none}.ath-dialog__panel{position:relative;display:flex;flex-direction:column;width:100%;max-height:calc(100vh - var(--ath-space-16));background-color:var(--ath-bg-elevated);border:1px solid var(--ath-border-color);border-radius:var(--ath-border-radius-xl);box-shadow:var(--ath-shadow-xl);pointer-events:auto;animation:ath-dialog-panel-in .2s ease}.ath-dialog__panel--sm{max-width:400px}.ath-dialog__panel--md{max-width:520px}.ath-dialog__panel--lg{max-width:680px}.ath-dialog__panel--xl{max-width:860px}.ath-dialog__header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--ath-space-4);padding:var(--ath-space-6);padding-bottom:0}.ath-dialog__header-text{display:flex;flex-direction:column;gap:var(--ath-space-1);min-width:0}.ath-dialog__title{margin:0;font-size:var(--ath-font-size-lg);font-weight:var(--ath-font-weight-semibold);color:var(--ath-text-primary);line-height:var(--ath-line-height-tight)}.ath-dialog__description{margin:0;font-size:var(--ath-font-size-sm);color:var(--ath-text-secondary);line-height:var(--ath-line-height-normal)}.ath-dialog__close{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;color:var(--ath-text-tertiary);background:none;border:none;border-radius:var(--ath-border-radius-sm);cursor:pointer;transition:color var(--ath-transition-fast),background-color var(--ath-transition-fast)}.ath-dialog__close:hover{color:var(--ath-text-primary);background-color:var(--ath-bg-tertiary)}.ath-dialog__close:focus-visible{outline:none;box-shadow:0 0 0 2px var(--ath-border-color-focus)}.ath-dialog__body{flex:1;overflow-y:auto;padding:var(--ath-space-6)}.ath-dialog__footer{display:flex;align-items:center;justify-content:flex-end;gap:var(--ath-space-3);padding:var(--ath-space-4) var(--ath-space-6);border-top:1px solid var(--ath-border-color)}.ath-dialog__footer:empty{display:none}@keyframes ath-dialog-backdrop-in{0%{opacity:0}to{opacity:1}}@keyframes ath-dialog-panel-in{0%{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthDialogComponent, isStandalone: true, selector: "ath-dialog", inputs: { closeLabel: "closeLabel", open: "open", title: "title", description: "description", size: "size", closeOnBackdrop: "closeOnBackdrop", closeOnEscape: "closeOnEscape" }, outputs: { closed: "closed" }, host: { listeners: { "document:keydown.escape": "onEscapeKey()" } }, usesOnChanges: true, ngImport: i0, template: "@if (open) {\n  <div\n    class=\"ath-dialog__backdrop\"\n    (click)=\"onBackdropClick()\"\n    (keydown)=\"onBackdropKeydown($event)\"\n    role=\"button\"\n    tabindex=\"0\"\n    [attr.aria-label]=\"closeText\"\n  ></div>\n  <div class=\"ath-dialog__container\">\n    <div\n      [class]=\"dialogClasses\"\n      role=\"dialog\"\n      aria-modal=\"true\"\n      tabindex=\"-1\"\n      [attr.aria-labelledby]=\"title ? titleId : null\"\n      [attr.aria-describedby]=\"description ? descriptionId : null\"\n      (keydown)=\"onPanelKeydown($event)\"\n    >\n      <!-- Header -->\n      <div class=\"ath-dialog__header\">\n        <div class=\"ath-dialog__header-text\">\n          @if (title) {\n            <h2 class=\"ath-dialog__title\" [id]=\"titleId\">{{ title }}</h2>\n          }\n          @if (description) {\n            <p class=\"ath-dialog__description\" [id]=\"descriptionId\">{{ description }}</p>\n          }\n        </div>\n        <button\n          class=\"ath-dialog__close\"\n          type=\"button\"\n          [attr.aria-label]=\"closeText\"\n          (click)=\"close()\"\n        >\n          <lucide-icon [img]=\"closeIcon\" [size]=\"18\" />\n        </button>\n      </div>\n\n      <!-- Body -->\n      <div class=\"ath-dialog__body\">\n        <ng-content />\n      </div>\n\n      <!-- Footer -->\n      <div class=\"ath-dialog__footer\">\n        <ng-content select=\"[slot=footer]\" />\n      </div>\n    </div>\n  </div>\n}\n", styles: [".ath-dialog__backdrop{position:fixed;inset:0;z-index:var(--ath-z-modal-backdrop);background-color:var(--ath-bg-overlay);animation:ath-dialog-backdrop-in .2s ease}.ath-dialog__container{position:fixed;inset:0;z-index:var(--ath-z-modal);display:flex;align-items:center;justify-content:center;padding:var(--ath-space-4);pointer-events:none}.ath-dialog__panel{position:relative;display:flex;flex-direction:column;width:100%;max-height:calc(100vh - var(--ath-space-16));background-color:var(--ath-bg-elevated);border:1px solid var(--ath-border-color);border-radius:var(--ath-border-radius-xl);box-shadow:var(--ath-shadow-xl);pointer-events:auto;animation:ath-dialog-panel-in .2s ease}.ath-dialog__panel--sm{max-width:400px}.ath-dialog__panel--md{max-width:520px}.ath-dialog__panel--lg{max-width:680px}.ath-dialog__panel--xl{max-width:860px}.ath-dialog__header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--ath-space-4);padding:var(--ath-space-6);padding-bottom:0}.ath-dialog__header-text{display:flex;flex-direction:column;gap:var(--ath-space-1);min-width:0}.ath-dialog__title{margin:0;font-size:var(--ath-font-size-lg);font-weight:var(--ath-font-weight-semibold);color:var(--ath-text-primary);line-height:var(--ath-line-height-tight)}.ath-dialog__description{margin:0;font-size:var(--ath-font-size-sm);color:var(--ath-text-secondary);line-height:var(--ath-line-height-normal)}.ath-dialog__close{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;color:var(--ath-text-tertiary);background:none;border:none;border-radius:var(--ath-border-radius-sm);cursor:pointer;transition:color var(--ath-transition-fast),background-color var(--ath-transition-fast)}.ath-dialog__close:hover{color:var(--ath-text-primary);background-color:var(--ath-bg-tertiary)}.ath-dialog__close:focus-visible{outline:none;box-shadow:0 0 0 2px var(--ath-border-color-focus)}.ath-dialog__body{flex:1;overflow-y:auto;padding:var(--ath-space-6)}.ath-dialog__footer{display:flex;align-items:center;justify-content:flex-end;gap:var(--ath-space-3);padding:var(--ath-space-4) var(--ath-space-6);border-top:1px solid var(--ath-border-color)}.ath-dialog__footer:empty{display:none}@keyframes ath-dialog-backdrop-in{0%{opacity:0}to{opacity:1}}@keyframes ath-dialog-panel-in{0%{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}.ath-dialog__panel:focus{outline:none}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
 }
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthDialogComponent, decorators: [{
             type: Component,
-            args: [{ selector: 'ath-dialog', standalone: true, imports: [CommonModule, LucideAngularModule, AthButtonComponent], changeDetection: ChangeDetectionStrategy.OnPush, template: "@if (open) {\n  <div\n    class=\"ath-dialog__backdrop\"\n    (click)=\"onBackdropClick()\"\n    (keydown)=\"onBackdropKeydown($event)\"\n    role=\"button\"\n    tabindex=\"0\"\n    [attr.aria-label]=\"closeText\"\n  ></div>\n  <div class=\"ath-dialog__container\">\n    <div [class]=\"dialogClasses\" role=\"dialog\" aria-modal=\"true\">\n      <!-- Header -->\n      <div class=\"ath-dialog__header\">\n        <div class=\"ath-dialog__header-text\">\n          @if (title) {\n            <h2 class=\"ath-dialog__title\">{{ title }}</h2>\n          }\n          @if (description) {\n            <p class=\"ath-dialog__description\">{{ description }}</p>\n          }\n        </div>\n        <button class=\"ath-dialog__close\" type=\"button\" [attr.aria-label]=\"closeText\" (click)=\"close()\">\n          <lucide-icon [img]=\"closeIcon\" [size]=\"18\" />\n        </button>\n      </div>\n\n      <!-- Body -->\n      <div class=\"ath-dialog__body\">\n        <ng-content />\n      </div>\n\n      <!-- Footer -->\n      <div class=\"ath-dialog__footer\">\n        <ng-content select=\"[slot=footer]\" />\n      </div>\n    </div>\n  </div>\n}\n", styles: [".ath-dialog__backdrop{position:fixed;inset:0;z-index:var(--ath-z-modal-backdrop);background-color:var(--ath-bg-overlay);animation:ath-dialog-backdrop-in .2s ease}.ath-dialog__container{position:fixed;inset:0;z-index:var(--ath-z-modal);display:flex;align-items:center;justify-content:center;padding:var(--ath-space-4);pointer-events:none}.ath-dialog__panel{position:relative;display:flex;flex-direction:column;width:100%;max-height:calc(100vh - var(--ath-space-16));background-color:var(--ath-bg-elevated);border:1px solid var(--ath-border-color);border-radius:var(--ath-border-radius-xl);box-shadow:var(--ath-shadow-xl);pointer-events:auto;animation:ath-dialog-panel-in .2s ease}.ath-dialog__panel--sm{max-width:400px}.ath-dialog__panel--md{max-width:520px}.ath-dialog__panel--lg{max-width:680px}.ath-dialog__panel--xl{max-width:860px}.ath-dialog__header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--ath-space-4);padding:var(--ath-space-6);padding-bottom:0}.ath-dialog__header-text{display:flex;flex-direction:column;gap:var(--ath-space-1);min-width:0}.ath-dialog__title{margin:0;font-size:var(--ath-font-size-lg);font-weight:var(--ath-font-weight-semibold);color:var(--ath-text-primary);line-height:var(--ath-line-height-tight)}.ath-dialog__description{margin:0;font-size:var(--ath-font-size-sm);color:var(--ath-text-secondary);line-height:var(--ath-line-height-normal)}.ath-dialog__close{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;color:var(--ath-text-tertiary);background:none;border:none;border-radius:var(--ath-border-radius-sm);cursor:pointer;transition:color var(--ath-transition-fast),background-color var(--ath-transition-fast)}.ath-dialog__close:hover{color:var(--ath-text-primary);background-color:var(--ath-bg-tertiary)}.ath-dialog__close:focus-visible{outline:none;box-shadow:0 0 0 2px var(--ath-border-color-focus)}.ath-dialog__body{flex:1;overflow-y:auto;padding:var(--ath-space-6)}.ath-dialog__footer{display:flex;align-items:center;justify-content:flex-end;gap:var(--ath-space-3);padding:var(--ath-space-4) var(--ath-space-6);border-top:1px solid var(--ath-border-color)}.ath-dialog__footer:empty{display:none}@keyframes ath-dialog-backdrop-in{0%{opacity:0}to{opacity:1}}@keyframes ath-dialog-panel-in{0%{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}\n"] }]
+            args: [{ selector: 'ath-dialog', standalone: true, imports: [CommonModule, LucideAngularModule, AthButtonComponent], changeDetection: ChangeDetectionStrategy.OnPush, template: "@if (open) {\n  <div\n    class=\"ath-dialog__backdrop\"\n    (click)=\"onBackdropClick()\"\n    (keydown)=\"onBackdropKeydown($event)\"\n    role=\"button\"\n    tabindex=\"0\"\n    [attr.aria-label]=\"closeText\"\n  ></div>\n  <div class=\"ath-dialog__container\">\n    <div\n      [class]=\"dialogClasses\"\n      role=\"dialog\"\n      aria-modal=\"true\"\n      tabindex=\"-1\"\n      [attr.aria-labelledby]=\"title ? titleId : null\"\n      [attr.aria-describedby]=\"description ? descriptionId : null\"\n      (keydown)=\"onPanelKeydown($event)\"\n    >\n      <!-- Header -->\n      <div class=\"ath-dialog__header\">\n        <div class=\"ath-dialog__header-text\">\n          @if (title) {\n            <h2 class=\"ath-dialog__title\" [id]=\"titleId\">{{ title }}</h2>\n          }\n          @if (description) {\n            <p class=\"ath-dialog__description\" [id]=\"descriptionId\">{{ description }}</p>\n          }\n        </div>\n        <button\n          class=\"ath-dialog__close\"\n          type=\"button\"\n          [attr.aria-label]=\"closeText\"\n          (click)=\"close()\"\n        >\n          <lucide-icon [img]=\"closeIcon\" [size]=\"18\" />\n        </button>\n      </div>\n\n      <!-- Body -->\n      <div class=\"ath-dialog__body\">\n        <ng-content />\n      </div>\n\n      <!-- Footer -->\n      <div class=\"ath-dialog__footer\">\n        <ng-content select=\"[slot=footer]\" />\n      </div>\n    </div>\n  </div>\n}\n", styles: [".ath-dialog__backdrop{position:fixed;inset:0;z-index:var(--ath-z-modal-backdrop);background-color:var(--ath-bg-overlay);animation:ath-dialog-backdrop-in .2s ease}.ath-dialog__container{position:fixed;inset:0;z-index:var(--ath-z-modal);display:flex;align-items:center;justify-content:center;padding:var(--ath-space-4);pointer-events:none}.ath-dialog__panel{position:relative;display:flex;flex-direction:column;width:100%;max-height:calc(100vh - var(--ath-space-16));background-color:var(--ath-bg-elevated);border:1px solid var(--ath-border-color);border-radius:var(--ath-border-radius-xl);box-shadow:var(--ath-shadow-xl);pointer-events:auto;animation:ath-dialog-panel-in .2s ease}.ath-dialog__panel--sm{max-width:400px}.ath-dialog__panel--md{max-width:520px}.ath-dialog__panel--lg{max-width:680px}.ath-dialog__panel--xl{max-width:860px}.ath-dialog__header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--ath-space-4);padding:var(--ath-space-6);padding-bottom:0}.ath-dialog__header-text{display:flex;flex-direction:column;gap:var(--ath-space-1);min-width:0}.ath-dialog__title{margin:0;font-size:var(--ath-font-size-lg);font-weight:var(--ath-font-weight-semibold);color:var(--ath-text-primary);line-height:var(--ath-line-height-tight)}.ath-dialog__description{margin:0;font-size:var(--ath-font-size-sm);color:var(--ath-text-secondary);line-height:var(--ath-line-height-normal)}.ath-dialog__close{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;color:var(--ath-text-tertiary);background:none;border:none;border-radius:var(--ath-border-radius-sm);cursor:pointer;transition:color var(--ath-transition-fast),background-color var(--ath-transition-fast)}.ath-dialog__close:hover{color:var(--ath-text-primary);background-color:var(--ath-bg-tertiary)}.ath-dialog__close:focus-visible{outline:none;box-shadow:0 0 0 2px var(--ath-border-color-focus)}.ath-dialog__body{flex:1;overflow-y:auto;padding:var(--ath-space-6)}.ath-dialog__footer{display:flex;align-items:center;justify-content:flex-end;gap:var(--ath-space-3);padding:var(--ath-space-4) var(--ath-space-6);border-top:1px solid var(--ath-border-color)}.ath-dialog__footer:empty{display:none}@keyframes ath-dialog-backdrop-in{0%{opacity:0}to{opacity:1}}@keyframes ath-dialog-panel-in{0%{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}.ath-dialog__panel:focus{outline:none}\n"] }]
         }], propDecorators: { closeLabel: [{
                 type: Input
             }], open: [{
@@ -2693,61 +2772,6 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImpo
                 args: ['document:keydown.escape']
             }] } });
 
-const ACTION_MIN_DURATION = 8000;
-/**
- * Toast Service
- *
- * Global notification service for displaying toast messages.
- *
- * @example
- * constructor(private toast: AthToastService) {}
- * this.toast.success('Item created');
- * this.toast.error('Something went wrong');
- */
-class AthToastService {
-    constructor() {
-        this.toastsSignal = signal([]);
-        this.toasts = this.toastsSignal.asReadonly();
-    }
-    success(message, options = 4000) {
-        this.add('success', message, options, 4000);
-    }
-    error(message, options = 6000) {
-        this.add('error', message, options, 6000);
-    }
-    warning(message, options = 5000) {
-        this.add('warning', message, options, 5000);
-    }
-    info(message, options = 4000) {
-        this.add('info', message, options, 4000);
-    }
-    /** Run a toast's action, then close the toast. */
-    runAction(id) {
-        const toast = this.toastsSignal().find((t) => t.id === id);
-        this.remove(id);
-        toast?.action?.run();
-    }
-    remove(id) {
-        this.toastsSignal.update(toasts => toasts.filter(t => t.id !== id));
-    }
-    add(variant, message, options, fallback) {
-        const opts = typeof options === 'number' ? { duration: options } : options;
-        const action = opts.action;
-        const duration = opts.duration ?? (action ? Math.max(fallback, ACTION_MIN_DURATION) : fallback);
-        const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-        const toast = { id, variant, message, duration, action };
-        this.toastsSignal.update((toasts) => [...toasts, toast]);
-        if (duration > 0) {
-            setTimeout(() => this.remove(id), duration);
-        }
-    }
-    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthToastService, deps: [], target: i0.ɵɵFactoryTarget.Injectable }); }
-    static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthToastService, providedIn: 'root' }); }
-}
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthToastService, decorators: [{
-            type: Injectable,
-            args: [{ providedIn: 'root' }]
-        }] });
 /**
  * Athene Toast Container Component
  *
@@ -2784,13 +2808,13 @@ class AthToastContainerComponent {
     runAction(id) {
         this.toastService.runAction(id);
     }
-    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthToastContainerComponent, deps: [{ token: AthToastService }], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthToastContainerComponent, deps: [{ token: i1$2.AthToastService }], target: i0.ɵɵFactoryTarget.Component }); }
     static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthToastContainerComponent, isStandalone: true, selector: "ath-toast-container", ngImport: i0, template: "<div class=\"ath-toast-container\" aria-live=\"polite\">\n  @for (toast of toasts; track toast.id) {\n    <div class=\"ath-toast\" [class]=\"'ath-toast ath-toast--' + toast.variant\">\n      <lucide-icon [img]=\"getIcon(toast.variant)\" [size]=\"18\" class=\"ath-toast__icon\" />\n      <span class=\"ath-toast__message\">{{ toast.message }}</span>\n      @if (toast.action; as action) {\n        <button type=\"button\" class=\"ath-toast__action\" (click)=\"runAction(toast.id)\">\n          {{ action.label }}\n        </button>\n      }\n      <button\n        type=\"button\"\n        class=\"ath-toast__close\"\n        [attr.aria-label]=\"'Dismiss notification: ' + toast.message\"\n        (click)=\"dismiss(toast.id)\"\n      >\n        <lucide-icon [img]=\"closeIcon\" [size]=\"14\" />\n      </button>\n    </div>\n  }\n</div>\n", styles: [".ath-toast-container{position:fixed;top:var(--toast-offset-top, auto);bottom:var(--toast-offset-bottom, 16px);right:var(--toast-offset-right, 16px);z-index:var(--ath-z-toast);display:flex;flex-direction:column;gap:var(--ath-space-2);max-width:420px;width:100%;pointer-events:none}.ath-toast{display:flex;align-items:flex-start;gap:var(--ath-space-3);padding:var(--ath-space-3) var(--ath-space-4);background-color:var(--ath-bg-elevated);border:1px solid var(--ath-border-color);border-radius:var(--ath-border-radius-md);box-shadow:var(--ath-shadow-lg);pointer-events:auto;animation:ath-toast-in .2s ease}.ath-toast--success{border-left:3px solid var(--ath-color-success)}.ath-toast--success .ath-toast__icon{color:var(--ath-color-success)}.ath-toast--error{border-left:3px solid var(--ath-color-error)}.ath-toast--error .ath-toast__icon{color:var(--ath-color-error)}.ath-toast--warning{border-left:3px solid var(--ath-color-warning)}.ath-toast--warning .ath-toast__icon{color:var(--ath-color-warning)}.ath-toast--info{border-left:3px solid var(--ath-color-info)}.ath-toast--info .ath-toast__icon{color:var(--ath-color-info)}.ath-toast__icon{flex-shrink:0;margin-top:1px}.ath-toast__message{flex:1;font-size:var(--ath-font-size-sm);color:var(--ath-text-primary);line-height:var(--ath-line-height-normal)}.ath-toast__action{flex-shrink:0;align-self:center;padding:2px 6px;margin:-2px 0;background:none;border:none;border-radius:var(--r-xs);color:var(--fg);font-family:inherit;font-size:var(--ath-font-size-sm);font-weight:var(--ath-font-weight-semibold);cursor:pointer}.ath-toast__action:hover{text-decoration:underline;text-underline-offset:2px}.ath-toast__action:focus-visible{outline:none;box-shadow:0 0 0 2px var(--accent-ring)}.ath-toast__close{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;color:var(--ath-text-tertiary);background:none;border:none;border-radius:var(--ath-border-radius-sm);cursor:pointer;transition:color var(--ath-transition-fast)}.ath-toast__close:hover{color:var(--ath-text-primary)}@keyframes ath-toast-in{0%{opacity:0;transform:translate(20px)}to{opacity:1;transform:translate(0)}}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
 }
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthToastContainerComponent, decorators: [{
             type: Component,
             args: [{ selector: 'ath-toast-container', standalone: true, imports: [CommonModule, LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "<div class=\"ath-toast-container\" aria-live=\"polite\">\n  @for (toast of toasts; track toast.id) {\n    <div class=\"ath-toast\" [class]=\"'ath-toast ath-toast--' + toast.variant\">\n      <lucide-icon [img]=\"getIcon(toast.variant)\" [size]=\"18\" class=\"ath-toast__icon\" />\n      <span class=\"ath-toast__message\">{{ toast.message }}</span>\n      @if (toast.action; as action) {\n        <button type=\"button\" class=\"ath-toast__action\" (click)=\"runAction(toast.id)\">\n          {{ action.label }}\n        </button>\n      }\n      <button\n        type=\"button\"\n        class=\"ath-toast__close\"\n        [attr.aria-label]=\"'Dismiss notification: ' + toast.message\"\n        (click)=\"dismiss(toast.id)\"\n      >\n        <lucide-icon [img]=\"closeIcon\" [size]=\"14\" />\n      </button>\n    </div>\n  }\n</div>\n", styles: [".ath-toast-container{position:fixed;top:var(--toast-offset-top, auto);bottom:var(--toast-offset-bottom, 16px);right:var(--toast-offset-right, 16px);z-index:var(--ath-z-toast);display:flex;flex-direction:column;gap:var(--ath-space-2);max-width:420px;width:100%;pointer-events:none}.ath-toast{display:flex;align-items:flex-start;gap:var(--ath-space-3);padding:var(--ath-space-3) var(--ath-space-4);background-color:var(--ath-bg-elevated);border:1px solid var(--ath-border-color);border-radius:var(--ath-border-radius-md);box-shadow:var(--ath-shadow-lg);pointer-events:auto;animation:ath-toast-in .2s ease}.ath-toast--success{border-left:3px solid var(--ath-color-success)}.ath-toast--success .ath-toast__icon{color:var(--ath-color-success)}.ath-toast--error{border-left:3px solid var(--ath-color-error)}.ath-toast--error .ath-toast__icon{color:var(--ath-color-error)}.ath-toast--warning{border-left:3px solid var(--ath-color-warning)}.ath-toast--warning .ath-toast__icon{color:var(--ath-color-warning)}.ath-toast--info{border-left:3px solid var(--ath-color-info)}.ath-toast--info .ath-toast__icon{color:var(--ath-color-info)}.ath-toast__icon{flex-shrink:0;margin-top:1px}.ath-toast__message{flex:1;font-size:var(--ath-font-size-sm);color:var(--ath-text-primary);line-height:var(--ath-line-height-normal)}.ath-toast__action{flex-shrink:0;align-self:center;padding:2px 6px;margin:-2px 0;background:none;border:none;border-radius:var(--r-xs);color:var(--fg);font-family:inherit;font-size:var(--ath-font-size-sm);font-weight:var(--ath-font-weight-semibold);cursor:pointer}.ath-toast__action:hover{text-decoration:underline;text-underline-offset:2px}.ath-toast__action:focus-visible{outline:none;box-shadow:0 0 0 2px var(--accent-ring)}.ath-toast__close{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;color:var(--ath-text-tertiary);background:none;border:none;border-radius:var(--ath-border-radius-sm);cursor:pointer;transition:color var(--ath-transition-fast)}.ath-toast__close:hover{color:var(--ath-text-primary)}@keyframes ath-toast-in{0%{opacity:0;transform:translate(20px)}to{opacity:1;transform:translate(0)}}\n"] }]
-        }], ctorParameters: () => [{ type: AthToastService }] });
+        }], ctorParameters: () => [{ type: i1$2.AthToastService }] });
 
 /**
  * Athene Spinner Component
@@ -3432,5 +3456,5 @@ function range(from, to) {
  * Generated bundle index. Do not edit.
  */
 
-export { ATH_DEFAULT_LABELS, ATH_LABELS, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, AVATAR_TONE_COUNT, AthAlertComponent, AthAvatarComponent, AthAvatarStackComponent, AthBadgeComponent, AthBannerComponent, AthBreadcrumbComponent, AthButtonComponent, AthCardComponent, AthChipComponent, AthCodeBlockComponent, AthComboboxComponent, AthCopyButtonComponent, AthDialogComponent, AthDividerComponent, AthDropdownComponent, AthEmptyStateComponent, AthFileDropComponent, AthFilterChipComponent, AthInputComponent, AthKbdComponent, AthKpiTileComponent, AthMarkdownComponent, AthNavItemComponent, AthPageHeaderComponent, AthPaginationComponent, AthPriorityComponent, AthProgressComponent, AthProjectKeyBadgeComponent, AthSearchInputComponent, AthSectionComponent, AthSegmentComponent, AthSelectComponent, AthSidebarComponent, AthSkeletonCardComponent, AthSkeletonComponent, AthSkeletonTableComponent, AthSlaBarComponent, AthSparklineComponent, AthSpinnerComponent, AthStatCardComponent, AthStatusPillComponent, AthTableComponent, AthTabsComponent, AthTextareaComponent, AthTimelineComponent, AthTimelineEntryComponent, AthTimelineEventComponent, AthTimerPillComponent, AthToastContainerComponent, AthToastService, AthToggleComponent, AthTooltipDirective, AthUserPickerComponent, avatarInitials, avatarTone };
+export { AVATAR_TONE_COUNT, AthAlertComponent, AthAvatarComponent, AthAvatarStackComponent, AthBadgeComponent, AthBannerComponent, AthBreadcrumbComponent, AthButtonComponent, AthCardComponent, AthChipComponent, AthCodeBlockComponent, AthComboboxComponent, AthCopyButtonComponent, AthDialogComponent, AthDividerComponent, AthDropdownComponent, AthEmptyStateComponent, AthFileDropComponent, AthFilterChipComponent, AthInputComponent, AthKbdComponent, AthKpiTileComponent, AthMarkdownComponent, AthNavItemComponent, AthPageHeaderComponent, AthPaginationComponent, AthPriorityComponent, AthProgressComponent, AthProjectKeyBadgeComponent, AthSearchInputComponent, AthSectionComponent, AthSegmentComponent, AthSelectComponent, AthSidebarComponent, AthSkeletonCardComponent, AthSkeletonComponent, AthSkeletonTableComponent, AthSlaBarComponent, AthSparklineComponent, AthSpinnerComponent, AthStatCardComponent, AthStatusPillComponent, AthTableComponent, AthTabsComponent, AthTextareaComponent, AthTimelineComponent, AthTimelineEntryComponent, AthTimelineEventComponent, AthTimerPillComponent, AthToastContainerComponent, AthToggleComponent, AthTooltipDirective, AthUserPickerComponent, avatarInitials, avatarTone };
 //# sourceMappingURL=athene-webcomponents.mjs.map

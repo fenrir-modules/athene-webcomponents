@@ -1,4 +1,4 @@
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import * as i0 from "@angular/core";
 /**
  * Dialog size variants
@@ -18,7 +18,12 @@ export type DialogSize = 'sm' | 'md' | 'lg' | 'xl';
  *   </div>
  * </ath-dialog>
  */
-export declare class AthDialogComponent {
+export declare class AthDialogComponent implements OnChanges {
+    private readonly host;
+    private returnFocus;
+    /** Ids that name and describe the dialog (`aria-labelledby/-describedby`). */
+    protected readonly titleId: string;
+    protected readonly descriptionId: string;
     /** Whether the dialog is open */
     private readonly labels;
     /** Accessible name of the close controls; defaults to `ATH_LABELS`. */
@@ -39,6 +44,11 @@ export declare class AthDialogComponent {
     closed: EventEmitter<void>;
     protected readonly closeIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     onEscapeKey(): void;
+    ngOnChanges(changes: SimpleChanges): void;
+    /** Keep Tab inside the open dialog. */
+    onPanelKeydown(event: KeyboardEvent): void;
+    private panel;
+    private focusables;
     get dialogClasses(): string;
     close(): void;
     onBackdropClick(): void;

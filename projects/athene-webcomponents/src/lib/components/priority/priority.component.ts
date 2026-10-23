@@ -1,7 +1,13 @@
-import { ChangeDetectionStrategy, Component, HostBinding, InjectionToken, Input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ATH_PRIORITY_LABELS, type TicketPriority } from '@athene/webcomponents/core';
 
-export type TicketPriority = 'low' | 'medium' | 'high' | 'crit';
+// The priority type and label token live in `@athene/webcomponents/core`.
+export {
+  ATH_PRIORITY_LABELS,
+  type PriorityLabelResolver,
+  type TicketPriority,
+} from '@athene/webcomponents/core';
 
 const LABELS: Readonly<Record<TicketPriority, string>> = {
   low: 'Low',
@@ -9,15 +15,6 @@ const LABELS: Readonly<Record<TicketPriority, string>> = {
   high: 'High',
   crit: 'Critical',
 };
-
-/** Returns the label for a priority in the app's language, or null for the default. */
-export type PriorityLabelResolver = (priority: TicketPriority) => string | null;
-
-/**
- * Optional resolver for priority labels. The app provides it once at the
- * root (with its translations); without it the labels are English.
- */
-export const ATH_PRIORITY_LABELS = new InjectionToken<PriorityLabelResolver>('ATH_PRIORITY_LABELS');
 
 /**
  * Priority indicator with rising bars (low → critical).

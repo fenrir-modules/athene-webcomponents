@@ -3,11 +3,15 @@
 // ===========================================
 
 // -------------------------------------------
-// Font Import (Geist + Geist Mono)
-// Apps embedding this library can also preload these in their <head>
-// for faster initial paint.
+// Fonts (Geist + Geist Mono)
+// Not imported here: the consuming app loads them in its <head>
+// (athene-web's index.html, Storybook's .storybook/preview-head.html):
+//   <link rel="preconnect" href="https://fonts.googleapis.com">
+//   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+//   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+// An @import here was inlined into the app's global CSS a second time
+// (12.8 kB of duplicate @font-face rules) and blocks render (perf r2).
 // -------------------------------------------
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
 
 // -------------------------------------------
 // Body baseline

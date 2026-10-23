@@ -1,13 +1,6 @@
-import { InjectionToken } from '@angular/core';
+import { type TicketPriority } from '@athene/webcomponents/core';
 import * as i0 from "@angular/core";
-export type TicketPriority = 'low' | 'medium' | 'high' | 'crit';
-/** Returns the label for a priority in the app's language, or null for the default. */
-export type PriorityLabelResolver = (priority: TicketPriority) => string | null;
-/**
- * Optional resolver for priority labels. The app provides it once at the
- * root (with its translations); without it the labels are English.
- */
-export declare const ATH_PRIORITY_LABELS: InjectionToken<PriorityLabelResolver>;
+export { ATH_PRIORITY_LABELS, type PriorityLabelResolver, type TicketPriority, } from '@athene/webcomponents/core';
 /**
  * Priority indicator with rising bars (low → critical).
  *

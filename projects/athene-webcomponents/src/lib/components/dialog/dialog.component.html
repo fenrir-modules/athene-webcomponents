@@ -8,18 +8,31 @@
     [attr.aria-label]="closeText"
   ></div>
   <div class="ath-dialog__container">
-    <div [class]="dialogClasses" role="dialog" aria-modal="true">
+    <div
+      [class]="dialogClasses"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      [attr.aria-labelledby]="title ? titleId : null"
+      [attr.aria-describedby]="description ? descriptionId : null"
+      (keydown)="onPanelKeydown($event)"
+    >
       <!-- Header -->
       <div class="ath-dialog__header">
         <div class="ath-dialog__header-text">
           @if (title) {
-            <h2 class="ath-dialog__title">{{ title }}</h2>
+            <h2 class="ath-dialog__title" [id]="titleId">{{ title }}</h2>
           }
           @if (description) {
-            <p class="ath-dialog__description">{{ description }}</p>
+            <p class="ath-dialog__description" [id]="descriptionId">{{ description }}</p>
           }
         </div>
-        <button class="ath-dialog__close" type="button" [attr.aria-label]="closeText" (click)="close()">
+        <button
+          class="ath-dialog__close"
+          type="button"
+          [attr.aria-label]="closeText"
+          (click)="close()"
+        >
           <lucide-icon [img]="closeIcon" [size]="18" />
         </button>
       </div>
