@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "projects/athene-webcomponents/src/public-api.ts",
+    "projects/athene-webcomponents/core/src/public-api.ts",
+    "projects/**/*.spec.ts",
+    "projects/**/*.stories.ts",
+    ".storybook/*.ts",
+    "scripts/**/*.mjs",
+    "config/*.mjs"
+  ],
+  "project": ["projects/**/*.ts", ".storybook/*.ts", "scripts/**/*.mjs", "config/*.mjs"],
+  "ignoreDependencies": ["@typescript-eslint/utils"],
+  "ignore": ["dist/**", "storybook-static/**"]
+}

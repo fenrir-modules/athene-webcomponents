@@ -1,0 +1,10 @@
+{
+  "$comment": "Frozen knip findings (scripts/knip-check.mjs). Only shrinks: fix, then `npm run lint:knip -- --prune`.",
+  "devDependencies": [
+    "package.json: @storybook/blocks",
+    "package.json: @storybook/test"
+  ],
+  "unlisted": [
+    "scripts/tokens/parity.mjs: sass"
+  ]
+}
