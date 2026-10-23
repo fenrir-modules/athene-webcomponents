@@ -13,6 +13,7 @@
 
   @if (isOpen) {
     <div
+      #menu
       class="ath-dropdown__menu"
       role="menu"
       [class.ath-dropdown__menu--left]="placementX === 'left'"
@@ -28,6 +29,7 @@
             type="button"
             [class]="getItemClasses(item)"
             [disabled]="item.disabled"
+            [attr.title]="item.title || null"
             (click)="selectItem(item)"
             role="menuitem"
           >

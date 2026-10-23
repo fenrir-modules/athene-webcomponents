@@ -22,7 +22,7 @@ $gap: var(--ath-space-1);
     padding: var(--ath-space-1);
     background-color: var(--ath-bg-elevated);
     border: 1px solid var(--ath-border-color);
-    border-radius: var(--ath-border-radius-md);
+    border-radius: var(--ath-border-radius-lg);
     box-shadow: var(--ath-shadow-lg);
 
     // ── Vertical ──
@@ -96,11 +96,23 @@ $gap: var(--ath-space-1);
 
 // ── Animations ──
 @keyframes ath-dd-down {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes ath-dd-up {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

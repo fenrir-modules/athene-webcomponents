@@ -1,4 +1,4 @@
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, OnDestroy } from '@angular/core';
 import * as i0 from "@angular/core";
 /**
  * Dropdown menu item
@@ -10,6 +10,8 @@ export interface DropdownItem {
     variant?: 'default' | 'danger';
     disabled?: boolean;
     divider?: boolean;
+    /** A tooltip — e.g. why a disabled item cannot be chosen. */
+    title?: string;
 }
 /**
  * Horizontal alignment hint.
@@ -28,7 +30,7 @@ export type DropdownAlign = 'left' | 'right' | 'auto';
  *   <ath-button variant="ghost">Actions</ath-button>
  * </ath-dropdown>
  */
-export declare class AthDropdownComponent {
+export declare class AthDropdownComponent implements OnDestroy {
     private readonly el;
     private readonly cdr;
     /** Menu items */
@@ -47,6 +49,13 @@ export declare class AthDropdownComponent {
     /** Emits `true` when the menu opens, `false` when it closes. */
     openChange: EventEmitter<boolean>;
     protected isOpen: boolean;
+    /**
+     * The open menu floats (`position: fixed`, kept inside the viewport), so a
+     * side panel's or table's overflow never cuts it off.
+     */
+    private unfloat;
+    private set menuEl(value);
+    ngOnDestroy(): void;
     protected placementX: 'left' | 'right';
     protected placementY: 'down' | 'up';
     onDocumentClick(event: MouseEvent): void;

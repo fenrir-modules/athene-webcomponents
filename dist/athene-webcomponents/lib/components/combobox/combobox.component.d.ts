@@ -1,4 +1,4 @@
-import { EventEmitter, TemplateRef } from '@angular/core';
+import { EventEmitter, OnDestroy, TemplateRef } from '@angular/core';
 import * as i0 from "@angular/core";
 export interface ComboboxOption<T = string> {
     value: T;
@@ -24,7 +24,14 @@ export interface ComboboxOption<T = string> {
  *   placeholder="Pick assignee"
  *   (queryChange)="search($event)" />
  */
-export declare class AthComboboxComponent<T = string> {
+export declare class AthComboboxComponent<T = string> implements OnDestroy {
+    /**
+     * The open panel floats (`position: fixed`, kept inside the viewport), so
+     * a side panel's or dialog's overflow never cuts it off.
+     */
+    private unfloat;
+    private set panelEl(value);
+    ngOnDestroy(): void;
     private readonly host;
     options: ComboboxOption<T>[];
     value: T | null;

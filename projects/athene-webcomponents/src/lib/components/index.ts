@@ -42,6 +42,7 @@ export * from './dropdown';
 export * from './segment';
 export * from './filter-chip';
 export * from './combobox';
+export * from './floating';
 export * from './user-picker';
 export * from './file-drop';
 

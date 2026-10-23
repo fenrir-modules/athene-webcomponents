@@ -5,6 +5,7 @@ import {
   EventEmitter,
   HostListener,
   Input,
+  OnDestroy,
   Output,
   TemplateRef,
   ViewChild,
@@ -14,6 +15,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { floatPanel } from '../floating/floating';
 import { LucideAngularModule, ChevronDown, Check, Search, X } from 'lucide-angular';
 
 export interface ComboboxOption<T = string> {
@@ -49,7 +51,26 @@ export interface ComboboxOption<T = string> {
   templateUrl: './combobox.component.html',
   styleUrl: './combobox.component.scss',
 })
-export class AthComboboxComponent<T = string> {
+export class AthComboboxComponent<T = string> implements OnDestroy {
+  /**
+   * The open panel floats (`position: fixed`, kept inside the viewport), so
+   * a side panel's or dialog's overflow never cuts it off.
+   */
+  private unfloat: (() => void) | null = null;
+  @ViewChild('panel')
+  private set panelEl(ref: ElementRef<HTMLElement> | undefined) {
+    this.unfloat?.();
+    this.unfloat = null;
+    if (!ref) return;
+    const root = this.host.nativeElement as HTMLElement;
+    const anchor = root.querySelector<HTMLElement>('.ath-cb__trigger') ?? root;
+    this.unfloat = floatPanel(ref.nativeElement, anchor, { align: 'auto', matchWidth: !this.bare });
+  }
+
+  ngOnDestroy(): void {
+    this.unfloat?.();
+  }
+
   private readonly host = inject(ElementRef<HTMLElement>);
 
   @Input() options: ComboboxOption<T>[] = [];
@@ -89,9 +110,7 @@ export class AthComboboxComponent<T = string> {
     const q = this.query().trim().toLowerCase();
     if (!q) return this.options;
     return this.options.filter(
-      (o) =>
-        o.label.toLowerCase().includes(q) ||
-        (o.sublabel ?? '').toLowerCase().includes(q),
+      (o) => o.label.toLowerCase().includes(q) || (o.sublabel ?? '').toLowerCase().includes(q)
     );
   });
 
@@ -125,7 +144,7 @@ export class AthComboboxComponent<T = string> {
   });
 
   protected readonly selectedOption = computed<ComboboxOption<T> | null>(
-    () => this.options.find((o) => o.value === this.value) ?? null,
+    () => this.options.find((o) => o.value === this.value) ?? null
   );
 
   toggle(): void {

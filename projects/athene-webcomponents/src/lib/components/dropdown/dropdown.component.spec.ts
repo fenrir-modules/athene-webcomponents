@@ -41,7 +41,9 @@ describe('AthDropdownComponent', () => {
     trigger.click();
     fixture.detectChanges();
 
-    const firstItem = fixture.nativeElement.querySelector('.ath-dropdown__item') as HTMLButtonElement;
+    const firstItem = fixture.nativeElement.querySelector(
+      '.ath-dropdown__item'
+    ) as HTMLButtonElement;
     firstItem.click();
     expect(clicked).toHaveBeenCalledWith('profile');
   });

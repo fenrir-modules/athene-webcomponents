@@ -7,10 +7,13 @@ import {
   ChangeDetectorRef,
   HostListener,
   ElementRef,
+  OnDestroy,
+  ViewChild,
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
+import { floatPanel } from '../floating/floating';
 
 /**
  * Dropdown menu item
@@ -22,6 +25,8 @@ export interface DropdownItem {
   variant?: 'default' | 'danger';
   disabled?: boolean;
   divider?: boolean;
+  /** A tooltip — e.g. why a disabled item cannot be chosen. */
+  title?: string;
 }
 
 /**
@@ -50,7 +55,7 @@ export type DropdownAlign = 'left' | 'right' | 'auto';
   templateUrl: './dropdown.component.html',
   styleUrl: './dropdown.component.scss',
 })
-export class AthDropdownComponent {
+export class AthDropdownComponent implements OnDestroy {
   private readonly el = inject(ElementRef);
   private readonly cdr = inject(ChangeDetectorRef);
 
@@ -74,6 +79,29 @@ export class AthDropdownComponent {
   @Output() openChange = new EventEmitter<boolean>();
 
   protected isOpen = false;
+
+  /**
+   * The open menu floats (`position: fixed`, kept inside the viewport), so a
+   * side panel's or table's overflow never cuts it off.
+   */
+  private unfloat: (() => void) | null = null;
+  @ViewChild('menu')
+  private set menuEl(ref: ElementRef<HTMLElement> | undefined) {
+    this.unfloat?.();
+    this.unfloat = null;
+    if (!ref) return;
+    const trigger = (this.el.nativeElement as HTMLElement).querySelector<HTMLElement>(
+      '.ath-dropdown__trigger'
+    );
+    if (!trigger) return;
+    this.unfloat = floatPanel(ref.nativeElement, trigger, {
+      align: this.align === 'left' ? 'start' : this.align === 'right' ? 'end' : 'auto',
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.unfloat?.();
+  }
 
   // Computed placement — set each time the menu opens
   protected placementX: 'left' | 'right' = 'right';
