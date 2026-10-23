@@ -6,7 +6,7 @@
   &__backdrop {
     position: fixed;
     inset: 0;
-    z-index: var(--ath-z-modal-backdrop);
+    z-index: var(--z-overlay);
     background-color: var(--ath-bg-overlay);
     animation: ath-dialog-backdrop-in 200ms ease;
   }
@@ -14,7 +14,7 @@
   &__container {
     position: fixed;
     inset: 0;
-    z-index: var(--ath-z-modal);
+    z-index: var(--z-modal);
     display: flex;
     align-items: center;
     justify-content: center;

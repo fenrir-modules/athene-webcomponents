@@ -4,10 +4,10 @@
 
 .ath-toast-container {
   position: fixed;
-  top: var(--toast-offset-top, auto);
-  bottom: var(--toast-offset-bottom, 16px);
-  right: var(--toast-offset-right, 16px);
-  z-index: var(--ath-z-toast);
+  top: var(--toast-offset-top);
+  bottom: var(--toast-offset-bottom);
+  right: var(--toast-offset-right);
+  z-index: var(--z-toast);
   display: flex;
   flex-direction: column;
   gap: var(--ath-space-2);
@@ -94,7 +94,7 @@
 
     &:focus-visible {
       outline: none;
-      box-shadow: 0 0 0 2px var(--accent-ring);
+      box-shadow: var(--focus-ring-shadow);
     }
   }
 

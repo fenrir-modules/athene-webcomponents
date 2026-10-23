@@ -1,0 +1,124 @@
+{
+  "$comment": "Every deliberate difference between the hand-written tokens (b128fc7) and the generated ones. scripts/tokens/parity.mjs fails on anything not listed here.",
+  "selectorAliases": {
+    "[data-theme=light]": ":root"
+  },
+  "changes": [
+    {
+      "selector": ":root",
+      "prop": "--fg-label",
+      "before": "#8b8b90",
+      "after": "#6e6e73",
+      "why": "DS-16: label text 3.39 → 5.07:1 on white, 4.62 on canvas"
+    },
+    {
+      "selector": "[data-theme=dark]",
+      "prop": "--fg-label",
+      "before": "#74747f",
+      "after": "#85858f",
+      "why": "DS-16: label text 3.67 → 4.65:1 on surface"
+    },
+    {
+      "selector": ":root",
+      "prop": "--action-create-bg",
+      "before": "#43946c",
+      "after": "#3b825f",
+      "why": "DS-16: white on \"+ New\" 3.69 → 4.62:1"
+    },
+    {
+      "selector": ":root",
+      "prop": "--action-create-bg-hover",
+      "before": "#3a8560",
+      "after": "#327353",
+      "why": "DS-16: same lightness step below the new base (5.66:1)"
+    },
+    {
+      "selector": ":root",
+      "prop": "--action-create-bg-active",
+      "before": "#347659",
+      "after": "#2c644b",
+      "why": "DS-16: same step (6.93:1)"
+    },
+    {
+      "selector": ":root",
+      "prop": "--action-create-border",
+      "before": "#347659",
+      "after": "#2c644b",
+      "why": "DS-16: border follows the active shade as before"
+    },
+    {
+      "selector": ":root",
+      "prop": "--focus-ring-color",
+      "before": null,
+      "after": "var(--accent)",
+      "why": "DS-12: new focus token, ≥3:1 on every surface/theme/accent"
+    },
+    {
+      "selector": ":root",
+      "prop": "--focus-ring-shadow",
+      "before": null,
+      "after": "0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring-color)",
+      "why": "DS-12: new focus ring (gap + ring)"
+    },
+    {
+      "selector": ":root",
+      "prop": "--amber-text",
+      "before": null,
+      "after": "#9e6024",
+      "why": "DS-16: new text amber, 5.06:1 white / 4.60 canvas"
+    },
+    {
+      "selector": "[data-theme=dark]",
+      "prop": "--amber-text",
+      "before": null,
+      "after": "var(--amber)",
+      "why": "DS-16: dark amber already 5.6:1"
+    },
+    {
+      "selector": ":root",
+      "prop": "--z-base",
+      "before": null,
+      "after": "0",
+      "why": "single z-index scale: in-flow level"
+    },
+    {
+      "selector": ":root",
+      "prop": "--z-raised",
+      "before": null,
+      "after": "1",
+      "why": "single z-index scale: local lift (replaces literal z-index: 1)"
+    }
+  ],
+  "ruleChanges": [
+    {
+      "change": "removed",
+      "rule": ":focus-visible { outline: 2px solid var(--ath-color-primary); outline-offset: 2px }",
+      "why": "global focus outline reads the focus token — same colour (--ath-color-primary = --accent = --focus-ring-color)"
+    },
+    {
+      "change": "added",
+      "rule": ":focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px }",
+      "why": "see above"
+    },
+    {
+      "change": "removed",
+      "rule": ".ath-tooltip { position: fixed; z-index: var(--ath-z-tooltip); max-width: 260px; padding: var(--ath-space-1) var(--ath-space-2); font-family: var(--ath-font-family); font-size: var(--ath-font-size-xs); font-weight: var(--ath-font-weight-medium); color: var(--ath-text-primary); background-color: var(--ath-bg-elevated); border: 1px solid var(--ath-border-color); border-radius: var(--ath-border-radius-sm); box-shadow: var(--ath-shadow-md); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 150ms ease }",
+      "why": "z-index scale: deprecated alias → --z-tooltip (same value 1070)"
+    },
+    {
+      "change": "added",
+      "rule": ".ath-tooltip { position: fixed; z-index: var(--z-tooltip); max-width: 260px; padding: var(--ath-space-1) var(--ath-space-2); font-family: var(--ath-font-family); font-size: var(--ath-font-size-xs); font-weight: var(--ath-font-weight-medium); color: var(--ath-text-primary); background-color: var(--ath-bg-elevated); border: 1px solid var(--ath-border-color); border-radius: var(--ath-border-radius-sm); box-shadow: var(--ath-shadow-md); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 150ms ease }",
+      "why": "see above"
+    },
+    {
+      "change": "removed",
+      "rule": "svg.lucide[stroke-width=\"2\"] { stroke-width: var(--icon-stroke, 1.5) }",
+      "why": "no fallback on a defined token (athene/no-fallback-on-token); token value is 1.5"
+    },
+    {
+      "change": "added",
+      "rule": "svg.lucide[stroke-width=\"2\"] { stroke-width: var(--icon-stroke) }",
+      "why": "see above"
+    }
+  ]
+}

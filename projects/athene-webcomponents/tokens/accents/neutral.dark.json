@@ -1,0 +1,28 @@
+{
+  "color": {
+    "accent": {
+      "accent": {
+        "$value": "#dcdce2"
+      },
+      "accent-2": {
+        "$value": "#c4c4cc"
+      },
+      "accent-3": {
+        "$value": "#9898a4"
+      },
+      "accent-faint": {
+        "$value": "#ffffff0e"
+      },
+      "accent-ring": {
+        "$value": "#ffffff22"
+      }
+    }
+  },
+  "legacy": {
+    "color": {
+      "ath-color-primary-rgb": {
+        "$value": "220, 220, 226"
+      }
+    }
+  }
+}

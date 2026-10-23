@@ -78,9 +78,11 @@
 // -------------------------------------------
 // Interactive Mixins
 // -------------------------------------------
+// The one focus treatment: a 2px surface gap + 2px --focus-ring-color ring
+// (>= 3:1 on every surface, theme and accent — see tokens.config.json).
 @mixin focus-ring {
   outline: none;
-  box-shadow: 0 0 0 2px var(--ath-bg-primary), 0 0 0 4px var(--ath-color-primary);
+  box-shadow: var(--focus-ring-shadow);
 }
 
 @mixin button-reset {

@@ -1,0 +1,299 @@
+{
+  "$comment": "Athene token pipeline config. scripts/tokens/build.mjs reads this; blocks are emitted in this order (= cascade order).",
+  "base": "base.json",
+  "outputs": {
+    "scss": "../src/lib/styles/_tokens.scss",
+    "customProperties": "../src/lib/styles/tokens.custom-properties.json",
+    "inventory": "../src/lib/styles/tokens.inventory.json"
+  },
+  "contexts": {
+    "theme": [
+      "light",
+      "dark"
+    ],
+    "accent": [
+      null,
+      "violet",
+      "blue",
+      "green",
+      "orange",
+      "neutral"
+    ]
+  },
+  "canvas": "bg-0",
+  "blocks": [
+    {
+      "title": "LIGHT (default) — no data-theme attribute, or data-theme=\"light\"",
+      "selector": ":root,\n[data-theme=\"light\"]",
+      "set": "base.json",
+      "declarations": {
+        "color-scheme": "light"
+      }
+    },
+    {
+      "title": "DARK",
+      "selector": "[data-theme=\"dark\"]",
+      "when": {
+        "theme": "dark"
+      },
+      "set": "themes/dark.json",
+      "declarations": {
+        "color-scheme": "dark"
+      }
+    },
+    {
+      "title": "ACCENT violet — light",
+      "selector": "[data-accent=\"violet\"]",
+      "when": {
+        "accent": "violet"
+      },
+      "set": "accents/violet.light.json"
+    },
+    {
+      "title": "ACCENT blue — light",
+      "selector": "[data-accent=\"blue\"]",
+      "when": {
+        "accent": "blue"
+      },
+      "set": "accents/blue.light.json"
+    },
+    {
+      "title": "ACCENT green — light",
+      "selector": "[data-accent=\"green\"]",
+      "when": {
+        "accent": "green"
+      },
+      "set": "accents/green.light.json"
+    },
+    {
+      "title": "ACCENT orange — light",
+      "selector": "[data-accent=\"orange\"]",
+      "when": {
+        "accent": "orange"
+      },
+      "set": "accents/orange.light.json"
+    },
+    {
+      "title": "ACCENT neutral — light",
+      "selector": "[data-accent=\"neutral\"]",
+      "when": {
+        "accent": "neutral"
+      },
+      "set": "accents/neutral.light.json"
+    },
+    {
+      "title": "ACCENT violet — dark",
+      "selector": "[data-theme=\"dark\"][data-accent=\"violet\"]",
+      "when": {
+        "theme": "dark",
+        "accent": "violet"
+      },
+      "set": "accents/violet.dark.json"
+    },
+    {
+      "title": "ACCENT blue — dark",
+      "selector": "[data-theme=\"dark\"][data-accent=\"blue\"]",
+      "when": {
+        "theme": "dark",
+        "accent": "blue"
+      },
+      "set": "accents/blue.dark.json"
+    },
+    {
+      "title": "ACCENT green — dark",
+      "selector": "[data-theme=\"dark\"][data-accent=\"green\"]",
+      "when": {
+        "theme": "dark",
+        "accent": "green"
+      },
+      "set": "accents/green.dark.json"
+    },
+    {
+      "title": "ACCENT orange — dark",
+      "selector": "[data-theme=\"dark\"][data-accent=\"orange\"]",
+      "when": {
+        "theme": "dark",
+        "accent": "orange"
+      },
+      "set": "accents/orange.dark.json"
+    },
+    {
+      "title": "ACCENT neutral — dark",
+      "selector": "[data-theme=\"dark\"][data-accent=\"neutral\"]",
+      "when": {
+        "theme": "dark",
+        "accent": "neutral"
+      },
+      "set": "accents/neutral.dark.json"
+    }
+  ],
+  "contrast": [
+    {
+      "fg": "focus-ring-color",
+      "bg": [
+        "surface",
+        "bg-0",
+        "bg-1",
+        "bg-2",
+        "surface-2"
+      ],
+      "min": 3,
+      "why": "WCAG 1.4.11 — focus indicator vs adjacent colours"
+    },
+    {
+      "fg": "fg",
+      "bg": [
+        "surface",
+        "bg-0",
+        "bg-1",
+        "surface-2",
+        "bg-2",
+        "surface-3"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 body text"
+    },
+    {
+      "fg": "fg-2",
+      "bg": [
+        "surface",
+        "bg-0",
+        "bg-1",
+        "surface-2",
+        "bg-2",
+        "surface-3"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3"
+    },
+    {
+      "fg": "fg-3",
+      "bg": [
+        "surface",
+        "bg-0",
+        "bg-1",
+        "surface-2",
+        "bg-2"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — meta, keys, hints"
+    },
+    {
+      "fg": "fg-4",
+      "bg": [
+        "surface",
+        "bg-0",
+        "bg-1",
+        "surface-2",
+        "bg-2"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — quietest text step"
+    },
+    {
+      "fg": "fg-label",
+      "bg": [
+        "surface",
+        "bg-0",
+        "bg-1",
+        "surface-2"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — labels are the only carrier of e.g. calendar weekday text"
+    },
+    {
+      "fg": "amber-text",
+      "bg": [
+        "surface",
+        "bg-0",
+        "bg-1",
+        "surface-2"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — due \"soon\""
+    },
+    {
+      "fg": "action-create-fg",
+      "bg": [
+        "action-create-bg",
+        "action-create-bg-hover",
+        "action-create-bg-active"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — \"+ New\" label"
+    },
+    {
+      "fg": "action-primary-fg",
+      "bg": [
+        "action-primary-bg",
+        "action-primary-bg-hover"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — primary button label. Pressed (-active) is not gated yet: dark accents reach 3.5–4.4:1 there (follow-up)."
+    },
+    {
+      "fg": "avatar-1-fg",
+      "bg": [
+        "avatar-1-bg"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — avatar initials"
+    },
+    {
+      "fg": "avatar-2-fg",
+      "bg": [
+        "avatar-2-bg"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — avatar initials"
+    },
+    {
+      "fg": "avatar-3-fg",
+      "bg": [
+        "avatar-3-bg"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — avatar initials"
+    },
+    {
+      "fg": "avatar-4-fg",
+      "bg": [
+        "avatar-4-bg"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — avatar initials"
+    },
+    {
+      "fg": "avatar-5-fg",
+      "bg": [
+        "avatar-5-bg"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — avatar initials"
+    },
+    {
+      "fg": "avatar-6-fg",
+      "bg": [
+        "avatar-6-bg"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — avatar initials"
+    },
+    {
+      "fg": "avatar-7-fg",
+      "bg": [
+        "avatar-7-bg"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — avatar initials"
+    },
+    {
+      "fg": "avatar-8-fg",
+      "bg": [
+        "avatar-8-bg"
+      ],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — avatar initials"
+    }
+  ]
+}

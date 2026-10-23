@@ -1,0 +1,1104 @@
+{
+  "color": {
+    "$description": "Colour tokens. Light values here; [data-theme=\"dark\"] overrides live in themes/dark.json, accent presets in accents/*.json.",
+    "surface": {
+      "$description": "Surfaces — neutral, calm. Hierarchy: bg-0 (canvas) → bg-1 (chrome) → surface (cards) → bg-2 (fill).",
+      "$type": "color",
+      "bg-0": {
+        "$value": "#f4f4f6",
+        "$description": "App background — subtle cool off-white"
+      },
+      "bg-1": {
+        "$value": "#ffffff",
+        "$description": "Sidebar / topbar / chrome — clean white"
+      },
+      "bg-2": {
+        "$value": "#efeff2",
+        "$description": "Hover fills, section heads, segmented bg"
+      },
+      "surface": {
+        "$value": "#ffffff",
+        "$description": "Cards / panels / modals"
+      },
+      "surface-2": {
+        "$value": "#f9f9fb",
+        "$description": "Recessed within cards — table heads"
+      },
+      "surface-3": {
+        "$value": "#eaeaed",
+        "$description": "Deep wells — inputs, kbd, inner fills"
+      },
+      "hover": {
+        "$value": "#00000009",
+        "$description": "3.5% black overlay for hover"
+      },
+      "hover-strong": {
+        "$value": "#00000013",
+        "$description": "7% black overlay for active"
+      },
+      "selected": {
+        "$value": "#4f46e50e",
+        "$description": "Subtle accent tint for selected rows"
+      }
+    },
+    "border": {
+      "$description": "Borders — hairlines, soft.",
+      "$type": "color",
+      "border": {
+        "$value": "#e2e2e6"
+      },
+      "border-strong": {
+        "$value": "#ccccd0"
+      },
+      "border-faint": {
+        "$value": "#ebebee"
+      },
+      "rule": {
+        "$value": "#e2e2e6"
+      }
+    },
+    "text": {
+      "$description": "Text hierarchy — no pure black. fg-3/fg-4/fg-label carry real small text, so they clear 4.5:1 on white, the canvas (bg-0) and surface-2 (checked by the contrast gate in tokens.config.json).",
+      "$type": "color",
+      "fg": {
+        "$value": "#1a1a1e"
+      },
+      "fg-2": {
+        "$value": "#3c3c44"
+      },
+      "fg-3": {
+        "$value": "#5c5c65",
+        "$description": "6.6:1 white · 6.0 canvas · 5.8 bg-2"
+      },
+      "fg-4": {
+        "$value": "#6c6c76",
+        "$description": "5.2:1 white · 4.7 canvas · 4.5 bg-2"
+      },
+      "fg-label": {
+        "$value": "#6e6e73",
+        "$description": "Tertiary label grey: section labels, weekday names, time-gutter labels, card keys. Was #8b8b90 (3.4:1); now 5.1:1 white · 4.6 canvas · 4.8 surface-2 so it may carry text (WCAG 1.4.3)."
+      },
+      "fg-disabled": {
+        "$value": "#c8c8d0"
+      }
+    },
+    "accent": {
+      "$description": "Accent — default violet (overridden per data-accent, see accents/*.json).",
+      "$type": "color",
+      "accent": {
+        "$value": "#4f46e5"
+      },
+      "accent-2": {
+        "$value": "#4338ca"
+      },
+      "accent-3": {
+        "$value": "#6366f1"
+      },
+      "accent-dim": {
+        "$value": "#818cf8"
+      },
+      "accent-faint": {
+        "$value": "#4f46e50f"
+      },
+      "accent-ring": {
+        "$value": "#4f46e526",
+        "$description": "Soft accent halo. Decorative only (≈1.3:1): use it next to a border that turns --accent, never as the only focus indicator — that is --focus-ring-shadow / --focus-ring-color."
+      }
+    },
+    "focus": {
+      "$description": "Focus indicator (WCAG 2.4.7 / 1.4.11). The ring colour clears 3:1 against every surface in every theme and accent (contrast gate); --focus-ring-shadow adds a surface-coloured gap so it also reads on accent fills.",
+      "focus-ring-color": {
+        "$value": "{color.accent.accent}",
+        "$type": "color",
+        "$description": "Outline / ring colour for :focus-visible."
+      },
+      "focus-ring-shadow": {
+        "$value": "0 0 0 2px {color.surface.surface}, 0 0 0 4px {color.focus.focus-ring-color}",
+        "$type": "shadow",
+        "$description": "box-shadow focus ring: 2px gap + 2px ring. Pair with outline: none. (Not named --focus-ring: the app already reads var(--focus-ring, …) as an outline colour.)"
+      }
+    },
+    "role": {
+      "$description": "Semantic roles — what a component reaches for instead of the raw accent. Light keeps the accent as a small signal (focus ring, links, markers): CTAs are ink, selection is neutral grey. Dark re-points the same roles at the accent.",
+      "ink": {
+        "$type": "color",
+        "ink": {
+          "$value": "#17171a"
+        },
+        "ink-hover": {
+          "$value": "#2e2e34"
+        }
+      },
+      "action-primary": {
+        "action-primary-bg": {
+          "$value": "{color.role.ink.ink}",
+          "$type": "color"
+        },
+        "action-primary-bg-hover": {
+          "$value": "{color.role.ink.ink-hover}",
+          "$type": "color"
+        },
+        "action-primary-bg-active": {
+          "$value": "#000000",
+          "$type": "color"
+        },
+        "action-primary-fg": {
+          "$value": "#ffffff",
+          "$type": "color"
+        },
+        "action-primary-disabled-bg": {
+          "$value": "{color.role.action-primary.action-primary-bg}",
+          "$type": "color"
+        },
+        "action-primary-disabled-fg": {
+          "$value": "{color.role.action-primary.action-primary-fg}",
+          "$type": "color"
+        },
+        "action-primary-disabled-border": {
+          "$value": "{color.role.action-primary.action-primary-bg}",
+          "$type": "color"
+        },
+        "action-primary-disabled-opacity": {
+          "$value": 0.38,
+          "$type": "number"
+        }
+      },
+      "nav": {
+        "$type": "color",
+        "nav-active-bg": {
+          "$value": "#00000017",
+          "$description": "~9% black — reads as a pill on white chrome"
+        },
+        "nav-active-bg-hover": {
+          "$value": "#0000001f"
+        },
+        "nav-active-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "nav-active-icon": {
+          "$value": "{color.text.fg}"
+        },
+        "nav-active-indicator": {
+          "$value": "{color.text.fg}"
+        },
+        "nav-badge-bg": {
+          "$value": "{color.surface.bg-2}"
+        },
+        "nav-badge-fg": {
+          "$value": "{color.text.fg-2}"
+        }
+      },
+      "tab": {
+        "$type": "color",
+        "tab-active-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "tab-active-indicator": {
+          "$value": "{color.text.fg}"
+        },
+        "segment-track-bg": {
+          "$value": "{color.surface.bg-2}"
+        },
+        "segment-active-bg": {
+          "$value": "{color.surface.surface}"
+        },
+        "segment-active-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "segment-count-active-bg": {
+          "$value": "{color.surface.surface-3}"
+        },
+        "segment-count-active-fg": {
+          "$value": "{color.text.fg-2}"
+        },
+        "progress-fill": {
+          "$value": "{color.role.ink.ink}"
+        },
+        "progress-track": {
+          "$value": "{color.border.border}"
+        }
+      },
+      "chip-active": {
+        "$type": "color",
+        "chip-active-bg": {
+          "$value": "{color.role.nav.nav-active-bg}"
+        },
+        "chip-active-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "chip-active-border": {
+          "$value": "{color.border.border-strong}"
+        }
+      },
+      "action-outline": {
+        "$type": "color",
+        "action-outline-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "action-outline-hover-bg": {
+          "$value": "{color.surface.hover}"
+        },
+        "action-outline-hover-border": {
+          "$value": "{color.border.border-strong}"
+        },
+        "action-outline-border": {
+          "$value": "{color.border.border-strong}"
+        }
+      },
+      "chip-primary": {
+        "$type": "color",
+        "chip-primary-bg": {
+          "$value": "{color.surface.bg-2}"
+        },
+        "chip-primary-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "chip-primary-border": {
+          "$value": "{color.border.border-strong}"
+        }
+      },
+      "control": {
+        "$type": "color",
+        "control-checked": {
+          "$value": "{color.role.ink.ink}"
+        }
+      },
+      "selection-bar": {
+        "$type": "color",
+        "selection-bar-bg": {
+          "$value": "{color.surface.surface}"
+        },
+        "selection-bar-border": {
+          "$value": "{color.border.border-strong}"
+        },
+        "selection-bar-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "row-selected-bg": {
+          "$value": "{color.surface.hover-strong}"
+        }
+      },
+      "brand-mark": {
+        "$type": "color",
+        "brand-mark-bg": {
+          "$value": "#0a0a0b"
+        },
+        "brand-mark-fg": {
+          "$value": "#ffffff"
+        }
+      },
+      "action-create": {
+        "$type": "color",
+        "action-create-bg": {
+          "$value": "#3b825f",
+          "$description": "Topbar \"+ New\" (ref 01: green, not ink). Was #43946c (white text 3.7:1); darkened to 4.6:1. Page-head primaries stay ink; this is the one global \"make something\" button."
+        },
+        "action-create-bg-hover": {
+          "$value": "#327353"
+        },
+        "action-create-bg-active": {
+          "$value": "#2c644b"
+        },
+        "action-create-border": {
+          "$value": "#2c644b"
+        },
+        "action-create-fg": {
+          "$value": "#ffffff"
+        }
+      },
+      "notify": {
+        "$type": "color",
+        "notify-dot": {
+          "$value": "#43946c"
+        }
+      },
+      "rail": {
+        "$type": "color",
+        "rail-active-bg": {
+          "$value": "{color.surface.bg-2}"
+        },
+        "rail-tile-bg": {
+          "$value": "{color.surface.bg-2}"
+        }
+      }
+    },
+    "avatar": {
+      "$description": "Person avatars — deterministic per person (avatarTone()), muted mid-tones with white initials (all >= 4.5:1).",
+      "$type": "color",
+      "avatar-neutral-bg": {
+        "$value": "{color.surface.surface-3}"
+      },
+      "avatar-neutral-fg": {
+        "$value": "{color.text.fg-3}"
+      },
+      "avatar-1-bg": {
+        "$value": "#a95c25"
+      },
+      "avatar-1-fg": {
+        "$value": "#ffffff",
+        "$description": "clay"
+      },
+      "avatar-2-bg": {
+        "$value": "#b8466f"
+      },
+      "avatar-2-fg": {
+        "$value": "#ffffff",
+        "$description": "rose"
+      },
+      "avatar-3-bg": {
+        "$value": "#2f7f8f"
+      },
+      "avatar-3-fg": {
+        "$value": "#ffffff",
+        "$description": "teal"
+      },
+      "avatar-4-bg": {
+        "$value": "#6a52c4"
+      },
+      "avatar-4-fg": {
+        "$value": "#ffffff",
+        "$description": "violet"
+      },
+      "avatar-5-bg": {
+        "$value": "#3a7d55"
+      },
+      "avatar-5-fg": {
+        "$value": "#ffffff",
+        "$description": "green"
+      },
+      "avatar-6-bg": {
+        "$value": "#3d64b8"
+      },
+      "avatar-6-fg": {
+        "$value": "#ffffff",
+        "$description": "blue"
+      },
+      "avatar-7-bg": {
+        "$value": "#94509e"
+      },
+      "avatar-7-fg": {
+        "$value": "#ffffff",
+        "$description": "plum"
+      },
+      "avatar-8-bg": {
+        "$value": "#5b6474"
+      },
+      "avatar-8-fg": {
+        "$value": "#ffffff",
+        "$description": "slate"
+      }
+    },
+    "status": {
+      "$description": "Status — muted, used as dots + subtle fills. Use the *-text variant where a status colour carries text.",
+      "$type": "color",
+      "red": {
+        "$value": "#dc2626"
+      },
+      "amber": {
+        "$value": "#cc7c2e",
+        "$description": "Measured on the reference's in-progress icons. Icons, dots and fills only (3.2:1 on white) — text uses --amber-text."
+      },
+      "amber-text": {
+        "$value": "#9e6024",
+        "$description": "Amber that carries text (due \"soon\", warnings). --amber is 3.2:1 on white — icons/dots only; this is 5.1:1 white · 4.6 canvas."
+      },
+      "blue": {
+        "$value": "#2563eb"
+      },
+      "green": {
+        "$value": "#16a34a"
+      },
+      "purple": {
+        "$value": "#7c3aed"
+      },
+      "pink": {
+        "$value": "#db2777"
+      }
+    },
+    "status-tint": {
+      "$type": "color",
+      "red-tint": {
+        "$value": "#dc26260f"
+      },
+      "amber-tint": {
+        "$value": "#cc7c2e0f"
+      },
+      "blue-tint": {
+        "$value": "#2563eb0f"
+      },
+      "green-tint": {
+        "$value": "#16a34a0f"
+      },
+      "purple-tint": {
+        "$value": "#7c3aed0f"
+      },
+      "pink-tint": {
+        "$value": "#db27770f"
+      }
+    },
+    "deco": {
+      "$description": "Decorative status marks (board column bars, ticket-group dots, sidebar project-key chips): the status hue at ~60% strength over the surface. Status icons and due text keep the full colour.",
+      "deco-mix": {
+        "$value": "60%"
+      },
+      "red-muted": {
+        "$value": "color-mix(in srgb, {color.status.red} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "amber-muted": {
+        "$value": "color-mix(in srgb, {color.status.amber} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "blue-muted": {
+        "$value": "color-mix(in srgb, {color.status.blue} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "green-muted": {
+        "$value": "color-mix(in srgb, {color.status.green} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "purple-muted": {
+        "$value": "color-mix(in srgb, {color.status.purple} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "pink-muted": {
+        "$value": "color-mix(in srgb, {color.status.pink} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "grey-muted": {
+        "$value": "color-mix(in srgb, {color.text.fg-4} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      }
+    },
+    "selection": {
+      "$type": "color",
+      "selection-bg": {
+        "$value": "rgba(23, 23, 26, 0.16)"
+      },
+      "selection-fg": {
+        "$value": "inherit"
+      }
+    }
+  },
+  "radius": {
+    "$description": "Radii — Linear-class, small & precise.",
+    "$type": "dimension",
+    "r-xs": {
+      "$value": "4px"
+    },
+    "r-sm": {
+      "$value": "6px"
+    },
+    "r": {
+      "$value": "8px"
+    },
+    "r-lg": {
+      "$value": "10px"
+    },
+    "r-xl": {
+      "$value": "12px"
+    },
+    "r-2xl": {
+      "$value": "16px"
+    },
+    "r-full": {
+      "$value": "9999px"
+    }
+  },
+  "shadow": {
+    "$description": "Shadows — restrained.",
+    "$type": "shadow",
+    "shadow-1": {
+      "$value": "0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03)"
+    },
+    "shadow-2": {
+      "$value": "0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04)"
+    },
+    "shadow-3": {
+      "$value": "0 16px 40px -12px rgba(15, 23, 42, 0.18), 0 4px 12px -2px rgba(15, 23, 42, 0.06)"
+    },
+    "shadow-drawer": {
+      "$value": "6px 0 20px -6px rgba(15, 23, 42, 0.12)"
+    }
+  },
+  "font": {
+    "$description": "Type.",
+    "family": {
+      "$type": "fontFamily",
+      "font-sans": {
+        "$value": "\"Geist\", -apple-system, BlinkMacSystemFont, \"Inter\", \"Segoe UI\", system-ui, sans-serif"
+      },
+      "font-mono": {
+        "$value": "\"Geist Mono\", \"JetBrains Mono\", ui-monospace, \"SF Mono\", Menlo, monospace"
+      },
+      "font-serif": {
+        "$value": "{font.family.font-sans}",
+        "$description": "alias — no serif"
+      }
+    },
+    "size": {
+      "$type": "dimension",
+      "text-xs": {
+        "$value": "11px"
+      },
+      "text-sm": {
+        "$value": "12px"
+      },
+      "text-base": {
+        "$value": "13.5px"
+      },
+      "text-md": {
+        "$value": "14px"
+      },
+      "text-lg": {
+        "$value": "16px"
+      },
+      "text-xl": {
+        "$value": "18px"
+      },
+      "text-2xl": {
+        "$value": "22px"
+      },
+      "text-3xl": {
+        "$value": "28px"
+      },
+      "text-4xl": {
+        "$value": "36px"
+      }
+    },
+    "weight": {
+      "$type": "number",
+      "weight-normal": {
+        "$value": 400
+      },
+      "weight-medium": {
+        "$value": 500
+      },
+      "weight-semibold": {
+        "$value": 600
+      },
+      "weight-bold": {
+        "$value": 700
+      }
+    },
+    "line-height": {
+      "$type": "number",
+      "line-tight": {
+        "$value": 1.2
+      },
+      "line-normal": {
+        "$value": 1.5
+      },
+      "line-relaxed": {
+        "$value": 1.7
+      }
+    }
+  },
+  "density": {
+    "$description": "Scale & density — measured from the reference screens at 1110×760. Pages read these instead of hard-coding their own heights, so the whole product moves together when the density changes.",
+    "page": {
+      "$type": "dimension",
+      "page-title-size": {
+        "$value": "17px",
+        "$description": "H1, semibold"
+      },
+      "page-meta-size": {
+        "$value": "12px",
+        "$description": "muted meta line under the title"
+      },
+      "page-head-gap": {
+        "$value": "4px",
+        "$description": "title → meta"
+      },
+      "page-head-pad-bottom": {
+        "$value": "12px",
+        "$description": "meta → hairline"
+      },
+      "page-head-rule": {
+        "$value": "{color.border.border-faint}"
+      },
+      "content-pad-top": {
+        "$value": "16px"
+      },
+      "content-pad-x": {
+        "$value": "28px"
+      },
+      "section-gap": {
+        "$value": "16px"
+      }
+    },
+    "control": {
+      "$type": "dimension",
+      "control-h-xs": {
+        "$value": "26px",
+        "$description": "topbar \"+ New\" (ref 25–26px)"
+      },
+      "control-h-sm": {
+        "$value": "28px"
+      },
+      "control-h": {
+        "$value": "32px"
+      },
+      "control-h-lg": {
+        "$value": "40px"
+      },
+      "field-h-sm": {
+        "$value": "33px",
+        "$description": "compact form field (settings rows)"
+      },
+      "control-font": {
+        "$value": "13px"
+      }
+    },
+    "panel": {
+      "$type": "dimension",
+      "panel-radius": {
+        "$value": "{radius.r-lg}"
+      },
+      "panel-pad-x": {
+        "$value": "16px"
+      },
+      "panel-pad-y": {
+        "$value": "12px"
+      },
+      "panel-head-h": {
+        "$value": "40px",
+        "$description": "title row of a panel"
+      },
+      "panel-title-size": {
+        "$value": "14px"
+      },
+      "table-head-h": {
+        "$value": "36px"
+      },
+      "table-head-bg": {
+        "$value": "{color.surface.bg-2}",
+        "$description": "filled grey band (ref 01 focus table)"
+      },
+      "table-head-size": {
+        "$value": "12.5px"
+      },
+      "row-h": {
+        "$value": "44px",
+        "$description": "body row in a panel table"
+      },
+      "row-h-compact": {
+        "$value": "36px",
+        "$description": "agenda / member lists"
+      }
+    },
+    "chip": {
+      "$type": "dimension",
+      "chip-h": {
+        "$value": "20px"
+      },
+      "chip-radius": {
+        "$value": "{radius.r-xs}"
+      },
+      "chip-font": {
+        "$value": "11.5px"
+      }
+    }
+  },
+  "size": {
+    "avatar": {
+      "$type": "dimension",
+      "avatar-xs": {
+        "$value": "20px",
+        "$description": "topbar, dense rows (ref 20px)"
+      },
+      "avatar-sm": {
+        "$value": "22px"
+      }
+    },
+    "icon": {
+      "icon-stroke": {
+        "$value": 1.5,
+        "$type": "number"
+      },
+      "icon-size-nav": {
+        "$value": "14px",
+        "$type": "dimension"
+      }
+    }
+  },
+  "layout": {
+    "toast": {
+      "$type": "dimension",
+      "toast-offset-top": {
+        "$value": "auto"
+      },
+      "toast-offset-bottom": {
+        "$value": "16px"
+      },
+      "toast-offset-right": {
+        "$value": "16px"
+      }
+    }
+  },
+  "space": {
+    "$description": "Spacing scale.",
+    "$type": "dimension",
+    "space-0": {
+      "$value": "0"
+    },
+    "space-1": {
+      "$value": "4px"
+    },
+    "space-2": {
+      "$value": "8px"
+    },
+    "space-3": {
+      "$value": "12px"
+    },
+    "space-4": {
+      "$value": "16px"
+    },
+    "space-5": {
+      "$value": "20px"
+    },
+    "space-6": {
+      "$value": "24px"
+    },
+    "space-8": {
+      "$value": "32px"
+    },
+    "space-10": {
+      "$value": "40px"
+    },
+    "space-12": {
+      "$value": "48px"
+    },
+    "space-16": {
+      "$value": "64px"
+    }
+  },
+  "motion": {
+    "$description": "Motion.",
+    "$type": "transition",
+    "t-fast": {
+      "$value": "100ms ease"
+    },
+    "t-base": {
+      "$value": "150ms ease"
+    },
+    "t-slow": {
+      "$value": "250ms ease"
+    }
+  },
+  "z-index": {
+    "$description": "The one z-index scale. Every stacking value in the lib and the app is one of these (or a calc() on one); no raw numbers, no fallbacks.",
+    "$type": "number",
+    "z-base": {
+      "$value": 0,
+      "$description": "In-flow content."
+    },
+    "z-raised": {
+      "$value": 1,
+      "$description": "Local lift inside a component (an overlapping avatar, a timeline dot over its line)."
+    },
+    "z-dropdown": {
+      "$value": 1000,
+      "$description": "Menus and dropdown panels anchored to a control."
+    },
+    "z-sticky": {
+      "$value": 1020,
+      "$description": "Sticky headers / toolbars."
+    },
+    "z-fixed": {
+      "$value": 1030,
+      "$description": "Fixed shell chrome."
+    },
+    "z-overlay": {
+      "$value": 1040,
+      "$description": "Dialog / drawer backdrop."
+    },
+    "z-modal": {
+      "$value": 1050,
+      "$description": "Dialogs and drawers."
+    },
+    "z-popover": {
+      "$value": 1060,
+      "$description": "Floating panels (floating.ts) — above dialogs so a picker inside a dialog is not clipped."
+    },
+    "z-tooltip": {
+      "$value": 1070,
+      "$description": "Tooltips."
+    },
+    "z-toast": {
+      "$value": 1080,
+      "$description": "Toasts — always on top."
+    }
+  },
+  "legacy": {
+    "$description": "LEGACY ALIASES (--ath-* names, --gold). Existing component code references these; they alias the design tokens via the CSS cascade.",
+    "color": {
+      "ath-color-primary": {
+        "$value": "{color.accent.accent}",
+        "$type": "color"
+      },
+      "ath-color-primary-rgb": {
+        "$value": "79, 70, 229",
+        "$description": "for legacy rgba() usage"
+      },
+      "ath-color-success": {
+        "$value": "{color.status.green}",
+        "$type": "color"
+      },
+      "ath-color-warning": {
+        "$value": "{color.status.amber}",
+        "$type": "color"
+      },
+      "ath-color-error": {
+        "$value": "{color.status.red}",
+        "$type": "color"
+      },
+      "ath-color-info": {
+        "$value": "{color.status.blue}",
+        "$type": "color"
+      }
+    },
+    "bg": {
+      "$type": "color",
+      "ath-bg-primary": {
+        "$value": "{color.surface.bg-0}"
+      },
+      "ath-bg-secondary": {
+        "$value": "{color.surface.bg-1}"
+      },
+      "ath-bg-tertiary": {
+        "$value": "{color.surface.bg-2}"
+      },
+      "ath-bg-elevated": {
+        "$value": "{color.surface.surface}"
+      },
+      "ath-bg-panel": {
+        "$value": "{color.surface.surface}"
+      },
+      "ath-bg-input": {
+        "$value": "{color.surface.bg-1}"
+      },
+      "ath-bg-overlay": {
+        "$value": "rgba(0, 0, 0, 0.4)"
+      },
+      "ath-bg-sidebar": {
+        "$value": "{color.surface.bg-1}"
+      }
+    },
+    "text": {
+      "$type": "color",
+      "ath-text-primary": {
+        "$value": "{color.text.fg}"
+      },
+      "ath-text-secondary": {
+        "$value": "{color.text.fg-2}"
+      },
+      "ath-text-tertiary": {
+        "$value": "{color.text.fg-3}"
+      },
+      "ath-text-link": {
+        "$value": "{color.accent.accent}"
+      },
+      "ath-text-link-hover": {
+        "$value": "{color.accent.accent-2}"
+      }
+    },
+    "border": {
+      "$type": "color",
+      "ath-border-color": {
+        "$value": "{color.border.border}"
+      },
+      "ath-border-color-hover": {
+        "$value": "{color.border.border-strong}"
+      },
+      "ath-border-color-focus": {
+        "$value": "{color.accent.accent}"
+      }
+    },
+    "radius": {
+      "$type": "dimension",
+      "ath-border-radius-sm": {
+        "$value": "{radius.r-sm}"
+      },
+      "ath-border-radius-md": {
+        "$value": "{radius.r}"
+      },
+      "ath-border-radius-lg": {
+        "$value": "{radius.r-lg}"
+      },
+      "ath-border-radius-xl": {
+        "$value": "{radius.r-xl}"
+      },
+      "ath-border-radius-full": {
+        "$value": "{radius.r-full}"
+      }
+    },
+    "space": {
+      "$type": "dimension",
+      "ath-space-1": {
+        "$value": "{space.space-1}"
+      },
+      "ath-space-2": {
+        "$value": "{space.space-2}"
+      },
+      "ath-space-3": {
+        "$value": "{space.space-3}"
+      },
+      "ath-space-4": {
+        "$value": "{space.space-4}"
+      },
+      "ath-space-5": {
+        "$value": "{space.space-5}"
+      },
+      "ath-space-6": {
+        "$value": "{space.space-6}"
+      },
+      "ath-space-8": {
+        "$value": "{space.space-8}"
+      },
+      "ath-space-10": {
+        "$value": "{space.space-10}"
+      },
+      "ath-space-16": {
+        "$value": "{space.space-16}"
+      }
+    },
+    "font": {
+      "ath-font-family": {
+        "$value": "{font.family.font-sans}",
+        "$type": "fontFamily"
+      },
+      "ath-font-family-mono": {
+        "$value": "{font.family.font-mono}",
+        "$type": "fontFamily"
+      },
+      "ath-font-mono": {
+        "$value": "{font.family.font-mono}",
+        "$type": "fontFamily"
+      },
+      "ath-font-size-xs": {
+        "$value": "{font.size.text-xs}",
+        "$type": "dimension"
+      },
+      "ath-font-size-sm": {
+        "$value": "{font.size.text-sm}",
+        "$type": "dimension"
+      },
+      "ath-font-size-md": {
+        "$value": "{font.size.text-md}",
+        "$type": "dimension"
+      },
+      "ath-font-size-lg": {
+        "$value": "{font.size.text-lg}",
+        "$type": "dimension"
+      },
+      "ath-font-size-xl": {
+        "$value": "{font.size.text-xl}",
+        "$type": "dimension"
+      },
+      "ath-font-size-2xl": {
+        "$value": "{font.size.text-2xl}",
+        "$type": "dimension"
+      },
+      "ath-font-size-3xl": {
+        "$value": "{font.size.text-3xl}",
+        "$type": "dimension"
+      },
+      "ath-font-size-4xl": {
+        "$value": "{font.size.text-4xl}",
+        "$type": "dimension"
+      },
+      "ath-font-weight-normal": {
+        "$value": "{font.weight.weight-normal}",
+        "$type": "fontWeight"
+      },
+      "ath-font-weight-medium": {
+        "$value": "{font.weight.weight-medium}",
+        "$type": "fontWeight"
+      },
+      "ath-font-weight-semibold": {
+        "$value": "{font.weight.weight-semibold}",
+        "$type": "fontWeight"
+      },
+      "ath-font-weight-bold": {
+        "$value": "{font.weight.weight-bold}",
+        "$type": "fontWeight"
+      },
+      "ath-line-height-tight": {
+        "$value": "{font.line-height.line-tight}",
+        "$type": "number"
+      },
+      "ath-line-height-normal": {
+        "$value": "{font.line-height.line-normal}",
+        "$type": "number"
+      }
+    },
+    "shadow": {
+      "$type": "shadow",
+      "ath-shadow-sm": {
+        "$value": "{shadow.shadow-1}"
+      },
+      "ath-shadow-md": {
+        "$value": "{shadow.shadow-2}"
+      },
+      "ath-shadow-lg": {
+        "$value": "{shadow.shadow-3}"
+      },
+      "ath-shadow-xl": {
+        "$value": "{shadow.shadow-3}"
+      }
+    },
+    "motion": {
+      "$type": "transition",
+      "ath-transition-fast": {
+        "$value": "{motion.t-fast}"
+      },
+      "ath-transition-normal": {
+        "$value": "{motion.t-base}"
+      },
+      "ath-transition-slow": {
+        "$value": "{motion.t-slow}"
+      }
+    },
+    "hover": {
+      "$type": "color",
+      "ath-hover-bg": {
+        "$value": "{color.surface.hover}"
+      },
+      "ath-hover-bg-strong": {
+        "$value": "{color.surface.hover-strong}"
+      },
+      "ath-active-bg": {
+        "$value": "{color.surface.hover-strong}"
+      }
+    },
+    "z-index": {
+      "$type": "number",
+      "ath-z-dropdown": {
+        "$value": "{z-index.z-dropdown}"
+      },
+      "ath-z-fixed": {
+        "$value": "{z-index.z-fixed}"
+      },
+      "ath-z-modal-backdrop": {
+        "$value": "{z-index.z-overlay}"
+      },
+      "ath-z-modal": {
+        "$value": "{z-index.z-modal}"
+      },
+      "ath-z-tooltip": {
+        "$value": "{z-index.z-tooltip}"
+      },
+      "ath-z-toast": {
+        "$value": "{z-index.z-toast}"
+      }
+    },
+    "gold": {
+      "$type": "color",
+      "gold": {
+        "$value": "{color.accent.accent}"
+      }
+    },
+    "$deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+  }
+}

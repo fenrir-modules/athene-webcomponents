@@ -58,10 +58,3 @@
     color: var(--fg-4);
   }
 }
-
-// In dark mode the inner ring needs to match the dark surface
-[data-theme='dark'] :host {
-  .ath-status-pill__dot {
-    box-shadow: inset 0 0 0 2px var(--bg-1), 0 0 0 1px currentColor;
-  }
-}

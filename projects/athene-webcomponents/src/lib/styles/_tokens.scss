@@ -1,636 +1,705 @@
-// ===========================================
-// ATHENE DESIGN TOKENS
-// ===========================================
-// Clean, neutral, professional SaaS — Linear / Stripe / Notion direction.
-// Light-first; dark via [data-theme="dark"].
-// Accent is configurable via [data-accent="..."] (see _accents.scss).
-//
-// All components consume these tokens only.
-// Legacy --ath-* names are provided as aliases for backward compat
-// — they resolve via CSS variable cascade to the design tokens below.
+// =====================================================================
+// GENERATED FILE — DO NOT EDIT BY HAND.
+// Source of truth: projects/athene-webcomponents/tokens/*.json (DTCG JSON).
+// Regenerate with `npm run tokens:build` (runs before `npm run build:lib`).
+// =====================================================================
 
-// ===========================================
-// LIGHT (default)
-// ===========================================
+// ---------------------------------------------------------------------
+// LIGHT (default) — no data-theme attribute, or data-theme="light"
+// ---------------------------------------------------------------------
+:root,
+[data-theme="light"] {
 
-:root {
-  // -----------------------------------------------------------------
-  // Surfaces — neutral, calm
-  // Hierarchy: bg-0 (canvas) → bg-1 (chrome) → surface (cards) → bg-2 (fill)
-  // -----------------------------------------------------------------
-  --bg-0:         #f4f4f6;          // App background — subtle cool off-white
-  --bg-1:         #ffffff;          // Sidebar / topbar / chrome — clean white
-  --bg-2:         #efeff2;          // Hover fills, section heads, segmented bg
-  --surface:      #ffffff;          // Cards / panels / modals
-  --surface-2:    #f9f9fb;          // Recessed within cards — table heads
-  --surface-3:    #eaeaed;          // Deep wells — inputs, kbd, inner fills
-  --hover:        #00000009;        // 3.5% black overlay for hover
-  --hover-strong: #00000013;        // 7% black overlay for active
-  --selected:     #4f46e50e;        // Subtle accent tint for selected rows
+  // ===== color — Colour tokens. Light values here; [data-theme="dark"] overrides live in themes/dark.json, accent presets in accents/*.json.
 
-  // -----------------------------------------------------------------
-  // Borders — hairlines, soft
-  // -----------------------------------------------------------------
-  --border:        #e2e2e6;
+  // color.surface — Surfaces — neutral, calm. Hierarchy: bg-0 (canvas) → bg-1 (chrome) → surface (cards) → bg-2 (fill).
+  --bg-0: #f4f4f6; // App background — subtle cool off-white
+  --bg-1: #ffffff; // Sidebar / topbar / chrome — clean white
+  --bg-2: #efeff2; // Hover fills, section heads, segmented bg
+  --surface: #ffffff; // Cards / panels / modals
+  --surface-2: #f9f9fb; // Recessed within cards — table heads
+  --surface-3: #eaeaed; // Deep wells — inputs, kbd, inner fills
+  --hover: #00000009; // 3.5% black overlay for hover
+  --hover-strong: #00000013; // 7% black overlay for active
+  --selected: #4f46e50e; // Subtle accent tint for selected rows
+
+  // color.border — Borders — hairlines, soft.
+  --border: #e2e2e6;
   --border-strong: #ccccd0;
-  --border-faint:  #ebebee;
-  --rule:          #e2e2e6;
+  --border-faint: #ebebee;
+  --rule: #e2e2e6;
 
-  // -----------------------------------------------------------------
-  // Text hierarchy — no pure black
-  // -----------------------------------------------------------------
-  --fg:          #1a1a1e;
-  --fg-2:        #3c3c44;
-  // fg-3/fg-4 carry real small text (meta, keys, hints), so both clear
-  // 4.5:1 on white, the canvas (bg-0) and bg-2 fills; fg-4 stays a step
-  // quieter than fg-3. Disabled text is fg-disabled, which is exempt.
-  --fg-3:        #5c5c65;           // 6.6:1 white · 6.0 canvas · 5.8 bg-2
-  --fg-4:        #6c6c76;           // 5.2:1 white · 4.7 canvas · 4.5 bg-2
-  // Tertiary label grey (ref ≈ #8b8b90): section labels, weekday names,
-  // time-gutter labels, card keys. Decorative/secondary labels only — it
-  // is 3.4:1 on white, so never the only carrier of body text.
-  --fg-label:    #8b8b90;
+  // color.text — Text hierarchy — no pure black. fg-3/fg-4/fg-label carry real small text, so they clear 4.5:1 on white, the canvas (bg-0) and surface-2 (checked by the contrast gate in tokens.config.json).
+  --fg: #1a1a1e;
+  --fg-2: #3c3c44;
+  --fg-3: #5c5c65; // 6.6:1 white · 6.0 canvas · 5.8 bg-2
+  --fg-4: #6c6c76; // 5.2:1 white · 4.7 canvas · 4.5 bg-2
+  --fg-label: #6e6e73; // Tertiary label grey: section labels, weekday names, time-gutter labels, card keys. Was #8b8b90 (3.4:1); now 5.1:1 white · 4.6 canvas · 4.8 surface-2 so it may carry text (WCAG 1.4.3).
   --fg-disabled: #c8c8d0;
 
-  // -----------------------------------------------------------------
-  // Accent — default violet (overridden by _accents.scss per data-accent)
-  // -----------------------------------------------------------------
-  --accent:        #4f46e5;
-  --accent-2:      #4338ca;
-  --accent-3:      #6366f1;
-  --accent-dim:    #818cf8;
-  --accent-faint:  #4f46e50f;
-  --accent-ring:   #4f46e526;
+  // color.accent — Accent — default violet (overridden per data-accent, see accents/*.json).
+  --accent: #4f46e5;
+  --accent-2: #4338ca;
+  --accent-3: #6366f1;
+  --accent-dim: #818cf8;
+  --accent-faint: #4f46e50f;
+  --accent-ring: #4f46e526; // Soft accent halo. Decorative only (≈1.3:1): use it next to a border that turns --accent, never as the only focus indicator — that is --focus-ring-shadow / --focus-ring-color.
 
-  // -----------------------------------------------------------------
-  // Semantic roles — what a component should reach for instead of the
-  // raw accent. Light mode keeps the accent as a small signal (focus
-  // ring, links, markers): CTAs are ink, selection is neutral grey.
-  // Dark mode re-points the same roles at the accent (see below).
-  // -----------------------------------------------------------------
-  --ink:       #17171a;
+  // color.focus — Focus indicator (WCAG 2.4.7 / 1.4.11). The ring colour clears 3:1 against every surface in every theme and accent (contrast gate); --focus-ring-shadow adds a surface-coloured gap so it also reads on accent fills.
+  --focus-ring-color: var(--accent); // Outline / ring colour for :focus-visible.
+  --focus-ring-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring-color); // box-shadow focus ring: 2px gap + 2px ring. Pair with outline: none. (Not named --focus-ring: the app already reads var(--focus-ring, …) as an outline colour.)
+
+  // color.role.ink
+  --ink: #17171a;
   --ink-hover: #2e2e34;
 
-  // Primary action (ath-button primary, link-buttons, toggles, active page)
-  --action-primary-bg:        var(--ink);
-  --action-primary-bg-hover:  var(--ink-hover);
+  // color.role.action-primary
+  --action-primary-bg: var(--ink);
+  --action-primary-bg-hover: var(--ink-hover);
   --action-primary-bg-active: #000000;
-  --action-primary-fg:        #ffffff;
-  // Disabled primary: the black button at ~0.38 — clearly "not yet",
-  // still recognisably the primary (QA D12, Design Director).
-  --action-primary-disabled-bg:      var(--action-primary-bg);
-  --action-primary-disabled-fg:      var(--action-primary-fg);
-  --action-primary-disabled-border:  var(--action-primary-bg);
+  --action-primary-fg: #ffffff;
+  --action-primary-disabled-bg: var(--action-primary-bg);
+  --action-primary-disabled-fg: var(--action-primary-fg);
+  --action-primary-disabled-border: var(--action-primary-bg);
   --action-primary-disabled-opacity: 0.38;
 
-  // Selected navigation row (rail, settings nav, filter lists)
-  --nav-active-bg:        #00000017;   // ~9% black — reads as a pill on white chrome
-  --nav-active-bg-hover:  #0000001f;
-  --nav-active-fg:        var(--fg);
-  --nav-active-icon:      var(--fg);
+  // color.role.nav
+  --nav-active-bg: #00000017; // ~9% black — reads as a pill on white chrome
+  --nav-active-bg-hover: #0000001f;
+  --nav-active-fg: var(--fg);
+  --nav-active-icon: var(--fg);
   --nav-active-indicator: var(--fg);
-  --nav-badge-bg:         var(--bg-2);
-  --nav-badge-fg:         var(--fg-2);
+  --nav-badge-bg: var(--bg-2);
+  --nav-badge-fg: var(--fg-2);
 
-  // Tabs / segmented controls / progress
-  --tab-active-fg:        var(--fg);
+  // color.role.tab
+  --tab-active-fg: var(--fg);
   --tab-active-indicator: var(--fg);
-  --segment-track-bg:     var(--bg-2);
-  --segment-active-bg:    var(--surface);
-  --segment-active-fg:    var(--fg);
+  --segment-track-bg: var(--bg-2);
+  --segment-active-bg: var(--surface);
+  --segment-active-fg: var(--fg);
   --segment-count-active-bg: var(--surface-3);
   --segment-count-active-fg: var(--fg-2);
-  --progress-fill:        var(--ink);
-  // Visible on the grey canvas too, not only inside white cards.
-  --progress-track:       var(--border);
+  --progress-fill: var(--ink);
+  --progress-track: var(--border);
 
-  // Selected filter / saved-view chip
-  --chip-active-bg:     var(--nav-active-bg);
-  --chip-active-fg:     var(--fg);
+  // color.role.chip-active
+  --chip-active-bg: var(--nav-active-bg);
+  --chip-active-fg: var(--fg);
   --chip-active-border: var(--border-strong);
 
-  // Secondary-emphasis actions (outline button, primary chip)
-  --action-outline-fg:           var(--fg);
-  --action-outline-hover-bg:     var(--hover);
+  // color.role.action-outline
+  --action-outline-fg: var(--fg);
+  --action-outline-hover-bg: var(--hover);
   --action-outline-hover-border: var(--border-strong);
-  // Outline / secondary button border (ref ≈ #ccccd0).
-  --action-outline-border:       var(--border-strong);
-  --chip-primary-bg:     var(--bg-2);
-  --chip-primary-fg:     var(--fg);
+  --action-outline-border: var(--border-strong);
+
+  // color.role.chip-primary
+  --chip-primary-bg: var(--bg-2);
+  --chip-primary-fg: var(--fg);
   --chip-primary-border: var(--border-strong);
 
-  // Checked native controls (checkbox / radio accent-color)
+  // color.role.control
   --control-checked: var(--ink);
 
-  // Bulk-selection bar
-  --selection-bar-bg:     var(--surface);
+  // color.role.selection-bar
+  --selection-bar-bg: var(--surface);
   --selection-bar-border: var(--border-strong);
-  --selection-bar-fg:     var(--fg);
-  --row-selected-bg:      var(--hover-strong);
+  --selection-bar-fg: var(--fg);
+  --row-selected-bg: var(--hover-strong);
 
-  // Brand mark in the shell — black tile, white glyph (ref 01/02).
+  // color.role.brand-mark
   --brand-mark-bg: #0a0a0b;
   --brand-mark-fg: #ffffff;
 
-  // Create action — the topbar "+ New" (ref 01: green, not ink). Page-head
-  // primaries stay ink; this is the one global "make something" button.
-  --action-create-bg:        #43946c;
-  --action-create-bg-hover:  #3a8560;
-  --action-create-bg-active: #347659;
-  --action-create-border:    #347659;
-  --action-create-fg:        #ffffff;
+  // color.role.action-create
+  --action-create-bg: #3b825f; // Topbar "+ New" (ref 01: green, not ink). Was #43946c (white text 3.7:1); darkened to 4.6:1. Page-head primaries stay ink; this is the one global "make something" button.
+  --action-create-bg-hover: #327353;
+  --action-create-bg-active: #2c644b;
+  --action-create-border: #2c644b;
+  --action-create-fg: #ffffff;
 
-  // Unread marker (topbar bell, rail inbox) — green in the reference.
+  // color.role.notify
   --notify-dot: #43946c;
 
-  // Rail / sidebar selected row — a flat grey tile, the same fill as the
-  // rail's search tile (ref 01: both #efeff2).
+  // color.role.rail
   --rail-active-bg: var(--bg-2);
-  --rail-tile-bg:   var(--bg-2);
+  --rail-tile-bg: var(--bg-2);
 
-  // Person avatars — deterministic per person (avatarTone()), muted
-  // mid-tones with white initials (all >= 4.5:1).
+  // color.avatar — Person avatars — deterministic per person (avatarTone()), muted mid-tones with white initials (all >= 4.5:1).
   --avatar-neutral-bg: var(--surface-3);
   --avatar-neutral-fg: var(--fg-3);
-  --avatar-1-bg: #a95c25;  --avatar-1-fg: #ffffff;  // clay
-  --avatar-2-bg: #b8466f;  --avatar-2-fg: #ffffff;  // rose
-  --avatar-3-bg: #2f7f8f;  --avatar-3-fg: #ffffff;  // teal
-  --avatar-4-bg: #6a52c4;  --avatar-4-fg: #ffffff;  // violet
-  --avatar-5-bg: #3a7d55;  --avatar-5-fg: #ffffff;  // green
-  --avatar-6-bg: #3d64b8;  --avatar-6-fg: #ffffff;  // blue
-  --avatar-7-bg: #94509e;  --avatar-7-fg: #ffffff;  // plum
-  --avatar-8-bg: #5b6474;  --avatar-8-fg: #ffffff;  // slate
+  --avatar-1-bg: #a95c25;
+  --avatar-1-fg: #ffffff; // clay
+  --avatar-2-bg: #b8466f;
+  --avatar-2-fg: #ffffff; // rose
+  --avatar-3-bg: #2f7f8f;
+  --avatar-3-fg: #ffffff; // teal
+  --avatar-4-bg: #6a52c4;
+  --avatar-4-fg: #ffffff; // violet
+  --avatar-5-bg: #3a7d55;
+  --avatar-5-fg: #ffffff; // green
+  --avatar-6-bg: #3d64b8;
+  --avatar-6-fg: #ffffff; // blue
+  --avatar-7-bg: #94509e;
+  --avatar-7-fg: #ffffff; // plum
+  --avatar-8-bg: #5b6474;
+  --avatar-8-fg: #ffffff; // slate
 
-  // -----------------------------------------------------------------
-  // Status — muted, used as dots + subtle fills
-  // -----------------------------------------------------------------
-  --red:    #dc2626;
-  // Measured on the reference's in-progress icons and due text.
-  --amber:  #cc7c2e;
-  --blue:   #2563eb;
-  --green:  #16a34a;
+  // color.status — Status — muted, used as dots + subtle fills. Use the *-text variant where a status colour carries text.
+  --red: #dc2626;
+  --amber: #cc7c2e; // Measured on the reference's in-progress icons. Icons, dots and fills only (3.2:1 on white) — text uses --amber-text.
+  --amber-text: #9e6024; // Amber that carries text (due "soon", warnings). --amber is 3.2:1 on white — icons/dots only; this is 5.1:1 white · 4.6 canvas.
+  --blue: #2563eb;
+  --green: #16a34a;
   --purple: #7c3aed;
-  --pink:   #db2777;
+  --pink: #db2777;
 
-  --red-tint:    #dc26260f;
-  --amber-tint:  #cc7c2e0f;
-  --blue-tint:   #2563eb0f;
-  --green-tint:  #16a34a0f;
+  // color.status-tint
+  --red-tint: #dc26260f;
+  --amber-tint: #cc7c2e0f;
+  --blue-tint: #2563eb0f;
+  --green-tint: #16a34a0f;
   --purple-tint: #7c3aed0f;
-  --pink-tint:   #db27770f;
+  --pink-tint: #db27770f;
 
-  // -----------------------------------------------------------------
-  // Radii — Linear-class, small & precise
-  // -----------------------------------------------------------------
+  // color.deco — Decorative status marks (board column bars, ticket-group dots, sidebar project-key chips): the status hue at ~60% strength over the surface. Status icons and due text keep the full colour.
+  --deco-mix: 60%;
+  --red-muted: color-mix(in srgb, var(--red) var(--deco-mix), var(--surface));
+  --amber-muted: color-mix(in srgb, var(--amber) var(--deco-mix), var(--surface));
+  --blue-muted: color-mix(in srgb, var(--blue) var(--deco-mix), var(--surface));
+  --green-muted: color-mix(in srgb, var(--green) var(--deco-mix), var(--surface));
+  --purple-muted: color-mix(in srgb, var(--purple) var(--deco-mix), var(--surface));
+  --pink-muted: color-mix(in srgb, var(--pink) var(--deco-mix), var(--surface));
+  --grey-muted: color-mix(in srgb, var(--fg-4) var(--deco-mix), var(--surface));
+
+  // color.selection
+  --selection-bg: rgba(23, 23, 26, 0.16);
+  --selection-fg: inherit;
+
+  // ===== radius
+  // radius — Radii — Linear-class, small & precise.
   --r-xs: 4px;
   --r-sm: 6px;
-  --r:    8px;
+  --r: 8px;
   --r-lg: 10px;
   --r-xl: 12px;
   --r-2xl: 16px;
   --r-full: 9999px;
 
-  // -----------------------------------------------------------------
-  // Shadows — restrained
-  // -----------------------------------------------------------------
+  // ===== shadow
+  // shadow — Shadows — restrained.
   --shadow-1: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
   --shadow-2: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
   --shadow-3: 0 16px 40px -12px rgba(15, 23, 42, 0.18), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+  --shadow-drawer: 6px 0 20px -6px rgba(15, 23, 42, 0.12);
 
-  // -----------------------------------------------------------------
-  // Type
-  // -----------------------------------------------------------------
-  --font-sans:  "Geist", -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
-  --font-mono:  "Geist Mono", "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  // ===== font — Type.
+
+  // font.family
+  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --font-serif: var(--font-sans); // alias — no serif
 
-  --text-xs:   11px;
-  --text-sm:   12px;
+  // font.size
+  --text-xs: 11px;
+  --text-sm: 12px;
   --text-base: 13.5px;
-  --text-md:   14px;
-  --text-lg:   16px;
-  --text-xl:   18px;
-  --text-2xl:  22px;
-  --text-3xl:  28px;
-  --text-4xl:  36px;
+  --text-md: 14px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 22px;
+  --text-3xl: 28px;
+  --text-4xl: 36px;
 
-  --weight-normal:   400;
-  --weight-medium:   500;
+  // font.weight
+  --weight-normal: 400;
+  --weight-medium: 500;
   --weight-semibold: 600;
-  --weight-bold:     700;
+  --weight-bold: 700;
 
-  --line-tight:   1.2;
-  --line-normal:  1.5;
+  // font.line-height
+  --line-tight: 1.2;
+  --line-normal: 1.5;
   --line-relaxed: 1.7;
 
-  // -----------------------------------------------------------------
-  // Scale & density — measured from the reference screens at 1110×760.
-  // Pages read these instead of hard-coding their own heights, so the
-  // whole product moves together when the density changes.
-  // -----------------------------------------------------------------
-  // Page head (ath-page-header)
-  // Measured on ref 01 (2224px @2x): the H1 cap height is 12 CSS px and
-  // "Good evening, Joel" sets 149px wide — 17px semibold Geist; the meta
-  // line sets at 12px; the hairline sits 12px under it.
-  --page-title-size:      17px;      // H1, semibold
-  --page-meta-size:       12px;      // muted meta line under the title
-  --page-head-gap:        4px;       // title → meta
-  --page-head-pad-bottom: 12px;      // meta → hairline
-  --page-head-rule:       var(--border-faint);
-  // Shell content frame (first element starts 16px under the topbar)
-  --content-pad-top:      16px;
-  --content-pad-x:        28px;
-  // Section rhythm below the page head (hairline → first panel)
-  --section-gap:          16px;
+  // ===== density — Scale & density — measured from the reference screens at 1110×760. Pages read these instead of hard-coding their own heights, so the whole product moves together when the density changes.
 
-  // Controls (ath-button, segment, filter pills, toolbar inputs)
-  --control-h-xs:  26px;           // topbar "+ New" (ref 25–26px)
-  --control-h-sm:  28px;
-  --control-h:     32px;
-  --control-h-lg:  40px;
-  --field-h-sm:    33px;           // compact form field (settings rows)
-  --control-font:  13px;
+  // density.page
+  --page-title-size: 17px; // H1, semibold
+  --page-meta-size: 12px; // muted meta line under the title
+  --page-head-gap: 4px; // title → meta
+  --page-head-pad-bottom: 12px; // meta → hairline
+  --page-head-rule: var(--border-faint);
+  --content-pad-top: 16px;
+  --content-pad-x: 28px;
+  --section-gap: 16px;
 
-  // Panels & tables
-  --panel-radius:     var(--r-lg);
-  --panel-pad-x:      16px;
-  --panel-pad-y:      12px;
-  --panel-head-h:     40px;          // title row of a panel
+  // density.control
+  --control-h-xs: 26px; // topbar "+ New" (ref 25–26px)
+  --control-h-sm: 28px;
+  --control-h: 32px;
+  --control-h-lg: 40px;
+  --field-h-sm: 33px; // compact form field (settings rows)
+  --control-font: 13px;
+
+  // density.panel
+  --panel-radius: var(--r-lg);
+  --panel-pad-x: 16px;
+  --panel-pad-y: 12px;
+  --panel-head-h: 40px; // title row of a panel
   --panel-title-size: 14px;
-  --table-head-h:     36px;
-  --table-head-bg:    var(--bg-2);   // filled grey band (ref 01 focus table)
-  --table-head-size:  12.5px;
-  --row-h:            44px;          // body row in a panel table
-  --row-h-compact:    36px;          // agenda / member lists
+  --table-head-h: 36px;
+  --table-head-bg: var(--bg-2); // filled grey band (ref 01 focus table)
+  --table-head-size: 12.5px;
+  --row-h: 44px; // body row in a panel table
+  --row-h-compact: 36px; // agenda / member lists
 
-  // Avatars in rows and the topbar
-  --avatar-xs: 20px;               // topbar, dense rows (ref 20px)
+  // density.chip
+  --chip-h: 20px;
+  --chip-radius: var(--r-xs);
+  --chip-font: 11.5px;
+
+  // ===== size
+
+  // size.avatar
+  --avatar-xs: 20px; // topbar, dense rows (ref 20px)
   --avatar-sm: 22px;
 
-  // Icons — thin strokes (ref ≈1.25–1.5 at 13–14px).
+  // size.icon
   --icon-stroke: 1.5;
   --icon-size-nav: 14px;
 
-  // Decorative status marks (board column bars, ticket-group dots, sidebar
-  // project-key chips): the status hue at ~60% strength over the surface.
-  // Status icons and due text keep the full colour.
-  --deco-mix:          60%;
-  --red-muted:         color-mix(in srgb, var(--red) var(--deco-mix), var(--surface));
-  --amber-muted:       color-mix(in srgb, var(--amber) var(--deco-mix), var(--surface));
-  --blue-muted:        color-mix(in srgb, var(--blue) var(--deco-mix), var(--surface));
-  --green-muted:       color-mix(in srgb, var(--green) var(--deco-mix), var(--surface));
-  --purple-muted:      color-mix(in srgb, var(--purple) var(--deco-mix), var(--surface));
-  --pink-muted:        color-mix(in srgb, var(--pink) var(--deco-mix), var(--surface));
-  --grey-muted:        color-mix(in srgb, var(--fg-4) var(--deco-mix), var(--surface));
+  // ===== layout
 
-  // Toasts live bottom-right, away from the topbar's "+ New" and avatar
-  // entirely (Design Director: under-the-bar still read as covering it).
-  --toast-offset-top:    auto;
+  // layout.toast
+  --toast-offset-top: auto;
   --toast-offset-bottom: 16px;
-  --toast-offset-right:  16px;
+  --toast-offset-right: 16px;
 
-  // Text selection — neutral ink wash, never the accent.
-  --selection-bg: rgba(23, 23, 26, 0.16);
-  --selection-fg: inherit;
-
-  // Shadow of the hover-expanded sidebar drawer (ref 02: soft, ≈20px).
-  --shadow-drawer: 6px 0 20px -6px rgba(15, 23, 42, 0.12);
-
-  // Chips (labels, project keys)
-  --chip-h:      20px;
-  --chip-radius: var(--r-xs);
-  --chip-font:   11.5px;
-
-  // -----------------------------------------------------------------
-  // Spacing scale
-  // -----------------------------------------------------------------
-  --space-0:  0;
-  --space-1:  4px;
-  --space-2:  8px;
-  --space-3:  12px;
-  --space-4:  16px;
-  --space-5:  20px;
-  --space-6:  24px;
-  --space-8:  32px;
+  // ===== space
+  // space — Spacing scale.
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
   --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
 
-  // -----------------------------------------------------------------
-  // Motion
-  // -----------------------------------------------------------------
+  // ===== motion
+  // motion — Motion.
   --t-fast: 100ms ease;
   --t-base: 150ms ease;
   --t-slow: 250ms ease;
 
-  // -----------------------------------------------------------------
-  // Z-index scale
-  // -----------------------------------------------------------------
-  --z-dropdown: 1000;
-  --z-sticky:   1020;
-  --z-fixed:    1030;
-  --z-overlay:  1040;
-  --z-modal:    1050;
-  --z-popover:  1060;
-  --z-tooltip:  1070;
-  --z-toast:    1080;
+  // ===== z-index
+  // z-index — The one z-index scale. Every stacking value in the lib and the app is one of these (or a calc() on one); no raw numbers, no fallbacks.
+  --z-base: 0; // In-flow content.
+  --z-raised: 1; // Local lift inside a component (an overlapping avatar, a timeline dot over its line).
+  --z-dropdown: 1000; // Menus and dropdown panels anchored to a control.
+  --z-sticky: 1020; // Sticky headers / toolbars.
+  --z-fixed: 1030; // Fixed shell chrome.
+  --z-overlay: 1040; // Dialog / drawer backdrop.
+  --z-modal: 1050; // Dialogs and drawers.
+  --z-popover: 1060; // Floating panels (floating.ts) — above dialogs so a picker inside a dialog is not clipped.
+  --z-tooltip: 1070; // Tooltips.
+  --z-toast: 1080; // Toasts — always on top.
 
-  // =================================================================
-  // LEGACY ALIASES (--ath-* names)
-  // Existing component code references these. They alias to the design
-  // tokens above via CSS variable cascade — change a design token and
-  // every consumer updates automatically. Do NOT use these in new code.
-  // =================================================================
+  // ===== legacy — LEGACY ALIASES (--ath-* names, --gold). Existing component code references these; they alias the design tokens via the CSS cascade.
+  // DEPRECATED: Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7.
 
-  // Semantic colors (legacy: --ath-color-*)
-  --ath-color-primary:        var(--accent);
-  --ath-color-primary-rgb:    79, 70, 229; // for legacy rgba() usage
+  // legacy.color
+  --ath-color-primary: var(--accent); // deprecated → use --accent
+  --ath-color-primary-rgb: 79, 70, 229; // for legacy rgba() usage · deprecated
+  --ath-color-success: var(--green); // deprecated → use --green
+  --ath-color-warning: var(--amber); // deprecated → use --amber
+  --ath-color-error: var(--red); // deprecated → use --red
+  --ath-color-info: var(--blue); // deprecated → use --blue
 
-  --ath-color-success:        var(--green);
-  --ath-color-warning:        var(--amber);
-  --ath-color-error:          var(--red);
-  --ath-color-info:           var(--blue);
+  // legacy.bg
+  --ath-bg-primary: var(--bg-0); // deprecated → use --bg-0
+  --ath-bg-secondary: var(--bg-1); // deprecated → use --bg-1
+  --ath-bg-tertiary: var(--bg-2); // deprecated → use --bg-2
+  --ath-bg-elevated: var(--surface); // deprecated → use --surface
+  --ath-bg-panel: var(--surface); // deprecated → use --surface
+  --ath-bg-input: var(--bg-1); // deprecated → use --bg-1
+  --ath-bg-overlay: rgba(0, 0, 0, 0.4); // deprecated
+  --ath-bg-sidebar: var(--bg-1); // deprecated → use --bg-1
 
-  // Backgrounds (legacy: --ath-bg-*)
-  --ath-bg-primary:    var(--bg-0);
-  --ath-bg-secondary:  var(--bg-1);
-  --ath-bg-tertiary:   var(--bg-2);
-  --ath-bg-elevated:   var(--surface);
-  --ath-bg-panel:      var(--surface);
-  --ath-bg-input:      var(--bg-1);
-  --ath-bg-overlay:    rgba(0, 0, 0, 0.4);
-  --ath-bg-sidebar:    var(--bg-1);
+  // legacy.text
+  --ath-text-primary: var(--fg); // deprecated → use --fg
+  --ath-text-secondary: var(--fg-2); // deprecated → use --fg-2
+  --ath-text-tertiary: var(--fg-3); // deprecated → use --fg-3
+  --ath-text-link: var(--accent); // deprecated → use --accent
+  --ath-text-link-hover: var(--accent-2); // deprecated → use --accent-2
 
-  // Text (legacy: --ath-text-*)
-  --ath-text-primary:    var(--fg);
-  --ath-text-secondary:  var(--fg-2);
-  --ath-text-tertiary:   var(--fg-3);
-  --ath-text-link:       var(--accent);
-  --ath-text-link-hover: var(--accent-2);
+  // legacy.border
+  --ath-border-color: var(--border); // deprecated → use --border
+  --ath-border-color-hover: var(--border-strong); // deprecated → use --border-strong
+  --ath-border-color-focus: var(--accent); // deprecated → use --accent
 
-  // Borders (legacy: --ath-border-*)
-  --ath-border-color:        var(--border);
-  --ath-border-color-hover:  var(--border-strong);
-  --ath-border-color-focus:  var(--accent);
+  // legacy.radius
+  --ath-border-radius-sm: var(--r-sm); // deprecated → use --r-sm
+  --ath-border-radius-md: var(--r); // deprecated → use --r
+  --ath-border-radius-lg: var(--r-lg); // deprecated → use --r-lg
+  --ath-border-radius-xl: var(--r-xl); // deprecated → use --r-xl
+  --ath-border-radius-full: var(--r-full); // deprecated → use --r-full
 
-  // Radii (legacy)
-  --ath-border-radius-sm:   var(--r-sm);
-  --ath-border-radius-md:   var(--r);
-  --ath-border-radius-lg:   var(--r-lg);
-  --ath-border-radius-xl:   var(--r-xl);
-  --ath-border-radius-full: var(--r-full);
+  // legacy.space
+  --ath-space-1: var(--space-1); // deprecated → use --space-1
+  --ath-space-2: var(--space-2); // deprecated → use --space-2
+  --ath-space-3: var(--space-3); // deprecated → use --space-3
+  --ath-space-4: var(--space-4); // deprecated → use --space-4
+  --ath-space-5: var(--space-5); // deprecated → use --space-5
+  --ath-space-6: var(--space-6); // deprecated → use --space-6
+  --ath-space-8: var(--space-8); // deprecated → use --space-8
+  --ath-space-10: var(--space-10); // deprecated → use --space-10
+  --ath-space-16: var(--space-16); // deprecated → use --space-16
 
-  // Spacing (legacy: --ath-space-*)
-  --ath-space-1:  var(--space-1);
-  --ath-space-2:  var(--space-2);
-  --ath-space-3:  var(--space-3);
-  --ath-space-4:  var(--space-4);
-  --ath-space-5:  var(--space-5);
-  --ath-space-6:  var(--space-6);
-  --ath-space-8:  var(--space-8);
-  --ath-space-10: var(--space-10);
-  --ath-space-16: var(--space-16);
+  // legacy.font
+  --ath-font-family: var(--font-sans); // deprecated → use --font-sans
+  --ath-font-family-mono: var(--font-mono); // deprecated → use --font-mono
+  --ath-font-mono: var(--font-mono); // deprecated → use --font-mono
+  --ath-font-size-xs: var(--text-xs); // deprecated → use --text-xs
+  --ath-font-size-sm: var(--text-sm); // deprecated → use --text-sm
+  --ath-font-size-md: var(--text-md); // deprecated → use --text-md
+  --ath-font-size-lg: var(--text-lg); // deprecated → use --text-lg
+  --ath-font-size-xl: var(--text-xl); // deprecated → use --text-xl
+  --ath-font-size-2xl: var(--text-2xl); // deprecated → use --text-2xl
+  --ath-font-size-3xl: var(--text-3xl); // deprecated → use --text-3xl
+  --ath-font-size-4xl: var(--text-4xl); // deprecated → use --text-4xl
+  --ath-font-weight-normal: var(--weight-normal); // deprecated → use --weight-normal
+  --ath-font-weight-medium: var(--weight-medium); // deprecated → use --weight-medium
+  --ath-font-weight-semibold: var(--weight-semibold); // deprecated → use --weight-semibold
+  --ath-font-weight-bold: var(--weight-bold); // deprecated → use --weight-bold
+  --ath-line-height-tight: var(--line-tight); // deprecated → use --line-tight
+  --ath-line-height-normal: var(--line-normal); // deprecated → use --line-normal
 
-  // Type (legacy)
-  --ath-font-family:      var(--font-sans);
-  --ath-font-family-mono: var(--font-mono);
-  --ath-font-mono:        var(--font-mono);
+  // legacy.shadow
+  --ath-shadow-sm: var(--shadow-1); // deprecated → use --shadow-1
+  --ath-shadow-md: var(--shadow-2); // deprecated → use --shadow-2
+  --ath-shadow-lg: var(--shadow-3); // deprecated → use --shadow-3
+  --ath-shadow-xl: var(--shadow-3); // deprecated → use --shadow-3
 
-  --ath-font-size-xs:  var(--text-xs);
-  --ath-font-size-sm:  var(--text-sm);
-  --ath-font-size-md:  var(--text-md);
-  --ath-font-size-lg:  var(--text-lg);
-  --ath-font-size-xl:  var(--text-xl);
-  --ath-font-size-2xl: var(--text-2xl);
-  --ath-font-size-3xl: var(--text-3xl);
-  --ath-font-size-4xl: var(--text-4xl);
+  // legacy.motion
+  --ath-transition-fast: var(--t-fast); // deprecated → use --t-fast
+  --ath-transition-normal: var(--t-base); // deprecated → use --t-base
+  --ath-transition-slow: var(--t-slow); // deprecated → use --t-slow
 
-  --ath-font-weight-normal:   var(--weight-normal);
-  --ath-font-weight-medium:   var(--weight-medium);
-  --ath-font-weight-semibold: var(--weight-semibold);
-  --ath-font-weight-bold:     var(--weight-bold);
+  // legacy.hover
+  --ath-hover-bg: var(--hover); // deprecated → use --hover
+  --ath-hover-bg-strong: var(--hover-strong); // deprecated → use --hover-strong
+  --ath-active-bg: var(--hover-strong); // deprecated → use --hover-strong
 
-  --ath-line-height-tight:   var(--line-tight);
-  --ath-line-height-normal:  var(--line-normal);
+  // legacy.z-index
+  --ath-z-dropdown: var(--z-dropdown); // deprecated → use --z-dropdown
+  --ath-z-fixed: var(--z-fixed); // deprecated → use --z-fixed
+  --ath-z-modal-backdrop: var(--z-overlay); // deprecated → use --z-overlay
+  --ath-z-modal: var(--z-modal); // deprecated → use --z-modal
+  --ath-z-tooltip: var(--z-tooltip); // deprecated → use --z-tooltip
+  --ath-z-toast: var(--z-toast); // deprecated → use --z-toast
 
-  // Shadows (legacy)
-  --ath-shadow-sm:   var(--shadow-1);
-  --ath-shadow-md:   var(--shadow-2);
-  --ath-shadow-lg:   var(--shadow-3);
-  --ath-shadow-xl:   var(--shadow-3);
-
-  // Transitions (legacy)
-  --ath-transition-fast:   var(--t-fast);
-  --ath-transition-normal: var(--t-base);
-  --ath-transition-slow:   var(--t-slow);
-
-  // Hover utilities (legacy)
-  --ath-hover-bg:        var(--hover);
-  --ath-hover-bg-strong: var(--hover-strong);
-  --ath-active-bg:       var(--hover-strong);
-
-  // Z-Index (legacy)
-  --ath-z-dropdown:       var(--z-dropdown);
-  --ath-z-fixed:          var(--z-fixed);
-  --ath-z-modal-backdrop: var(--z-overlay);
-  --ath-z-modal:          var(--z-modal);
-  --ath-z-tooltip:        var(--z-tooltip);
-  --ath-z-toast:          var(--z-toast);
-
-  // Legacy gold-* tokens (some component code still references these).
-  // Map them to accent so existing code keeps working with the new identity.
-  --gold:        var(--accent);
+  // legacy.gold
+  --gold: var(--accent); // deprecated → use --accent
 
   color-scheme: light;
 }
 
-// ===========================================
+// ---------------------------------------------------------------------
 // DARK
-// ===========================================
-// Premium soft dark counterpart of light mode.
-// Never pure black. Warm-neutral grays with clear surface hierarchy.
-
+// ---------------------------------------------------------------------
 [data-theme="dark"] {
-  // Surfaces — every level subtly lighter than the one below
-  --bg-0:         #111113;          // App canvas — very dark neutral, NOT pure black
-  --bg-1:         #18181c;          // Sidebar / topbar chrome
-  --bg-2:         #222228;          // Hover fills, section heads, segmented bg
-  --surface:      #1c1c21;          // Cards, panels, modals
-  --surface-2:    #17171b;          // Recessed within cards — table heads
-  --surface-3:    #26262e;          // Inputs, kbd chips, inner wells
-  --hover:        #ffffff0b;        // 4% white overlay
-  --hover-strong: #ffffff18;        // 9% white overlay
-  --selected:     #ffffff0d;        // Selected row tint
 
-  // Borders
-  --border:        #2c2c34;
+  // color.surface
+  --bg-0: #111113; // App canvas — very dark neutral, NOT pure black
+  --bg-1: #18181c; // Sidebar / topbar chrome
+  --bg-2: #222228; // Hover fills, section heads, segmented bg
+  --surface: #1c1c21; // Cards, panels, modals
+  --surface-2: #17171b; // Recessed within cards — table heads
+  --surface-3: #26262e; // Inputs, kbd chips, inner wells
+  --hover: #ffffff0b; // 4% white overlay
+  --hover-strong: #ffffff18; // 9% white overlay
+  --selected: #ffffff0d; // Selected row tint
+
+  // color.border
+  --border: #2c2c34;
   --border-strong: #3c3c46;
-  --border-faint:  #232329;
-  --rule:          #2c2c34;
+  --border-faint: #232329;
+  --rule: #2c2c34;
 
-  // Text — never pure white; warm-neutral scale
-  --fg:          #e6e6eb;
-  --fg-2:        #b0b0bc;
-  --fg-3:        #9a9aa6;           // 6.1:1 surface · 6.8 bg-0 · 5.7 bg-2
-  --fg-4:        #8c8c98;           // 5.1:1 surface · 5.7 bg-0 · 4.8 bg-2
-  --fg-label:    #74747f;
+  // color.text
+  --fg: #e6e6eb;
+  --fg-2: #b0b0bc;
+  --fg-3: #9a9aa6; // 6.1:1 surface · 6.8 bg-0 · 5.7 bg-2
+  --fg-4: #8c8c98; // 5.1:1 surface · 5.7 bg-0 · 4.8 bg-2
+  --fg-label: #85858f; // Was #74747f (3.7:1 on surface); now 4.6:1 surface · 4.9 bg-0.
   --fg-disabled: #38383f;
 
-  // Accent (default violet for dark — softer than light)
-  --accent:        #8280e8;
-  --accent-2:      #9d9bf0;
-  --accent-3:      #6b69d8;
-  --accent-dim:    #6366f1;
-  --accent-faint:  #8280e820;
-  --accent-ring:   #8280e83a;
+  // color.accent
+  --accent: #8280e8;
+  --accent-2: #9d9bf0;
+  --accent-3: #6b69d8;
+  --accent-dim: #6366f1;
+  --accent-faint: #8280e820;
+  --accent-ring: #8280e83a;
 
-  // Semantic roles — dark keeps its established accent-led identity:
-  // accent CTAs with dark text, accent-tinted selection.
-  --ink:       #e6e6eb;
+  // color.role.ink
+  --ink: #e6e6eb;
   --ink-hover: #f2f2f5;
 
-  --action-primary-bg:        var(--accent);
-  --action-primary-bg-hover:  var(--accent-2);
+  // color.role.action-primary
+  --action-primary-bg: var(--accent);
+  --action-primary-bg-hover: var(--accent-2);
   --action-primary-bg-active: var(--accent-3);
-  --action-primary-fg:        #111113;
-  // Disabled primary in dark: a faded accent over a dark surface turns a
-  // muddy brown with dark text on it — illegible, and it read as a hover
-  // state. A neutral well with muted text says "unavailable" plainly.
-  --action-primary-disabled-bg:      var(--surface-3);
-  --action-primary-disabled-fg:      var(--fg-4);
-  --action-primary-disabled-border:  var(--border);
+  --action-primary-fg: #111113;
+  --action-primary-disabled-bg: var(--surface-3);
+  --action-primary-disabled-fg: var(--fg-4);
+  --action-primary-disabled-border: var(--border);
   --action-primary-disabled-opacity: 1;
 
-  --nav-active-bg:        color-mix(in srgb, var(--accent) 12%, transparent);
-  --nav-active-bg-hover:  color-mix(in srgb, var(--accent) 18%, transparent);
-  --nav-active-fg:        var(--accent);
-  --nav-active-icon:      var(--accent);
+  // color.role.nav
+  --nav-active-bg: color-mix(in srgb, var(--accent) 12%, transparent);
+  --nav-active-bg-hover: color-mix(in srgb, var(--accent) 18%, transparent);
+  --nav-active-fg: var(--accent);
+  --nav-active-icon: var(--accent);
   --nav-active-indicator: var(--accent);
-  --nav-badge-bg:         color-mix(in srgb, var(--accent) 14%, transparent);
-  --nav-badge-fg:         var(--accent);
+  --nav-badge-bg: color-mix(in srgb, var(--accent) 14%, transparent);
+  --nav-badge-fg: var(--accent);
 
-  --tab-active-fg:        var(--accent);
+  // color.role.tab
+  --tab-active-fg: var(--accent);
   --tab-active-indicator: var(--accent);
-  --segment-active-bg:    var(--bg-1);
+  --segment-active-bg: var(--bg-1);
   --segment-count-active-bg: var(--accent-faint);
   --segment-count-active-fg: var(--accent);
-  --progress-fill:        var(--accent);
-  --progress-track:       var(--bg-2);
+  --progress-fill: var(--accent);
+  --progress-track: var(--bg-2);
 
-  --chip-active-bg:     var(--accent-faint);
-  --chip-active-fg:     var(--accent);
+  // color.role.chip-active
+  --chip-active-bg: var(--accent-faint);
+  --chip-active-fg: var(--accent);
   --chip-active-border: var(--accent);
 
-  --action-outline-fg:           var(--accent);
-  --action-outline-hover-bg:     var(--accent-faint);
+  // color.role.action-outline
+  --action-outline-fg: var(--accent);
+  --action-outline-hover-bg: var(--accent-faint);
   --action-outline-hover-border: var(--accent);
-  --chip-primary-bg:     var(--accent-ring);
-  --chip-primary-fg:     var(--accent);
+  --action-outline-border: var(--border-strong);
+
+  // color.role.chip-primary
+  --chip-primary-bg: var(--accent-ring);
+  --chip-primary-fg: var(--accent);
   --chip-primary-border: color-mix(in srgb, var(--accent) 30%, transparent);
 
+  // color.role.control
   --control-checked: var(--accent);
 
-  --selection-bar-bg:     var(--accent-faint);
+  // color.role.selection-bar
+  --selection-bar-bg: var(--accent-faint);
   --selection-bar-border: var(--accent);
-  --selection-bar-fg:     var(--accent);
-  --row-selected-bg:      color-mix(in srgb, var(--accent) 7%, transparent);
+  --selection-bar-fg: var(--accent);
+  --row-selected-bg: color-mix(in srgb, var(--accent) 7%, transparent);
 
-  // Inverted tile in dark: light square, dark glyph — same mark, same weight.
+  // color.role.brand-mark
   --brand-mark-bg: var(--fg);
   --brand-mark-fg: var(--bg-0);
 
-  --action-create-bg:        var(--green);
-  --action-create-bg-hover:  color-mix(in srgb, var(--green) 88%, #fff);
+  // color.role.action-create
+  --action-create-bg: var(--green);
+  --action-create-bg-hover: color-mix(in srgb, var(--green) 88%, #fff);
   --action-create-bg-active: color-mix(in srgb, var(--green) 88%, #000);
-  --action-create-border:    var(--green);
-  --action-create-fg:        #111113;
-  --notify-dot:              var(--green);
-  --rail-active-bg:          var(--nav-active-bg);
-  --rail-tile-bg:            var(--bg-2);
-  --page-head-rule:          var(--border);
+  --action-create-border: var(--green);
+  --action-create-fg: #111113;
 
-  // Avatars — same hues, lifted for dark surfaces, dark initials.
-  --avatar-1-bg: #d0915e;  --avatar-1-fg: #111113;
-  --avatar-2-bg: #d27e9e;  --avatar-2-fg: #111113;
-  --avatar-3-bg: #64b0bf;  --avatar-3-fg: #111113;
-  --avatar-4-bg: #a291e0;  --avatar-4-fg: #111113;
-  --avatar-5-bg: #6db48a;  --avatar-5-fg: #111113;
-  --avatar-6-bg: #84a0e0;  --avatar-6-fg: #111113;
-  --avatar-7-bg: #c48ccc;  --avatar-7-fg: #111113;
-  --avatar-8-bg: #a2aab8;  --avatar-8-fg: #111113;
+  // color.role.notify
+  --notify-dot: var(--green);
 
-  // Status — calm, desaturated, readable on dark surfaces
-  --red:    #cc6b6b;
-  --amber:  #c4884e;
-  --blue:   #5b80d4;
-  --green:  #46a86e;
+  // color.role.rail
+  --rail-active-bg: var(--nav-active-bg);
+  --rail-tile-bg: var(--bg-2);
+
+  // color.avatar
+  --avatar-1-bg: #d0915e;
+  --avatar-1-fg: #111113;
+  --avatar-2-bg: #d27e9e;
+  --avatar-2-fg: #111113;
+  --avatar-3-bg: #64b0bf;
+  --avatar-3-fg: #111113;
+  --avatar-4-bg: #a291e0;
+  --avatar-4-fg: #111113;
+  --avatar-5-bg: #6db48a;
+  --avatar-5-fg: #111113;
+  --avatar-6-bg: #84a0e0;
+  --avatar-6-fg: #111113;
+  --avatar-7-bg: #c48ccc;
+  --avatar-7-fg: #111113;
+  --avatar-8-bg: #a2aab8;
+  --avatar-8-fg: #111113;
+
+  // color.status
+  --red: #cc6b6b;
+  --amber: #c4884e;
+  --amber-text: var(--amber); // Dark amber already clears 4.5:1 (5.6:1 surface).
+  --blue: #5b80d4;
+  --green: #46a86e;
   --purple: #9077cc;
-  --pink:   #c46a9a;
+  --pink: #c46a9a;
 
-  --red-tint:    #cc6b6b1a;
-  --amber-tint:  #c4884e1a;
-  --blue-tint:   #5b80d41a;
-  --green-tint:  #46a86e1a;
+  // color.status-tint
+  --red-tint: #cc6b6b1a;
+  --amber-tint: #c4884e1a;
+  --blue-tint: #5b80d41a;
+  --green-tint: #46a86e1a;
   --purple-tint: #9077cc1a;
-  --pink-tint:   #c46a9a1a;
+  --pink-tint: #c46a9a1a;
 
-  // Shadows — deeper and more diffuse on dark backgrounds
+  // color.selection
+  --selection-bg: rgba(230, 230, 235, 0.24);
+
+  // shadow
   --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-2: 0 4px 16px -2px rgba(0, 0, 0, 0.5), 0 2px 5px -1px rgba(0, 0, 0, 0.3);
   --shadow-3: 0 20px 52px -12px rgba(0, 0, 0, 0.7), 0 8px 16px -4px rgba(0, 0, 0, 0.4);
-
   --shadow-drawer: 8px 0 24px -6px rgba(0, 0, 0, 0.55);
-  --selection-bg:  rgba(230, 230, 235, 0.24);
-  --action-outline-border: var(--border-strong);
 
-  // Overlay (dark backdrop is more opaque)
-  --ath-bg-overlay: rgba(0, 0, 0, 0.7);
+  // density.page
+  --page-head-rule: var(--border);
 
-  // RGB legacy: re-set for dark accent
+  // legacy.color
   --ath-color-primary-rgb: 130, 128, 232;
 
+  // legacy.bg
+  --ath-bg-overlay: rgba(0, 0, 0, 0.7);
 
   color-scheme: dark;
 }
 
-// Native checkboxes / radios follow the role token (ink in light,
-// accent in dark) instead of the browser's own blue or the raw accent.
-input[type='checkbox'],
-input[type='radio'] {
-  accent-color: var(--control-checked);
+// ---------------------------------------------------------------------
+// ACCENT violet — light
+// ---------------------------------------------------------------------
+[data-accent="violet"] {
+  --accent: #4f46e5;
+  --accent-2: #4338ca;
+  --accent-3: #6366f1;
+  --accent-dim: #818cf8;
+  --accent-faint: #4f46e50f;
+  --accent-ring: #4f46e526;
+  --ath-color-primary-rgb: 79, 70, 229;
 }
 
-// Dark-mode scrollbars — barely-there, soft
-[data-theme="dark"] {
-  ::-webkit-scrollbar-thumb {
-    background: #ffffff10;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-    border-radius: 999px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #ffffff1c;
-    background-clip: padding-box;
-    border: 2px solid transparent;
-  }
+// ---------------------------------------------------------------------
+// ACCENT blue — light
+// ---------------------------------------------------------------------
+[data-accent="blue"] {
+  --accent: #2563eb;
+  --accent-2: #1d4ed8;
+  --accent-3: #3b82f6;
+  --accent-dim: #60a5fa;
+  --accent-faint: #2563eb0f;
+  --accent-ring: #2563eb26;
+  --ath-color-primary-rgb: 37, 99, 235;
 }
 
-// Light-mode scrollbars
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+// ---------------------------------------------------------------------
+// ACCENT green — light
+// ---------------------------------------------------------------------
+[data-accent="green"] {
+  --accent: #059669;
+  --accent-2: #047857;
+  --accent-3: #10b981;
+  --accent-dim: #34d399;
+  --accent-faint: #0596690f;
+  --accent-ring: #05966926;
+  --ath-color-primary-rgb: 5, 150, 105;
 }
-::-webkit-scrollbar-thumb {
-  background: #00000020;
-  border-radius: 999px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
+
+// ---------------------------------------------------------------------
+// ACCENT orange — light
+// ---------------------------------------------------------------------
+[data-accent="orange"] {
+  --accent: #ea580c;
+  --accent-2: #c2410c;
+  --accent-3: #f97316;
+  --accent-dim: #fb923c;
+  --accent-faint: #ea580c0f;
+  --accent-ring: #ea580c26;
+  --ath-color-primary-rgb: 234, 88, 12;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #00000030;
-  background-clip: padding-box;
-  border: 2px solid transparent;
+
+// ---------------------------------------------------------------------
+// ACCENT neutral — light
+// ---------------------------------------------------------------------
+[data-accent="neutral"] {
+  --accent: #0a0a0b;
+  --accent-2: #27272a;
+  --accent-3: #3f3f46;
+  --accent-dim: #71717a;
+  --accent-faint: #0a0a0b0f;
+  --accent-ring: #0a0a0b1f;
+  --ath-color-primary-rgb: 10, 10, 11;
 }
-::-webkit-scrollbar-track {
-  background: transparent;
+
+// ---------------------------------------------------------------------
+// ACCENT violet — dark
+// ---------------------------------------------------------------------
+[data-theme="dark"][data-accent="violet"] {
+  --accent: #8280e8;
+  --accent-2: #9d9bf0;
+  --accent-3: #6b69d8;
+  --accent-faint: #8280e820;
+  --accent-ring: #8280e83a;
+  --ath-color-primary-rgb: 130, 128, 232;
+}
+
+// ---------------------------------------------------------------------
+// ACCENT blue — dark
+// ---------------------------------------------------------------------
+[data-theme="dark"][data-accent="blue"] {
+  --accent: #5b80d4;
+  --accent-2: #7a9ae0;
+  --accent-3: #4268bc;
+  --accent-faint: #5b80d420;
+  --accent-ring: #5b80d43a;
+  --ath-color-primary-rgb: 91, 128, 212;
+}
+
+// ---------------------------------------------------------------------
+// ACCENT green — dark
+// ---------------------------------------------------------------------
+[data-theme="dark"][data-accent="green"] {
+  --accent: #46a86e;
+  --accent-2: #5cba82;
+  --accent-3: #37895a;
+  --accent-faint: #46a86e20;
+  --accent-ring: #46a86e3a;
+  --ath-color-primary-rgb: 70, 168, 110;
+}
+
+// ---------------------------------------------------------------------
+// ACCENT orange — dark
+// ---------------------------------------------------------------------
+[data-theme="dark"][data-accent="orange"] {
+  --accent: #d4824a;
+  --accent-2: #e09862;
+  --accent-3: #bc6c38;
+  --accent-faint: #d4824a20;
+  --accent-ring: #d4824a3a;
+  --ath-color-primary-rgb: 212, 130, 74;
+}
+
+// ---------------------------------------------------------------------
+// ACCENT neutral — dark
+// ---------------------------------------------------------------------
+[data-theme="dark"][data-accent="neutral"] {
+  --accent: #dcdce2;
+  --accent-2: #c4c4cc;
+  --accent-3: #9898a4;
+  --accent-faint: #ffffff0e;
+  --accent-ring: #ffffff22;
+  --ath-color-primary-rgb: 220, 220, 226;
 }

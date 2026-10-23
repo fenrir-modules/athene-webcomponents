@@ -8,7 +8,7 @@
 
 .ath-tl-entry__avatar {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-raised);
   // Subtle ring so avatar visually breaks the rail
   ath-avatar {
     box-shadow: 0 0 0 2px var(--bg-0);
@@ -42,7 +42,7 @@
   padding: 1px 6px;
   font-size: 10.5px;
   font-weight: 500;
-  color: var(--amber);
+  color: var(--amber-text);
   background: var(--amber-tint);
   border-radius: var(--r-xs);
   text-transform: lowercase;

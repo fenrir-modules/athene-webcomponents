@@ -35,7 +35,7 @@ export function floatPanel(
   style.right = 'auto';
   style.bottom = 'auto';
   style.margin = '0';
-  style.zIndex = 'var(--z-popover, 1200)';
+  style.zIndex = 'var(--z-popover)';
   style.visibility = 'hidden';
 
   let frame = 0;

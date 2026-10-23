@@ -1,0 +1,1459 @@
+{
+  "tokens": [
+    {
+      "name": "--bg-0",
+      "path": "color.surface.bg-0",
+      "type": "color"
+    },
+    {
+      "name": "--bg-1",
+      "path": "color.surface.bg-1",
+      "type": "color"
+    },
+    {
+      "name": "--bg-2",
+      "path": "color.surface.bg-2",
+      "type": "color"
+    },
+    {
+      "name": "--surface",
+      "path": "color.surface.surface",
+      "type": "color"
+    },
+    {
+      "name": "--surface-2",
+      "path": "color.surface.surface-2",
+      "type": "color"
+    },
+    {
+      "name": "--surface-3",
+      "path": "color.surface.surface-3",
+      "type": "color"
+    },
+    {
+      "name": "--hover",
+      "path": "color.surface.hover",
+      "type": "color"
+    },
+    {
+      "name": "--hover-strong",
+      "path": "color.surface.hover-strong",
+      "type": "color"
+    },
+    {
+      "name": "--selected",
+      "path": "color.surface.selected",
+      "type": "color"
+    },
+    {
+      "name": "--border",
+      "path": "color.border.border",
+      "type": "color"
+    },
+    {
+      "name": "--border-strong",
+      "path": "color.border.border-strong",
+      "type": "color"
+    },
+    {
+      "name": "--border-faint",
+      "path": "color.border.border-faint",
+      "type": "color"
+    },
+    {
+      "name": "--rule",
+      "path": "color.border.rule",
+      "type": "color"
+    },
+    {
+      "name": "--fg",
+      "path": "color.text.fg",
+      "type": "color"
+    },
+    {
+      "name": "--fg-2",
+      "path": "color.text.fg-2",
+      "type": "color"
+    },
+    {
+      "name": "--fg-3",
+      "path": "color.text.fg-3",
+      "type": "color"
+    },
+    {
+      "name": "--fg-4",
+      "path": "color.text.fg-4",
+      "type": "color"
+    },
+    {
+      "name": "--fg-label",
+      "path": "color.text.fg-label",
+      "type": "color"
+    },
+    {
+      "name": "--fg-disabled",
+      "path": "color.text.fg-disabled",
+      "type": "color"
+    },
+    {
+      "name": "--accent",
+      "path": "color.accent.accent",
+      "type": "color"
+    },
+    {
+      "name": "--accent-2",
+      "path": "color.accent.accent-2",
+      "type": "color"
+    },
+    {
+      "name": "--accent-3",
+      "path": "color.accent.accent-3",
+      "type": "color"
+    },
+    {
+      "name": "--accent-dim",
+      "path": "color.accent.accent-dim",
+      "type": "color"
+    },
+    {
+      "name": "--accent-faint",
+      "path": "color.accent.accent-faint",
+      "type": "color"
+    },
+    {
+      "name": "--accent-ring",
+      "path": "color.accent.accent-ring",
+      "type": "color"
+    },
+    {
+      "name": "--focus-ring-color",
+      "path": "color.focus.focus-ring-color",
+      "type": "color"
+    },
+    {
+      "name": "--focus-ring-shadow",
+      "path": "color.focus.focus-ring-shadow",
+      "type": "shadow"
+    },
+    {
+      "name": "--ink",
+      "path": "color.role.ink.ink",
+      "type": "color"
+    },
+    {
+      "name": "--ink-hover",
+      "path": "color.role.ink.ink-hover",
+      "type": "color"
+    },
+    {
+      "name": "--action-primary-bg",
+      "path": "color.role.action-primary.action-primary-bg",
+      "type": "color"
+    },
+    {
+      "name": "--action-primary-bg-hover",
+      "path": "color.role.action-primary.action-primary-bg-hover",
+      "type": "color"
+    },
+    {
+      "name": "--action-primary-bg-active",
+      "path": "color.role.action-primary.action-primary-bg-active",
+      "type": "color"
+    },
+    {
+      "name": "--action-primary-fg",
+      "path": "color.role.action-primary.action-primary-fg",
+      "type": "color"
+    },
+    {
+      "name": "--action-primary-disabled-bg",
+      "path": "color.role.action-primary.action-primary-disabled-bg",
+      "type": "color"
+    },
+    {
+      "name": "--action-primary-disabled-fg",
+      "path": "color.role.action-primary.action-primary-disabled-fg",
+      "type": "color"
+    },
+    {
+      "name": "--action-primary-disabled-border",
+      "path": "color.role.action-primary.action-primary-disabled-border",
+      "type": "color"
+    },
+    {
+      "name": "--action-primary-disabled-opacity",
+      "path": "color.role.action-primary.action-primary-disabled-opacity",
+      "type": "number"
+    },
+    {
+      "name": "--nav-active-bg",
+      "path": "color.role.nav.nav-active-bg",
+      "type": "color"
+    },
+    {
+      "name": "--nav-active-bg-hover",
+      "path": "color.role.nav.nav-active-bg-hover",
+      "type": "color"
+    },
+    {
+      "name": "--nav-active-fg",
+      "path": "color.role.nav.nav-active-fg",
+      "type": "color"
+    },
+    {
+      "name": "--nav-active-icon",
+      "path": "color.role.nav.nav-active-icon",
+      "type": "color"
+    },
+    {
+      "name": "--nav-active-indicator",
+      "path": "color.role.nav.nav-active-indicator",
+      "type": "color"
+    },
+    {
+      "name": "--nav-badge-bg",
+      "path": "color.role.nav.nav-badge-bg",
+      "type": "color"
+    },
+    {
+      "name": "--nav-badge-fg",
+      "path": "color.role.nav.nav-badge-fg",
+      "type": "color"
+    },
+    {
+      "name": "--tab-active-fg",
+      "path": "color.role.tab.tab-active-fg",
+      "type": "color"
+    },
+    {
+      "name": "--tab-active-indicator",
+      "path": "color.role.tab.tab-active-indicator",
+      "type": "color"
+    },
+    {
+      "name": "--segment-track-bg",
+      "path": "color.role.tab.segment-track-bg",
+      "type": "color"
+    },
+    {
+      "name": "--segment-active-bg",
+      "path": "color.role.tab.segment-active-bg",
+      "type": "color"
+    },
+    {
+      "name": "--segment-active-fg",
+      "path": "color.role.tab.segment-active-fg",
+      "type": "color"
+    },
+    {
+      "name": "--segment-count-active-bg",
+      "path": "color.role.tab.segment-count-active-bg",
+      "type": "color"
+    },
+    {
+      "name": "--segment-count-active-fg",
+      "path": "color.role.tab.segment-count-active-fg",
+      "type": "color"
+    },
+    {
+      "name": "--progress-fill",
+      "path": "color.role.tab.progress-fill",
+      "type": "color"
+    },
+    {
+      "name": "--progress-track",
+      "path": "color.role.tab.progress-track",
+      "type": "color"
+    },
+    {
+      "name": "--chip-active-bg",
+      "path": "color.role.chip-active.chip-active-bg",
+      "type": "color"
+    },
+    {
+      "name": "--chip-active-fg",
+      "path": "color.role.chip-active.chip-active-fg",
+      "type": "color"
+    },
+    {
+      "name": "--chip-active-border",
+      "path": "color.role.chip-active.chip-active-border",
+      "type": "color"
+    },
+    {
+      "name": "--action-outline-fg",
+      "path": "color.role.action-outline.action-outline-fg",
+      "type": "color"
+    },
+    {
+      "name": "--action-outline-hover-bg",
+      "path": "color.role.action-outline.action-outline-hover-bg",
+      "type": "color"
+    },
+    {
+      "name": "--action-outline-hover-border",
+      "path": "color.role.action-outline.action-outline-hover-border",
+      "type": "color"
+    },
+    {
+      "name": "--action-outline-border",
+      "path": "color.role.action-outline.action-outline-border",
+      "type": "color"
+    },
+    {
+      "name": "--chip-primary-bg",
+      "path": "color.role.chip-primary.chip-primary-bg",
+      "type": "color"
+    },
+    {
+      "name": "--chip-primary-fg",
+      "path": "color.role.chip-primary.chip-primary-fg",
+      "type": "color"
+    },
+    {
+      "name": "--chip-primary-border",
+      "path": "color.role.chip-primary.chip-primary-border",
+      "type": "color"
+    },
+    {
+      "name": "--control-checked",
+      "path": "color.role.control.control-checked",
+      "type": "color"
+    },
+    {
+      "name": "--selection-bar-bg",
+      "path": "color.role.selection-bar.selection-bar-bg",
+      "type": "color"
+    },
+    {
+      "name": "--selection-bar-border",
+      "path": "color.role.selection-bar.selection-bar-border",
+      "type": "color"
+    },
+    {
+      "name": "--selection-bar-fg",
+      "path": "color.role.selection-bar.selection-bar-fg",
+      "type": "color"
+    },
+    {
+      "name": "--row-selected-bg",
+      "path": "color.role.selection-bar.row-selected-bg",
+      "type": "color"
+    },
+    {
+      "name": "--brand-mark-bg",
+      "path": "color.role.brand-mark.brand-mark-bg",
+      "type": "color"
+    },
+    {
+      "name": "--brand-mark-fg",
+      "path": "color.role.brand-mark.brand-mark-fg",
+      "type": "color"
+    },
+    {
+      "name": "--action-create-bg",
+      "path": "color.role.action-create.action-create-bg",
+      "type": "color"
+    },
+    {
+      "name": "--action-create-bg-hover",
+      "path": "color.role.action-create.action-create-bg-hover",
+      "type": "color"
+    },
+    {
+      "name": "--action-create-bg-active",
+      "path": "color.role.action-create.action-create-bg-active",
+      "type": "color"
+    },
+    {
+      "name": "--action-create-border",
+      "path": "color.role.action-create.action-create-border",
+      "type": "color"
+    },
+    {
+      "name": "--action-create-fg",
+      "path": "color.role.action-create.action-create-fg",
+      "type": "color"
+    },
+    {
+      "name": "--notify-dot",
+      "path": "color.role.notify.notify-dot",
+      "type": "color"
+    },
+    {
+      "name": "--rail-active-bg",
+      "path": "color.role.rail.rail-active-bg",
+      "type": "color"
+    },
+    {
+      "name": "--rail-tile-bg",
+      "path": "color.role.rail.rail-tile-bg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-neutral-bg",
+      "path": "color.avatar.avatar-neutral-bg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-neutral-fg",
+      "path": "color.avatar.avatar-neutral-fg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-1-bg",
+      "path": "color.avatar.avatar-1-bg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-1-fg",
+      "path": "color.avatar.avatar-1-fg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-2-bg",
+      "path": "color.avatar.avatar-2-bg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-2-fg",
+      "path": "color.avatar.avatar-2-fg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-3-bg",
+      "path": "color.avatar.avatar-3-bg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-3-fg",
+      "path": "color.avatar.avatar-3-fg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-4-bg",
+      "path": "color.avatar.avatar-4-bg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-4-fg",
+      "path": "color.avatar.avatar-4-fg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-5-bg",
+      "path": "color.avatar.avatar-5-bg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-5-fg",
+      "path": "color.avatar.avatar-5-fg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-6-bg",
+      "path": "color.avatar.avatar-6-bg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-6-fg",
+      "path": "color.avatar.avatar-6-fg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-7-bg",
+      "path": "color.avatar.avatar-7-bg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-7-fg",
+      "path": "color.avatar.avatar-7-fg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-8-bg",
+      "path": "color.avatar.avatar-8-bg",
+      "type": "color"
+    },
+    {
+      "name": "--avatar-8-fg",
+      "path": "color.avatar.avatar-8-fg",
+      "type": "color"
+    },
+    {
+      "name": "--red",
+      "path": "color.status.red",
+      "type": "color"
+    },
+    {
+      "name": "--amber",
+      "path": "color.status.amber",
+      "type": "color"
+    },
+    {
+      "name": "--amber-text",
+      "path": "color.status.amber-text",
+      "type": "color"
+    },
+    {
+      "name": "--blue",
+      "path": "color.status.blue",
+      "type": "color"
+    },
+    {
+      "name": "--green",
+      "path": "color.status.green",
+      "type": "color"
+    },
+    {
+      "name": "--purple",
+      "path": "color.status.purple",
+      "type": "color"
+    },
+    {
+      "name": "--pink",
+      "path": "color.status.pink",
+      "type": "color"
+    },
+    {
+      "name": "--red-tint",
+      "path": "color.status-tint.red-tint",
+      "type": "color"
+    },
+    {
+      "name": "--amber-tint",
+      "path": "color.status-tint.amber-tint",
+      "type": "color"
+    },
+    {
+      "name": "--blue-tint",
+      "path": "color.status-tint.blue-tint",
+      "type": "color"
+    },
+    {
+      "name": "--green-tint",
+      "path": "color.status-tint.green-tint",
+      "type": "color"
+    },
+    {
+      "name": "--purple-tint",
+      "path": "color.status-tint.purple-tint",
+      "type": "color"
+    },
+    {
+      "name": "--pink-tint",
+      "path": "color.status-tint.pink-tint",
+      "type": "color"
+    },
+    {
+      "name": "--deco-mix",
+      "path": "color.deco.deco-mix",
+      "type": null
+    },
+    {
+      "name": "--red-muted",
+      "path": "color.deco.red-muted",
+      "type": "color"
+    },
+    {
+      "name": "--amber-muted",
+      "path": "color.deco.amber-muted",
+      "type": "color"
+    },
+    {
+      "name": "--blue-muted",
+      "path": "color.deco.blue-muted",
+      "type": "color"
+    },
+    {
+      "name": "--green-muted",
+      "path": "color.deco.green-muted",
+      "type": "color"
+    },
+    {
+      "name": "--purple-muted",
+      "path": "color.deco.purple-muted",
+      "type": "color"
+    },
+    {
+      "name": "--pink-muted",
+      "path": "color.deco.pink-muted",
+      "type": "color"
+    },
+    {
+      "name": "--grey-muted",
+      "path": "color.deco.grey-muted",
+      "type": "color"
+    },
+    {
+      "name": "--selection-bg",
+      "path": "color.selection.selection-bg",
+      "type": "color"
+    },
+    {
+      "name": "--selection-fg",
+      "path": "color.selection.selection-fg",
+      "type": "color"
+    },
+    {
+      "name": "--r-xs",
+      "path": "radius.r-xs",
+      "type": "dimension"
+    },
+    {
+      "name": "--r-sm",
+      "path": "radius.r-sm",
+      "type": "dimension"
+    },
+    {
+      "name": "--r",
+      "path": "radius.r",
+      "type": "dimension"
+    },
+    {
+      "name": "--r-lg",
+      "path": "radius.r-lg",
+      "type": "dimension"
+    },
+    {
+      "name": "--r-xl",
+      "path": "radius.r-xl",
+      "type": "dimension"
+    },
+    {
+      "name": "--r-2xl",
+      "path": "radius.r-2xl",
+      "type": "dimension"
+    },
+    {
+      "name": "--r-full",
+      "path": "radius.r-full",
+      "type": "dimension"
+    },
+    {
+      "name": "--shadow-1",
+      "path": "shadow.shadow-1",
+      "type": "shadow"
+    },
+    {
+      "name": "--shadow-2",
+      "path": "shadow.shadow-2",
+      "type": "shadow"
+    },
+    {
+      "name": "--shadow-3",
+      "path": "shadow.shadow-3",
+      "type": "shadow"
+    },
+    {
+      "name": "--shadow-drawer",
+      "path": "shadow.shadow-drawer",
+      "type": "shadow"
+    },
+    {
+      "name": "--font-sans",
+      "path": "font.family.font-sans",
+      "type": "fontFamily"
+    },
+    {
+      "name": "--font-mono",
+      "path": "font.family.font-mono",
+      "type": "fontFamily"
+    },
+    {
+      "name": "--font-serif",
+      "path": "font.family.font-serif",
+      "type": "fontFamily"
+    },
+    {
+      "name": "--text-xs",
+      "path": "font.size.text-xs",
+      "type": "dimension"
+    },
+    {
+      "name": "--text-sm",
+      "path": "font.size.text-sm",
+      "type": "dimension"
+    },
+    {
+      "name": "--text-base",
+      "path": "font.size.text-base",
+      "type": "dimension"
+    },
+    {
+      "name": "--text-md",
+      "path": "font.size.text-md",
+      "type": "dimension"
+    },
+    {
+      "name": "--text-lg",
+      "path": "font.size.text-lg",
+      "type": "dimension"
+    },
+    {
+      "name": "--text-xl",
+      "path": "font.size.text-xl",
+      "type": "dimension"
+    },
+    {
+      "name": "--text-2xl",
+      "path": "font.size.text-2xl",
+      "type": "dimension"
+    },
+    {
+      "name": "--text-3xl",
+      "path": "font.size.text-3xl",
+      "type": "dimension"
+    },
+    {
+      "name": "--text-4xl",
+      "path": "font.size.text-4xl",
+      "type": "dimension"
+    },
+    {
+      "name": "--weight-normal",
+      "path": "font.weight.weight-normal",
+      "type": "number"
+    },
+    {
+      "name": "--weight-medium",
+      "path": "font.weight.weight-medium",
+      "type": "number"
+    },
+    {
+      "name": "--weight-semibold",
+      "path": "font.weight.weight-semibold",
+      "type": "number"
+    },
+    {
+      "name": "--weight-bold",
+      "path": "font.weight.weight-bold",
+      "type": "number"
+    },
+    {
+      "name": "--line-tight",
+      "path": "font.line-height.line-tight",
+      "type": "number"
+    },
+    {
+      "name": "--line-normal",
+      "path": "font.line-height.line-normal",
+      "type": "number"
+    },
+    {
+      "name": "--line-relaxed",
+      "path": "font.line-height.line-relaxed",
+      "type": "number"
+    },
+    {
+      "name": "--page-title-size",
+      "path": "density.page.page-title-size",
+      "type": "dimension"
+    },
+    {
+      "name": "--page-meta-size",
+      "path": "density.page.page-meta-size",
+      "type": "dimension"
+    },
+    {
+      "name": "--page-head-gap",
+      "path": "density.page.page-head-gap",
+      "type": "dimension"
+    },
+    {
+      "name": "--page-head-pad-bottom",
+      "path": "density.page.page-head-pad-bottom",
+      "type": "dimension"
+    },
+    {
+      "name": "--page-head-rule",
+      "path": "density.page.page-head-rule",
+      "type": "dimension"
+    },
+    {
+      "name": "--content-pad-top",
+      "path": "density.page.content-pad-top",
+      "type": "dimension"
+    },
+    {
+      "name": "--content-pad-x",
+      "path": "density.page.content-pad-x",
+      "type": "dimension"
+    },
+    {
+      "name": "--section-gap",
+      "path": "density.page.section-gap",
+      "type": "dimension"
+    },
+    {
+      "name": "--control-h-xs",
+      "path": "density.control.control-h-xs",
+      "type": "dimension"
+    },
+    {
+      "name": "--control-h-sm",
+      "path": "density.control.control-h-sm",
+      "type": "dimension"
+    },
+    {
+      "name": "--control-h",
+      "path": "density.control.control-h",
+      "type": "dimension"
+    },
+    {
+      "name": "--control-h-lg",
+      "path": "density.control.control-h-lg",
+      "type": "dimension"
+    },
+    {
+      "name": "--field-h-sm",
+      "path": "density.control.field-h-sm",
+      "type": "dimension"
+    },
+    {
+      "name": "--control-font",
+      "path": "density.control.control-font",
+      "type": "dimension"
+    },
+    {
+      "name": "--panel-radius",
+      "path": "density.panel.panel-radius",
+      "type": "dimension"
+    },
+    {
+      "name": "--panel-pad-x",
+      "path": "density.panel.panel-pad-x",
+      "type": "dimension"
+    },
+    {
+      "name": "--panel-pad-y",
+      "path": "density.panel.panel-pad-y",
+      "type": "dimension"
+    },
+    {
+      "name": "--panel-head-h",
+      "path": "density.panel.panel-head-h",
+      "type": "dimension"
+    },
+    {
+      "name": "--panel-title-size",
+      "path": "density.panel.panel-title-size",
+      "type": "dimension"
+    },
+    {
+      "name": "--table-head-h",
+      "path": "density.panel.table-head-h",
+      "type": "dimension"
+    },
+    {
+      "name": "--table-head-bg",
+      "path": "density.panel.table-head-bg",
+      "type": "dimension"
+    },
+    {
+      "name": "--table-head-size",
+      "path": "density.panel.table-head-size",
+      "type": "dimension"
+    },
+    {
+      "name": "--row-h",
+      "path": "density.panel.row-h",
+      "type": "dimension"
+    },
+    {
+      "name": "--row-h-compact",
+      "path": "density.panel.row-h-compact",
+      "type": "dimension"
+    },
+    {
+      "name": "--chip-h",
+      "path": "density.chip.chip-h",
+      "type": "dimension"
+    },
+    {
+      "name": "--chip-radius",
+      "path": "density.chip.chip-radius",
+      "type": "dimension"
+    },
+    {
+      "name": "--chip-font",
+      "path": "density.chip.chip-font",
+      "type": "dimension"
+    },
+    {
+      "name": "--avatar-xs",
+      "path": "size.avatar.avatar-xs",
+      "type": "dimension"
+    },
+    {
+      "name": "--avatar-sm",
+      "path": "size.avatar.avatar-sm",
+      "type": "dimension"
+    },
+    {
+      "name": "--icon-stroke",
+      "path": "size.icon.icon-stroke",
+      "type": "number"
+    },
+    {
+      "name": "--icon-size-nav",
+      "path": "size.icon.icon-size-nav",
+      "type": "dimension"
+    },
+    {
+      "name": "--toast-offset-top",
+      "path": "layout.toast.toast-offset-top",
+      "type": "dimension"
+    },
+    {
+      "name": "--toast-offset-bottom",
+      "path": "layout.toast.toast-offset-bottom",
+      "type": "dimension"
+    },
+    {
+      "name": "--toast-offset-right",
+      "path": "layout.toast.toast-offset-right",
+      "type": "dimension"
+    },
+    {
+      "name": "--space-0",
+      "path": "space.space-0",
+      "type": "dimension"
+    },
+    {
+      "name": "--space-1",
+      "path": "space.space-1",
+      "type": "dimension"
+    },
+    {
+      "name": "--space-2",
+      "path": "space.space-2",
+      "type": "dimension"
+    },
+    {
+      "name": "--space-3",
+      "path": "space.space-3",
+      "type": "dimension"
+    },
+    {
+      "name": "--space-4",
+      "path": "space.space-4",
+      "type": "dimension"
+    },
+    {
+      "name": "--space-5",
+      "path": "space.space-5",
+      "type": "dimension"
+    },
+    {
+      "name": "--space-6",
+      "path": "space.space-6",
+      "type": "dimension"
+    },
+    {
+      "name": "--space-8",
+      "path": "space.space-8",
+      "type": "dimension"
+    },
+    {
+      "name": "--space-10",
+      "path": "space.space-10",
+      "type": "dimension"
+    },
+    {
+      "name": "--space-12",
+      "path": "space.space-12",
+      "type": "dimension"
+    },
+    {
+      "name": "--space-16",
+      "path": "space.space-16",
+      "type": "dimension"
+    },
+    {
+      "name": "--t-fast",
+      "path": "motion.t-fast",
+      "type": "transition"
+    },
+    {
+      "name": "--t-base",
+      "path": "motion.t-base",
+      "type": "transition"
+    },
+    {
+      "name": "--t-slow",
+      "path": "motion.t-slow",
+      "type": "transition"
+    },
+    {
+      "name": "--z-base",
+      "path": "z-index.z-base",
+      "type": "number"
+    },
+    {
+      "name": "--z-raised",
+      "path": "z-index.z-raised",
+      "type": "number"
+    },
+    {
+      "name": "--z-dropdown",
+      "path": "z-index.z-dropdown",
+      "type": "number"
+    },
+    {
+      "name": "--z-sticky",
+      "path": "z-index.z-sticky",
+      "type": "number"
+    },
+    {
+      "name": "--z-fixed",
+      "path": "z-index.z-fixed",
+      "type": "number"
+    },
+    {
+      "name": "--z-overlay",
+      "path": "z-index.z-overlay",
+      "type": "number"
+    },
+    {
+      "name": "--z-modal",
+      "path": "z-index.z-modal",
+      "type": "number"
+    },
+    {
+      "name": "--z-popover",
+      "path": "z-index.z-popover",
+      "type": "number"
+    },
+    {
+      "name": "--z-tooltip",
+      "path": "z-index.z-tooltip",
+      "type": "number"
+    },
+    {
+      "name": "--z-toast",
+      "path": "z-index.z-toast",
+      "type": "number"
+    },
+    {
+      "name": "--ath-color-primary",
+      "path": "legacy.color.ath-color-primary",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-color-primary-rgb",
+      "path": "legacy.color.ath-color-primary-rgb",
+      "type": null,
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-color-success",
+      "path": "legacy.color.ath-color-success",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-color-warning",
+      "path": "legacy.color.ath-color-warning",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-color-error",
+      "path": "legacy.color.ath-color-error",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-color-info",
+      "path": "legacy.color.ath-color-info",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-bg-primary",
+      "path": "legacy.bg.ath-bg-primary",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-bg-secondary",
+      "path": "legacy.bg.ath-bg-secondary",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-bg-tertiary",
+      "path": "legacy.bg.ath-bg-tertiary",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-bg-elevated",
+      "path": "legacy.bg.ath-bg-elevated",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-bg-panel",
+      "path": "legacy.bg.ath-bg-panel",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-bg-input",
+      "path": "legacy.bg.ath-bg-input",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-bg-overlay",
+      "path": "legacy.bg.ath-bg-overlay",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-bg-sidebar",
+      "path": "legacy.bg.ath-bg-sidebar",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-text-primary",
+      "path": "legacy.text.ath-text-primary",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-text-secondary",
+      "path": "legacy.text.ath-text-secondary",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-text-tertiary",
+      "path": "legacy.text.ath-text-tertiary",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-text-link",
+      "path": "legacy.text.ath-text-link",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-text-link-hover",
+      "path": "legacy.text.ath-text-link-hover",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-border-color",
+      "path": "legacy.border.ath-border-color",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-border-color-hover",
+      "path": "legacy.border.ath-border-color-hover",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-border-color-focus",
+      "path": "legacy.border.ath-border-color-focus",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-border-radius-sm",
+      "path": "legacy.radius.ath-border-radius-sm",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-border-radius-md",
+      "path": "legacy.radius.ath-border-radius-md",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-border-radius-lg",
+      "path": "legacy.radius.ath-border-radius-lg",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-border-radius-xl",
+      "path": "legacy.radius.ath-border-radius-xl",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-border-radius-full",
+      "path": "legacy.radius.ath-border-radius-full",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-space-1",
+      "path": "legacy.space.ath-space-1",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-space-2",
+      "path": "legacy.space.ath-space-2",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-space-3",
+      "path": "legacy.space.ath-space-3",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-space-4",
+      "path": "legacy.space.ath-space-4",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-space-5",
+      "path": "legacy.space.ath-space-5",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-space-6",
+      "path": "legacy.space.ath-space-6",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-space-8",
+      "path": "legacy.space.ath-space-8",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-space-10",
+      "path": "legacy.space.ath-space-10",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-space-16",
+      "path": "legacy.space.ath-space-16",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-family",
+      "path": "legacy.font.ath-font-family",
+      "type": "fontFamily",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-family-mono",
+      "path": "legacy.font.ath-font-family-mono",
+      "type": "fontFamily",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-mono",
+      "path": "legacy.font.ath-font-mono",
+      "type": "fontFamily",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-size-xs",
+      "path": "legacy.font.ath-font-size-xs",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-size-sm",
+      "path": "legacy.font.ath-font-size-sm",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-size-md",
+      "path": "legacy.font.ath-font-size-md",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-size-lg",
+      "path": "legacy.font.ath-font-size-lg",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-size-xl",
+      "path": "legacy.font.ath-font-size-xl",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-size-2xl",
+      "path": "legacy.font.ath-font-size-2xl",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-size-3xl",
+      "path": "legacy.font.ath-font-size-3xl",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-size-4xl",
+      "path": "legacy.font.ath-font-size-4xl",
+      "type": "dimension",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-weight-normal",
+      "path": "legacy.font.ath-font-weight-normal",
+      "type": "fontWeight",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-weight-medium",
+      "path": "legacy.font.ath-font-weight-medium",
+      "type": "fontWeight",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-weight-semibold",
+      "path": "legacy.font.ath-font-weight-semibold",
+      "type": "fontWeight",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-font-weight-bold",
+      "path": "legacy.font.ath-font-weight-bold",
+      "type": "fontWeight",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-line-height-tight",
+      "path": "legacy.font.ath-line-height-tight",
+      "type": "number",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-line-height-normal",
+      "path": "legacy.font.ath-line-height-normal",
+      "type": "number",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-shadow-sm",
+      "path": "legacy.shadow.ath-shadow-sm",
+      "type": "shadow",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-shadow-md",
+      "path": "legacy.shadow.ath-shadow-md",
+      "type": "shadow",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-shadow-lg",
+      "path": "legacy.shadow.ath-shadow-lg",
+      "type": "shadow",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-shadow-xl",
+      "path": "legacy.shadow.ath-shadow-xl",
+      "type": "shadow",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-transition-fast",
+      "path": "legacy.motion.ath-transition-fast",
+      "type": "transition",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-transition-normal",
+      "path": "legacy.motion.ath-transition-normal",
+      "type": "transition",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-transition-slow",
+      "path": "legacy.motion.ath-transition-slow",
+      "type": "transition",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-hover-bg",
+      "path": "legacy.hover.ath-hover-bg",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-hover-bg-strong",
+      "path": "legacy.hover.ath-hover-bg-strong",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-active-bg",
+      "path": "legacy.hover.ath-active-bg",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-z-dropdown",
+      "path": "legacy.z-index.ath-z-dropdown",
+      "type": "number",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-z-fixed",
+      "path": "legacy.z-index.ath-z-fixed",
+      "type": "number",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-z-modal-backdrop",
+      "path": "legacy.z-index.ath-z-modal-backdrop",
+      "type": "number",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-z-modal",
+      "path": "legacy.z-index.ath-z-modal",
+      "type": "number",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-z-tooltip",
+      "path": "legacy.z-index.ath-z-tooltip",
+      "type": "number",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--ath-z-toast",
+      "path": "legacy.z-index.ath-z-toast",
+      "type": "number",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    },
+    {
+      "name": "--gold",
+      "path": "legacy.gold.gold",
+      "type": "color",
+      "deprecated": "Legacy alias — use the design token it points to. Do not use in new code; removed in quality step 2.7."
+    }
+  ]
+}

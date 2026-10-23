@@ -70,7 +70,7 @@ table {
 
 // Accessibility
 :focus-visible {
-  outline: 2px solid var(--ath-color-primary);
+  outline: 2px solid var(--focus-ring-color);
   outline-offset: 2px;
 }
 
@@ -90,10 +90,56 @@ table {
 // (≈1.25–1.5). Only the library default is re-pointed at the token — an
 // icon given an explicit strokeWidth keeps it.
 svg.lucide[stroke-width='2'] {
-  stroke-width: var(--icon-stroke, 1.5);
+  stroke-width: var(--icon-stroke);
 }
 
 ::selection {
   background: var(--selection-bg);
   color: var(--selection-fg);
+}
+
+// -------------------------------------------
+// Native controls & scrollbars (moved from _tokens.scss, which is now
+// generated and holds custom properties only)
+// -------------------------------------------
+// Native checkboxes / radios follow the role token (ink in light,
+// accent in dark) instead of the browser's own blue or the raw accent.
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--control-checked);
+}
+
+// Dark-mode scrollbars — barely-there, soft
+[data-theme="dark"] {
+  ::-webkit-scrollbar-thumb {
+    background: #ffffff10;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ffffff1c;
+    background-clip: padding-box;
+    border: 2px solid transparent;
+  }
+}
+
+// Light-mode scrollbars
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #00000020;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00000030;
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
 }
