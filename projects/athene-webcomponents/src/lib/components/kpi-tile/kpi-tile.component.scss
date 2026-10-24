@@ -47,6 +47,17 @@
   white-space: nowrap;
 }
 
+// A status key before the label; the app passes the colour. Inline, so
+// the label keeps its ellipsis.
+.ath-kpi__dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-inline-end: 3px; // plus the space before the label text
+  border-radius: var(--r-full);
+  vertical-align: 0.05em;
+}
+
 .ath-kpi__delta {
   // Above a linked tile's stretched hit area, so its tooltip still shows.
   position: relative;
@@ -89,6 +100,27 @@
   letter-spacing: -0.02em;
   line-height: 1;
 
+  // A count in a status colour; text, so the contrast-safe shades.
+  &[data-tone='amber'] {
+    color: var(--amber-text);
+  }
+
+  &[data-tone='blue'] {
+    color: var(--blue-text);
+  }
+
+  &[data-tone='green'] {
+    color: var(--green-text);
+  }
+
+  &[data-tone='red'] {
+    color: var(--red-text);
+  }
+
+  &[data-tone='purple'] {
+    color: var(--purple-text);
+  }
+
   &--alert {
     color: var(--red-text);
   }
@@ -106,6 +138,15 @@
   font-size: var(--text-xs);
   line-height: 22px;
   white-space: nowrap;
+}
+
+// Projected content under the figure (a progress bar); gone when empty.
+.ath-kpi__extra {
+  margin-top: -4px;
+
+  &:empty {
+    display: none;
+  }
 }
 
 // 70 × 22: the sparkline's footprint, so tiles keep their mass without a trend.

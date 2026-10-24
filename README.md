@@ -122,7 +122,7 @@ One colour rule from the `--due-*` tokens: overdue and **today red** (`--red-tex
 
 ### `ath-chip`
 
-`kind`: `tag` (semantic `variant`: default, primary, success, warning, error, info), `label` (dot in `color`), `epic` (outline, bolt in `color`, default `--purple`), `type` (16px square in `color` with `icon`; no text = the square alone; `muted` = grey glyph), `status` (toned dot or `icon`), `count` (`[count]="3"` → "+3", `tooltip` names the hidden items and is read as "3 more: …"). All kinds are `--chip-h` (20px) tall. `removable` + `(removed)` (does not bubble to a clickable row; `name` feeds "Remove {name}").
+`kind`: `tag` (semantic `variant`: default, primary, success, warning, error, info), `label` (dot in `color`), `epic` (outline, bolt in `color`, default `--purple`), `type` (16px square in `color` with `icon`; no text = the square alone; `muted` = grey glyph), `status` (toned dot or `icon`), `count` (`[count]="3"` → "+3", `tooltip` names the hidden items and is read as "3 more: …"). `tag` takes `shape`: `pill` (default) or `square`, the plain grey tag of dense ticket rows and board cards (references 05/06: `--r-xs`, `--bg-2`, faint border, no dot). All kinds are `--chip-h` (20px) tall. `removable` + `(removed)` (does not bubble to a clickable row; `name` feeds "Remove {name}").
 
 ### `ath-skeleton`, `ath-skeleton-list`
 
@@ -180,7 +180,7 @@ The app provides its parser once (`{ provide: ATH_MARKDOWN_PARSER, useValue: ren
 </ath-kpi-strip>
 ```
 
-One KPI API (the app's `metric-card` features): `label`, `value`, `delta`, `deltaDirection`, `deltaTitle`, `tone` (trend colour), `spark` (≥ 2 samples, not all zero), `note`/`noteTitle`, `alert`, `muted`, `link`/`linkParams`/`linkLabel` (the whole tile is the hit area). The strip draws the card and the hairlines and drops to two columns below 920px. `ath-stat-card` is a deprecated alias that renders a strip of one tile. `ath-sparkline` (`data`, `width` 70, `height` 22, `color`, `showDot`, `showArea`, `strokeWidth` 1.2) is decorative; `sparklineGeometry()` is the pure path maths.
+One KPI API (the app's `metric-card` features): `label`, `value`, `delta`, `deltaDirection`, `deltaTitle`, `tone` (trend colour), `spark` (≥ 2 samples, not all zero), `note`/`noteTitle`, `alert`, `muted`, `link`/`linkParams`/`linkLabel` (the whole tile is the hit area). For counts per status: `valueTone` (`amber|blue|green|red|purple`, the figure in the `--*-text` shade; `alert` and `muted` win), `dot` (a CSS colour for a small key before the label), and projected content under the figure (a progress bar). The strip draws the card and the hairlines and drops to two columns below 920px. `ath-stat-card` is a deprecated alias that renders a strip of one tile. `ath-sparkline` (`data`, `width` 70, `height` 22, `color`, `showDot`, `showArea`, `strokeWidth` 1.2) is decorative; `sparklineGeometry()` is the pure path maths.
 
 ## Page frame: `ath-page`, `ath-panel-grid`, `ath-panel`
 
@@ -224,7 +224,14 @@ One positioning engine, one overlay stack, one modal. App popups (menus, pickers
 }
 ```
 
-Inputs: `athFloating` (anchor element or `ElementRef`), `align` (`start` | `end` | `auto`, follows `dir`), `side` (`bottom` | `top`, flips when the other side has more room), `offset` (px, 4), `matchWidth`, `maxHeight` (px; the viewport caps anyway), `topLayer` (true), `arrow` (an element kept pointing at the anchor). Writes `data-placement="bottom|top"`. Follows scrolls in any container, resizes, and size changes of panel and anchor; `update()` re-measures. `floatPanel(panel, anchor, options)` is the same as a function and returns the stop function (with `.update()`). This replaces the app's `shared/directives/floating.directive.ts` (same selector and inputs).
+Inputs: `athFloating` (anchor element, `ElementRef`, or a `FloatingVirtualAnchor`), `align` (`start` | `end` | `auto`, follows `dir`; `center` centres the panel on the anchor), `side` (`bottom` | `top`, flips when the other side has more room), `offset` (px, 4), `matchWidth`, `maxHeight` (px; the viewport caps anyway), `topLayer` (true), `arrow` (an element kept pointing at the anchor). Writes `data-placement="bottom|top"`. Follows scrolls in any container, resizes, and size changes of panel and anchor; `update()` re-measures. `floatPanel(panel, anchor, options)` is the same as a function and returns the stop function (with `.update()`). This replaced the app's `shared/directives/floating.directive.ts` (deleted in quality step 2.1).
+
+**Virtual anchors** hang a panel from a rectangle instead of an element: a caret, a text selection, the spot the pointer rests on. `{ getBoundingClientRect(): DOMRect, contextElement?: Element }` (a `Range` qualifies); the rectangle is read on every placement, so a live one follows scrolls. The `contextElement` (the editor, the row) is observed for size changes, decides `dir`, stops placement once it leaves the document, and counts as the trigger of an `ath-popover` (focus return, outside clicks). `resolveAnchor()` gives that element, `resolveFloatingTarget()` the anchor to place against, `isVirtualAnchor()` tells them apart.
+
+```html
+<div class="toolbar" [athFloating]="selection" align="center" side="top">…</div>
+<!-- selection = { getBoundingClientRect: () => range.getBoundingClientRect(), contextElement: editorEl } -->
+```
 
 ### `ath-popover`
 
@@ -235,7 +242,7 @@ Inputs: `athFloating` (anchor element or `ElementRef`), `align` (`start` | `end`
 </ath-popover>
 ```
 
-`role="dialog"` panel (`panelRole`: `dialog` | `menu` | `listbox` | `null`), named by `ariaLabel` / `ariaLabelledby`. Opens from `athPopoverTrigger` (sets `aria-haspopup`, `aria-expanded`, `aria-controls` on the real button, also inside `<ath-button>`), `show(anchor?)` / `hide()` / `toggle()` or `[(open)]` with `[anchor]`. Inputs: `size` (`sm` 220 · `md` 280 default · `lg` 360 · `auto`), `padding` (`md` | `sm` | `none`), `align`, `side`, `offset`, `matchWidth`, `maxHeight`, `arrow`, `trapFocus` (Tab stays inside, `aria-modal`; otherwise Tab out closes), `autoFocus` (`first` | `panel` | `none`), `restoreFocus`, `closeOnEscape`, `closeOnOutsideClick`, `panelClass`, `panelId`. Outputs: `opened`, `closed` (reason: `escape` | `outside` | `select` | `tab` | `programmatic`).
+`role="dialog"` panel (`panelRole`: `dialog` | `menu` | `listbox` | `null`), named by `ariaLabel` / `ariaLabelledby`. The panel resets the text styles it would inherit from its spot in the DOM (`text-align`, `white-space`, weight, case), so a picker inside a right-aligned table cell reads normally. `[anchor]` also takes a virtual anchor (a hover card by the pointer). Opens from `athPopoverTrigger` (sets `aria-haspopup`, `aria-expanded`, `aria-controls` on the real button, also inside `<ath-button>`), `show(anchor?)` / `hide()` / `toggle()` or `[(open)]` with `[anchor]`. Inputs: `size` (`sm` 220 · `md` 280 default · `lg` 360 · `auto`), `padding` (`md` | `sm` | `none`), `align`, `side`, `offset`, `matchWidth`, `maxHeight`, `arrow`, `trapFocus` (Tab stays inside, `aria-modal`; otherwise Tab out closes), `autoFocus` (`first` | `panel` | `none`), `restoreFocus`, `closeOnEscape`, `closeOnOutsideClick`, `panelClass`, `panelId`. Outputs: `opened`, `closed` (reason: `escape` | `outside` | `select` | `tab` | `programmatic`).
 
 ### `ath-menu`, `athMenuItem`, `ath-menu-separator`
 
@@ -272,7 +279,7 @@ The WAI-ARIA menu button. Trigger: click, Enter, Space and ArrowDown open on the
 />
 ```
 
-`ListboxOption<T>`: `value`, `label`, `sublabel`, `icon` (Lucide icon, or a string for your own template), `disabled`, `group`, `keywords` (matched, not shown). Single (`[(value)]`) or multi-select (`multiple`, `[(values)]`, check boxes); `searchable` adds a `role="combobox"` field that keeps focus while `aria-activedescendant` marks the active option (without it the list itself is focused, with typeahead). `[(query)]` + `localFilter="false"` for server search; matching ignores case and accents. Groups render as labelled `role="group"`; ungrouped options next to groups go under `listboxOtherGroup`. `creatable` adds a "Create “…”" row for a query without an exact match (`create` emits the text). Keyboard: ArrowDown/ArrowUp, PageDown/PageUp, Home/End and Space (without search field), Enter. Other inputs: `loading`, `emptyLabel`, `searchPlaceholder`, `optionTemplate` (`let-option let-selected="selected" let-active="active"`), `compareWith`, `maxHeight` (320). Output `picked` per choice. Rendering stays cheap at a few hundred options (one element per option, `content-visibility: auto`).
+`ListboxOption<T>`: `value`, `label`, `sublabel`, `icon` (Lucide icon, or a string for your own template), `disabled`, `group`, `keywords` (matched, not shown). Single (`[(value)]`) or multi-select (`multiple`, `[(values)]`, check boxes); `searchable` adds a `role="combobox"` field that keeps focus while `aria-activedescendant` marks the active option (without it the list itself is focused, with typeahead). `[(query)]` + `localFilter="false"` for server search; matching ignores case and accents. Groups render as labelled `role="group"`; ungrouped options next to groups go under `listboxOtherGroup`. `creatable` adds a "Create “…”" row for a query without an exact match (`create` emits the text). Keyboard: ArrowDown/ArrowUp, PageDown/PageUp, Home/End and Space (without search field), Enter. **Driven from an outside field** (an @-mention in a textarea, a suggestion menu): the field keeps focus, forwards its keys to `handleKeydown(event)` (a used key has its default prevented; call it from code, not as the template handler of a field you type in) and points its `aria-activedescendant` at `activeId()`; `autoActivate` keeps the first usable option ready for Enter, `choose(activeIndex())` picks it. Other inputs: `loading`, `emptyLabel`, `searchPlaceholder`, `optionTemplate` (`let-option let-selected="selected" let-active="active"`), `compareWith`, `maxHeight` (320). Output `picked` per choice. Rendering stays cheap at a few hundred options (one element per option, `content-visibility: auto`).
 
 ### `ath-option-picker`
 
@@ -300,7 +307,21 @@ The WAI-ARIA menu button. Trigger: click, Enter, Space and ArrowDown open on the
 </ath-dialog>
 ```
 
-A native `<dialog>` with `showModal()`: top layer, inert background, `::backdrop` in `--scrim`. Tab stays inside, page scroll is locked, initial focus goes to `[autofocus]`, else the first control in body or footer, else the close button; on close focus returns to where it was. Controlled: ✕, Escape (`closeOnEscape`) and a backdrop click (`closeOnBackdrop`) emit `closed` and `openChange(false)`; it closes when `open` turns false, so a parent may refuse. Escape closes a popover inside the dialog first. Inputs: `open`, `title`, `description`, `size` (`sm` | `md` | `lg` | `xl` | `full`), `closeOnBackdrop`, `closeOnEscape`, `showClose`, `closeLabel`, `ariaLabel` (without a title), `role` (`dialog` | `alertdialog`). Content slots: default (scrolling body), `[slot=header]` / `[athDialogHeader]`, `[slot=footer]` / `[athDialogFooter]`.
+A native `<dialog>` with `showModal()`: top layer, inert background, `::backdrop` in `--scrim`. Tab stays inside, page scroll is locked, initial focus goes to `[autofocus]`, else the first control in body or footer, else the close button; on close focus returns to where it was. Controlled: ✕, Escape (`closeOnEscape`) and a backdrop click (`closeOnBackdrop`) emit `closed` and `openChange(false)`; it closes when `open` turns false, so a parent may refuse. Escape closes a popover inside the dialog first. Inputs: `open`, `title`, `description`, `size` (`sm` | `md` | `lg` | `xl` | `full`), `closeOnBackdrop`, `closeOnEscape`, `showClose`, `closeLabel`, `ariaLabel` (without a title), `role` (`dialog` | `alertdialog`), `bare`. Content slots: default (scrolling body), `[slot=header]` / `[athDialogHeader]`, `[slot=footer]` / `[athDialogFooter]`.
+
+`bare`: no header, footer, close button or surface. The dialog is a transparent layer over the viewport, and the content draws and places its own surface in it (margins, or absolute positions against the layer): a command palette near the top that does not jump while its results change height, a composer with its own head that grows to full screen, a bottom sheet. Top layer, inert page, `::backdrop` in `--scrim`, focus trap, scroll lock, Escape and focus return stay; a press on the layer around the content is a backdrop press. Name it with `ariaLabel`.
+
+```html
+<ath-dialog bare [open]="open()" ariaLabel="Command palette" (closed)="close()">
+  <div class="palette" style="margin: 14vh auto 0; width: min(680px, calc(100% - 32px))">…</div>
+</ath-dialog>
+```
+
+**Escape and app listeners.** A modal dialog gets Escape as its native `cancel` event, which the browser skips when the keydown was prevented: a field that handles Escape itself inside a dialog calls `preventDefault()` (not only `stopPropagation()`). Document-level Escape handlers of the app skip keys an overlay took (`event.defaultPrevented`) or check `AthOverlayStack.size`, since listeners run in registration order and the stack may see the key after them.
+
+### `ath-select`
+
+A styled native `<select>` with `ControlValueAccessor` (`[(ngModel)]`, forms). A value written before its options exist (a saved setting read before the list it picks from has loaded) is shown once they arrive: each option carries `[selected]`, not only the select's `[value]`.
 
 ### `ath-dropdown`, `ath-combobox` (presets)
 

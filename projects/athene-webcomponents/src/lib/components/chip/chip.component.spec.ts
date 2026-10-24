@@ -24,6 +24,11 @@ import { AthChipComponent } from './chip.component';
       <ath-chip kind="status" variant="warning">In progress</ath-chip>
       <ath-chip kind="count" [count]="3" tooltip="design, api, backend" />
     </div>
+    <div class="shapes">
+      <ath-chip>pill</ath-chip>
+      <ath-chip shape="square">square</ath-chip>
+      <ath-chip kind="label" color="rgb(1, 2, 3)" shape="square">label</ath-chip>
+    </div>
   `,
 })
 class HostComponent {
@@ -34,7 +39,13 @@ class HostComponent {
 describe('AthChipComponent', () => {
   let fixture: ComponentFixture<HostComponent>;
   const chips = () =>
-    Array.from((fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('.ath-chip'));
+    Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('.row .ath-chip')
+    );
+  const shapes = () =>
+    Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('.shapes .ath-chip')
+    );
 
   beforeEach(() => {
     fixture = TestBed.configureTestingModule({ imports: [HostComponent] }).createComponent(
@@ -86,5 +97,19 @@ describe('AthChipComponent', () => {
     const status = chips()[5];
     expect(status.dataset['variant']).toBe('warning');
     expect(status.querySelector('.ath-chip__dot')).not.toBeNull();
+  });
+
+  it('draws a square tag as the plain grey tag of dense rows, same height, no dot', () => {
+    const [pill, square, label] = shapes();
+    const sq = getComputedStyle(square);
+    expect(square.dataset['shape']).toBe('square');
+    expect(sq.borderTopLeftRadius).toBe('4px');
+    expect(getComputedStyle(pill).borderTopLeftRadius).not.toBe('4px');
+    expect(sq.backgroundColor).not.toBe(getComputedStyle(pill).backgroundColor);
+    expect(square.getBoundingClientRect().height).toBe(20);
+    expect(square.querySelector('.ath-chip__dot')).toBeNull();
+    // Only a tag takes the shape; a label keeps its dot and pill.
+    expect(label.dataset['shape']).toBeUndefined();
+    expect(label.querySelector('.ath-chip__dot')).not.toBeNull();
   });
 });

@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  InjectionToken,
   SecurityContext,
   ViewEncapsulation,
   computed,
@@ -9,16 +8,11 @@ import {
   input,
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ATH_MARKDOWN_PARSER, type AthMarkdownParser } from '@athene/webcomponents/core';
 
-/** Turns Markdown into HTML. Its output is sanitized before it is shown. */
-export type AthMarkdownParser = (source: string) => string;
-
-/**
- * The app's Markdown parser, provided once at the root so every
- * `<ath-markdown [text]>` renders the same dialect. An explicit `[parse]`
- * input wins.
- */
-export const ATH_MARKDOWN_PARSER = new InjectionToken<AthMarkdownParser>('ATH_MARKDOWN_PARSER');
+// The parser token lives in the light core entry point, so an app provides
+// it at its root without loading the components.
+export { ATH_MARKDOWN_PARSER, type AthMarkdownParser } from '@athene/webcomponents/core';
 
 /** Escapes text for HTML. */
 export function athEscapeHtml(text: string): string {

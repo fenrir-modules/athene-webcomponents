@@ -1,5 +1,38 @@
-/** Which edge of the anchor a floating panel lines up with (`start` follows `dir`). */
-export type FloatingAlign = 'start' | 'end' | 'auto';
+/**
+ * Which edge of the anchor a floating panel lines up with (`start` follows
+ * `dir`); `center` centres the panel on the anchor (a toolbar over a text
+ * selection).
+ */
+export type FloatingAlign = 'start' | 'end' | 'auto' | 'center';
+
+/**
+ * A rectangle to hang a panel from instead of an element: a caret, a text
+ * selection, the spot the pointer rests on. `getBoundingClientRect()` is read
+ * on every placement, so a live rectangle keeps the panel in place while
+ * things scroll.
+ */
+export interface FloatingVirtualAnchor {
+  getBoundingClientRect(): DOMRect | DOMRectReadOnly;
+  /**
+   * The element the rectangle belongs to (the editor, the row): its size
+   * changes re-place the panel, its `dir` decides `start`/`end`, and its
+   * removal from the document stops placing.
+   */
+  readonly contextElement?: Element | null;
+}
+
+/** What `floatPanel` can hang a panel from. */
+export type FloatingTarget = Element | FloatingVirtualAnchor;
+
+/** Whether `target` is a virtual anchor rather than an element. */
+export function isVirtualAnchor(target: unknown): target is FloatingVirtualAnchor {
+  return (
+    !!target &&
+    typeof target === 'object' &&
+    !(typeof Element !== 'undefined' && target instanceof Element) &&
+    typeof (target as FloatingVirtualAnchor).getBoundingClientRect === 'function'
+  );
+}
 
 /** The side of the anchor a panel prefers; it flips when the other side has more room. */
 export type FloatingSide = 'bottom' | 'top';
@@ -42,7 +75,8 @@ const ARROW_INSET = 12;
  * The one positioning engine of the library (menus, listboxes, popovers,
  * pickers; the `athFloating` directive wraps it).
  *
- * Pins `panel` to `anchor` and keeps it inside the viewport: on the preferred
+ * Pins `panel` to `anchor` (an element, or a `FloatingVirtualAnchor` such as
+ * a caret rectangle) and keeps it inside the viewport: on the preferred
  * side when it fits, on the other side when that has more room, shifted
  * sideways to stay on screen, height-capped (scrolling inside) when neither
  * side has room for all of it. Follows scrolls in any container, viewport
@@ -57,9 +91,13 @@ const ARROW_INSET = 12;
  */
 export function floatPanel(
   panel: HTMLElement,
-  anchor: HTMLElement,
+  anchor: FloatingTarget,
   options: FloatingOptions = {}
 ): FloatingCleanup {
+  // The element that stands for the anchor: itself, or a virtual anchor's context.
+  const anchorEl: Element | null = isVirtualAnchor(anchor)
+    ? (anchor.contextElement ?? null)
+    : anchor;
   const style = panel.style;
   style.position = 'fixed';
   style.top = '0';
@@ -76,7 +114,7 @@ export function floatPanel(
 
   let frame = 0;
   const place = (): void => {
-    if (!anchor.isConnected || !panel.isConnected) return;
+    if ((anchorEl && !anchorEl.isConnected) || !panel.isConnected) return;
     const a = anchor.getBoundingClientRect();
     const vw = document.documentElement.clientWidth;
     const vh = window.innerHeight;
@@ -103,7 +141,7 @@ export function floatPanel(
       style.overflowY = 'auto';
     }
 
-    const rtl = getComputedStyle(anchor).direction === 'rtl';
+    const rtl = getComputedStyle(anchorEl ?? panel).direction === 'rtl';
     const leftEdge = a.left;
     const rightEdge = a.right - width;
     const fromStart = rtl ? rightEdge : leftEdge;
@@ -111,7 +149,13 @@ export function floatPanel(
     const fits = (x: number): boolean => x >= MARGIN && x + width <= vw - MARGIN;
     const align = options.align ?? 'start';
     let left =
-      align === 'end' ? fromEnd : align === 'auto' && !fits(fromStart) ? fromEnd : fromStart;
+      align === 'center'
+        ? a.left + a.width / 2 - width / 2
+        : align === 'end'
+          ? fromEnd
+          : align === 'auto' && !fits(fromStart)
+            ? fromEnd
+            : fromStart;
     left = Math.max(MARGIN, Math.min(left, vw - width - MARGIN));
     const top = Math.max(MARGIN, down ? a.bottom + gap : a.top - gap - height);
 
@@ -143,7 +187,7 @@ export function floatPanel(
   const resize =
     typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => schedule());
   resize?.observe(panel);
-  resize?.observe(anchor);
+  if (anchorEl) resize?.observe(anchorEl);
   place();
 
   const stop = (): void => {

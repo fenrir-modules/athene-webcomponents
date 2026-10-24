@@ -57,6 +57,11 @@ interface Section<T> {
  * PageDown/PageUp, Enter chooses (toggles in multi-select), Space too
  * without search field, typeahead without search field.
  *
+ * Driven from a field outside it (an @-mention in a textarea, a slash menu
+ * in an editor): the field keeps focus, forwards its keys to
+ * `handleKeydown()` and points `aria-activedescendant` at `activeId()`;
+ * `autoActivate` keeps the first option ready for Enter.
+ *
  * @example
  * <ath-listbox [options]="labels" multiple searchable [(values)]="selected"
  *              creatable (create)="addLabel($event)" ariaLabel="Labels" />
@@ -89,6 +94,11 @@ export declare class AthListboxComponent<T = string> {
     readonly maxHeight: import("@angular/core").InputSignal<number | null>;
     /** Equality of values; `Object.is` by default. */
     readonly compareWith: import("@angular/core").InputSignal<((a: T, b: T) => boolean) | null>;
+    /**
+     * With no option highlighted, the first usable one counts as active (Enter
+     * chooses it). For a list driven from an outside field (`handleKeydown`).
+     */
+    readonly autoActivate: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** The user chose (single) or toggled (multi) an option. */
     readonly picked: import("@angular/core").OutputEmitterRef<ListboxOption<T>>;
     /** The user chose the "create" row; carries the trimmed query. */
@@ -112,7 +122,8 @@ export declare class AthListboxComponent<T = string> {
     protected readonly rows: import("@angular/core").Signal<Row<T>[]>;
     /** Index of the highlighted row, -1 for none. */
     readonly activeIndex: import("@angular/core").Signal<number>;
-    protected readonly activeId: import("@angular/core").Signal<string>;
+    /** Element id of the highlighted option, for an outside field's `aria-activedescendant`. */
+    readonly activeId: import("@angular/core").Signal<string>;
     /** Focuses the search field, or the list itself. */
     focus(): void;
     /** Highlights the first selected option, else the first enabled one. */
@@ -121,7 +132,13 @@ export declare class AthListboxComponent<T = string> {
     choose(index: number): void;
     protected optionIcon(option: ListboxOption<T>): AthIconData | null;
     protected onQueryInput(event: Event): void;
-    protected onKeydown(event: KeyboardEvent): void;
+    /**
+     * The list's keyboard model, for keys that arrive elsewhere (a textarea
+     * that keeps focus while it suggests). A key it uses has its default
+     * prevented (`event.defaultPrevented`); others pass untouched. Without a
+     * search field, Home/End, Space and typeahead are handled too.
+     */
+    handleKeydown(event: KeyboardEvent): void;
     protected onListClick(event: MouseEvent): void;
     protected onListMousedown(event: MouseEvent): void;
     protected onListHover(event: MouseEvent): void;
@@ -131,6 +148,6 @@ export declare class AthListboxComponent<T = string> {
     private rowIndexAt;
     private scrollToActive;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthListboxComponent<any>, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthListboxComponent<any>, "ath-listbox", ["athListbox"], { "options": { "alias": "options"; "required": false; "isSignal": true; }; "multiple": { "alias": "multiple"; "required": false; "isSignal": true; }; "value": { "alias": "value"; "required": false; "isSignal": true; }; "values": { "alias": "values"; "required": false; "isSignal": true; }; "searchable": { "alias": "searchable"; "required": false; "isSignal": true; }; "query": { "alias": "query"; "required": false; "isSignal": true; }; "localFilter": { "alias": "localFilter"; "required": false; "isSignal": true; }; "creatable": { "alias": "creatable"; "required": false; "isSignal": true; }; "loading": { "alias": "loading"; "required": false; "isSignal": true; }; "searchPlaceholder": { "alias": "searchPlaceholder"; "required": false; "isSignal": true; }; "emptyLabel": { "alias": "emptyLabel"; "required": false; "isSignal": true; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; "isSignal": true; }; "ariaLabelledby": { "alias": "ariaLabelledby"; "required": false; "isSignal": true; }; "optionTemplate": { "alias": "optionTemplate"; "required": false; "isSignal": true; }; "maxHeight": { "alias": "maxHeight"; "required": false; "isSignal": true; }; "compareWith": { "alias": "compareWith"; "required": false; "isSignal": true; }; }, { "value": "valueChange"; "values": "valuesChange"; "query": "queryChange"; "picked": "picked"; "create": "create"; }, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthListboxComponent<any>, "ath-listbox", ["athListbox"], { "options": { "alias": "options"; "required": false; "isSignal": true; }; "multiple": { "alias": "multiple"; "required": false; "isSignal": true; }; "value": { "alias": "value"; "required": false; "isSignal": true; }; "values": { "alias": "values"; "required": false; "isSignal": true; }; "searchable": { "alias": "searchable"; "required": false; "isSignal": true; }; "query": { "alias": "query"; "required": false; "isSignal": true; }; "localFilter": { "alias": "localFilter"; "required": false; "isSignal": true; }; "creatable": { "alias": "creatable"; "required": false; "isSignal": true; }; "loading": { "alias": "loading"; "required": false; "isSignal": true; }; "searchPlaceholder": { "alias": "searchPlaceholder"; "required": false; "isSignal": true; }; "emptyLabel": { "alias": "emptyLabel"; "required": false; "isSignal": true; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; "isSignal": true; }; "ariaLabelledby": { "alias": "ariaLabelledby"; "required": false; "isSignal": true; }; "optionTemplate": { "alias": "optionTemplate"; "required": false; "isSignal": true; }; "maxHeight": { "alias": "maxHeight"; "required": false; "isSignal": true; }; "compareWith": { "alias": "compareWith"; "required": false; "isSignal": true; }; "autoActivate": { "alias": "autoActivate"; "required": false; "isSignal": true; }; }, { "value": "valueChange"; "values": "valuesChange"; "query": "queryChange"; "picked": "picked"; "create": "create"; }, never, never, true, never>;
 }
 export {};

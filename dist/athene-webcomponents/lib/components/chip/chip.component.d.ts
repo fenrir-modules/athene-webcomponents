@@ -17,6 +17,12 @@ export type ChipVariant = 'default' | 'primary' | 'success' | 'warning' | 'error
  */
 export type ChipKind = 'tag' | 'label' | 'epic' | 'type' | 'status' | 'count';
 /**
+ * Outline of a `tag` chip: `pill` (default, round ends) or `square`, the
+ * plain grey tag of dense ticket rows and board cards (references 05/06):
+ * small radius, `--bg-2`, a faint border, no dot.
+ */
+export type ChipShape = 'pill' | 'square';
+/**
  * Athene Chip
  *
  * The library takes colour and words; resolving a label's, epic's or
@@ -24,6 +30,7 @@ export type ChipKind = 'tag' | 'label' | 'epic' | 'type' | 'status' | 'count';
  *
  * @example
  * <ath-chip>authentication</ath-chip>
+ * <ath-chip shape="square">backend</ath-chip>
  * <ath-chip kind="label" [color]="label.color">{{ label.name }}</ath-chip>
  * <ath-chip kind="epic" [color]="'var(--purple)'" [tooltip]="epic.title">{{ epic.title }}</ath-chip>
  * <ath-chip kind="type" [icon]="bugIcon" color="var(--red)" [tooltip]="'Bug'" />
@@ -36,6 +43,8 @@ export declare class AthChipComponent {
     readonly kind: import("@angular/core").InputSignal<ChipKind>;
     /** Tone of a `tag` or `status` chip. */
     readonly variant: import("@angular/core").InputSignal<ChipVariant>;
+    /** Outline of a `tag` chip; `square` is the plain grey tag of dense rows. */
+    readonly shape: import("@angular/core").InputSignal<ChipShape>;
     /** Any CSS colour: the label dot, the epic glyph, the type square, the status dot. */
     readonly color: import("@angular/core").InputSignal<string | null | undefined>;
     /** Glyph for `epic` (default bolt), `type` (required) and `status` (instead of the dot). */
@@ -60,5 +69,5 @@ export declare class AthChipComponent {
     protected readonly resolvedRemoveLabel: import("@angular/core").Signal<string>;
     remove(event: MouseEvent): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthChipComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthChipComponent, "ath-chip", never, { "kind": { "alias": "kind"; "required": false; "isSignal": true; }; "variant": { "alias": "variant"; "required": false; "isSignal": true; }; "color": { "alias": "color"; "required": false; "isSignal": true; }; "icon": { "alias": "icon"; "required": false; "isSignal": true; }; "count": { "alias": "count"; "required": false; "isSignal": true; }; "tooltip": { "alias": "tooltip"; "required": false; "isSignal": true; }; "muted": { "alias": "muted"; "required": false; "isSignal": true; }; "removable": { "alias": "removable"; "required": false; "isSignal": true; }; "removeLabel": { "alias": "removeLabel"; "required": false; "isSignal": true; }; "name": { "alias": "name"; "required": false; "isSignal": true; }; }, { "removed": "removed"; }, never, ["*"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthChipComponent, "ath-chip", never, { "kind": { "alias": "kind"; "required": false; "isSignal": true; }; "variant": { "alias": "variant"; "required": false; "isSignal": true; }; "shape": { "alias": "shape"; "required": false; "isSignal": true; }; "color": { "alias": "color"; "required": false; "isSignal": true; }; "icon": { "alias": "icon"; "required": false; "isSignal": true; }; "count": { "alias": "count"; "required": false; "isSignal": true; }; "tooltip": { "alias": "tooltip"; "required": false; "isSignal": true; }; "muted": { "alias": "muted"; "required": false; "isSignal": true; }; "removable": { "alias": "removable"; "required": false; "isSignal": true; }; "removeLabel": { "alias": "removeLabel"; "required": false; "isSignal": true; }; "name": { "alias": "name"; "required": false; "isSignal": true; }; }, { "removed": "removed"; }, never, ["*"], true, never>;
 }

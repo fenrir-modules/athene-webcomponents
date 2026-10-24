@@ -97,3 +97,26 @@ export const GermanLabels: Story = {
     ),
   }),
 };
+
+/**
+ * Driven from an outside field (an @-mention in a comment box): the textarea
+ * keeps focus and forwards its keys to `handleKeydown()`; `autoActivate`
+ * keeps the first person ready for Enter.
+ */
+export const OutsideField: Story = {
+  render: () => ({
+    props: { options: STORY_ASSIGNEES.slice(0, 4) },
+    template: `
+      <div style="width:320px;display:flex;flex-direction:column;gap:4px">
+        <textarea aria-label="Comment" rows="2" style="font:inherit;padding:6px"
+          [attr.aria-activedescendant]="people.activeId()"
+          (keydown)="people.handleKeydown($event)">Thanks &#64;a</textarea>
+        ${frame(`<ath-listbox #people [options]="options" autoActivate ariaLabel="People" />`)}
+      </div>
+    `,
+  }),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('textbox'));
+    await userEvent.keyboard('{ArrowDown}');
+  },
+};

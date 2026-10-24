@@ -7,6 +7,9 @@ export type KpiDeltaDirection = 'up' | 'down' | 'neutral';
 /** Tint of the trend line. */
 export type KpiTone = 'neutral' | 'amber' | 'blue' | 'green' | 'red';
 
+/** Colour of the figure itself, from the contrast-safe `--*-text` tokens. */
+export type KpiValueTone = 'amber' | 'blue' | 'green' | 'red' | 'purple';
+
 const SPARK_COLOR: Record<KpiTone, string> = {
   neutral: 'var(--fg-3)',
   amber: 'var(--amber)',
@@ -39,7 +42,11 @@ export function hasKpiTrend(spark: readonly number[] | null | undefined): boolea
  *   <ath-kpi-tile label="Story points" [value]="24" note="3 done" />
  *   <ath-kpi-tile label="In review" [value]="2" link="/app/tickets" [linkParams]="{ status: 'review' }"
  *                 linkLabel="Show in-review tickets" />
+ *   <ath-kpi-tile label="In progress" [value]="4" valueTone="amber" dot="var(--amber)" />
+ *   <ath-kpi-tile label="Progress" value="62%"><my-progress-bar /></ath-kpi-tile>
  * </ath-kpi-strip>
+ *
+ * Projected content sits under the figure (a progress bar, a short line).
  */
 @Component({
   selector: 'ath-kpi-tile',
@@ -78,6 +85,13 @@ export class AthKpiTileComponent {
 
   /** The figure in red: something needs attention now. */
   readonly alert = input(false);
+  /**
+   * The figure in a status colour (`--amber-text`, `--blue-text` …), e.g. a
+   * count of tickets in a status. `alert` and `muted` win over it.
+   */
+  readonly valueTone = input<KpiValueTone | null | undefined>(null);
+  /** A small dot in this CSS colour before the label (a status key). */
+  readonly dot = input<string | null | undefined>(null);
   /** Nothing to count: a quiet figure (pass "–" for a zero), no trend. */
   readonly muted = input(false);
 
@@ -91,6 +105,10 @@ export class AthKpiTileComponent {
   protected readonly showTrend = computed(() => !this.muted() && hasKpiTrend(this.samples()));
   protected readonly trendColor = computed(() => this.sparkColor() ?? SPARK_COLOR[this.tone()]);
   protected readonly routerLink = computed(() => this.link() as string | unknown[]);
+  /** `alert` and `muted` say more than a status colour, so they win. */
+  protected readonly figureTone = computed(() =>
+    this.alert() || this.muted() ? null : (this.valueTone() ?? null)
+  );
 }
 
 /**

@@ -43,7 +43,11 @@ export declare class AthPopoverComponent implements OnChanges, OnDestroy {
     private readonly stack;
     /** Whether the panel is shown. Two-way: `[(open)]`. */
     readonly open: import("@angular/core").ModelSignal<boolean>;
-    /** The element the panel hangs from. A trigger directive sets it on its own. */
+    /**
+     * The element the panel hangs from (a trigger directive sets it on its
+     * own), or a `FloatingVirtualAnchor` such as the spot the pointer rests on;
+     * its `contextElement` then counts as the trigger.
+     */
     readonly anchor: import("@angular/core").InputSignal<FloatingAnchor>;
     readonly size: import("@angular/core").InputSignal<PopoverSize>;
     readonly padding: import("@angular/core").InputSignal<PopoverPadding>;
@@ -77,6 +81,8 @@ export declare class AthPopoverComponent implements OnChanges, OnDestroy {
     private readonly triggerAnchor;
     /** The element the panel currently hangs from. */
     readonly anchorElement: import("@angular/core").Signal<HTMLElement | null>;
+    /** What the panel is placed against: the anchor input (element or virtual) or the trigger. */
+    protected readonly floatTarget: import("@angular/core").Signal<HTMLElement | import("../floating/floating").FloatingVirtualAnchor | null>;
     protected readonly panelClasses: import("@angular/core").Signal<string>;
     private registered;
     private returnFocus;

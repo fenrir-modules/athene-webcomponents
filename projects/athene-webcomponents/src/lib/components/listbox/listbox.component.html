@@ -21,7 +21,7 @@
       [placeholder]="searchText()"
       [value]="query()"
       (input)="onQueryInput($event)"
-      (keydown)="onKeydown($event)"
+      (keydown)="handleKeydown($event)"
     />
   </div>
 }
@@ -44,7 +44,7 @@
   [attr.aria-busy]="loading() || null"
   [attr.aria-activedescendant]="searchable() ? null : activeId()"
   [style.max-height.px]="maxHeight()"
-  (keydown)="onKeydown($event)"
+  (keydown)="handleKeydown($event)"
   (click)="onListClick($event)"
   (mousedown)="onListMousedown($event)"
   (mousemove)="onListHover($event)"

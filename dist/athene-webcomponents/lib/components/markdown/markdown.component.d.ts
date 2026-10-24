@@ -1,13 +1,6 @@
-import { InjectionToken } from '@angular/core';
+import { type AthMarkdownParser } from '@athene/webcomponents/core';
 import * as i0 from "@angular/core";
-/** Turns Markdown into HTML. Its output is sanitized before it is shown. */
-export type AthMarkdownParser = (source: string) => string;
-/**
- * The app's Markdown parser, provided once at the root so every
- * `<ath-markdown [text]>` renders the same dialect. An explicit `[parse]`
- * input wins.
- */
-export declare const ATH_MARKDOWN_PARSER: InjectionToken<AthMarkdownParser>;
+export { ATH_MARKDOWN_PARSER, type AthMarkdownParser } from '@athene/webcomponents/core';
 /** Escapes text for HTML. */
 export declare function athEscapeHtml(text: string): string;
 /** Plain text as paragraphs and line breaks: the fallback without a parser. */

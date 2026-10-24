@@ -14,6 +14,15 @@
   max-width: calc(100vw - var(--space-4));
   font-family: var(--font-sans);
   font-size: var(--text-base);
+  // The panel stays in the DOM where the template put it (inside a
+  // right-aligned table cell, a heading, a nowrap toolbar), but is drawn in
+  // the top layer: text styles of that spot must not leak in (letter
+  // spacing stays the body's).
+  font-style: normal;
+  font-weight: var(--weight-normal);
+  text-align: start;
+  text-transform: none;
+  white-space: normal;
   color: var(--fg);
   background: var(--surface);
   border: 1px solid var(--border);

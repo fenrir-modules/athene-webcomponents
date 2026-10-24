@@ -39,6 +39,13 @@
       background: var(--chip-primary-bg);
       color: var(--chip-primary-fg);
     }
+
+    // The plain grey tag of dense ticket rows and board cards (refs 05/06).
+    &[data-shape='square'] {
+      border-color: var(--border-faint);
+      border-radius: var(--r-xs);
+      background: var(--bg-2);
+    }
   }
 
   &[data-kind='tag'],

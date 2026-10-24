@@ -13,6 +13,13 @@
   padding: 0;
   overflow: hidden;
   font-family: var(--font-sans);
+  // Drawn in the top layer, but inheriting from where it sits in the DOM:
+  // no text styles of that spot leak in.
+  font-style: normal;
+  font-weight: var(--weight-normal);
+  text-align: start;
+  text-transform: none;
+  white-space: normal;
   color: var(--fg);
   background: var(--surface);
   border: 1px solid var(--border);
@@ -54,6 +61,33 @@
     max-width: none;
     height: calc(100dvh - var(--space-16));
   }
+
+  // Bare: a transparent layer over the whole viewport. The projected content
+  // is the surface and places itself in it (margins, or absolute positions
+  // against the layer); a press on the layer is a backdrop press.
+  &--bare {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    overflow: hidden;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+
+    &[open] {
+      display: block;
+      animation: none;
+    }
+  }
+}
+
+// The default slot of a bare dialog: no box of its own, so the content's
+// root is laid out (and positioned) against the dialog layer.
+.ath-dialog__bare {
+  display: contents;
 }
 
 .ath-dialog__surface {

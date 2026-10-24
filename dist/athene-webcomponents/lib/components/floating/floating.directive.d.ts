@@ -1,9 +1,18 @@
 import { AfterViewInit, ElementRef, OnChanges, OnDestroy } from '@angular/core';
-import { type FloatingAlign, type FloatingSide } from './floating';
+import { type FloatingAlign, type FloatingSide, type FloatingVirtualAnchor } from './floating';
 import * as i0 from "@angular/core";
-/** An anchor given as an element or an `ElementRef` (a template ref of a component). */
-export type FloatingAnchor = HTMLElement | ElementRef<HTMLElement> | null | undefined;
+/**
+ * An anchor given as an element, an `ElementRef` (a template ref of a
+ * component) or a `FloatingVirtualAnchor` (a caret or pointer rectangle).
+ */
+export type FloatingAnchor = HTMLElement | ElementRef<HTMLElement> | FloatingVirtualAnchor | null | undefined;
+/**
+ * The element behind an anchor: itself, or a virtual anchor's
+ * `contextElement` (focus return, outside clicks, `aria-*`).
+ */
 export declare function resolveAnchor(anchor: FloatingAnchor): HTMLElement | null;
+/** What a panel is placed against: the element, or the virtual anchor itself. */
+export declare function resolveFloatingTarget(anchor: FloatingAnchor): HTMLElement | FloatingVirtualAnchor | null;
 /**
  * Hangs the host element from an anchor with `floatPanel`: top layer (so no
  * `overflow`, `transform` or `z-index` of a container can clip or cover it),
@@ -20,9 +29,12 @@ export declare function resolveAnchor(anchor: FloatingAnchor): HTMLElement | nul
  * }
  */
 export declare class AthFloatingDirective implements AfterViewInit, OnChanges, OnDestroy {
-    /** The element the panel hangs from. */
+    /** The element (or virtual anchor) the panel hangs from. */
     readonly anchor: import("@angular/core").InputSignal<FloatingAnchor>;
-    /** `start`: start edges line up; `end`: end edges; `auto`: start unless it overflows. */
+    /**
+     * `start`: start edges line up; `end`: end edges; `auto`: start unless it
+     * overflows; `center`: centred on the anchor.
+     */
     readonly align: import("@angular/core").InputSignal<FloatingAlign>;
     /** Preferred side; flips when the other side has more room. */
     readonly side: import("@angular/core").InputSignal<FloatingSide>;

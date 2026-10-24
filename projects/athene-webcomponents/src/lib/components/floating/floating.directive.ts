@@ -11,15 +11,42 @@ import {
 } from '@angular/core';
 import {
   floatPanel,
+  isVirtualAnchor,
   type FloatingAlign,
   type FloatingCleanup,
   type FloatingSide,
+  type FloatingVirtualAnchor,
 } from './floating';
 
-/** An anchor given as an element or an `ElementRef` (a template ref of a component). */
-export type FloatingAnchor = HTMLElement | ElementRef<HTMLElement> | null | undefined;
+/**
+ * An anchor given as an element, an `ElementRef` (a template ref of a
+ * component) or a `FloatingVirtualAnchor` (a caret or pointer rectangle).
+ */
+export type FloatingAnchor =
+  | HTMLElement
+  | ElementRef<HTMLElement>
+  | FloatingVirtualAnchor
+  | null
+  | undefined;
 
+/**
+ * The element behind an anchor: itself, or a virtual anchor's
+ * `contextElement` (focus return, outside clicks, `aria-*`).
+ */
 export function resolveAnchor(anchor: FloatingAnchor): HTMLElement | null {
+  if (!anchor) return null;
+  if (anchor instanceof ElementRef) return anchor.nativeElement;
+  if (isVirtualAnchor(anchor)) {
+    const ctx = anchor.contextElement;
+    return ctx instanceof HTMLElement ? ctx : null;
+  }
+  return anchor;
+}
+
+/** What a panel is placed against: the element, or the virtual anchor itself. */
+export function resolveFloatingTarget(
+  anchor: FloatingAnchor
+): HTMLElement | FloatingVirtualAnchor | null {
   if (!anchor) return null;
   return anchor instanceof ElementRef ? anchor.nativeElement : anchor;
 }
@@ -45,9 +72,12 @@ export function resolveAnchor(anchor: FloatingAnchor): HTMLElement | null {
   exportAs: 'athFloating',
 })
 export class AthFloatingDirective implements AfterViewInit, OnChanges, OnDestroy {
-  /** The element the panel hangs from. */
+  /** The element (or virtual anchor) the panel hangs from. */
   readonly anchor = input.required<FloatingAnchor>({ alias: 'athFloating' });
-  /** `start`: start edges line up; `end`: end edges; `auto`: start unless it overflows. */
+  /**
+   * `start`: start edges line up; `end`: end edges; `auto`: start unless it
+   * overflows; `center`: centred on the anchor.
+   */
   readonly align = input<FloatingAlign>('start');
   /** Preferred side; flips when the other side has more room. */
   readonly side = input<FloatingSide>('bottom');
@@ -89,7 +119,7 @@ export class AthFloatingDirective implements AfterViewInit, OnChanges, OnDestroy
   private attach(): void {
     this.cleanup?.();
     this.cleanup = null;
-    const anchor = resolveAnchor(this.anchor());
+    const anchor = resolveFloatingTarget(this.anchor());
     if (!anchor) return;
     this.cleanup = this.zone.runOutsideAngular(() =>
       floatPanel(this.el, anchor, {

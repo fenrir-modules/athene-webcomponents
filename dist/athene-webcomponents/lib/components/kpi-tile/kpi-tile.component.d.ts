@@ -3,6 +3,8 @@ import * as i0 from "@angular/core";
 export type KpiDeltaDirection = 'up' | 'down' | 'neutral';
 /** Tint of the trend line. */
 export type KpiTone = 'neutral' | 'amber' | 'blue' | 'green' | 'red';
+/** Colour of the figure itself, from the contrast-safe `--*-text` tokens. */
+export type KpiValueTone = 'amber' | 'blue' | 'green' | 'red' | 'purple';
 /** A trend worth drawing: two samples or more, and not all zero. */
 export declare function hasKpiTrend(spark: readonly number[] | null | undefined): boolean;
 /**
@@ -24,7 +26,11 @@ export declare function hasKpiTrend(spark: readonly number[] | null | undefined)
  *   <ath-kpi-tile label="Story points" [value]="24" note="3 done" />
  *   <ath-kpi-tile label="In review" [value]="2" link="/app/tickets" [linkParams]="{ status: 'review' }"
  *                 linkLabel="Show in-review tickets" />
+ *   <ath-kpi-tile label="In progress" [value]="4" valueTone="amber" dot="var(--amber)" />
+ *   <ath-kpi-tile label="Progress" value="62%"><my-progress-bar /></ath-kpi-tile>
  * </ath-kpi-strip>
+ *
+ * Projected content sits under the figure (a progress bar, a short line).
  */
 export declare class AthKpiTileComponent {
     readonly label: import("@angular/core").InputSignal<string>;
@@ -47,6 +53,13 @@ export declare class AthKpiTileComponent {
     readonly noteTitle: import("@angular/core").InputSignal<string | null | undefined>;
     /** The figure in red: something needs attention now. */
     readonly alert: import("@angular/core").InputSignal<boolean>;
+    /**
+     * The figure in a status colour (`--amber-text`, `--blue-text` …), e.g. a
+     * count of tickets in a status. `alert` and `muted` win over it.
+     */
+    readonly valueTone: import("@angular/core").InputSignal<KpiValueTone | null | undefined>;
+    /** A small dot in this CSS colour before the label (a status key). */
+    readonly dot: import("@angular/core").InputSignal<string | null | undefined>;
     /** Nothing to count: a quiet figure (pass "–" for a zero), no trend. */
     readonly muted: import("@angular/core").InputSignal<boolean>;
     /** Where the tile leads (router link). */
@@ -58,8 +71,10 @@ export declare class AthKpiTileComponent {
     protected readonly showTrend: import("@angular/core").Signal<boolean>;
     protected readonly trendColor: import("@angular/core").Signal<string>;
     protected readonly routerLink: import("@angular/core").Signal<string | unknown[]>;
+    /** `alert` and `muted` say more than a status colour, so they win. */
+    protected readonly figureTone: import("@angular/core").Signal<KpiValueTone | null>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthKpiTileComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthKpiTileComponent, "ath-kpi-tile", never, { "label": { "alias": "label"; "required": true; "isSignal": true; }; "value": { "alias": "value"; "required": false; "isSignal": true; }; "delta": { "alias": "delta"; "required": false; "isSignal": true; }; "deltaDirection": { "alias": "deltaDirection"; "required": false; "isSignal": true; }; "deltaTitle": { "alias": "deltaTitle"; "required": false; "isSignal": true; }; "tone": { "alias": "tone"; "required": false; "isSignal": true; }; "spark": { "alias": "spark"; "required": false; "isSignal": true; }; "sparkData": { "alias": "sparkData"; "required": false; "isSignal": true; }; "sparkColor": { "alias": "sparkColor"; "required": false; "isSignal": true; }; "note": { "alias": "note"; "required": false; "isSignal": true; }; "noteTitle": { "alias": "noteTitle"; "required": false; "isSignal": true; }; "alert": { "alias": "alert"; "required": false; "isSignal": true; }; "muted": { "alias": "muted"; "required": false; "isSignal": true; }; "link": { "alias": "link"; "required": false; "isSignal": true; }; "linkParams": { "alias": "linkParams"; "required": false; "isSignal": true; }; "linkLabel": { "alias": "linkLabel"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthKpiTileComponent, "ath-kpi-tile", never, { "label": { "alias": "label"; "required": true; "isSignal": true; }; "value": { "alias": "value"; "required": false; "isSignal": true; }; "delta": { "alias": "delta"; "required": false; "isSignal": true; }; "deltaDirection": { "alias": "deltaDirection"; "required": false; "isSignal": true; }; "deltaTitle": { "alias": "deltaTitle"; "required": false; "isSignal": true; }; "tone": { "alias": "tone"; "required": false; "isSignal": true; }; "spark": { "alias": "spark"; "required": false; "isSignal": true; }; "sparkData": { "alias": "sparkData"; "required": false; "isSignal": true; }; "sparkColor": { "alias": "sparkColor"; "required": false; "isSignal": true; }; "note": { "alias": "note"; "required": false; "isSignal": true; }; "noteTitle": { "alias": "noteTitle"; "required": false; "isSignal": true; }; "alert": { "alias": "alert"; "required": false; "isSignal": true; }; "valueTone": { "alias": "valueTone"; "required": false; "isSignal": true; }; "dot": { "alias": "dot"; "required": false; "isSignal": true; }; "muted": { "alias": "muted"; "required": false; "isSignal": true; }; "link": { "alias": "link"; "required": false; "isSignal": true; }; "linkParams": { "alias": "linkParams"; "required": false; "isSignal": true; }; "linkLabel": { "alias": "linkLabel"; "required": false; "isSignal": true; }; }, {}, never, ["*"], true, never>;
 }
 /**
  * The card around a row of `ath-kpi-tile`s: one border, radius and shadow,

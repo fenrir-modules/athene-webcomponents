@@ -1,7 +1,13 @@
 import { ChangeDetectionStrategy, Component, ElementRef, signal, viewChild } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { floatPanel, supportsTopLayer, type FloatingCleanup } from './floating';
-import { AthFloatingDirective } from './floating.directive';
+import {
+  floatPanel,
+  isVirtualAnchor,
+  supportsTopLayer,
+  type FloatingCleanup,
+  type FloatingVirtualAnchor,
+} from './floating';
+import { AthFloatingDirective, resolveAnchor, resolveFloatingTarget } from './floating.directive';
 
 /** An anchor fixed at the given viewport position, and a panel of the given size. */
 function setup(
@@ -115,6 +121,68 @@ describe('floatPanel', () => {
     stop();
     stop = null;
     expect(panel.matches(':popover-open')).toBeFalse();
+  });
+
+  it('centres the panel on the anchor with align="center"', () => {
+    const { anchor, panel } = setup('top:20px;left:200px', { w: 140, h: 40 });
+    stop = floatPanel(panel, anchor, { align: 'center' });
+    const a = anchor.getBoundingClientRect();
+    const p = panel.getBoundingClientRect();
+    expect(Math.round(p.left + p.width / 2)).toBe(Math.round(a.left + a.width / 2));
+  });
+
+  it('hangs from a virtual anchor (a caret rectangle) and follows its rectangle', () => {
+    const context = document.createElement('div');
+    document.body.appendChild(context);
+    cleanup.push(context);
+    const panel = document.createElement('div');
+    panel.style.cssText = 'width:120px;height:40px';
+    document.body.appendChild(panel);
+    let rect = new DOMRect(150, 60, 2, 18);
+    const caret: FloatingVirtualAnchor = {
+      getBoundingClientRect: () => rect,
+      contextElement: context,
+    };
+    stop = floatPanel(panel, caret, { offset: 6 });
+    let p = panel.getBoundingClientRect();
+    expect(Math.round(p.top)).toBe(60 + 18 + 6);
+    expect(Math.round(p.left)).toBe(150);
+
+    rect = new DOMRect(300, 100, 2, 18);
+    stop.update();
+    p = panel.getBoundingClientRect();
+    expect(Math.round(p.top)).toBe(100 + 18 + 6);
+    expect(Math.round(p.left)).toBe(300);
+  });
+
+  it("stops placing once the virtual anchor's context element is gone", () => {
+    const context = document.createElement('div');
+    document.body.appendChild(context);
+    const panel = document.createElement('div');
+    panel.style.cssText = 'width:120px;height:40px';
+    document.body.appendChild(panel);
+    let rect = new DOMRect(40, 40, 2, 18);
+    stop = floatPanel(panel, { getBoundingClientRect: () => rect, contextElement: context });
+    const before = panel.style.top;
+    context.remove();
+    rect = new DOMRect(400, 400, 2, 18);
+    stop.update();
+    expect(panel.style.top).toBe(before);
+  });
+
+  it('tells virtual anchors from elements, and resolves their element', () => {
+    const el = document.createElement('div');
+    const virtual: FloatingVirtualAnchor = {
+      getBoundingClientRect: () => new DOMRect(),
+      contextElement: el,
+    };
+    expect(isVirtualAnchor(virtual)).toBeTrue();
+    expect(isVirtualAnchor(el)).toBeFalse();
+    expect(isVirtualAnchor(null)).toBeFalse();
+    expect(resolveAnchor(virtual)).toBe(el);
+    expect(resolveAnchor({ getBoundingClientRect: () => new DOMRect() })).toBeNull();
+    expect(resolveFloatingTarget(virtual)).toBe(virtual);
+    expect(resolveFloatingTarget(new ElementRef(el))).toBe(el);
   });
 
   it('corrects for a transformed container without the top layer', () => {

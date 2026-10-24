@@ -23,6 +23,13 @@ export type DialogSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
  * an element with `autofocus`, else the first control in the body/footer,
  * else the close button.
  *
+ * `bare`: no header, footer, close button or surface. The dialog is a
+ * transparent layer over the viewport and the content draws and places its
+ * own surface (a palette at the top, a bottom sheet, a composer with its own
+ * head); a click on the layer around it counts as a backdrop click. Top
+ * layer, inert page, scrim, focus trap, Escape and focus return stay. Name it
+ * with `ariaLabel`.
+ *
  * @example
  * <ath-dialog [(open)]="isOpen" title="Create item" (closed)="onClose()">
  *   <p>Dialog content here</p>
@@ -57,6 +64,12 @@ export declare class AthDialogComponent implements OnChanges, OnDestroy {
     readonly ariaLabel: import("@angular/core").InputSignal<string | null>;
     /** `alertdialog` for confirmations that interrupt. */
     readonly role: import("@angular/core").InputSignal<"dialog" | "alertdialog">;
+    /**
+     * Only the content, on a transparent full-viewport layer: the content is
+     * the surface and places itself (see the class comment). `title`,
+     * `description`, `size` and `showClose` do not apply.
+     */
+    readonly bare: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** The user asked to close (✕, Escape, backdrop). */
     readonly closed: import("@angular/core").OutputEmitterRef<void>;
     /** Two-way partner of `open`; emits `false` on a close request. */
@@ -83,11 +96,15 @@ export declare class AthDialogComponent implements OnChanges, OnDestroy {
     protected onPointerDown(event: PointerEvent): void;
     protected onClick(event: MouseEvent): void;
     private requestClose;
-    /** A press on the `::backdrop`: it targets the dialog, outside its box. */
+    /**
+     * A press on the `::backdrop`: it targets the dialog, outside its box. In
+     * `bare` mode the dialog is the transparent layer around the content, so
+     * any press on the dialog element itself is one.
+     */
     private isBackdropEvent;
     private present;
     private focusInitial;
     private teardown;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthDialogComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthDialogComponent, "ath-dialog", never, { "open": { "alias": "open"; "required": false; "isSignal": true; }; "title": { "alias": "title"; "required": false; "isSignal": true; }; "description": { "alias": "description"; "required": false; "isSignal": true; }; "size": { "alias": "size"; "required": false; "isSignal": true; }; "closeOnBackdrop": { "alias": "closeOnBackdrop"; "required": false; "isSignal": true; }; "closeOnEscape": { "alias": "closeOnEscape"; "required": false; "isSignal": true; }; "showClose": { "alias": "showClose"; "required": false; "isSignal": true; }; "closeLabel": { "alias": "closeLabel"; "required": false; "isSignal": true; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; "isSignal": true; }; "role": { "alias": "role"; "required": false; "isSignal": true; }; }, { "closed": "closed"; "openChange": "openChange"; "opened": "opened"; }, never, ["[slot=header],[athDialogHeader]", "*", "[slot=footer],[athDialogFooter]"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthDialogComponent, "ath-dialog", never, { "open": { "alias": "open"; "required": false; "isSignal": true; }; "title": { "alias": "title"; "required": false; "isSignal": true; }; "description": { "alias": "description"; "required": false; "isSignal": true; }; "size": { "alias": "size"; "required": false; "isSignal": true; }; "closeOnBackdrop": { "alias": "closeOnBackdrop"; "required": false; "isSignal": true; }; "closeOnEscape": { "alias": "closeOnEscape"; "required": false; "isSignal": true; }; "showClose": { "alias": "showClose"; "required": false; "isSignal": true; }; "closeLabel": { "alias": "closeLabel"; "required": false; "isSignal": true; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; "isSignal": true; }; "role": { "alias": "role"; "required": false; "isSignal": true; }; "bare": { "alias": "bare"; "required": false; "isSignal": true; }; }, { "closed": "closed"; "openChange": "openChange"; "opened": "opened"; }, never, ["*", "[slot=header],[athDialogHeader]", "[slot=footer],[athDialogFooter]"], true, never>;
 }

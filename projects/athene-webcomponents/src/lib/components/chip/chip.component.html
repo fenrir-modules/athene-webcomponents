@@ -14,6 +14,7 @@
       class="ath-chip"
       [attr.data-kind]="kind()"
       [attr.data-variant]="variant()"
+      [attr.data-shape]="kind() === 'tag' && shape() === 'square' ? 'square' : null"
       [attr.data-muted]="muted() ? 'true' : null"
       [style.--_tint]="color() || null"
       [athTooltip]="tooltip() ?? ''"

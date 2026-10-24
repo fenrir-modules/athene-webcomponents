@@ -90,6 +90,11 @@ function foldText(text: string): string {
  * PageDown/PageUp, Enter chooses (toggles in multi-select), Space too
  * without search field, typeahead without search field.
  *
+ * Driven from a field outside it (an @-mention in a textarea, a slash menu
+ * in an editor): the field keeps focus, forwards its keys to
+ * `handleKeydown()` and points `aria-activedescendant` at `activeId()`;
+ * `autoActivate` keeps the first option ready for Enter.
+ *
  * @example
  * <ath-listbox [options]="labels" multiple searchable [(values)]="selected"
  *              creatable (create)="addLabel($event)" ariaLabel="Labels" />
@@ -132,6 +137,11 @@ export class AthListboxComponent<T = string> {
   readonly maxHeight = input<number | null>(320);
   /** Equality of values; `Object.is` by default. */
   readonly compareWith = input<((a: T, b: T) => boolean) | null>(null);
+  /**
+   * With no option highlighted, the first usable one counts as active (Enter
+   * chooses it). For a list driven from an outside field (`handleKeydown`).
+   */
+  readonly autoActivate = input(false, { transform: booleanAttribute });
 
   /** The user chose (single) or toggled (multi) an option. */
   readonly picked = output<ListboxOption<T>>();
@@ -247,10 +257,13 @@ export class AthListboxComponent<T = string> {
   /** Index of the highlighted row, -1 for none. */
   readonly activeIndex = computed(() => {
     const i = this.activeRaw();
-    return i >= 0 && i < this.rows().length ? i : -1;
+    const count = this.rows().length;
+    if (i >= 0 && i < count) return i;
+    return this.autoActivate() ? edgeIndex(count, this.usable) : -1;
   });
 
-  protected readonly activeId = computed(() => this.rows()[this.activeIndex()]?.id ?? null);
+  /** Element id of the highlighted option, for an outside field's `aria-activedescendant`. */
+  readonly activeId = computed(() => this.rows()[this.activeIndex()]?.id ?? null);
 
   /** Focuses the search field, or the list itself. */
   focus(): void {
@@ -299,7 +312,13 @@ export class AthListboxComponent<T = string> {
     this.listRef().nativeElement.scrollTop = 0;
   }
 
-  protected onKeydown(event: KeyboardEvent): void {
+  /**
+   * The list's keyboard model, for keys that arrive elsewhere (a textarea
+   * that keeps focus while it suggests). A key it uses has its default
+   * prevented (`event.defaultPrevented`); others pass untouched. Without a
+   * search field, Home/End, Space and typeahead are handled too.
+   */
+  handleKeydown(event: KeyboardEvent): void {
     const count = this.rows().length;
     const searchable = this.searchable();
     const active = this.activeIndex();

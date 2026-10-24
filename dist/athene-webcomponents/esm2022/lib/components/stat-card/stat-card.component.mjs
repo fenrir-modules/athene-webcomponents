@@ -44,7 +44,7 @@ export class AthStatCardComponent {
         [sparkColor]="sparkColor()"
       />
     </ath-kpi-strip>
-  `, isInline: true, styles: [":host{display:block}\n"], dependencies: [{ kind: "component", type: AthKpiStripComponent, selector: "ath-kpi-strip", inputs: ["columns"] }, { kind: "component", type: AthKpiTileComponent, selector: "ath-kpi-tile", inputs: ["label", "value", "delta", "deltaDirection", "deltaTitle", "tone", "spark", "sparkData", "sparkColor", "note", "noteTitle", "alert", "muted", "link", "linkParams", "linkLabel"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+  `, isInline: true, styles: [":host{display:block}\n"], dependencies: [{ kind: "component", type: AthKpiStripComponent, selector: "ath-kpi-strip", inputs: ["columns"] }, { kind: "component", type: AthKpiTileComponent, selector: "ath-kpi-tile", inputs: ["label", "value", "delta", "deltaDirection", "deltaTitle", "tone", "spark", "sparkData", "sparkColor", "note", "noteTitle", "alert", "valueTone", "dot", "muted", "link", "linkParams", "linkLabel"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
 }
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthStatCardComponent, decorators: [{
             type: Component,

@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, signal, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { supportsTopLayer } from '../floating/floating';
+import { supportsTopLayer, type FloatingVirtualAnchor } from '../floating/floating';
 import { AthPopoverComponent, AthPopoverContentDirective } from './popover.component';
 import { AthPopoverTriggerDirective } from './popover-trigger.directive';
 
@@ -205,5 +205,106 @@ describe('AthPopoverComponent', () => {
     expect(q('.inner-btn')).toBeNull();
     await open();
     expect(q('.inner-btn')).toBeNull();
+  });
+});
+
+@Component({
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AthPopoverComponent],
+  template: `
+    <div
+      #row
+      class="row"
+      tabindex="0"
+      style="position:fixed;top:40px;left:10px;width:600px;height:30px"
+    >
+      row
+    </div>
+    <ath-popover
+      [anchor]="spot"
+      [(open)]="open"
+      autoFocus="none"
+      size="sm"
+      ariaLabel="Card"
+      (closed)="reason = $event"
+    >
+      <p class="card">Card</p>
+    </ath-popover>
+  `,
+})
+class VirtualAnchorHostComponent {
+  readonly open = signal(false);
+  reason: string | null = null;
+  private readonly row = viewChild.required<ElementRef<HTMLElement>>('row');
+  /** The spot the pointer rests on, inside the wide row. */
+  readonly spot: FloatingVirtualAnchor = {
+    getBoundingClientRect: () => {
+      const r = this.row().nativeElement.getBoundingClientRect();
+      return new DOMRect(400, r.top, 1, r.height);
+    },
+    get contextElement() {
+      return document.querySelector<HTMLElement>('.row');
+    },
+  };
+}
+
+describe('AthPopoverComponent with a virtual anchor', () => {
+  it('hangs at the rectangle and treats its context element as the trigger', async () => {
+    const fixture = TestBed.createComponent(VirtualAnchorHostComponent);
+    const root = fixture.nativeElement as HTMLElement;
+    document.body.appendChild(root);
+    fixture.detectChanges();
+    fixture.componentInstance.open.set(true);
+    fixture.detectChanges();
+    await wait();
+    const panel = root.querySelector<HTMLElement>('.ath-popover__panel')!;
+    // The placed position (the entry animation offsets the box for a moment).
+    expect(panel.style.left).toBe('400px');
+    expect(panel.style.top).toBe(`${40 + 30 + 6}px`);
+
+    // A press on the row (the context element) is not "outside".
+    root.querySelector('.row')!.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.open()).toBeTrue();
+
+    document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.open()).toBeFalse();
+    expect(fixture.componentInstance.reason).toBe('outside');
+    fixture.destroy();
+    root.remove();
+  });
+});
+
+@Component({
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AthPopoverComponent, AthPopoverTriggerDirective],
+  template: `
+    <div style="text-align:right;white-space:nowrap;font-weight:700;text-transform:uppercase">
+      <button type="button" class="trigger" [athPopoverTrigger]="pop">Open</button>
+      <ath-popover #pop ariaLabel="Picker"><p class="inside">Option</p></ath-popover>
+    </div>
+  `,
+})
+class InheritingHostComponent {}
+
+describe('AthPopoverComponent inside a styled spot', () => {
+  it('does not inherit the text styles of where it sits in the DOM', async () => {
+    const fixture = TestBed.createComponent(InheritingHostComponent);
+    const root = fixture.nativeElement as HTMLElement;
+    document.body.appendChild(root);
+    fixture.detectChanges();
+    root.querySelector<HTMLElement>('.trigger')!.click();
+    fixture.detectChanges();
+    await wait();
+    const style = getComputedStyle(root.querySelector('.inside')!);
+    expect(['start', 'left']).toContain(style.textAlign);
+    expect(style.whiteSpace).toBe('normal');
+    expect(style.fontWeight).toBe('400');
+    expect(style.textTransform).toBe('none');
+    fixture.destroy();
+    root.remove();
   });
 });

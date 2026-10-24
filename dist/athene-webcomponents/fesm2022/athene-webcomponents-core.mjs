@@ -112,6 +112,25 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImpo
             args: [{ providedIn: 'root' }]
         }] });
 
+/**
+ * The app's date settings for every `ath-due-label`, provided once at the
+ * root. A function, so a provider that reads signals (language, the
+ * reader's preferences) keeps the labels current.
+ *
+ * @example
+ * { provide: ATH_DATE_CONTEXT, useFactory: () => {
+ *     const prefs = inject(UserPreferencesService);
+ *     return () => ({ locale: prefs.locale(), timeZone: prefs.timeZone(), dateFormat: prefs.dateFormat() });
+ * } }
+ */
+const ATH_DATE_CONTEXT = new InjectionToken('ATH_DATE_CONTEXT');
+/**
+ * The app's Markdown parser, provided once at the root so every
+ * `<ath-markdown [text]>` renders the same dialect. An explicit `[parse]`
+ * input wins.
+ */
+const ATH_MARKDOWN_PARSER = new InjectionToken('ATH_MARKDOWN_PARSER');
+
 // ===========================================
 // ATHENE WEBCOMPONENTS - CORE ENTRY POINT
 // ===========================================
@@ -126,5 +145,5 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImpo
  * Generated bundle index. Do not edit.
  */
 
-export { ATH_DEFAULT_LABELS, ATH_LABELS, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, AthToastService };
+export { ATH_DATE_CONTEXT, ATH_DEFAULT_LABELS, ATH_LABELS, ATH_MARKDOWN_PARSER, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, AthToastService };
 //# sourceMappingURL=athene-webcomponents-core.mjs.map

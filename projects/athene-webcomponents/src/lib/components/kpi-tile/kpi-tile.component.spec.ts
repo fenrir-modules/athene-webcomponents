@@ -33,6 +33,11 @@ import { AthKpiStripComponent, AthKpiTileComponent, hasKpiTrend } from './kpi-ti
       </ath-kpi-strip>
     </div>
     <ath-stat-card label="Old" value="42" subValue="sub" trend="up" />
+    <ath-kpi-strip class="status" [columns]="3">
+      <ath-kpi-tile label="In progress" [value]="4" valueTone="amber" dot="rgb(1, 2, 3)" />
+      <ath-kpi-tile label="Overdue" [value]="2" valueTone="green" [alert]="true" />
+      <ath-kpi-tile label="Progress" value="62%"><span class="bar">bar</span></ath-kpi-tile>
+    </ath-kpi-strip>
   `,
 })
 class HostComponent {}
@@ -99,5 +104,46 @@ describe('AthKpiTileComponent', () => {
     expect(card.querySelector('ath-kpi-tile .ath-kpi__value')!.textContent).toBe('42');
     expect(card.querySelector('.ath-kpi__delta')!.textContent).toBe('↑');
     expect(card.querySelector('.ath-kpi__note')!.textContent).toBe('sub');
+  });
+
+  describe('status tiles', () => {
+    const statusTiles = () =>
+      Array.from(
+        (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>(
+          'ath-kpi-strip.status ath-kpi-tile'
+        )
+      );
+
+    it('colours the figure from the --*-text tokens and draws the label dot', () => {
+      const [prog] = statusTiles();
+      const value = prog.querySelector<HTMLElement>('.ath-kpi__value')!;
+      expect(value.dataset['tone']).toBe('amber');
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--amber-text)';
+      prog.appendChild(probe);
+      expect(getComputedStyle(value).color).toBe(getComputedStyle(probe).color);
+      probe.remove();
+      const dot = prog.querySelector<HTMLElement>('.ath-kpi__label .ath-kpi__dot')!;
+      expect(getComputedStyle(dot).backgroundColor).toBe('rgb(1, 2, 3)');
+      expect(dot.getAttribute('aria-hidden')).toBe('true');
+      expect(prog.querySelector('.ath-kpi__label')!.textContent!.trim()).toBe('In progress');
+    });
+
+    it('lets alert win over a value tone', () => {
+      const [, overdue] = statusTiles();
+      const value = overdue.querySelector<HTMLElement>('.ath-kpi__value')!;
+      expect(value.dataset['tone']).toBeUndefined();
+      expect(value.classList).toContain('ath-kpi__value--alert');
+    });
+
+    it('projects content under the figure and drops the empty slot', () => {
+      const [prog, , progress] = statusTiles();
+      const extra = progress.querySelector<HTMLElement>('.ath-kpi__extra')!;
+      expect(extra.querySelector('.bar')!.textContent).toBe('bar');
+      expect(extra.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+        progress.querySelector('.ath-kpi__value')!.getBoundingClientRect().bottom
+      );
+      expect(getComputedStyle(prog.querySelector('.ath-kpi__extra')!).display).toBe('none');
+    });
   });
 });

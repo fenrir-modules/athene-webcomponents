@@ -198,3 +198,81 @@ describe('AthDialogComponent', () => {
     expect(host.closedCount).toBe(1);
   });
 });
+
+@Component({
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AthDialogComponent],
+  template: `
+    <button type="button" class="opener" (click)="open.set(true)">Open</button>
+    <ath-dialog
+      bare
+      [(open)]="open"
+      title="Ignored"
+      ariaLabel="Command palette"
+      (closed)="closedCount = closedCount + 1"
+    >
+      <div class="surface" style="width:300px;height:120px;margin:80px auto 0">
+        <input class="query" aria-label="Search" />
+      </div>
+    </ath-dialog>
+  `,
+})
+class BareDialogHostComponent {
+  readonly open = signal(false);
+  closedCount = 0;
+}
+
+describe('AthDialogComponent (bare)', () => {
+  let fixture: ComponentFixture<BareDialogHostComponent>;
+  let root: HTMLElement;
+  const q = <T extends HTMLElement = HTMLElement>(sel: string): T | null =>
+    root.querySelector<T>(sel);
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(BareDialogHostComponent);
+    root = fixture.nativeElement as HTMLElement;
+    fixture.detectChanges();
+    q('.opener')!.focus();
+    fixture.componentInstance.open.set(true);
+    fixture.detectChanges();
+  });
+
+  afterEach(() => fixture.destroy());
+
+  it('shows only the content, named by ariaLabel, as a modal over the viewport', () => {
+    const el = q<HTMLDialogElement>('dialog')!;
+    expect(el.matches(':modal')).toBeTrue();
+    expect(el.classList).toContain('ath-dialog--bare');
+    expect(el.getAttribute('aria-label')).toBe('Command palette');
+    expect(el.hasAttribute('aria-labelledby')).toBeFalse();
+    expect(q('.ath-dialog__header')).toBeNull();
+    expect(q('.ath-dialog__close')).toBeNull();
+    expect(q('.ath-dialog__footer')).toBeNull();
+    const r = el.getBoundingClientRect();
+    expect(Math.round(r.width)).toBe(document.documentElement.clientWidth);
+    expect(document.activeElement).toBe(q('.query'));
+  });
+
+  it('treats a press on the layer around the content as a backdrop press', () => {
+    const el = q<HTMLDialogElement>('dialog')!;
+    const surface = q('.surface')!;
+    surface.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+    surface.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.closedCount).toBe(0);
+
+    el.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: 5, clientY: 5 }));
+    el.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: 5, clientY: 5 }));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.closedCount).toBe(1);
+    expect(q('dialog')).toBeNull();
+    expect(document.activeElement).toBe(q('.opener'));
+  });
+
+  it('closes on Escape like any dialog', () => {
+    q('dialog')!.dispatchEvent(new Event('cancel', { cancelable: true }));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.closedCount).toBe(1);
+  });
+});

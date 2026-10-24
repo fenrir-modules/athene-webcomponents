@@ -1,4 +1,4 @@
-import { InjectionToken } from '@angular/core';
+import type { AthDateContext } from '@athene/webcomponents/core';
 
 /**
  * Due dates as the product shows them: pure functions, no Angular, so the
@@ -15,30 +15,13 @@ export type DueTone = 'overdue' | 'today' | 'soon' | 'later' | 'done';
 /** Where a due date comes from: the ticket's own, or its sprint's end. */
 export type DueSource = 'own' | 'sprint';
 
-/** Short-date order: the locale's own, or one the reader chose. */
-export type DueDateFormat = 'auto' | 'dmy' | 'mdy' | 'iso';
-
-/** The reader's date settings. All optional; missing = the browser's. */
-export interface AthDateContext {
-  /** BCP-47 tag for month names (`auto` format). */
-  locale?: string;
-  /** IANA zone "today" is computed in. */
-  timeZone?: string;
-  dateFormat?: DueDateFormat;
-}
-
-/**
- * The app's date settings for every `ath-due-label`, provided once at the
- * root. A function, so a provider that reads signals (language, the
- * reader's preferences) keeps the labels current.
- *
- * @example
- * { provide: ATH_DATE_CONTEXT, useFactory: () => {
- *     const prefs = inject(UserPreferencesService);
- *     return () => ({ locale: prefs.locale(), timeZone: prefs.timeZone(), dateFormat: prefs.dateFormat() });
- * } }
- */
-export const ATH_DATE_CONTEXT = new InjectionToken<() => AthDateContext>('ATH_DATE_CONTEXT');
+// The reader's date settings and their token live in the light core entry
+// point, so an app provides them at its root without loading the components.
+export {
+  ATH_DATE_CONTEXT,
+  type AthDateContext,
+  type DueDateFormat,
+} from '@athene/webcomponents/core';
 
 /** Label templates the compact text is built from (`{count}` placeholder). */
 export interface DueTextLabels {

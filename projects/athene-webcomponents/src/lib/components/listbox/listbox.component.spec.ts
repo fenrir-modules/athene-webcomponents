@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AthListboxComponent, type ListboxOption } from './listbox.component';
 import { AthOptionPickerComponent } from './option-picker.component';
@@ -212,6 +212,76 @@ describe('AthListboxComponent', () => {
     expect(activeLabel()).toBe('Option 299');
     press('PageUp', list);
     expect(activeLabel()).toBe('Option 289');
+  });
+});
+
+@Component({
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AthListboxComponent],
+  template: `
+    <textarea
+      class="box"
+      aria-label="Comment"
+      [attr.aria-activedescendant]="list.activeId()"
+      (keydown)="list.handleKeydown($event)"
+    ></textarea>
+    <ath-listbox
+      #list
+      [options]="people"
+      autoActivate
+      ariaLabel="People"
+      (picked)="picked.push($event.value)"
+    />
+  `,
+})
+class OutsideFieldHostComponent {
+  readonly people: ListboxOption[] = [
+    { value: 'ana', label: 'Ana' },
+    { value: 'ben', label: 'Ben', disabled: true },
+    { value: 'cy', label: 'Cy' },
+  ];
+  readonly picked: string[] = [];
+  readonly list = viewChild.required<AthListboxComponent>('list');
+}
+
+describe('AthListboxComponent driven from an outside field', () => {
+  it('takes arrows and Enter from the field, which keeps focus', () => {
+    const fixture = TestBed.createComponent(OutsideFieldHostComponent);
+    const root = fixture.nativeElement as HTMLElement;
+    document.body.appendChild(root);
+    fixture.detectChanges();
+    const box = root.querySelector<HTMLTextAreaElement>('.box')!;
+    box.focus();
+    const label = (): string =>
+      document
+        .getElementById(box.getAttribute('aria-activedescendant') ?? '')
+        ?.textContent?.trim() ?? '';
+    // autoActivate: the first option is ready for Enter.
+    expect(label()).toBe('Ana');
+
+    const down = new KeyboardEvent('keydown', {
+      key: 'ArrowDown',
+      bubbles: true,
+      cancelable: true,
+    });
+    box.dispatchEvent(down);
+    fixture.detectChanges();
+    expect(down.defaultPrevented).toBeTrue();
+    expect(label()).toBe('Cy');
+
+    const letter = new KeyboardEvent('keydown', { key: 'x', bubbles: true, cancelable: true });
+    fixture.componentInstance.list().handleKeydown(letter);
+    expect(letter.defaultPrevented).toBeFalse();
+
+    const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+    box.dispatchEvent(enter);
+    fixture.detectChanges();
+    expect(enter.defaultPrevented).toBeTrue();
+    expect(fixture.componentInstance.picked).toEqual(['cy']);
+    expect(document.activeElement).toBe(box);
+    fixture.destroy();
+    root.remove();
   });
 });
 

@@ -41,6 +41,29 @@ export const Tones: Story = {
   }),
 };
 
+/**
+ * Counts per status, as on a project's overview: the figure in the status
+ * colour (`valueTone`, from the `--*-text` tokens), a status dot before the
+ * label, and a progress bar projected under the figure.
+ */
+export const StatusCounts: Story = {
+  render: () => ({
+    template: `
+      <ath-kpi-strip [columns]="4">
+        <ath-kpi-tile label="Open" [value]="5" dot="var(--red)" />
+        <ath-kpi-tile label="In progress" [value]="3" valueTone="amber" dot="var(--amber)" />
+        <ath-kpi-tile label="In review" [value]="1" valueTone="blue" dot="var(--blue)" />
+        <ath-kpi-tile label="Progress" value="62%">
+          <span role="progressbar" aria-label="62% done" aria-valuemin="0" aria-valuemax="100" aria-valuenow="62"
+            style="display:flex;height:4px;overflow:hidden;border-radius:999px;background:var(--bg-2)">
+            <span style="width:62%;background:var(--green)"></span>
+          </span>
+        </ath-kpi-tile>
+      </ath-kpi-strip>
+    `,
+  }),
+};
+
 export const MutedAndEmpty: Story = {
   render: () => ({
     template: `

@@ -21,6 +21,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import {
   AthFloatingDirective,
   resolveAnchor,
+  resolveFloatingTarget,
   type FloatingAnchor,
 } from '../floating/floating.directive';
 import type { FloatingAlign, FloatingSide } from '../floating/floating';
@@ -88,7 +89,11 @@ export class AthPopoverComponent implements OnChanges, OnDestroy {
 
   /** Whether the panel is shown. Two-way: `[(open)]`. */
   readonly open = model(false);
-  /** The element the panel hangs from. A trigger directive sets it on its own. */
+  /**
+   * The element the panel hangs from (a trigger directive sets it on its
+   * own), or a `FloatingVirtualAnchor` such as the spot the pointer rests on;
+   * its `contextElement` then counts as the trigger.
+   */
   readonly anchor = input<FloatingAnchor>(null);
   readonly size = input<PopoverSize>('md');
   readonly padding = input<PopoverPadding>('md');
@@ -128,6 +133,11 @@ export class AthPopoverComponent implements OnChanges, OnDestroy {
 
   /** The element the panel currently hangs from. */
   readonly anchorElement = computed(() => resolveAnchor(this.anchor()) ?? this.triggerAnchor());
+
+  /** What the panel is placed against: the anchor input (element or virtual) or the trigger. */
+  protected readonly floatTarget = computed(
+    () => resolveFloatingTarget(this.anchor()) ?? this.triggerAnchor()
+  );
 
   protected readonly panelClasses = computed(() =>
     [

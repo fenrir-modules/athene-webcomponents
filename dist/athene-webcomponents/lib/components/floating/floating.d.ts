@@ -1,5 +1,28 @@
-/** Which edge of the anchor a floating panel lines up with (`start` follows `dir`). */
-export type FloatingAlign = 'start' | 'end' | 'auto';
+/**
+ * Which edge of the anchor a floating panel lines up with (`start` follows
+ * `dir`); `center` centres the panel on the anchor (a toolbar over a text
+ * selection).
+ */
+export type FloatingAlign = 'start' | 'end' | 'auto' | 'center';
+/**
+ * A rectangle to hang a panel from instead of an element: a caret, a text
+ * selection, the spot the pointer rests on. `getBoundingClientRect()` is read
+ * on every placement, so a live rectangle keeps the panel in place while
+ * things scroll.
+ */
+export interface FloatingVirtualAnchor {
+    getBoundingClientRect(): DOMRect | DOMRectReadOnly;
+    /**
+     * The element the rectangle belongs to (the editor, the row): its size
+     * changes re-place the panel, its `dir` decides `start`/`end`, and its
+     * removal from the document stops placing.
+     */
+    readonly contextElement?: Element | null;
+}
+/** What `floatPanel` can hang a panel from. */
+export type FloatingTarget = Element | FloatingVirtualAnchor;
+/** Whether `target` is a virtual anchor rather than an element. */
+export declare function isVirtualAnchor(target: unknown): target is FloatingVirtualAnchor;
 /** The side of the anchor a panel prefers; it flips when the other side has more room. */
 export type FloatingSide = 'bottom' | 'top';
 export interface FloatingOptions {
@@ -31,7 +54,8 @@ export interface FloatingCleanup {
  * The one positioning engine of the library (menus, listboxes, popovers,
  * pickers; the `athFloating` directive wraps it).
  *
- * Pins `panel` to `anchor` and keeps it inside the viewport: on the preferred
+ * Pins `panel` to `anchor` (an element, or a `FloatingVirtualAnchor` such as
+ * a caret rectangle) and keeps it inside the viewport: on the preferred
  * side when it fits, on the other side when that has more room, shifted
  * sideways to stay on screen, height-capped (scrolling inside) when neither
  * side has room for all of it. Follows scrolls in any container, viewport
@@ -44,7 +68,7 @@ export interface FloatingCleanup {
  *
  * Writes `data-placement="bottom|top"` on the panel for side-dependent styles.
  */
-export declare function floatPanel(panel: HTMLElement, anchor: HTMLElement, options?: FloatingOptions): FloatingCleanup;
+export declare function floatPanel(panel: HTMLElement, anchor: FloatingTarget, options?: FloatingOptions): FloatingCleanup;
 /** Whether this browser has the Popover API (top layer for non-modal panels). */
 export declare function supportsTopLayer(): boolean;
 /** @internal Installs the reset once; used by `floatPanel` and `AthOverlayStack`. */

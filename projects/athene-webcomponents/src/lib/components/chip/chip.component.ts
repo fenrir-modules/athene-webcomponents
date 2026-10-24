@@ -23,6 +23,13 @@ export type ChipVariant = 'default' | 'primary' | 'success' | 'warning' | 'error
 export type ChipKind = 'tag' | 'label' | 'epic' | 'type' | 'status' | 'count';
 
 /**
+ * Outline of a `tag` chip: `pill` (default, round ends) or `square`, the
+ * plain grey tag of dense ticket rows and board cards (references 05/06):
+ * small radius, `--bg-2`, a faint border, no dot.
+ */
+export type ChipShape = 'pill' | 'square';
+
+/**
  * Athene Chip
  *
  * The library takes colour and words; resolving a label's, epic's or
@@ -30,6 +37,7 @@ export type ChipKind = 'tag' | 'label' | 'epic' | 'type' | 'status' | 'count';
  *
  * @example
  * <ath-chip>authentication</ath-chip>
+ * <ath-chip shape="square">backend</ath-chip>
  * <ath-chip kind="label" [color]="label.color">{{ label.name }}</ath-chip>
  * <ath-chip kind="epic" [color]="'var(--purple)'" [tooltip]="epic.title">{{ epic.title }}</ath-chip>
  * <ath-chip kind="type" [icon]="bugIcon" color="var(--red)" [tooltip]="'Bug'" />
@@ -51,6 +59,8 @@ export class AthChipComponent {
   readonly kind = input<ChipKind>('tag');
   /** Tone of a `tag` or `status` chip. */
   readonly variant = input<ChipVariant>('default');
+  /** Outline of a `tag` chip; `square` is the plain grey tag of dense rows. */
+  readonly shape = input<ChipShape>('pill');
   /** Any CSS colour: the label dot, the epic glyph, the type square, the status dot. */
   readonly color = input<string | null | undefined>(null);
   /** Glyph for `epic` (default bolt), `type` (required) and `status` (instead of the dot). */

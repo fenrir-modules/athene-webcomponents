@@ -12,6 +12,7 @@ import {
   input,
   output,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { LucideAngularModule, X } from 'lucide-angular';
 import { injectAthLabels } from '../../i18n/label-utils';
 import { AthOverlayStack, type AthOverlayEntry } from '../floating/overlay-stack';
@@ -43,6 +44,13 @@ let nextDialogId = 0;
  * an element with `autofocus`, else the first control in the body/footer,
  * else the close button.
  *
+ * `bare`: no header, footer, close button or surface. The dialog is a
+ * transparent layer over the viewport and the content draws and places its
+ * own surface (a palette at the top, a bottom sheet, a composer with its own
+ * head); a click on the layer around it counts as a backdrop click. Top
+ * layer, inert page, scrim, focus trap, Escape and focus return stay. Name it
+ * with `ariaLabel`.
+ *
  * @example
  * <ath-dialog [(open)]="isOpen" title="Create item" (closed)="onClose()">
  *   <p>Dialog content here</p>
@@ -55,7 +63,7 @@ let nextDialogId = 0;
 @Component({
   selector: 'ath-dialog',
   standalone: true,
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dialog.component.html',
   styleUrl: './dialog.component.scss',
@@ -91,6 +99,12 @@ export class AthDialogComponent implements OnChanges, OnDestroy {
   readonly ariaLabel = input<string | null>(null);
   /** `alertdialog` for confirmations that interrupt. */
   readonly role = input<'dialog' | 'alertdialog'>('dialog');
+  /**
+   * Only the content, on a transparent full-viewport layer: the content is
+   * the surface and places itself (see the class comment). `title`,
+   * `description`, `size` and `showClose` do not apply.
+   */
+  readonly bare = input(false, { transform: booleanAttribute });
 
   /** The user asked to close (✕, Escape, backdrop). */
   readonly closed = output<void>();
@@ -175,10 +189,15 @@ export class AthDialogComponent implements OnChanges, OnDestroy {
     this.openChange.emit(false);
   }
 
-  /** A press on the `::backdrop`: it targets the dialog, outside its box. */
+  /**
+   * A press on the `::backdrop`: it targets the dialog, outside its box. In
+   * `bare` mode the dialog is the transparent layer around the content, so
+   * any press on the dialog element itself is one.
+   */
   private isBackdropEvent(event: MouseEvent): boolean {
     const el = this.dialogEl;
     if (!el || event.target !== el) return false;
+    if (this.bare()) return true;
     const r = el.getBoundingClientRect();
     return (
       event.clientX < r.left ||
@@ -206,7 +225,9 @@ export class AthDialogComponent implements OnChanges, OnDestroy {
   private focusInitial(el: HTMLDialogElement): void {
     const auto = el.querySelector<HTMLElement>('[autofocus]');
     if (auto && focusSafely(auto)) return;
-    const parts = el.querySelectorAll<HTMLElement>('.ath-dialog__body, .ath-dialog__footer');
+    const parts = el.querySelectorAll<HTMLElement>(
+      '.ath-dialog__bare, .ath-dialog__body, .ath-dialog__footer'
+    );
     for (const part of Array.from(parts)) {
       const first = tabbables(part)[0];
       if (first && focusSafely(first)) return;

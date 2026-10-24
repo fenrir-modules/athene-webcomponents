@@ -76,6 +76,25 @@ export const Confirm: Story = {
   }),
 };
 
+/**
+ * `bare`: the content is the surface and places itself (here a palette at
+ * the top); the dialog keeps the scrim, the focus trap, Escape and the
+ * backdrop click on the layer around it.
+ */
+export const Bare: Story = {
+  render: () => ({
+    props: { open: true },
+    template: `
+      <ath-dialog [(open)]="open" bare ariaLabel="Command palette">
+        <div style="width:min(560px, calc(100% - 32px));margin:12vh auto 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-3);overflow:hidden">
+          <input aria-label="Search commands" placeholder="Type a command" style="box-sizing:border-box;width:100%;padding:12px 16px;font:inherit;border:0;border-bottom:1px solid var(--border);background:transparent;color:var(--fg)" />
+          <p style="margin:0;padding:12px 16px;color:var(--fg-3)">Recent: Open settings</p>
+        </div>
+      </ath-dialog>
+    `,
+  }),
+};
+
 /** Closed: only the opener button. */
 export const Closed: Story = {
   parameters: { visual: { mode: 'content' } },

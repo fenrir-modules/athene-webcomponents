@@ -5,10 +5,19 @@
       [routerLink]="routerLink()"
       [queryParams]="linkParams()"
       [attr.aria-label]="linkLabel() ?? label()"
-      >{{ label() }}</a
+    >
+      @if (dot()) {
+        <span class="ath-kpi__dot" [style.background]="dot()" aria-hidden="true"></span>
+      }
+      {{ label() }}</a
     >
   } @else {
-    <span class="ath-kpi__label">{{ label() }}</span>
+    <span class="ath-kpi__label">
+      @if (dot()) {
+        <span class="ath-kpi__dot" [style.background]="dot()" aria-hidden="true"></span>
+      }
+      {{ label() }}</span
+    >
   }
   @if (delta() !== null && delta() !== undefined) {
     <span
@@ -24,6 +33,7 @@
 <div class="ath-kpi__bottom">
   <span
     class="ath-kpi__value"
+    [attr.data-tone]="figureTone()"
     [class.ath-kpi__value--alert]="alert()"
     [class.ath-kpi__value--muted]="muted()"
     >{{ value() }}</span
@@ -37,3 +47,6 @@
     <span class="ath-kpi__spark-slot" aria-hidden="true"></span>
   }
 </div>
+
+<!-- Under the figure: a progress bar or a short line; nothing when empty. -->
+<div class="ath-kpi__extra"><ng-content /></div>

@@ -12,11 +12,12 @@ const meta: Meta<AthChipComponent> = {
       control: 'select',
       options: ['default', 'primary', 'success', 'warning', 'error', 'info'],
     },
+    shape: { control: 'select', options: ['pill', 'square'] },
   },
-  args: { kind: 'tag', variant: 'default', removable: false },
+  args: { kind: 'tag', variant: 'default', shape: 'pill', removable: false },
   render: (args) => ({
     props: args,
-    template: `<ath-chip [kind]="kind" [variant]="variant" [removable]="removable">authentication</ath-chip>`,
+    template: `<ath-chip [kind]="kind" [variant]="variant" [shape]="shape" [removable]="removable">authentication</ath-chip>`,
   }),
 };
 
@@ -32,6 +33,23 @@ export const Tags: Story = {
     template: `
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         @for (v of variants; track v) { <ath-chip [variant]="v">{{ v }}</ath-chip> }
+      </div>
+    `,
+  }),
+};
+
+/**
+ * `shape="square"`: the plain grey tag of dense ticket rows and board cards
+ * (references 05/06), next to the default pill.
+ */
+export const SquareTags: Story = {
+  render: () => ({
+    template: `
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <ath-chip>pill</ath-chip>
+        <ath-chip shape="square">backend</ath-chip>
+        <ath-chip shape="square">bug</ath-chip>
+        <ath-chip kind="count" [count]="2" tooltip="api, design" />
       </div>
     `,
   }),
