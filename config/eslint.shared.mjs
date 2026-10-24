@@ -44,6 +44,118 @@ export const RESTRICTED_SYNTAX = {
 };
 
 /**
+ * `athene/no-instant-in-computed` (FE-08, ADR 1.9a rule 6): a `computed()`
+ * that calls `translate.instant(…)` reads no signal for the language, so its
+ * label stays in the old language after a switch. Use `t()` from
+ * `injectT()` (@core/i18n), which tracks the loaded language.
+ *
+ * Reports `<x>.instant(…)` anywhere inside a `computed(…)` argument, and
+ * calls to `this.<method>(…)` there when that method of the same class
+ * calls `.instant(…)` itself (the `private t(key) { return
+ * this.translate.instant(key) }` wrappers the pages use).
+ */
+const isComputedCall = (node) =>
+  node.type === 'CallExpression' && node.callee.type === 'Identifier' && node.callee.name === 'computed';
+
+const isInstantCall = (node) =>
+  node.type === 'CallExpression' &&
+  node.callee.type === 'MemberExpression' &&
+  !node.callee.computed &&
+  node.callee.property.type === 'Identifier' &&
+  node.callee.property.name === 'instant';
+
+/** Whether `.instant(` is called anywhere below `node` (own AST walk; `parent` links skipped). */
+function callsInstant(node) {
+  if (!node || typeof node.type !== 'string') return false;
+  if (isInstantCall(node)) return true;
+  for (const key of Object.keys(node)) {
+    if (key === 'parent' || key === 'loc' || key === 'range' || key === 'tokens' || key === 'comments') continue;
+    const child = node[key];
+    if (Array.isArray(child)) {
+      if (child.some((c) => c && typeof c === 'object' && callsInstant(c))) return true;
+    } else if (child && typeof child === 'object' && callsInstant(child)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+const noInstantInComputed = {
+  meta: {
+    type: 'problem',
+    docs: { description: 'Disallow translate.instant inside computed(); use t() from injectT().' },
+    schema: [],
+    messages: {
+      instant:
+        '`instant()` in computed() does not follow a language switch; use `t()` from injectT() (@core/i18n, FE-08).',
+      wrapper:
+        '`this.{{name}}()` calls translate.instant, which computed() does not track; use `t()` from injectT() (@core/i18n, FE-08).',
+    },
+  },
+  create(context) {
+    /** Per class: the names of its methods that call `.instant(`. */
+    const wrappers = [];
+    let depth = 0;
+    const methodName = (member) =>
+      member.key && member.key.type === 'Identifier' && !member.computed ? member.key.name : null;
+    return {
+      ClassBody(node) {
+        const names = new Set();
+        for (const member of node.body) {
+          const name = methodName(member);
+          if (!name) continue;
+          const fn =
+            member.type === 'MethodDefinition'
+              ? member.value
+              : member.type === 'PropertyDefinition' &&
+                  member.value &&
+                  (member.value.type === 'ArrowFunctionExpression' || member.value.type === 'FunctionExpression')
+                ? member.value
+                : null;
+          if (fn && callsInstant(fn.body)) names.add(name);
+        }
+        wrappers.push(names);
+      },
+      'ClassBody:exit'() {
+        wrappers.pop();
+      },
+      CallExpression(node) {
+        if (isComputedCall(node)) {
+          depth++;
+          return;
+        }
+        if (depth === 0) return;
+        if (isInstantCall(node)) {
+          context.report({ node: node.callee.property, messageId: 'instant' });
+          return;
+        }
+        const callee = node.callee;
+        const names = wrappers[wrappers.length - 1];
+        if (
+          names &&
+          callee.type === 'MemberExpression' &&
+          callee.object.type === 'ThisExpression' &&
+          !callee.computed &&
+          callee.property.type === 'Identifier' &&
+          names.has(callee.property.name)
+        ) {
+          context.report({ node: callee.property, messageId: 'wrapper', data: { name: callee.property.name } });
+        }
+      },
+      'CallExpression:exit'(node) {
+        if (isComputedCall(node)) depth--;
+      },
+    };
+  },
+};
+
+/** Athene's own lint rules. */
+export const athenePlugin = {
+  meta: { name: 'athene' },
+  rules: { 'no-instant-in-computed': noInstantInComputed },
+};
+
+/**
  * @param {object} o
  * @param {string} o.rootDir           directory of the calling eslint.config.mjs (import.meta.dirname)
  * @param {string} o.prefix            component/directive selector prefix ('ath' | 'app')
@@ -81,7 +193,7 @@ export function atheneEslint({
       languageOptions: {
         parserOptions: { projectService: true, tsconfigRootDir: rootDir },
       },
-      plugins: { boundaries },
+      plugins: { boundaries, athene: athenePlugin },
       settings: {
         'import/resolver': {
           typescript: { alwaysTryTypes: true, project: `${rootDir}/tsconfig.json` },
@@ -114,6 +226,9 @@ export function atheneEslint({
 
         // Import boundaries (FE-12). Default allow; the policies list what is forbidden.
         'boundaries/dependencies': ['error', { default: 'allow', policies }],
+
+        // Translations in computed() follow the language (FE-08).
+        'athene/no-instant-in-computed': 'error',
       },
     },
     ...restrictedSyntax.map(({ files: groupFiles, ignores: groupIgnores, use }) => ({
