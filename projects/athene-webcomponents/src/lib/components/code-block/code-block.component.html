@@ -13,21 +13,21 @@
         type="button"
         class="ath-code__copy"
         [class.ath-code__copy--copied]="copied()"
-        [attr.aria-label]="copied() ? 'Copied' : 'Copy code'"
+        [attr.aria-label]="copied() ? labels.copied() : labels.copyCode()"
         (click)="copy()"
       >
         @if (copied()) {
           <lucide-icon [img]="checkIcon" [size]="12" />
-          <span>Copied</span>
+          <span>{{ labels.copied() }}</span>
         } @else {
           <lucide-icon [img]="copyIcon" [size]="12" />
-          <span>Copy</span>
+          <span>{{ labels.copy() }}</span>
         }
       </button>
     }
   </div>
 }
-<pre class="ath-code__pre"><code class="ath-code__code"><!--
+<pre class="ath-code__pre" tabindex="0"><code class="ath-code__code"><!--
   -->@if (showLineNumbers) {<!--
     --><span class="ath-code__gutter" aria-hidden="true"><!--
       -->@for (line of lines; track $index) {<!--

@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
+  },
+  "exclude": ["../projects/**/*.spec.ts"],
+  "include": ["../projects/athene-webcomponents/src/**/*.stories.ts", "./preview.ts"]
+}

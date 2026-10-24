@@ -15,6 +15,8 @@ export type PaginationMode = 'numbered' | 'cursor';
  *   summary="Showing 1–30 of 412" (previous)="loadPrev()" (next)="loadNext()" />
  */
 export declare class AthPaginationComponent {
+    protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
+    protected pageLabel(page: number | string): string;
     mode: PaginationMode;
     private readonly _page;
     set page(v: number);

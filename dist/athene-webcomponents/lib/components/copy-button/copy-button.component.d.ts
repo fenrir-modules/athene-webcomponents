@@ -11,10 +11,11 @@ import * as i0 from "@angular/core";
  */
 export declare class AthCopyButtonComponent {
     private cdr;
+    protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     /** Value to copy to clipboard */
     value: string;
     /** Optional tooltip/label */
-    label: string;
+    label: string | null;
     protected copied: boolean;
     protected readonly copyIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     protected readonly checkIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;

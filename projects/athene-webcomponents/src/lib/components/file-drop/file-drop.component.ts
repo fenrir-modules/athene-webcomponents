@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Upload } from 'lucide-angular';
+import { injectAthLabels } from '../../i18n/labels';
 
 /**
  * Drag-and-drop file upload zone with click-to-browse fallback.
@@ -24,6 +25,8 @@ import { LucideAngularModule, Upload } from 'lucide-angular';
   styleUrl: './file-drop.component.scss',
 })
 export class AthFileDropComponent {
+  protected readonly labels = injectAthLabels();
+
   /** Filter for the file picker (e.g., `image/*,.pdf`). */
   @Input() accept: string | null = null;
 
@@ -35,7 +38,7 @@ export class AthFileDropComponent {
   @Input() disabled = false;
 
   /** Custom prompt text. Defaults to "Drop files or click to browse". */
-  @Input() prompt = 'Drop files or click to browse';
+  @Input() prompt: string | null = null;
 
   @Output() filesPicked = new EventEmitter<File[]>();
 

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, comput
 import { CommonModule } from '@angular/common';
 import { AthAvatarComponent } from '../avatar';
 import { AthComboboxComponent, ComboboxOption } from '../combobox';
+import { injectAthLabels } from '../../i18n/labels';
 
 export interface UserOption {
   id: string;
@@ -29,6 +30,8 @@ export interface UserOption {
   styleUrl: './user-picker.component.scss',
 })
 export class AthUserPickerComponent {
+  protected readonly labels = injectAthLabels();
+
   private readonly _users = signal<UserOption[]>([]);
 
   @Input()
@@ -40,8 +43,8 @@ export class AthUserPickerComponent {
   }
 
   @Input() value: string | null = null;
-  @Input() placeholder = 'Pick user';
-  @Input() searchPlaceholder = 'Search people';
+  @Input() placeholder: string | null = null;
+  @Input() searchPlaceholder: string | null = null;
   @Input() disabled = false;
   @Input() clearable = true;
   @Input() allowUnassigned = true;
@@ -71,6 +74,6 @@ export class AthUserPickerComponent {
   protected get triggerLabel(): string {
     const selected = this.selectedUser();
     if (selected) return selected.name;
-    return this.allowUnassigned ? this.placeholder : '—';
+    return this.allowUnassigned ? (this.placeholder ?? this.labels.userPickerPlaceholder()) : '—';
   }
 }

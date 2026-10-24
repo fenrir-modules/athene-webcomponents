@@ -1,0 +1,189 @@
+{
+  "reasons": {
+    "color-contrast": "Token level, not per component: status colours (--red, --green, --blue, the accent, a project colour) carry text on their own tints or on --bg-1 (2.8–4.4:1), and the dark danger button is white on #cc6b6b (3.6:1). The fix is the --amber-text pattern for every tone (--red-text, --green-text, --blue-text, accent text), tinted pairs in the tokens.config.json contrast gate, and a darker dark --red for fills; a design decision across app and lib, tracked as a follow-up to DS-16.",
+    "scrollable-region-focusable": "The sample content of these stories is plain text, so the scrolling dialog body / panel body has nothing focusable. Real dialogs and panels hold controls; Chromium (130+) and Firefox make such scrollers keyboard-focusable, Safari does not. Decide in the overlay work whether ath-dialog / ath-panel set tabindex=0 while they overflow."
+  },
+  "violations": {
+    "display-badge--variants": {
+      "light": {
+        "color-contrast": 8
+      },
+      "dark": {
+        "color-contrast": 2
+      }
+    },
+    "display-chip--kinds": {
+      "light": {
+        "color-contrast": 2
+      }
+    },
+    "display-chip--tags": {
+      "light": {
+        "color-contrast": 4
+      },
+      "dark": {
+        "color-contrast": 2
+      }
+    },
+    "display-due-label--german-labels": {
+      "light": {
+        "color-contrast": 2
+      }
+    },
+    "display-due-label--overdue": {
+      "light": {
+        "color-contrast": 1
+      }
+    },
+    "display-due-label--tones": {
+      "light": {
+        "color-contrast": 6
+      }
+    },
+    "display-kpi-tile--strip": {
+      "light": {
+        "color-contrast": 1
+      },
+      "dark": {
+        "color-contrast": 1
+      }
+    },
+    "display-kpi-tile--tones": {
+      "light": {
+        "color-contrast": 5
+      }
+    },
+    "display-priority--all": {
+      "light": {
+        "color-contrast": 1
+      }
+    },
+    "display-project-key-badge--default": {
+      "light": {
+        "color-contrast": 1
+      },
+      "dark": {
+        "color-contrast": 1
+      }
+    },
+    "display-project-key-badge--sizes": {
+      "light": {
+        "color-contrast": 3
+      },
+      "dark": {
+        "color-contrast": 3
+      }
+    },
+    "display-sla-bar--states": {
+      "light": {
+        "color-contrast": 8
+      }
+    },
+    "display-stat-card-deprecated--default": {
+      "light": {
+        "color-contrast": 1
+      }
+    },
+    "display-timeline--default": {
+      "light": {
+        "color-contrast": 1
+      }
+    },
+    "feedback-alert--banner": {
+      "light": {
+        "color-contrast": 3
+      }
+    },
+    "feedback-alert--default": {
+      "light": {
+        "color-contrast": 2
+      },
+      "dark": {
+        "color-contrast": 2
+      }
+    },
+    "feedback-alert--error-with-retry": {
+      "light": {
+        "color-contrast": 1
+      }
+    },
+    "feedback-alert--german-labels": {
+      "light": {
+        "color-contrast": 1
+      }
+    },
+    "feedback-alert--long-text": {
+      "light": {
+        "color-contrast": 2
+      }
+    },
+    "feedback-alert--right-to-left": {
+      "light": {
+        "color-contrast": 2
+      },
+      "dark": {
+        "color-contrast": 2
+      }
+    },
+    "feedback-alert--variants": {
+      "light": {
+        "color-contrast": 8
+      },
+      "dark": {
+        "color-contrast": 2
+      }
+    },
+    "forms-button--action-round-trip": {
+      "dark": {
+        "color-contrast": 1
+      }
+    },
+    "forms-button--variants": {
+      "dark": {
+        "color-contrast": 1
+      }
+    },
+    "forms-input--with-error": {
+      "light": {
+        "color-contrast": 1
+      }
+    },
+    "forms-segment--default": {
+      "dark": {
+        "color-contrast": 1
+      }
+    },
+    "forms-segment--small": {
+      "dark": {
+        "color-contrast": 1
+      }
+    },
+    "forms-select--with-error": {
+      "light": {
+        "color-contrast": 1
+      }
+    },
+    "forms-textarea--with-error": {
+      "light": {
+        "color-contrast": 1
+      }
+    },
+    "layout-page--fill": {
+      "light": {
+        "color-contrast": 1,
+        "scrollable-region-focusable": 1
+      },
+      "dark": {
+        "scrollable-region-focusable": 1
+      }
+    },
+    "overlays-dialog--long-content": {
+      "light": {
+        "scrollable-region-focusable": 1
+      },
+      "dark": {
+        "scrollable-region-focusable": 1
+      }
+    }
+  }
+}

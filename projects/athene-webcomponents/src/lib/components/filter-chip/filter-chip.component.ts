@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, ChevronDown, X } from 'lucide-angular';
+import { formatAthLabel, injectAthLabels } from '../../i18n/labels';
 
 /**
  * Filter pill in the style `Label Value ▾`: quiet grey fill, muted label,
@@ -21,6 +22,8 @@ import { LucideAngularModule, ChevronDown, X } from 'lucide-angular';
   styleUrl: './filter-chip.component.scss',
 })
 export class AthFilterChipComponent {
+  protected readonly labels = injectAthLabels();
+
   @Input({ required: true }) label!: string;
   @Input() value = '';
 
@@ -44,6 +47,10 @@ export class AthFilterChipComponent {
 
   @HostBinding('attr.data-disabled') get hostDisabled(): string | null {
     return this.disabled ? 'true' : null;
+  }
+
+  protected clearLabel(): string {
+    return formatAthLabel(this.labels.clearFilter(), { name: this.label });
   }
 
   onClick(): void {

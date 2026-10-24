@@ -13,6 +13,7 @@ export type SpinnerSize = 'sm' | 'md' | 'lg';
  * <ath-spinner size="lg" />
  */
 export declare class AthSpinnerComponent {
+    protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     /** Spinner size */
     size: SpinnerSize;
     get spinnerClasses(): string;

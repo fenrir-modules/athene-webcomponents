@@ -11,6 +11,7 @@ import * as i0 from "@angular/core";
  * <ath-code-block language="rust" [code]="snippet" [filename]="'main.rs'" />
  */
 export declare class AthCodeBlockComponent {
+    protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     code: string;
     language: string | null;
     /** Optional filename to display next to the language label. */

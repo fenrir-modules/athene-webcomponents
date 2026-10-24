@@ -31,27 +31,47 @@
             "polyfills": ["zone.js", "zone.js/testing"],
             "styles": ["projects/athene-webcomponents/src/lib/styles/main.scss"]
           }
-        }
-      }
-    },
-    "storybook-host": {
-      "projectType": "application",
-      "root": "projects/storybook-host",
-      "sourceRoot": "projects/storybook-host/src",
-      "prefix": "app",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:application",
+        },
+        "storybook": {
+          "builder": "@storybook/angular:start-storybook",
           "options": {
-            "outputPath": "dist/storybook-host",
-            "index": "projects/storybook-host/src/index.html",
-            "browser": "projects/storybook-host/src/main.ts",
-            "polyfills": ["zone.js"],
-            "tsConfig": "projects/storybook-host/tsconfig.app.json",
+            "browserTarget": "athene-webcomponents:build:development",
+            "configDir": ".storybook",
+            "tsConfig": ".storybook/tsconfig.json",
+            "compodoc": false,
             "styles": [
+              "node_modules/@fontsource/geist/300.css",
+              "node_modules/@fontsource/geist/400.css",
+              "node_modules/@fontsource/geist/500.css",
+              "node_modules/@fontsource/geist/600.css",
+              "node_modules/@fontsource/geist/700.css",
+              "node_modules/@fontsource/geist-mono/400.css",
+              "node_modules/@fontsource/geist-mono/500.css",
+              "node_modules/@fontsource/geist-mono/600.css",
               "projects/athene-webcomponents/src/lib/styles/main.scss"
             ],
-            "scripts": []
+            "port": 6006
+          }
+        },
+        "build-storybook": {
+          "builder": "@storybook/angular:build-storybook",
+          "options": {
+            "browserTarget": "athene-webcomponents:build:development",
+            "configDir": ".storybook",
+            "tsConfig": ".storybook/tsconfig.json",
+            "compodoc": false,
+            "styles": [
+              "node_modules/@fontsource/geist/300.css",
+              "node_modules/@fontsource/geist/400.css",
+              "node_modules/@fontsource/geist/500.css",
+              "node_modules/@fontsource/geist/600.css",
+              "node_modules/@fontsource/geist/700.css",
+              "node_modules/@fontsource/geist-mono/400.css",
+              "node_modules/@fontsource/geist-mono/500.css",
+              "node_modules/@fontsource/geist-mono/600.css",
+              "projects/athene-webcomponents/src/lib/styles/main.scss"
+            ],
+            "outputDir": "storybook-static"
           }
         }
       }

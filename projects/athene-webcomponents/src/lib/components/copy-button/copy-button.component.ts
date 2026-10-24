@@ -1,6 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Copy, Check } from 'lucide-angular';
+import { injectAthLabels } from '../../i18n/labels';
 
 /**
  * Athene Copy Button Component
@@ -20,11 +21,13 @@ import { LucideAngularModule, Copy, Check } from 'lucide-angular';
   styleUrl: './copy-button.component.scss',
 })
 export class AthCopyButtonComponent {
+  protected readonly labels = injectAthLabels();
+
   /** Value to copy to clipboard */
   @Input({ required: true }) value = '';
 
   /** Optional tooltip/label */
-  @Input() label = 'Copy';
+  @Input() label: string | null = null;
 
   protected copied = false;
   protected readonly copyIcon = Copy;

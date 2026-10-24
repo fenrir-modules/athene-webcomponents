@@ -13,7 +13,7 @@
     <button
       type="button"
       class="ath-banner__close"
-      aria-label="Dismiss"
+      [attr.aria-label]="labels.dismiss()"
       (click)="onDismiss()"
     >
       <lucide-icon [img]="closeIcon" [size]="14" />

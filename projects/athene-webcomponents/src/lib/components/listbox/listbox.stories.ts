@@ -1,28 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata } from '@storybook/angular';
+import { RTL_TEXT, STORY_ASSIGNEES } from '../../stories/story-data';
 import { AthListboxComponent, type ListboxOption } from './listbox.component';
-import { AthOptionPickerComponent } from './option-picker.component';
-
-const PEOPLE: ListboxOption[] = [
-  { value: 'me', label: 'Me', group: 'Shortcuts' },
-  { value: 'none', label: 'Unassigned', group: 'Shortcuts' },
-  { value: 'ada', label: 'Ada Lovelace', sublabel: 'ada@example.com' },
-  { value: 'alan', label: 'Alan Turing', sublabel: 'alan@example.com' },
-  { value: 'grace', label: 'Grace Hopper', sublabel: 'grace@example.com' },
-  { value: 'jurgen', label: 'Jürgen Müller', sublabel: 'jm@example.com', keywords: 'juergen' },
-  { value: 'linus', label: 'Linus Torvalds', disabled: true },
-];
 
 const MANY: ListboxOption[] = Array.from({ length: 300 }, (_, i) => ({
   value: `opt-${i}`,
   label: `Option ${i + 1}`,
 }));
 
+const frame = (inner: string) =>
+  `<div style="width:280px;border:1px solid var(--border);border-radius:var(--r-lg);padding:4px">${inner}</div>`;
+
 const meta: Meta<AthListboxComponent> = {
   title: 'Overlays/Listbox',
   component: AthListboxComponent,
-  tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [AthOptionPickerComponent] })],
 };
 
 export default meta;
@@ -31,17 +21,14 @@ type Story = StoryObj<AthListboxComponent>;
 /** Single select with search and groups (inline, no popup). */
 export const Single: Story = {
   render: () => ({
-    props: { options: PEOPLE, value: 'ada' },
-    template: `
-      <div style="width:280px;border:1px solid var(--border);border-radius:var(--r-lg);padding:4px">
-        <ath-listbox [options]="options" searchable [(value)]="value" ariaLabel="Assignee" />
-      </div>
-      <p>Value: {{ value }}</p>
-    `,
+    props: { options: STORY_ASSIGNEES, value: 'ada' },
+    template: frame(
+      `<ath-listbox [options]="options" searchable [(value)]="value" ariaLabel="Assignee" />`
+    ),
   }),
 };
 
-/** Multi select with checkmarks and a "create" row. */
+/** Multi select with check boxes and a "create" row for the typed query. */
 export const MultiCreate: Story = {
   render: () => ({
     props: {
@@ -51,41 +38,62 @@ export const MultiCreate: Story = {
         { value: 'backend', label: 'backend' },
       ],
       values: ['ui'],
-      created: '',
     },
-    template: `
-      <div style="width:280px;border:1px solid var(--border);border-radius:var(--r-lg);padding:4px">
-        <ath-listbox [options]="options" multiple searchable creatable [(values)]="values"
-                     ariaLabel="Labels" (create)="created = $event" />
-      </div>
-      <p>Values: {{ values.join(', ') }} · created: {{ created }}</p>
-    `,
+    template: frame(
+      `<ath-listbox [options]="options" multiple searchable creatable [(values)]="values" ariaLabel="Labels" />`
+    ),
   }),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.type(canvas.getByRole('combobox'), 'ba');
+  },
 };
 
 /** 300 options without a search field: typeahead, Home/End, PageUp/PageDown. */
 export const ManyOptions: Story = {
   render: () => ({
     props: { options: MANY, value: null },
-    template: `
-      <div style="width:240px;border:1px solid var(--border);border-radius:var(--r-lg);padding:4px">
-        <ath-listbox [options]="options" [(value)]="value" ariaLabel="Option" />
-      </div>
-    `,
+    template: frame(`<ath-listbox [options]="options" [(value)]="value" ariaLabel="Option" />`),
   }),
 };
 
-/** The option picker: popover + listbox behind a select-style trigger. */
-export const OptionPicker: Story = {
+export const Loading: Story = {
   render: () => ({
-    props: { options: PEOPLE, value: null, values: [] },
-    template: `
-      <div style="display:flex;gap:12px">
-        <ath-option-picker [options]="options" [(value)]="value" clearable ariaLabel="Assignee"
-                           placeholder="Assignee" matchWidth />
-        <ath-option-picker [options]="options" multiple [(values)]="values" ariaLabel="Watchers"
-                           placeholder="Watchers" />
-      </div>
-    `,
+    props: { options: [] },
+    template: frame(`<ath-listbox [options]="options" searchable loading ariaLabel="People" />`),
+  }),
+};
+
+export const NoMatches: Story = {
+  render: () => ({
+    props: { options: STORY_ASSIGNEES, query: 'zzz' },
+    template: frame(
+      `<ath-listbox [options]="options" searchable [(query)]="query" ariaLabel="Assignee" />`
+    ),
+  }),
+};
+
+export const RightToLeft: Story = {
+  globals: { dir: 'rtl' },
+  render: () => ({
+    props: {
+      options: [
+        { value: 'a', label: RTL_TEXT, sublabel: 'a@example.com' },
+        { value: 'b', label: 'سارة' },
+      ],
+      values: ['a'],
+    },
+    template: frame(
+      `<ath-listbox [options]="options" multiple searchable [(values)]="values" ariaLabel="الأشخاص" />`
+    ),
+  }),
+};
+
+export const GermanLabels: Story = {
+  globals: { labels: 'de' },
+  render: () => ({
+    props: { options: STORY_ASSIGNEES, query: 'zzz' },
+    template: frame(
+      `<ath-listbox [options]="options" searchable creatable [(query)]="query" ariaLabel="Zuständig" />`
+    ),
   }),
 };

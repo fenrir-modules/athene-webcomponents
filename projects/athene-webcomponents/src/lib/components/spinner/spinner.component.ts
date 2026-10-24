@@ -1,5 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { injectAthLabels } from '../../i18n/labels';
 
 /**
  * Spinner size variants
@@ -24,6 +25,8 @@ export type SpinnerSize = 'sm' | 'md' | 'lg';
   styleUrl: './spinner.component.scss',
 })
 export class AthSpinnerComponent {
+  protected readonly labels = injectAthLabels();
+
   /** Spinner size */
   @Input() size: SpinnerSize = 'md';
 

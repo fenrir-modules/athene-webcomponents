@@ -42,6 +42,34 @@ export interface AthLabels {
     pickerClear: () => string;
     /** Picker trigger with more than two selected; `{count}` is the number. */
     pickerSelected: () => string;
+    /** `ath-search-input` clear button. */
+    clearSearch: () => string;
+    /** `ath-filter-chip` clear button; `{name}` is the filter's label. */
+    clearFilter: () => string;
+    /** `ath-sidebar` toggle. */
+    sidebarExpand: () => string;
+    sidebarCollapse: () => string;
+    /** `ath-pagination`. `{page}` is the page number. */
+    pageFirst: () => string;
+    pagePrevious: () => string;
+    pageNext: () => string;
+    pageLast: () => string;
+    pageNumber: () => string;
+    /** Visible words of the cursor pagination. */
+    previous: () => string;
+    next: () => string;
+    /** `ath-copy-button`, `ath-code-block`. */
+    copy: () => string;
+    copied: () => string;
+    copyCode: () => string;
+    /** `ath-file-drop` default prompt. */
+    fileDropPrompt: () => string;
+    /** `ath-user-picker` defaults. */
+    userPickerPlaceholder: () => string;
+    userPickerSearch: () => string;
+    /** `ath-timeline-entry` internal marker (visible word, tooltip). */
+    internal: () => string;
+    internalNote: () => string;
 }
 export declare const ATH_DEFAULT_LABELS: AthLabels;
 export declare const ATH_LABELS: InjectionToken<Partial<AthLabels>>;

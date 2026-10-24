@@ -14,6 +14,7 @@ import * as i0 from "@angular/core";
  * </ath-file-drop>
  */
 export declare class AthFileDropComponent {
+    protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     /** Filter for the file picker (e.g., `image/*,.pdf`). */
     accept: string | null;
     multiple: boolean;
@@ -21,7 +22,7 @@ export declare class AthFileDropComponent {
     maxSizeMb: number;
     disabled: boolean;
     /** Custom prompt text. Defaults to "Drop files or click to browse". */
-    prompt: string;
+    prompt: string | null;
     filesPicked: EventEmitter<File[]>;
     /** Emits when files are rejected (size limit, wrong type). */
     rejected: EventEmitter<{

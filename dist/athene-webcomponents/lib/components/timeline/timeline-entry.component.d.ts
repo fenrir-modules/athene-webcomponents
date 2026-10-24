@@ -13,6 +13,7 @@ import * as i0 from "@angular/core";
  * </ath-timeline-entry>
  */
 export declare class AthTimelineEntryComponent {
+    protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     author: string;
     /** Defaults to `author` for initials/colors. Override if avatar should differ. */
     avatarName: string | null;

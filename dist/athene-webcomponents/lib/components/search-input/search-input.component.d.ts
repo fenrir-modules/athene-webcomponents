@@ -10,6 +10,7 @@ import * as i0 from "@angular/core";
  */
 export declare class AthSearchInputComponent implements OnDestroy {
     private cdr;
+    protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     /** Placeholder text */
     placeholder: string;
     /** Debounce time in ms */

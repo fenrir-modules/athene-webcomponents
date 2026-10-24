@@ -9,7 +9,7 @@
     <lucide-icon [img]="uploadIcon" [size]="20" />
   </span>
   <span class="ath-fdrop__prompt">
-    <ng-content>{{ prompt }}</ng-content>
+    <ng-content>{{ prompt ?? labels.fileDropPrompt() }}</ng-content>
   </span>
   @if (accept || maxSizeMb > 0) {
     <span class="ath-fdrop__hint">

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AthAvatarComponent } from '../avatar';
+import { injectAthLabels } from '../../i18n/labels';
 
 /**
  * A full timeline item (comment, note, change-with-content).
@@ -24,6 +25,8 @@ import { AthAvatarComponent } from '../avatar';
   styleUrl: './timeline-entry.component.scss',
 })
 export class AthTimelineEntryComponent {
+  protected readonly labels = injectAthLabels();
+
   @Input({ required: true }) author!: string;
 
   /** Defaults to `author` for initials/colors. Override if avatar should differ. */

@@ -1,31 +1,24 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
+import { LONG_TEXT, RTL_TEXT } from '../../stories/story-data';
 import { AthButtonComponent } from '../button/button.component';
+import { AthInputComponent } from '../input/input.component';
 import { AthOptionPickerComponent } from '../listbox/option-picker.component';
 import { AthDialogComponent } from './dialog.component';
 
 const meta: Meta<AthDialogComponent> = {
   title: 'Overlays/Dialog',
   component: AthDialogComponent,
-  tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [AthButtonComponent, AthOptionPickerComponent] })],
-  argTypes: {
-    size: { control: 'select', options: ['sm', 'md', 'lg', 'xl', 'full'] },
-    closeOnBackdrop: { control: 'boolean' },
-    closeOnEscape: { control: 'boolean' },
-  },
+  decorators: [
+    moduleMetadata({ imports: [AthButtonComponent, AthOptionPickerComponent, AthInputComponent] }),
+  ],
+  parameters: { visual: { mode: 'viewport' } },
+  argTypes: { size: { control: 'select', options: ['sm', 'md', 'lg', 'xl', 'full'] } },
   args: { size: 'md', closeOnBackdrop: true, closeOnEscape: true },
-};
-
-export default meta;
-type Story = StoryObj<AthDialogComponent>;
-
-/** Header / body / footer, with a picker inside: its panel floats above the dialog. */
-export const Default: Story = {
   render: (args) => ({
     props: {
       ...args,
-      open: false,
+      open: true,
       options: [
         { value: 'low', label: 'Low' },
         { value: 'high', label: 'High' },
@@ -35,13 +28,78 @@ export const Default: Story = {
       <ath-button (clicked)="open = true">Open dialog</ath-button>
       <ath-dialog [(open)]="open" title="Create ticket" description="Fields marked * are required"
                   [size]="size" [closeOnBackdrop]="closeOnBackdrop" [closeOnEscape]="closeOnEscape">
-        <label style="display:block;margin-bottom:8px">Title * <input autofocus /></label>
-        <ath-option-picker [options]="options" placeholder="Priority" ariaLabel="Priority" />
+        <ath-input label="Title" [required]="true" />
+        <div style="margin-top:12px"><ath-option-picker [options]="options" placeholder="Priority" ariaLabel="Priority" /></div>
         <div slot="footer">
           <ath-button variant="secondary" (clicked)="open = false">Cancel</ath-button>
           <ath-button (clicked)="open = false">Create</ath-button>
         </div>
       </ath-dialog>
     `,
+  }),
+};
+
+export default meta;
+type Story = StoryObj<AthDialogComponent>;
+
+/** Open on load: header, body with a picker (its panel floats above the dialog), footer. */
+export const Default: Story = {};
+
+export const Small: Story = { args: { size: 'sm' } };
+export const Large: Story = { args: { size: 'lg' } };
+
+/** A long body scrolls inside; header and footer stay. */
+export const LongContent: Story = {
+  render: () => ({
+    props: { open: true, paragraphs: Array.from({ length: 24 }, () => LONG_TEXT) },
+    template: `
+      <ath-dialog [(open)]="open" title="Terms" size="md">
+        @for (p of paragraphs; track $index) { <p>{{ p }}</p> }
+        <div slot="footer"><ath-button (clicked)="open = false">Accept</ath-button></div>
+      </ath-dialog>
+    `,
+  }),
+};
+
+/** `role="alertdialog"` for a destructive confirmation. */
+export const Confirm: Story = {
+  render: () => ({
+    props: { open: true },
+    template: `
+      <ath-dialog [(open)]="open" role="alertdialog" title="Delete ticket?" description="This cannot be undone." size="sm">
+        <div slot="footer">
+          <ath-button variant="secondary" (clicked)="open = false">Cancel</ath-button>
+          <ath-button variant="danger" (clicked)="open = false">Delete</ath-button>
+        </div>
+      </ath-dialog>
+    `,
+  }),
+};
+
+/** Closed: only the opener button. */
+export const Closed: Story = {
+  parameters: { visual: { mode: 'content' } },
+  render: () => ({
+    props: { open: false },
+    template: `
+      <ath-button (clicked)="open = true">Open dialog</ath-button>
+      <ath-dialog [(open)]="open" title="Hello"><p>Body</p></ath-dialog>
+    `,
+  }),
+};
+
+export const RightToLeft: Story = {
+  globals: { dir: 'rtl' },
+  render: () => ({
+    props: { open: true, text: RTL_TEXT },
+    template: `<ath-dialog [(open)]="open" [title]="text" [description]="text" size="sm"><p>{{ text }}</p></ath-dialog>`,
+  }),
+};
+
+export const GermanLabels: Story = {
+  globals: { labels: 'de' },
+  render: () => ({
+    props: { open: true },
+    template: `<ath-dialog [(open)]="open" title="Ticket bearbeiten" size="sm"><p>Der Schließen-Knopf heißt „Dialog schließen“.</p></ath-dialog>`,
   }),
 };

@@ -1,100 +1,84 @@
-import type { Meta, StoryObj } from '@storybook/angular';
 import { FormsModule } from '@angular/forms';
+import type { Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
+import { LONG_TEXT, RTL_TEXT } from '../../stories/story-data';
 import { AthInputComponent } from './input.component';
 
 const meta: Meta<AthInputComponent> = {
-  title: 'Components/Input',
+  title: 'Forms/Input',
   component: AthInputComponent,
-  tags: ['autodocs'],
-  decorators: [
-    moduleMetadata({
-      imports: [FormsModule],
-    }),
-  ],
+  decorators: [moduleMetadata({ imports: [FormsModule] })],
   argTypes: {
     type: {
       control: 'select',
       options: ['text', 'email', 'password', 'number', 'tel', 'url', 'search'],
     },
-    label: { control: 'text' },
-    placeholder: { control: 'text' },
-    error: { control: 'text' },
-    hint: { control: 'text' },
-    disabled: { control: 'boolean' },
-    required: { control: 'boolean' },
+    size: { control: 'select', options: ['sm', 'md'] },
   },
+  args: {
+    label: 'Email',
+    placeholder: 'name@example.com',
+    type: 'email',
+    size: 'md',
+    hint: '',
+    error: '',
+    disabled: false,
+    readonly: false,
+    required: false,
+  },
+  render: (args) => ({
+    props: { ...args, value: '' },
+    template: `
+      <div style="max-width:320px">
+        <ath-input [label]="label" [type]="type" [size]="size" [placeholder]="placeholder"
+          [hint]="hint" [error]="error" [disabled]="disabled" [readonly]="readonly"
+          [required]="required" [(ngModel)]="value" />
+      </div>
+    `,
+  }),
 };
 
 export default meta;
 type Story = StoryObj<AthInputComponent>;
 
-// Default
-export const Default: Story = {
-  args: {
-    label: 'Email',
-    placeholder: 'Enter your email',
-    type: 'email',
-  },
-};
+export const Default: Story = {};
 
-// With Hint
-export const WithHint: Story = {
-  args: {
-    label: 'Username',
-    placeholder: 'Enter username',
-    hint: 'Username must be 3-20 characters',
-  },
-};
+export const WithHint: Story = { args: { hint: 'We never share your address.' } };
 
-// With Error
-export const WithError: Story = {
-  args: {
-    label: 'Email',
-    placeholder: 'Enter your email',
-    type: 'email',
-    error: 'Please enter a valid email address',
-  },
-};
+export const WithError: Story = { args: { error: 'Enter a valid email address', required: true } };
 
-// Password
-export const Password: Story = {
-  args: {
-    label: 'Password',
-    placeholder: 'Enter your password',
-    type: 'password',
-  },
-};
+export const Disabled: Story = { args: { disabled: true } };
 
-// Required
-export const Required: Story = {
-  args: {
-    label: 'Email',
-    placeholder: 'Enter your email',
-    required: true,
-  },
-};
-
-// Disabled
-export const Disabled: Story = {
-  args: {
-    label: 'Email',
-    placeholder: 'Enter your email',
-    disabled: true,
-  },
-};
-
-// All States
-export const AllStates: Story = {
+export const Readonly: Story = {
   render: () => ({
+    props: { value: 'ada@example.com' },
+    template: `<div style="max-width:320px"><ath-input label="Email" [readonly]="true" [(ngModel)]="value" /></div>`,
+  }),
+};
+
+export const Password: Story = { args: { label: 'Password', type: 'password', placeholder: '' } };
+
+export const Small: Story = { args: { size: 'sm' } };
+
+export const LongText: Story = {
+  render: () => ({
+    props: { value: LONG_TEXT, label: LONG_TEXT },
     template: `
-      <div style="display: flex; flex-direction: column; gap: 24px; max-width: 400px;">
-        <ath-input label="Default" placeholder="Enter text" />
-        <ath-input label="With Hint" placeholder="Enter text" hint="This is a helpful hint" />
-        <ath-input label="With Error" placeholder="Enter text" error="This field is required" />
-        <ath-input label="Password" type="password" placeholder="Enter password" />
-        <ath-input label="Required" placeholder="Enter text" [required]="true" />
-        <ath-input label="Disabled" placeholder="Enter text" [disabled]="true" />
+      <div style="max-width:280px">
+        <ath-input [label]="label" [hint]="label" [(ngModel)]="value" />
+      </div>
+    `,
+  }),
+};
+
+export const RightToLeft: Story = {
+  globals: { dir: 'rtl' },
+  render: () => ({
+    props: { value: RTL_TEXT },
+    template: `
+      <div style="max-width:320px;display:grid;gap:12px">
+        <ath-input label="الاسم" [(ngModel)]="value" hint="${RTL_TEXT}" />
+        <ath-input label="كلمة المرور" type="password" />
       </div>
     `,
   }),

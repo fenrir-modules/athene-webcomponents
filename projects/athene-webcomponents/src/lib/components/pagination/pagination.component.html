@@ -3,7 +3,7 @@
     type="button"
     class="ath-page__btn ath-page__btn--nav"
     [disabled]="page <= 1"
-    [attr.aria-label]="'First page'"
+    [attr.aria-label]="labels.pageFirst()"
     (click)="goFirst()"
   >
     <lucide-icon [img]="firstIcon" [size]="14" />
@@ -12,7 +12,7 @@
     type="button"
     class="ath-page__btn ath-page__btn--nav"
     [disabled]="page <= 1"
-    [attr.aria-label]="'Previous page'"
+    [attr.aria-label]="labels.pagePrevious()"
     (click)="goPrev()"
   >
     <lucide-icon [img]="prevIcon" [size]="14" />
@@ -29,7 +29,7 @@
         class="ath-page__btn"
         [class.ath-page__btn--active]="item === page"
         [attr.aria-current]="item === page ? 'page' : null"
-        [attr.aria-label]="'Page ' + item"
+        [attr.aria-label]="pageLabel(item)"
         (click)="goTo(item)"
       >
         {{ item }}
@@ -41,7 +41,7 @@
     type="button"
     class="ath-page__btn ath-page__btn--nav"
     [disabled]="page >= totalPages"
-    [attr.aria-label]="'Next page'"
+    [attr.aria-label]="labels.pageNext()"
     (click)="goNext()"
   >
     <lucide-icon [img]="nextIcon" [size]="14" />
@@ -50,7 +50,7 @@
     type="button"
     class="ath-page__btn ath-page__btn--nav"
     [disabled]="page >= totalPages"
-    [attr.aria-label]="'Last page'"
+    [attr.aria-label]="labels.pageLast()"
     (click)="goLast()"
   >
     <lucide-icon [img]="lastIcon" [size]="14" />
@@ -63,7 +63,7 @@
     (click)="goPrev()"
   >
     <lucide-icon [img]="prevIcon" [size]="14" />
-    <span>Previous</span>
+    <span>{{ labels.previous() }}</span>
   </button>
   @if (summary) {
     <span class="ath-page__summary">{{ summary }}</span>
@@ -74,7 +74,7 @@
     [disabled]="!hasNext"
     (click)="goNext()"
   >
-    <span>Next</span>
+    <span>{{ labels.next() }}</span>
     <lucide-icon [img]="nextIcon" [size]="14" />
   </button>
 }

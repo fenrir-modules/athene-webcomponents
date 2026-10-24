@@ -3,11 +3,13 @@
 Athene's Angular component library: design tokens, global styles and the `ath-*` presentational primitives. No HTTP, no domain words. `athene-web` uses it through `npm run deps:sync`.
 
 ```sh
-npm run build:lib      # tokens:build, then ng build athene-webcomponents → dist/
-npm test               # Karma unit tests
-npm run test:tokens    # token pipeline tests (node --test)
-npm run lint           # tsc, a11y, tokens:check, Stylelint
-npm run storybook      # component catalogue on :6006
+npm run build:lib        # tokens:build, then ng build athene-webcomponents → dist/
+npm test                 # Karma unit tests
+npm run test:tokens      # token pipeline tests (node --test)
+npm run lint             # tsc, a11y, tokens:check, Stylelint
+npm run storybook        # component catalogue on :6006
+npm run build-storybook  # static catalogue → storybook-static/
+npm run test:storybook   # axe + screenshots over storybook-static/ (see "Component catalogue")
 ```
 
 ## Design tokens
@@ -298,3 +300,32 @@ A native `<dialog>` with `showModal()`: top layer, inert background, `::backdrop
 ### `ath-dropdown`, `ath-combobox` (presets)
 
 Same public API as before, now thin presets: `ath-dropdown` = `ath-menu` from a flat `items: DropdownItem[]` (new optional `shortcut`; `title` is the tooltip and, on disabled items, the accessible reason). The projected button is the menu button itself (one tab stop, ARIA on the button); plain text gets a `role="button"` wrapper. `ath-combobox` = single-select `ath-option-picker` (`options`, `[(value)]`, `placeholder`, `searchPlaceholder`, `disabled`, `clearable`, `loading`, `bare`, `optionTpl`, `queryChange`, `opened`, `closed`, `toggle()`, `openPanel()`, `close()`, `select()`). For anything richer use `ath-menu` or `ath-option-picker` directly.
+
+## Component catalogue (quality step 1.8)
+
+Storybook 10 with the Angular builder: the targets `athene-webcomponents:storybook` and `:build-storybook` in `angular.json` carry the global styles (Geist from `@fontsource`, `main.scss` with the tokens) and `.storybook/tsconfig.json`. The toolbar sets **Theme** (`data-theme`), **Accent** (`data-accent`), **Direction** (`dir`) and **Labels** (`ATH_LABELS` English defaults or German, `.storybook/labels.ts`) on `<html>` before the story renders, as the app's theme boot does.
+
+### Adding a story
+
+- One `<component>.stories.ts` next to the component; the title is `Group/Name` (`Forms`, `Display`, `Feedback`, `Layout`, `Overlays`).
+- Write a `render` template. Angular 18 does not expose signal inputs to Storybook's automatic template, so `args` alone do not reach `input()` members.
+- Cover the states that matter: default, disabled, error, empty/loading, long text (`LONG_TEXT`), and RTL (`globals: { dir: 'rtl' }`, `RTL_TEXT`) or German labels (`globals: { labels: 'de' }`) where the component has words or direction. Shared samples are in `src/lib/stories/story-data.ts`; dates are relative to `STORY_NOW` and passed as `[now]`, so screenshots do not age.
+- Open states (menus, pickers, popovers) come from a `play` function that opens the trigger with the keyboard, like a user would.
+- Opt-outs, each with a comment that says why: `tags: ['!visual']` (no screenshots, e.g. a story that waits on a timer), `parameters.visual: { mode: 'viewport' }` (whole viewport instead of the content box: modal dialogs, fixed toasts; `layout: 'fullscreen'` implies it), `parameters.a11y: { config: { rules: [{ id, enabled: false }] } }` for one rule, or `a11y: { test: 'todo' }` (warn only).
+
+### Checks (`tests/storybook/`)
+
+`npm run build-storybook && npm run test:storybook` runs Playwright against `storybook-static/`, one test per story (about 1 min locally, 6 workers):
+
+- **axe**: the story is loaded in light and in dark; `@storybook/addon-a11y` runs axe after render with the story's `parameters.a11y`, the same result as the Accessibility panel. A violation fails unless `a11y-baseline.json` lists it (story × theme × rule, failing node count). An entry that no longer occurs fails too, so the baseline only shrinks. Every baselined rule has a written reason under `reasons`.
+- **Screenshots**: light and dark × 375/768/1280 px, `toHaveScreenshot` against `__screenshots__/<platform>/<story-id>/<theme>-<width>.png`. The image is the content box (story root plus open overlays) at full width, after layout, focus and overlay positions have settled; animations are off and `prefers-reduced-motion` is set.
+- A render error, a failing `play` function or an uncaught page error fails the story. A baseline folder without a story fails too.
+
+`SB_A11Y=off` or `SB_VISUAL=off` runs one half only; `npx playwright test -c tests/storybook/playwright.config.ts --grep "Overlays/Menu"` runs a subset.
+
+### Updating baselines
+
+- **Screenshots** after an intended visual change: `npm run test:storybook:update` (rewrites the images of the stories that ran; add `--grep` to limit it), look at the changed PNGs in the diff, commit them with the change. Delete the folder of a removed or renamed story. Baselines are per platform; the committed set is `darwin`, and CI compares on a macOS runner. If the runner's rendering drifts from local macOS, run the CI workflow by hand with `update_baselines` and commit the uploaded artifact instead.
+- **axe**: fix the component where you can. To record what is left: add a reason for the rule under `reasons` in `a11y-baseline.json`, then `npm run test:storybook:a11y-baseline`, which rewrites `violations` from a full run. After a fix the same command shrinks the file; never grow it by hand.
+
+CI (`.github/workflows/ci.yml`): lint, token tests, unit tests and `build:lib` on Linux; Storybook build + axe on Linux; Storybook build + screenshots on macOS. `release.yml` packages only after these pass.

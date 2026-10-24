@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Info, AlertTriangle, AlertOctagon, CheckCircle2, X } from 'lucide-angular';
+import { injectAthLabels } from '../../i18n/labels';
 
 export type BannerTone = 'info' | 'warning' | 'danger' | 'success';
 
@@ -29,6 +30,8 @@ export type BannerTone = 'info' | 'warning' | 'danger' | 'success';
   styleUrl: './banner.component.scss',
 })
 export class AthBannerComponent {
+  protected readonly labels = injectAthLabels();
+
   @Input() tone: BannerTone = 'info';
   @Input() title: string | null = null;
   @Input() dismissible = false;

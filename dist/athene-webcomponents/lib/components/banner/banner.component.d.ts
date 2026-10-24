@@ -18,6 +18,7 @@ export type BannerTone = 'info' | 'warning' | 'danger' | 'success';
  * </ath-banner>
  */
 export declare class AthBannerComponent {
+    protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     tone: BannerTone;
     title: string | null;
     dismissible: boolean;

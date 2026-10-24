@@ -2,7 +2,7 @@
   type="button"
   class="ath-copy-button"
   [class.ath-copy-button--copied]="copied"
-  [attr.aria-label]="copied ? 'Copied' : label"
+  [attr.aria-label]="copied ? labels.copied() : (label ?? labels.copy())"
   (click)="copy()"
 >
   <lucide-icon [img]="copied ? checkIcon : copyIcon" [size]="16" />

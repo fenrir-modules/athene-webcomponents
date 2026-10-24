@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, PanelLeftClose, PanelLeft } from 'lucide-angular';
+import { injectAthLabels } from '../../i18n/labels';
 
 /**
  * Athene Sidebar Component
@@ -23,6 +24,8 @@ import { LucideAngularModule, PanelLeftClose, PanelLeft } from 'lucide-angular';
   styleUrl: './sidebar.component.scss',
 })
 export class AthSidebarComponent {
+  protected readonly labels = injectAthLabels();
+
   /** Collapsed state */
   @Input() collapsed = false;
 

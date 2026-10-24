@@ -13,6 +13,7 @@ import * as i0 from "@angular/core";
  * </ath-sidebar>
  */
 export declare class AthSidebarComponent {
+    protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     /** Collapsed state */
     collapsed: boolean;
     /** Collapsed change event */

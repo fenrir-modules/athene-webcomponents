@@ -11,6 +11,8 @@
   </div>
 }
 <div class="ath-sla__track" role="progressbar"
+     [attr.aria-label]="(resolution ?? response)?.label ?? null"
+     [attr.aria-valuetext]="(resolution ?? response)?.text ?? null"
      [attr.aria-valuenow]="progressPct" aria-valuemin="0" aria-valuemax="100">
   <div class="ath-sla__fill" [style.width.%]="progressPct"></div>
 </div>

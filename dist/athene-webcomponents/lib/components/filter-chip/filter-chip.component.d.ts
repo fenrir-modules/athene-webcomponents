@@ -11,6 +11,7 @@ import * as i0 from "@angular/core";
  *                  (clicked)="open()" (cleared)="reset()" />
  */
 export declare class AthFilterChipComponent {
+    protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     label: string;
     value: string;
     /** Visually highlights the chip when a filter value is set. */
@@ -24,6 +25,7 @@ export declare class AthFilterChipComponent {
     protected readonly clearIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     get hostActive(): string | null;
     get hostDisabled(): string | null;
+    protected clearLabel(): string;
     onClick(): void;
     onClear(event: MouseEvent): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthFilterChipComponent, never>;

@@ -12,7 +12,7 @@
     <button
       class="ath-sidebar__toggle"
       type="button"
-      [attr.aria-label]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+      [attr.aria-label]="collapsed ? labels.sidebarExpand() : labels.sidebarCollapse()"
       (click)="toggleCollapse()"
     >
       <lucide-icon [img]="collapsed ? expandIcon : collapseIcon" [size]="18" />

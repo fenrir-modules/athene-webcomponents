@@ -7,9 +7,18 @@
     "projects/**/*.stories.ts",
     ".storybook/*.ts",
     "scripts/**/*.mjs",
-    "config/*.mjs"
+    "config/*.mjs",
+    "tests/storybook/*.ts",
+    "tests/storybook/*.mjs"
   ],
-  "project": ["projects/**/*.ts", ".storybook/*.ts", "scripts/**/*.mjs", "config/*.mjs"],
-  "ignoreDependencies": ["@typescript-eslint/utils"],
+  "project": [
+    "projects/**/*.ts",
+    ".storybook/*.ts",
+    "scripts/**/*.mjs",
+    "config/*.mjs",
+    "tests/storybook/*.ts",
+    "tests/storybook/*.mjs"
+  ],
+  "ignoreDependencies": ["@typescript-eslint/utils", "@fontsource/geist", "@fontsource/geist-mono"],
   "ignore": ["dist/**", "storybook-static/**"]
 }

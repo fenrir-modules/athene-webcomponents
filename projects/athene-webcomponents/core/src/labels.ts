@@ -47,6 +47,35 @@ export interface AthLabels {
   pickerClear: () => string;
   /** Picker trigger with more than two selected; `{count}` is the number. */
   pickerSelected: () => string;
+  // Remaining fixed words of the lib (quality step 1.8a, DS-20).
+  /** `ath-search-input` clear button. */
+  clearSearch: () => string;
+  /** `ath-filter-chip` clear button; `{name}` is the filter's label. */
+  clearFilter: () => string;
+  /** `ath-sidebar` toggle. */
+  sidebarExpand: () => string;
+  sidebarCollapse: () => string;
+  /** `ath-pagination`. `{page}` is the page number. */
+  pageFirst: () => string;
+  pagePrevious: () => string;
+  pageNext: () => string;
+  pageLast: () => string;
+  pageNumber: () => string;
+  /** Visible words of the cursor pagination. */
+  previous: () => string;
+  next: () => string;
+  /** `ath-copy-button`, `ath-code-block`. */
+  copy: () => string;
+  copied: () => string;
+  copyCode: () => string;
+  /** `ath-file-drop` default prompt. */
+  fileDropPrompt: () => string;
+  /** `ath-user-picker` defaults. */
+  userPickerPlaceholder: () => string;
+  userPickerSearch: () => string;
+  /** `ath-timeline-entry` internal marker (visible word, tooltip). */
+  internal: () => string;
+  internalNote: () => string;
 }
 
 export const ATH_DEFAULT_LABELS: AthLabels = {
@@ -74,6 +103,25 @@ export const ATH_DEFAULT_LABELS: AthLabels = {
   pickerPlaceholder: () => 'Select…',
   pickerClear: () => 'Clear selection',
   pickerSelected: () => '{count} selected',
+  clearSearch: () => 'Clear search',
+  clearFilter: () => 'Clear {name} filter',
+  sidebarExpand: () => 'Expand sidebar',
+  sidebarCollapse: () => 'Collapse sidebar',
+  pageFirst: () => 'First page',
+  pagePrevious: () => 'Previous page',
+  pageNext: () => 'Next page',
+  pageLast: () => 'Last page',
+  pageNumber: () => 'Page {page}',
+  previous: () => 'Previous',
+  next: () => 'Next',
+  copy: () => 'Copy',
+  copied: () => 'Copied',
+  copyCode: () => 'Copy code',
+  fileDropPrompt: () => 'Drop files or click to browse',
+  userPickerPlaceholder: () => 'Pick user',
+  userPickerSearch: () => 'Search people',
+  internal: () => 'internal',
+  internalNote: () => 'Internal note',
 };
 
 export const ATH_LABELS = new InjectionToken<Partial<AthLabels>>('ATH_LABELS');

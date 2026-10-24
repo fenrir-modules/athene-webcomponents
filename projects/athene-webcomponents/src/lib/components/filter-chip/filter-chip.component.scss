@@ -9,7 +9,7 @@
   align-items: center;
   gap: 5px;
   height: 28px;
-  padding: 0 10px;
+  padding: 0;
   background: var(--bg-2);
   border: 1px solid transparent;
   border-radius: var(--r);
@@ -26,20 +26,49 @@
     box-shadow var(--t-fast);
   letter-spacing: -0.005em;
 
-  &:hover:not(:disabled) {
+  &:hover:not(:has(:disabled)) {
     background: var(--hover-strong);
     color: var(--fg);
   }
 
-  &:focus-visible {
-    outline: none;
+  &:has(.ath-fchip__main:focus-visible) {
     box-shadow: 0 0 0 3px var(--accent-ring);
     border-color: var(--accent);
   }
 
-  &:disabled {
+  &:has(.ath-fchip__main:disabled) {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+}
+
+// The open button fills the pill; the pill draws fill, edge and focus ring.
+.ath-fchip__main {
+  display: inline-flex;
+  align-items: center;
+  gap: inherit;
+  height: 100%;
+  padding: 0 10px;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  cursor: inherit;
+  white-space: inherit;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  // With the clear button next to it, the pill's end padding moves to that button.
+  &:not(:last-child) {
+    padding-inline-end: 0;
   }
 }
 
@@ -62,7 +91,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin: 0 -2px 0 2px;
+  margin-inline: 2px 8px;
   width: 16px;
   height: 16px;
   padding: 0;
@@ -92,6 +121,9 @@
 // Density-aware
 body.compact .ath-fchip {
   height: 22px;
-  padding: 0 7px;
   font-size: 11.5px;
+}
+
+body.compact .ath-fchip__main {
+  padding: 0 7px;
 }

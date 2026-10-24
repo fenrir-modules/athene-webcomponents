@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, MoreHorizontal } from 'lucide-angular';
+import { formatAthLabel, injectAthLabels } from '../../i18n/labels';
 
 export type PaginationMode = 'numbered' | 'cursor';
 
@@ -26,6 +27,12 @@ export type PaginationMode = 'numbered' | 'cursor';
   styleUrl: './pagination.component.scss',
 })
 export class AthPaginationComponent {
+  protected readonly labels = injectAthLabels();
+
+  protected pageLabel(page: number | string): string {
+    return formatAthLabel(this.labels.pageNumber(), { page });
+  }
+
   @Input() mode: PaginationMode = 'numbered';
 
   // --- Numbered mode ---

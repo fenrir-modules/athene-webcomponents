@@ -238,8 +238,10 @@
     align-items: center;
     gap: 6px;
 
+    // Invisible but still read: the label stays the button's accessible
+    // name while it is busy (visibility: hidden would remove it).
     &--hidden {
-      visibility: hidden;
+      opacity: 0;
     }
   }
 }

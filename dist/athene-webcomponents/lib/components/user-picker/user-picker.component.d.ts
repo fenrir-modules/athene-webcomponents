@@ -18,12 +18,13 @@ export interface UserOption {
  *   placeholder="Unassigned" />
  */
 export declare class AthUserPickerComponent {
+    protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     private readonly _users;
     set users(value: UserOption[] | null | undefined);
     get users(): UserOption[];
     value: string | null;
-    placeholder: string;
-    searchPlaceholder: string;
+    placeholder: string | null;
+    searchPlaceholder: string | null;
     disabled: boolean;
     clearable: boolean;
     allowUnassigned: boolean;

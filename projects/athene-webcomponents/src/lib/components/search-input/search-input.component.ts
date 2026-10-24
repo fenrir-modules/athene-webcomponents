@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Search, X } from 'lucide-angular';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { injectAthLabels } from '../../i18n/labels';
 
 /**
  * Athene Search Input Component
@@ -21,6 +22,8 @@ import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
   styleUrl: './search-input.component.scss',
 })
 export class AthSearchInputComponent implements OnDestroy {
+  protected readonly labels = injectAthLabels();
+
   /** Placeholder text */
   @Input() placeholder = 'Search...';
 

@@ -12,3 +12,5 @@ config/*.baseline.json
 projects/athene-webcomponents/src/lib/styles/_tokens.scss
 projects/athene-webcomponents/src/lib/styles/tokens.custom-properties.json
 projects/athene-webcomponents/src/lib/styles/tokens.inventory.json
+test-results/
+tests/storybook/__screenshots__/

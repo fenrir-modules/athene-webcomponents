@@ -162,7 +162,9 @@ test('custom-properties export lists every token', () => {
   const json = JSON.parse(Object.entries(real.files).find(([f]) => f.endsWith('tokens.custom-properties.json'))[1]);
   assert.equal(Object.keys(json.customProperties).length, real.built.baseTokens.length);
   for (const n of ['--focus-ring-shadow', '--focus-ring-color', '--amber-text', '--z-raised', '--bg-0']) assert.ok(n in json.customProperties, n);
-  for (const n of ['--scrim', '--bg', '--r-md', '--focus-ring']) assert.ok(!(n in json.customProperties), `${n} must stay undefined`);
+  // DS-14's undefined app tokens; --scrim has been a real token since step 1.6 (ath-dialog backdrop).
+  assert.ok('--scrim' in json.customProperties, '--scrim');
+  for (const n of ['--bg', '--r-md', '--focus-ring']) assert.ok(!(n in json.customProperties), `${n} must stay undefined`);
 });
 
 test('parity extract/diff', () => {

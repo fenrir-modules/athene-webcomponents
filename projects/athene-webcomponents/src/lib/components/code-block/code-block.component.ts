@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, HostBinding, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Check, Copy } from 'lucide-angular';
+import { injectAthLabels } from '../../i18n/labels';
 
 /**
  * Code block with optional language label + copy-to-clipboard button.
@@ -22,6 +23,8 @@ import { LucideAngularModule, Check, Copy } from 'lucide-angular';
   styleUrl: './code-block.component.scss',
 })
 export class AthCodeBlockComponent {
+  protected readonly labels = injectAthLabels();
+
   @Input({ required: true }) code = '';
   @Input() language: string | null = null;
 
