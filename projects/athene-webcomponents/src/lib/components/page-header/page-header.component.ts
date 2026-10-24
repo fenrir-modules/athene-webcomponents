@@ -1,5 +1,14 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  booleanAttribute,
+  computed,
+  input,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+/** Heading level of the page head's title. */
+export type PageHeaderLevel = 1 | 2;
 
 /**
  * The page head every app page uses: H1, one muted meta line, actions on
@@ -31,22 +40,22 @@ import { CommonModule } from '@angular/common';
 })
 export class AthPageHeaderComponent {
   /** Page title. */
-  @Input({ required: true }) title = '';
+  readonly title = input.required<string>();
 
   /** Multi-segment sub-row, rendered with bullet (•) separators. */
-  @Input() subItems: string[] = [];
+  readonly subItems = input<string[]>([]);
 
   /** Legacy free-form description (single paragraph). Falls back if subItems empty. */
-  @Input() description = '';
+  readonly description = input('');
 
   /** Hairline under the head. On by default: it is part of the contract. */
-  @Input() divider = true;
+  readonly divider = input(true, { transform: booleanAttribute });
 
   /**
    * Heading level of the title. 1 for a page; 2 for a section head inside a
    * page that already has its h1 (the settings sub-pages under "Settings").
    */
-  @Input() level: 1 | 2 = 1;
+  readonly level = input<PageHeaderLevel>(1);
 
   /**
    * The sub-items worth separating.
@@ -56,7 +65,7 @@ export class AthPageHeaderComponent {
    * blank segment still earned its bullet, leaving headers reading
    * "All open tickets ·" with nothing after the separator.
    */
-  protected get visibleSubItems(): string[] {
-    return this.subItems.filter((item) => item != null && item.trim() !== '');
-  }
+  protected readonly visibleSubItems = computed(() =>
+    this.subItems().filter((item) => item != null && item.trim() !== '')
+  );
 }

@@ -1,4 +1,3 @@
-import { EventEmitter } from '@angular/core';
 import * as i0 from "@angular/core";
 export type PaginationMode = 'numbered' | 'cursor';
 /**
@@ -17,20 +16,19 @@ export type PaginationMode = 'numbered' | 'cursor';
 export declare class AthPaginationComponent {
     protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     protected pageLabel(page: number | string): string;
-    mode: PaginationMode;
-    private readonly _page;
-    set page(v: number);
-    get page(): number;
-    totalPages: number;
+    readonly mode: import("@angular/core").InputSignal<PaginationMode>;
+    /** Current page (1-based); values below 1 count as 1. */
+    readonly page: import("@angular/core").InputSignalWithTransform<number, unknown>;
+    readonly totalPages: import("@angular/core").InputSignalWithTransform<number, unknown>;
     /** How many siblings of the current page to always show (default 1). */
-    siblingCount: number;
-    pageChange: EventEmitter<number>;
-    hasPrev: boolean;
-    hasNext: boolean;
+    readonly siblingCount: import("@angular/core").InputSignalWithTransform<number, unknown>;
+    readonly pageChange: import("@angular/core").OutputEmitterRef<number>;
+    readonly hasPrev: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+    readonly hasNext: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Caption shown between prev/next in cursor mode (e.g., "1–30 of 412"). */
-    summary: string;
-    previous: EventEmitter<void>;
-    next: EventEmitter<void>;
+    readonly summary: import("@angular/core").InputSignal<string>;
+    readonly previous: import("@angular/core").OutputEmitterRef<void>;
+    readonly next: import("@angular/core").OutputEmitterRef<void>;
     protected readonly prevIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     protected readonly nextIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     protected readonly firstIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
@@ -43,5 +41,5 @@ export declare class AthPaginationComponent {
     goFirst(): void;
     goLast(): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthPaginationComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthPaginationComponent, "ath-pagination", never, { "mode": { "alias": "mode"; "required": false; }; "page": { "alias": "page"; "required": false; }; "totalPages": { "alias": "totalPages"; "required": false; }; "siblingCount": { "alias": "siblingCount"; "required": false; }; "hasPrev": { "alias": "hasPrev"; "required": false; }; "hasNext": { "alias": "hasNext"; "required": false; }; "summary": { "alias": "summary"; "required": false; }; }, { "pageChange": "pageChange"; "previous": "previous"; "next": "next"; }, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthPaginationComponent, "ath-pagination", never, { "mode": { "alias": "mode"; "required": false; "isSignal": true; }; "page": { "alias": "page"; "required": false; "isSignal": true; }; "totalPages": { "alias": "totalPages"; "required": false; "isSignal": true; }; "siblingCount": { "alias": "siblingCount"; "required": false; "isSignal": true; }; "hasPrev": { "alias": "hasPrev"; "required": false; "isSignal": true; }; "hasNext": { "alias": "hasNext"; "required": false; "isSignal": true; }; "summary": { "alias": "summary"; "required": false; "isSignal": true; }; }, { "pageChange": "pageChange"; "previous": "previous"; "next": "next"; }, never, never, true, never>;
 }

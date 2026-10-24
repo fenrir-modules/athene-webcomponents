@@ -1,10 +1,10 @@
 <div class="ath-tabs" role="tablist">
-  @for (tab of tabs; track tab.id) {
+  @for (tab of tabs(); track tab.id) {
     <button
       type="button"
       role="tab"
       [class]="getTabClasses(tab)"
-      [attr.aria-selected]="tab.id === activeTab"
+      [attr.aria-selected]="tab.id === activeTab()"
       [disabled]="tab.disabled"
       (click)="selectTab(tab)"
     >

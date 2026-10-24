@@ -1,18 +1,18 @@
-<header class="ath-page-header" [class.ath-page-header--divided]="divider">
+<header class="ath-page-header" [class.ath-page-header--divided]="divider()">
   <div class="ath-page-header__leading">
     <ng-content select="[athPageLeading]" />
   </div>
   <div class="ath-page-header__text">
-    @if (level === 2) {
-      <h2 class="ath-page-header__title">{{ title }}</h2>
+    @if (level() === 2) {
+      <h2 class="ath-page-header__title">{{ title() }}</h2>
     } @else {
-      <h1 class="ath-page-header__title">{{ title }}</h1>
+      <h1 class="ath-page-header__title">{{ title() }}</h1>
     }
     <div class="ath-page-header__sub">
       <!-- Every item leads with its separator, and the row clips the first
            separator-width of each line: a wrapped line neither ends nor
            starts on a stray "·". -->
-      @for (item of visibleSubItems; track $index) {
+      @for (item of visibleSubItems(); track $index) {
         <span class="ath-page-header__sub-item">
           <span class="ath-page-header__sub-sep" aria-hidden="true">·</span>
           {{ item }}
@@ -20,8 +20,8 @@
       }
       <span class="ath-page-header__sub-slot"><ng-content select="[athPageMeta]" /></span>
     </div>
-    @if (visibleSubItems.length === 0 && description) {
-      <p class="ath-page-header__description">{{ description }}</p>
+    @if (visibleSubItems().length === 0 && description()) {
+      <p class="ath-page-header__description">{{ description() }}</p>
     }
   </div>
   <div class="ath-page-header__actions">

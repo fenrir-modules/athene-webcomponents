@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  HostBinding,
-  Input,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, ChevronDown, X } from 'lucide-angular';
 import { formatAthLabel, injectAthLabels } from '../../i18n/labels';
@@ -27,48 +20,44 @@ import { formatAthLabel, injectAthLabels } from '../../i18n/labels';
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './filter-chip.component.html',
   styleUrl: './filter-chip.component.scss',
+  host: {
+    '[attr.data-active]': "active() ? 'true' : null",
+    '[attr.data-disabled]': "disabled() ? 'true' : null",
+  },
 })
 export class AthFilterChipComponent {
   protected readonly labels = injectAthLabels();
 
-  @Input({ required: true }) label!: string;
-  @Input() value = '';
+  readonly label = input.required<string>();
+  readonly value = input('');
 
   /** Visually highlights the chip when a filter value is set. */
-  @Input() active = false;
+  readonly active = input(false, { transform: booleanAttribute });
 
   /** Shows a small `×` button to clear the filter. */
-  @Input() clearable = false;
+  readonly clearable = input(false, { transform: booleanAttribute });
 
-  @Input() disabled = false;
+  readonly disabled = input(false, { transform: booleanAttribute });
 
-  @Output() clicked = new EventEmitter<void>();
-  @Output() cleared = new EventEmitter<void>();
+  readonly clicked = output<void>();
+  readonly cleared = output<void>();
 
   protected readonly chevronIcon = ChevronDown;
   protected readonly clearIcon = X;
 
-  @HostBinding('attr.data-active') get hostActive(): string | null {
-    return this.active ? 'true' : null;
-  }
-
-  @HostBinding('attr.data-disabled') get hostDisabled(): string | null {
-    return this.disabled ? 'true' : null;
-  }
-
   protected clearLabel(): string {
-    return formatAthLabel(this.labels.clearFilter(), { name: this.label });
+    return formatAthLabel(this.labels.clearFilter(), { name: this.label() });
   }
 
   onClick(): void {
-    if (!this.disabled) {
+    if (!this.disabled()) {
       this.clicked.emit();
     }
   }
 
   onClear(event: MouseEvent): void {
     event.stopPropagation();
-    if (!this.disabled) {
+    if (!this.disabled()) {
       this.cleared.emit();
     }
   }

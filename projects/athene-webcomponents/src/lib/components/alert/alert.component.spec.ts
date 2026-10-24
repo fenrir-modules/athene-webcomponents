@@ -1,5 +1,8 @@
-import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AthAlertComponent } from './alert.component';
+
+/** Lets pending promise callbacks run (no `fakeAsync`: the zoneless run has no zone.js). */
+const settle = (): Promise<void> => new Promise((resolve) => setTimeout(resolve));
 
 describe('AthAlertComponent', () => {
   let fixture: ComponentFixture<AthAlertComponent>;
@@ -42,7 +45,7 @@ describe('AthAlertComponent', () => {
     expect(getComputedStyle(box()).borderTopLeftRadius).toBe('0px');
   });
 
-  it('retries through a busy button', fakeAsync(() => {
+  it('retries through a busy button', async () => {
     let resolve!: () => void;
     const retry = jasmine
       .createSpy('retry')
@@ -59,10 +62,10 @@ describe('AthAlertComponent', () => {
     expect(retry).toHaveBeenCalledTimes(1);
     expect(button.disabled).toBeTrue();
     resolve();
-    flushMicrotasks();
+    await settle();
     fixture.detectChanges();
     expect(button.disabled).toBeFalse();
-  }));
+  });
 
   it('dismisses with a labelled button', () => {
     const dismissed = jasmine.createSpy('dismissed');

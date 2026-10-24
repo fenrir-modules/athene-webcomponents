@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { injectAthLabels } from '../../i18n/labels';
 
@@ -28,9 +28,7 @@ export class AthSpinnerComponent {
   protected readonly labels = injectAthLabels();
 
   /** Spinner size */
-  @Input() size: SpinnerSize = 'md';
+  readonly size = input<SpinnerSize>('md');
 
-  get spinnerClasses(): string {
-    return `ath-spinner ath-spinner--${this.size}`;
-  }
+  protected readonly spinnerClasses = computed(() => `ath-spinner ath-spinner--${this.size()}`);
 }

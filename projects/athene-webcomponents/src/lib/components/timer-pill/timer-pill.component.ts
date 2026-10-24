@@ -1,14 +1,17 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  HostBinding,
-  Input,
-  Output,
+  booleanAttribute,
   computed,
-  signal,
+  input,
+  numberAttribute,
+  output,
+  type Signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+/** Long-running timer: `warn` after 8h, `alert` after 24h. */
+export type TimerPillWarning = 'warn' | 'alert';
 
 /**
  * Live time-tracking pill for the topbar. **Stateless about ticking** —
@@ -31,38 +34,34 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './timer-pill.component.html',
   styleUrl: './timer-pill.component.scss',
+  host: {
+    '[attr.data-active]': "active() ? 'true' : 'false'",
+    '[attr.data-warning]': 'warning()',
+  },
 })
 export class AthTimerPillComponent {
-  private readonly _seconds = signal(0);
+  readonly active = input(false, { transform: booleanAttribute });
 
-  @Input() active = false;
+  /** Elapsed time in seconds; fractions are dropped, negative counts as 0. */
+  readonly seconds = input(0, {
+    transform: (value: unknown) => Math.max(0, Math.floor(numberAttribute(value, 0))),
+  });
 
-  @Input()
-  set seconds(value: number) {
-    this._seconds.set(Math.max(0, Math.floor(value)));
-  }
-  get seconds(): number {
-    return this._seconds();
-  }
-
-  @Input() ticketKey: string | null = null;
+  readonly ticketKey = input<string | null>(null);
 
   /** Tooltip override; otherwise auto-built from state. */
-  @Input() tooltip: string | null = null;
+  readonly tooltip = input<string | null>(null);
 
-  @Output() toggled = new EventEmitter<void>();
+  readonly toggled = output<void>();
 
-  @HostBinding('attr.data-active') get hostActive(): string {
-    return this.active ? 'true' : 'false';
-  }
-
-  @HostBinding('attr.data-warning') get hostWarning(): string | null {
-    // After 8h surfaces a warn color; after 24h, an alert color
-    return this._seconds() >= 24 * 3600 ? 'alert' : this._seconds() >= 8 * 3600 ? 'warn' : null;
-  }
+  /** After 8h surfaces a warn color; after 24h, an alert color. */
+  protected readonly warning: Signal<TimerPillWarning | null> = computed(() => {
+    const s = this.seconds();
+    return s >= 24 * 3600 ? 'alert' : s >= 8 * 3600 ? 'warn' : null;
+  });
 
   protected readonly time = computed<string>(() => {
-    const total = this._seconds();
+    const total = this.seconds();
     const hours = Math.floor(total / 3600);
     const minutes = Math.floor((total % 3600) / 60);
     const seconds = total % 60;
@@ -74,12 +73,14 @@ export class AthTimerPillComponent {
     return `${mm}:${ss}`;
   });
 
-  protected get effectiveTooltip(): string {
-    if (this.tooltip) return this.tooltip;
-    if (!this.active) return 'Click to resume timer';
-    if (this.ticketKey) return `Tracking ${this.ticketKey} · click to pause`;
+  protected readonly effectiveTooltip = computed<string>(() => {
+    const tooltip = this.tooltip();
+    if (tooltip) return tooltip;
+    if (!this.active()) return 'Click to resume timer';
+    const ticketKey = this.ticketKey();
+    if (ticketKey) return `Tracking ${ticketKey} · click to pause`;
     return 'Click to pause timer';
-  }
+  });
 
   onToggle(): void {
     this.toggled.emit();

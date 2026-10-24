@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -20,5 +20,5 @@ import { CommonModule } from '@angular/common';
 })
 export class AthTimelineEventComponent {
   /** Dot color — any CSS color (e.g., `var(--green)`, `#f59e0b`). */
-  @Input() statusColor = 'var(--fg-4)';
+  readonly statusColor = input('var(--fg-4)');
 }

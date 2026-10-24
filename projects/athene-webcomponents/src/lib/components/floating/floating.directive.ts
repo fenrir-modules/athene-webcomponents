@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Directive,
   ElementRef,
+  // eslint-disable-next-line no-restricted-imports -- runOutsideAngular only, a zone.js optimisation for floatPanel's scroll/resize listeners; see `zone` below.
   NgZone,
   OnChanges,
   OnDestroy,
@@ -93,6 +94,15 @@ export class AthFloatingDirective implements AfterViewInit, OnChanges, OnDestroy
   readonly arrow = input<HTMLElement | null>(null);
 
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  /**
+   * Only for `runOutsideAngular` below, a zone.js optimisation: `floatPanel`
+   * listens to every scroll, resize and size change while the panel is open
+   * and must not run the app's change detection each time. It changes no
+   * Angular state, so it is correct with and without zone.js; zoneless,
+   * `NgZone` is a no-op (angular.dev/guide/zoneless keeps `run` and
+   * `runOutsideAngular` for libraries that zone.js apps use). Drop it with
+   * zone.js (4.3).
+   */
   private readonly zone = inject(NgZone);
   private cleanup: FloatingCleanup | null = null;
   private viewReady = false;

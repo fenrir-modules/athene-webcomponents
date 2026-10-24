@@ -1,5 +1,8 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+export type DividerOrientation = 'horizontal' | 'vertical';
+export type DividerSpacing = 'none' | 'sm' | 'md' | 'lg';
 
 /**
  * Athene Divider Component
@@ -21,16 +24,16 @@ import { CommonModule } from '@angular/common';
 })
 export class AthDividerComponent {
   /** Orientation */
-  @Input() orientation: 'horizontal' | 'vertical' = 'horizontal';
+  readonly orientation = input<DividerOrientation>('horizontal');
 
   /** Spacing around the divider */
-  @Input() spacing: 'none' | 'sm' | 'md' | 'lg' = 'md';
+  readonly spacing = input<DividerSpacing>('md');
 
-  get dividerClasses(): string {
-    return [
+  protected readonly dividerClasses = computed(() =>
+    [
       'ath-divider',
-      `ath-divider--${this.orientation}`,
-      `ath-divider--spacing-${this.spacing}`,
-    ].join(' ');
-  }
+      `ath-divider--${this.orientation()}`,
+      `ath-divider--spacing-${this.spacing()}`,
+    ].join(' ')
+  );
 }

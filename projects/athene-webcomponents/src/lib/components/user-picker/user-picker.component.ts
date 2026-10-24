@@ -1,11 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
+  booleanAttribute,
   computed,
-  signal,
+  input,
+  model,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AthAvatarComponent } from '../avatar';
@@ -41,48 +40,44 @@ export interface UserOption {
 export class AthUserPickerComponent {
   protected readonly labels = injectAthLabels();
 
-  private readonly _users = signal<UserOption[]>([]);
+  /** The people to choose from; `null`/`undefined` count as none. */
+  readonly users = input<UserOption[], UserOption[] | null | undefined>([], {
+    transform: (value) => value ?? [],
+  });
 
-  @Input()
-  set users(value: UserOption[] | null | undefined) {
-    this._users.set(value ?? []);
-  }
-  get users(): UserOption[] {
-    return this._users();
-  }
-
-  @Input() value: string | null = null;
-  @Input() placeholder: string | null = null;
-  @Input() searchPlaceholder: string | null = null;
-  @Input() disabled = false;
-  @Input() clearable = true;
-  @Input() allowUnassigned = true;
+  /** The chosen user's id. Two-way: `[(value)]`. */
+  readonly value = model<string | null>(null);
+  readonly placeholder = input<string | null>(null);
+  readonly searchPlaceholder = input<string | null>(null);
+  readonly disabled = input(false, { transform: booleanAttribute });
+  readonly clearable = input(true, { transform: booleanAttribute });
+  readonly allowUnassigned = input(true, { transform: booleanAttribute });
 
   /** Show email under each name. */
-  @Input() showEmail = true;
+  readonly showEmail = input(true, { transform: booleanAttribute });
 
-  @Output() valueChange = new EventEmitter<string | null>();
-
-  protected readonly options = computed<ListboxOption<string>[]>(() =>
-    this._users().map((u) => ({
+  protected readonly options = computed<ListboxOption<string>[]>(() => {
+    const showEmail = this.showEmail();
+    return this.users().map((u) => ({
       value: u.id,
       label: u.name,
-      sublabel: this.showEmail ? u.email : undefined,
-    }))
-  );
+      sublabel: showEmail ? u.email : undefined,
+    }));
+  });
 
   protected readonly selectedUser = computed<UserOption | null>(
-    () => this._users().find((u) => u.id === this.value) ?? null
+    () => this.users().find((u) => u.id === this.value()) ?? null
   );
 
   onValueChange(v: string | null): void {
-    this.value = v;
-    this.valueChange.emit(v);
+    this.value.set(v);
   }
 
-  protected get triggerLabel(): string {
+  protected readonly triggerLabel = computed<string>(() => {
     const selected = this.selectedUser();
     if (selected) return selected.name;
-    return this.allowUnassigned ? (this.placeholder ?? this.labels.userPickerPlaceholder()) : '—';
-  }
+    return this.allowUnassigned()
+      ? (this.placeholder() ?? this.labels.userPickerPlaceholder())
+      : '—';
+  });
 }

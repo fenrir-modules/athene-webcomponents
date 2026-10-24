@@ -14,10 +14,10 @@ export type BadgeVariant = 'default' | 'success' | 'warning' | 'error' | 'info' 
  */
 export declare class AthBadgeComponent {
     /** Badge variant */
-    variant: BadgeVariant;
+    readonly variant: import("@angular/core").InputSignal<BadgeVariant>;
     /** Show dot indicator */
-    dot: boolean;
-    get badgeClasses(): string;
+    readonly dot: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+    protected readonly badgeClasses: import("@angular/core").Signal<string>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthBadgeComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthBadgeComponent, "ath-badge", never, { "variant": { "alias": "variant"; "required": false; }; "dot": { "alias": "dot"; "required": false; }; }, {}, never, ["*"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthBadgeComponent, "ath-badge", never, { "variant": { "alias": "variant"; "required": false; "isSignal": true; }; "dot": { "alias": "dot"; "required": false; "isSignal": true; }; }, {}, never, ["*"], true, never>;
 }

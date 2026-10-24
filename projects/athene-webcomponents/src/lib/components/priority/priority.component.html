@@ -3,6 +3,6 @@
   <i></i>
   <i></i>
 </span>
-@if (showLabel) {
-  <span class="ath-priority__label">{{ computedLabel }}</span>
+@if (showLabel()) {
+  <span class="ath-priority__label">{{ computedLabel() }}</span>
 }

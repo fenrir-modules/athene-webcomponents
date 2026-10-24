@@ -1,5 +1,12 @@
-import { ChangeDetectionStrategy, Component, ElementRef, signal, viewChild } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ApplicationRef,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { ComponentFixture, ComponentFixtureAutoDetect, TestBed } from '@angular/core/testing';
 import { supportsTopLayer, type FloatingVirtualAnchor } from '../floating/floating';
 import { AthPopoverComponent, AthPopoverContentDirective } from './popover.component';
 import { AthPopoverTriggerDirective } from './popover-trigger.directive';
@@ -304,6 +311,45 @@ describe('AthPopoverComponent inside a styled spot', () => {
     expect(style.whiteSpace).toBe('normal');
     expect(style.fontWeight).toBe('400');
     expect(style.textTransform).toBe('none');
+    fixture.destroy();
+    root.remove();
+  });
+});
+
+@Component({
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AthPopoverComponent],
+  template: `
+    <button type="button" class="trigger" (click)="pop.toggle($any($event.currentTarget))">
+      Open
+    </button>
+    <ath-popover #pop ariaLabel="Details"><input class="field" aria-label="Field" /></ath-popover>
+  `,
+})
+class HandCheckedPopoverHostComponent {}
+
+// A view outside ApplicationRef (a fixture without autoDetect, a view checked
+// by hand): an app render does not include it. Focus must wait for the
+// panel itself, not for "the next render" (VERIFY 4.1, app PersonPicker spec).
+describe('AthPopoverComponent in a view checked by hand', () => {
+  it('moves focus in when its panel renders, not on an app render without it', async () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: ComponentFixtureAutoDetect, useValue: false }],
+    });
+    const fixture = TestBed.createComponent(HandCheckedPopoverHostComponent);
+    const root = fixture.nativeElement as HTMLElement;
+    document.body.appendChild(root);
+    const render = () => fixture.componentRef.changeDetectorRef.detectChanges();
+    render();
+    const trigger = root.querySelector<HTMLElement>('.trigger')!;
+    trigger.focus();
+    trigger.click();
+    TestBed.inject(ApplicationRef).tick();
+    expect(root.querySelector('.ath-popover__panel')).toBeNull();
+    render();
+    await fixture.whenStable();
+    expect(document.activeElement).toBe(root.querySelector('.field'));
     fixture.destroy();
     root.remove();
   });

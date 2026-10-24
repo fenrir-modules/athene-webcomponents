@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -30,16 +30,16 @@ export interface TabItem {
 })
 export class AthTabsComponent {
   /** Tab items */
-  @Input() tabs: TabItem[] = [];
+  readonly tabs = input<TabItem[]>([]);
 
-  /** Currently active tab ID */
-  @Input() activeTab = '';
+  /** Currently active tab ID. Controlled: pair with `(tabChanged)`. */
+  readonly activeTab = input('');
 
   /** Tab change event */
-  @Output() tabChanged = new EventEmitter<string>();
+  readonly tabChanged = output<string>();
 
   selectTab(tab: TabItem): void {
-    if (!tab.disabled && tab.id !== this.activeTab) {
+    if (!tab.disabled && tab.id !== this.activeTab()) {
       this.tabChanged.emit(tab.id);
     }
   }
@@ -47,7 +47,7 @@ export class AthTabsComponent {
   getTabClasses(tab: TabItem): string {
     return [
       'ath-tabs__tab',
-      tab.id === this.activeTab ? 'ath-tabs__tab--active' : '',
+      tab.id === this.activeTab() ? 'ath-tabs__tab--active' : '',
       tab.disabled ? 'ath-tabs__tab--disabled' : '',
     ]
       .filter(Boolean)

@@ -5,6 +5,8 @@ import type { AthOverlayCloseReason } from '../floating/overlay-stack';
 import { type PopoverSize } from '../popover/popover.component';
 import { type ListboxOption, type ListboxOptionContext } from './listbox.component';
 import * as i0 from "@angular/core";
+/** `button`: the picker draws its own trigger; `none`: it hangs from `anchor`. */
+export type OptionPickerTrigger = 'button' | 'none';
 /**
  * Athene Option Picker: `ath-popover` + `ath-listbox` behind a select-style
  * trigger. The base for person, label, filter and relation pickers.
@@ -35,7 +37,7 @@ export declare class AthOptionPickerComponent<T = string> {
     readonly compareWith: import("@angular/core").InputSignal<((a: T, b: T) => boolean) | null>;
     readonly maxHeight: import("@angular/core").InputSignal<number | null>;
     /** `button`: built-in select-style trigger; `none`: you provide `anchor` and open it. */
-    readonly trigger: import("@angular/core").InputSignal<"button" | "none">;
+    readonly trigger: import("@angular/core").InputSignal<OptionPickerTrigger>;
     /** Trigger text without a selection; defaults to `ATH_LABELS.pickerPlaceholder`. */
     readonly placeholder: import("@angular/core").InputSignal<string | null>;
     readonly disabled: import("@angular/core").InputSignalWithTransform<boolean, unknown>;

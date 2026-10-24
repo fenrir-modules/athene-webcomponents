@@ -11,22 +11,18 @@ export type ProgressSize = 'xs' | 'sm' | 'md';
  * <ath-progress [value]="40" [total]="50" [showLabel]="true" />
  */
 export declare class AthProgressComponent {
-    private readonly _value;
-    /** Current value. When `total` is unset, treated as a percentage (0..100). */
-    set value(v: number);
-    get value(): number;
+    /** Current value. When `total` is unset, treated as a percentage (0..100). Negative counts as 0. */
+    readonly value: import("@angular/core").InputSignalWithTransform<number, unknown>;
     /** Total (denominator). If unset, `value` is a percent. */
-    total: number | null;
-    tone: ProgressTone;
-    size: ProgressSize;
+    readonly total: import("@angular/core").InputSignal<number | null>;
+    readonly tone: import("@angular/core").InputSignal<ProgressTone>;
+    readonly size: import("@angular/core").InputSignal<ProgressSize>;
     /** Show a small `X / Y` (or `X%`) label next to the bar. */
-    showLabel: boolean;
+    readonly showLabel: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Optional aria-label for screen readers. */
-    ariaLabel: string | null;
-    get hostTone(): ProgressTone;
-    get hostSize(): ProgressSize;
+    readonly ariaLabel: import("@angular/core").InputSignal<string | null>;
     protected readonly pct: import("@angular/core").Signal<number>;
     protected readonly label: import("@angular/core").Signal<string>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthProgressComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthProgressComponent, "ath-progress", never, { "value": { "alias": "value"; "required": false; }; "total": { "alias": "total"; "required": false; }; "tone": { "alias": "tone"; "required": false; }; "size": { "alias": "size"; "required": false; }; "showLabel": { "alias": "showLabel"; "required": false; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthProgressComponent, "ath-progress", never, { "value": { "alias": "value"; "required": false; "isSignal": true; }; "total": { "alias": "total"; "required": false; "isSignal": true; }; "tone": { "alias": "tone"; "required": false; "isSignal": true; }; "size": { "alias": "size"; "required": false; "isSignal": true; }; "showLabel": { "alias": "showLabel"; "required": false; "isSignal": true; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

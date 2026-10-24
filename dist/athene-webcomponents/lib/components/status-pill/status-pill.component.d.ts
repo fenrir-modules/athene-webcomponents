@@ -11,16 +11,15 @@ export type StatusPillSize = 'sm' | 'md';
  * <ath-status-pill status="done" size="sm" />
  */
 export declare class AthStatusPillComponent {
-    status: TicketStatus;
-    showDot: boolean;
-    showLabel: boolean;
-    size: StatusPillSize;
+    readonly status: import("@angular/core").InputSignal<TicketStatus>;
+    readonly showDot: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+    readonly showLabel: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+    readonly size: import("@angular/core").InputSignal<StatusPillSize>;
     /** Optional override label (otherwise the app's resolver, then the English default). */
-    label: string | null;
+    readonly label: import("@angular/core").InputSignal<string | null>;
     private readonly resolveLabel;
-    get hostStatus(): TicketStatus;
-    get hostSize(): StatusPillSize;
-    protected get computedLabel(): string;
+    /** The resolver reads a signal for the language (see `StatusLabelResolver`), so this follows it. */
+    protected readonly computedLabel: import("@angular/core").Signal<string>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthStatusPillComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthStatusPillComponent, "ath-status-pill", never, { "status": { "alias": "status"; "required": false; }; "showDot": { "alias": "showDot"; "required": false; }; "showLabel": { "alias": "showLabel"; "required": false; }; "size": { "alias": "size"; "required": false; }; "label": { "alias": "label"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthStatusPillComponent, "ath-status-pill", never, { "status": { "alias": "status"; "required": false; "isSignal": true; }; "showDot": { "alias": "showDot"; "required": false; "isSignal": true; }; "showLabel": { "alias": "showLabel"; "required": false; "isSignal": true; }; "size": { "alias": "size"; "required": false; "isSignal": true; }; "label": { "alias": "label"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

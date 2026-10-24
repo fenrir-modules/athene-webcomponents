@@ -27,7 +27,7 @@ export declare class AthSkeletonComponent {
     /** Height (CSS value); the variant's own height when empty. */
     readonly height: import("@angular/core").InputSignal<string>;
     /** Pulse; off is also forced by `prefers-reduced-motion`. */
-    readonly animated: import("@angular/core").InputSignal<boolean>;
+    readonly animated: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthSkeletonComponent, never>;
     static ɵcmp: i0.ɵɵComponentDeclaration<AthSkeletonComponent, "ath-skeleton", never, { "variant": { "alias": "variant"; "required": false; "isSignal": true; }; "width": { "alias": "width"; "required": false; "isSignal": true; }; "height": { "alias": "height"; "required": false; "isSignal": true; }; "animated": { "alias": "animated"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }
@@ -45,7 +45,7 @@ export type SkeletonListVariant = 'row' | 'card' | 'card-grid';
 export declare class AthSkeletonListComponent {
     private readonly labels;
     readonly variant: import("@angular/core").InputSignal<SkeletonListVariant>;
-    readonly count: import("@angular/core").InputSignal<number>;
+    readonly count: import("@angular/core").InputSignalWithTransform<number, unknown>;
     /** Accessible text; default `ATH_LABELS.loading`. */
     readonly label: import("@angular/core").InputSignal<string | null>;
     protected readonly indexes: import("@angular/core").Signal<number[]>;
@@ -60,12 +60,12 @@ export declare class AthSkeletonListComponent {
  */
 export declare class AthSkeletonTableComponent {
     /** Number of rows */
-    rows: number;
+    readonly rows: import("@angular/core").InputSignalWithTransform<number, unknown>;
     /** Column widths in percent */
-    columns: number[];
-    get rowsArray(): number[];
+    readonly columns: import("@angular/core").InputSignal<number[]>;
+    protected readonly rowsArray: import("@angular/core").Signal<number[]>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthSkeletonTableComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthSkeletonTableComponent, "ath-skeleton-table", never, { "rows": { "alias": "rows"; "required": false; }; "columns": { "alias": "columns"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthSkeletonTableComponent, "ath-skeleton-table", never, { "rows": { "alias": "rows"; "required": false; "isSignal": true; }; "columns": { "alias": "columns"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }
 /**
  * Skeleton Card Component
@@ -74,9 +74,9 @@ export declare class AthSkeletonTableComponent {
  */
 export declare class AthSkeletonCardComponent {
     /** Show image placeholder */
-    showImage: boolean;
+    readonly showImage: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Show action buttons */
-    showActions: boolean;
+    readonly showActions: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthSkeletonCardComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthSkeletonCardComponent, "ath-skeleton-card", never, { "showImage": { "alias": "showImage"; "required": false; }; "showActions": { "alias": "showActions"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthSkeletonCardComponent, "ath-skeleton-card", never, { "showImage": { "alias": "showImage"; "required": false; "isSignal": true; }; "showActions": { "alias": "showActions"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

@@ -7,28 +7,71 @@ import { atheneEslint } from './config/eslint.shared.mjs';
 
 const nonSpec = ['**/*.spec.ts', '**/*.stories.ts'];
 
-export default atheneEslint({
-  rootDir: import.meta.dirname,
-  prefix: 'ath',
-  selectorSeverity: 'error',
-  files: ['projects/**/*.ts'],
-  templates: ['projects/**/*.html'],
-  restrictedSyntax: [
-    { files: ['projects/**/*.ts'], ignores: nonSpec, use: ['allowSignalWrites', 'asUnknownAs'] },
-    { files: nonSpec, use: ['allowSignalWrites'] },
-  ],
-  // The light `core` entry point is built on its own (ng-packagr secondary
-  // entry): it must not reach into the main entry's sources.
-  elements: [
-    { type: 'core', pattern: 'projects/athene-webcomponents/core' },
-    { type: 'lib', pattern: 'projects/athene-webcomponents/src' },
-  ],
-  policies: [
-    {
-      from: { element: { type: 'core' } },
-      disallow: { to: { element: { type: 'lib' } } },
-      message:
-        '@athene/webcomponents/core must not import from the main entry point (secondary entry builds alone).',
+/**
+ * Signal APIs only (quality step 4.1, guideline A2), lib-only until the app
+ * is migrated (4.1b/c). angular-eslint 18 has no `prefer-signals` (it comes
+ * with 19, step 4.2), so the decorator APIs are banned at the import. A
+ * remaining `NgZone` or `ChangeDetectorRef` needs an
+ * `eslint-disable-next-line no-restricted-imports -- <reason>`.
+ */
+const SIGNAL_APIS = {
+  Input:
+    'input() / input.required() (with booleanAttribute or numberAttribute for bare attributes)',
+  Output: 'output(), or model() for a two-way [(x)] pair',
+  EventEmitter: 'output()',
+  HostBinding: "host: { '[attr.x]': 'x()' } in the component metadata",
+  HostListener: "host: { '(event)': 'onEvent($event)' } in the component metadata",
+  ViewChild: 'viewChild() / viewChild.required()',
+  ViewChildren: 'viewChildren()',
+  ContentChild: 'contentChild()',
+  ContentChildren: 'contentChildren()',
+  ChangeDetectorRef:
+    'signal state, which OnPush and zoneless views follow without markForCheck/detectChanges',
+  NgZone: 'nothing (zoneless-ready): signals and listeners schedule change detection',
+};
+
+export default [
+  ...atheneEslint({
+    rootDir: import.meta.dirname,
+    prefix: 'ath',
+    selectorSeverity: 'error',
+    files: ['projects/**/*.ts'],
+    templates: ['projects/**/*.html'],
+    restrictedSyntax: [
+      { files: ['projects/**/*.ts'], ignores: nonSpec, use: ['allowSignalWrites', 'asUnknownAs'] },
+      { files: nonSpec, use: ['allowSignalWrites'] },
+    ],
+    // The light `core` entry point is built on its own (ng-packagr secondary
+    // entry): it must not reach into the main entry's sources.
+    elements: [
+      { type: 'core', pattern: 'projects/athene-webcomponents/core' },
+      { type: 'lib', pattern: 'projects/athene-webcomponents/src' },
+    ],
+    policies: [
+      {
+        from: { element: { type: 'core' } },
+        disallow: { to: { element: { type: 'lib' } } },
+        message:
+          '@athene/webcomponents/core must not import from the main entry point (secondary entry builds alone).',
+      },
+    ],
+  }),
+  {
+    files: ['projects/**/*.ts'],
+    rules: {
+      '@angular-eslint/prefer-output-readonly': 'error',
+      '@angular-eslint/no-queries-metadata-property': 'error',
+      '@angular-eslint/no-attribute-decorator': 'error',
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: Object.entries(SIGNAL_APIS).map(([name, instead]) => ({
+            name: '@angular/core',
+            importNames: [name],
+            message: `\`${name}\`: use ${instead} (A2, quality step 4.1).`,
+          })),
+        },
+      ],
     },
-  ],
-});
+  },
+];

@@ -1,8 +1,8 @@
-@if (mode === 'numbered') {
+@if (mode() === 'numbered') {
   <button
     type="button"
     class="ath-page__btn ath-page__btn--nav"
-    [disabled]="page <= 1"
+    [disabled]="page() <= 1"
     [attr.aria-label]="labels.pageFirst()"
     (click)="goFirst()"
   >
@@ -11,7 +11,7 @@
   <button
     type="button"
     class="ath-page__btn ath-page__btn--nav"
-    [disabled]="page <= 1"
+    [disabled]="page() <= 1"
     [attr.aria-label]="labels.pagePrevious()"
     (click)="goPrev()"
   >
@@ -27,8 +27,8 @@
       <button
         type="button"
         class="ath-page__btn"
-        [class.ath-page__btn--active]="item === page"
-        [attr.aria-current]="item === page ? 'page' : null"
+        [class.ath-page__btn--active]="item === page()"
+        [attr.aria-current]="item === page() ? 'page' : null"
         [attr.aria-label]="pageLabel(item)"
         (click)="goTo(item)"
       >
@@ -40,7 +40,7 @@
   <button
     type="button"
     class="ath-page__btn ath-page__btn--nav"
-    [disabled]="page >= totalPages"
+    [disabled]="page() >= totalPages()"
     [attr.aria-label]="labels.pageNext()"
     (click)="goNext()"
   >
@@ -49,7 +49,7 @@
   <button
     type="button"
     class="ath-page__btn ath-page__btn--nav"
-    [disabled]="page >= totalPages"
+    [disabled]="page() >= totalPages()"
     [attr.aria-label]="labels.pageLast()"
     (click)="goLast()"
   >
@@ -59,19 +59,19 @@
   <button
     type="button"
     class="ath-page__btn ath-page__btn--cursor"
-    [disabled]="!hasPrev"
+    [disabled]="!hasPrev()"
     (click)="goPrev()"
   >
     <lucide-icon [img]="prevIcon" [size]="14" />
     <span>{{ labels.previous() }}</span>
   </button>
-  @if (summary) {
-    <span class="ath-page__summary">{{ summary }}</span>
+  @if (summary()) {
+    <span class="ath-page__summary">{{ summary() }}</span>
   }
   <button
     type="button"
     class="ath-page__btn ath-page__btn--cursor"
-    [disabled]="!hasNext"
+    [disabled]="!hasNext()"
     (click)="goNext()"
   >
     <span>{{ labels.next() }}</span>

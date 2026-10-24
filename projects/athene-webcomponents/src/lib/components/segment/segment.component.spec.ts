@@ -1,0 +1,62 @@
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { AthSegmentComponent, type SegmentOption } from './segment.component';
+
+const VIEWS: SegmentOption[] = [
+  { value: 'list', label: 'List' },
+  { value: 'board', label: 'Board' },
+  { value: 'off', label: 'Off', disabled: true },
+];
+
+@Component({
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AthSegmentComponent],
+  template: `<ath-segment
+    [options]="views"
+    [(value)]="view"
+    size="sm"
+    ariaLabel="View"
+    (valueChange)="changes.push($event)"
+  />`,
+})
+class SegmentHostComponent {
+  readonly views = VIEWS;
+  readonly view = signal('list');
+  readonly changes: string[] = [];
+}
+
+describe('AthSegmentComponent', () => {
+  function setup() {
+    const fixture = TestBed.createComponent(SegmentHostComponent);
+    fixture.detectChanges();
+    const host = fixture.nativeElement as HTMLElement;
+    const segment = host.querySelector<HTMLElement>('ath-segment')!;
+    const tabs = () => Array.from(segment.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    return { fixture, segment, tabs };
+  }
+
+  it('keeps [(value)] working on the signal input + valueChange pair', () => {
+    const { fixture, tabs } = setup();
+    expect(tabs()[0].getAttribute('aria-selected')).toBe('true');
+    tabs()[1].click();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.view()).toBe('board');
+    expect(tabs()[1].getAttribute('aria-selected')).toBe('true');
+    expect(tabs()[0].getAttribute('aria-selected')).toBe('false');
+  });
+
+  it('emits only for a different, enabled option', () => {
+    const { fixture, tabs } = setup();
+    tabs()[0].click();
+    tabs()[2].click();
+    expect(fixture.componentInstance.changes).toEqual([]);
+  });
+
+  it('carries role, name and size on the host', () => {
+    const { segment } = setup();
+    expect(segment.getAttribute('role')).toBe('tablist');
+    expect(segment.getAttribute('aria-label')).toBe('View');
+    expect(segment.dataset['size']).toBe('sm');
+  });
+});

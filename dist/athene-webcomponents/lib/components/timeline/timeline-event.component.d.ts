@@ -10,7 +10,7 @@ import * as i0 from "@angular/core";
  */
 export declare class AthTimelineEventComponent {
     /** Dot color — any CSS color (e.g., `var(--green)`, `#f59e0b`). */
-    statusColor: string;
+    readonly statusColor: import("@angular/core").InputSignal<string>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthTimelineEventComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthTimelineEventComponent, "ath-timeline-event", never, { "statusColor": { "alias": "statusColor"; "required": false; }; }, {}, never, ["*"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthTimelineEventComponent, "ath-timeline-event", never, { "statusColor": { "alias": "statusColor"; "required": false; "isSignal": true; }; }, {}, never, ["*"], true, never>;
 }

@@ -14,16 +14,15 @@ import * as i0 from "@angular/core";
  */
 export declare class AthTimelineEntryComponent {
     protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
-    author: string;
+    readonly author: import("@angular/core").InputSignal<string>;
     /** Defaults to `author` for initials/colors. Override if avatar should differ. */
-    avatarName: string | null;
-    avatarSrc: string;
+    readonly avatarName: import("@angular/core").InputSignal<string | null>;
+    readonly avatarSrc: import("@angular/core").InputSignal<string>;
     /** Pre-formatted relative time (e.g., "5m ago"). */
-    timeLabel: string;
+    readonly timeLabel: import("@angular/core").InputSignal<string>;
     /** Marks the entry as internal (only visible to operators/admins). */
-    internal: boolean;
-    get hostInternal(): string | null;
-    protected get effectiveAvatarName(): string;
+    readonly internal: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+    protected readonly effectiveAvatarName: import("@angular/core").Signal<string>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthTimelineEntryComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthTimelineEntryComponent, "ath-timeline-entry", never, { "author": { "alias": "author"; "required": true; }; "avatarName": { "alias": "avatarName"; "required": false; }; "avatarSrc": { "alias": "avatarSrc"; "required": false; }; "timeLabel": { "alias": "timeLabel"; "required": false; }; "internal": { "alias": "internal"; "required": false; }; }, {}, never, ["*"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthTimelineEntryComponent, "ath-timeline-entry", never, { "author": { "alias": "author"; "required": true; "isSignal": true; }; "avatarName": { "alias": "avatarName"; "required": false; "isSignal": true; }; "avatarSrc": { "alias": "avatarSrc"; "required": false; "isSignal": true; }; "timeLabel": { "alias": "timeLabel"; "required": false; "isSignal": true; }; "internal": { "alias": "internal"; "required": false; "isSignal": true; }; }, {}, never, ["*"], true, never>;
 }

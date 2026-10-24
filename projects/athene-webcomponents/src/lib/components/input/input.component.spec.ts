@@ -1,6 +1,18 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { AthInputComponent } from './input.component';
+
+@Component({
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AthInputComponent, ReactiveFormsModule],
+  template: `<ath-input label="Email" required [formControl]="email" />`,
+})
+class FormHostComponent {
+  readonly email = new FormControl('', { nonNullable: true });
+}
 
 describe('AthInputComponent', () => {
   let fixture: ComponentFixture<AthInputComponent>;
@@ -47,5 +59,23 @@ describe('AthInputComponent', () => {
     toggle.click();
     fixture.detectChanges();
     expect(toggle.getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('shows values and the disabled state the forms API writes, without an input change', async () => {
+    const host = TestBed.createComponent(FormHostComponent);
+    host.detectChanges();
+    const field = (host.nativeElement as HTMLElement).querySelector('input')!;
+    // `required` as a bare attribute.
+    expect((host.nativeElement as HTMLElement).querySelector('label')?.textContent).toContain('*');
+    host.componentInstance.email.setValue('mira@example.com');
+    host.componentInstance.email.disable();
+    await host.whenStable();
+    host.detectChanges();
+    expect(field.value).toBe('mira@example.com');
+    expect(field.disabled).toBeTrue();
+    host.componentInstance.email.enable();
+    await host.whenStable();
+    host.detectChanges();
+    expect(field.disabled).toBeFalse();
   });
 });

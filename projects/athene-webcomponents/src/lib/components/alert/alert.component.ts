@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
+  type Signal,
+} from '@angular/core';
 import {
   AlertOctagon,
   AlertTriangle,
@@ -70,13 +77,13 @@ export class AthAlertComponent {
 
   protected readonly closeIcon = X;
 
-  protected readonly tone = computed(() => {
+  protected readonly tone: Signal<'info' | 'success' | 'warn' | 'error'> = computed(() => {
     const v = this.variant();
     return v === 'warning' ? 'warn' : v;
   });
 
   /** Errors and warnings interrupt; info and success wait their turn. */
-  protected readonly role = computed(() =>
+  protected readonly role: Signal<'alert' | 'status'> = computed(() =>
     this.tone() === 'error' || this.tone() === 'warn' ? 'alert' : 'status'
   );
 

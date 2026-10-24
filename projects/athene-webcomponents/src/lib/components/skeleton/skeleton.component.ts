@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, Input, computed, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  booleanAttribute,
+  computed,
+  input,
+  numberAttribute,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { injectAthLabels } from '../../i18n/labels';
 
@@ -46,7 +53,7 @@ export class AthSkeletonComponent {
   /** Height (CSS value); the variant's own height when empty. */
   readonly height = input('');
   /** Pulse; off is also forced by `prefers-reduced-motion`. */
-  readonly animated = input(true);
+  readonly animated = input(true, { transform: booleanAttribute });
 }
 
 /** Layout of `ath-skeleton-list`. */
@@ -79,7 +86,7 @@ export class AthSkeletonListComponent {
   private readonly labels = injectAthLabels();
 
   readonly variant = input<SkeletonListVariant>('row');
-  readonly count = input(6);
+  readonly count = input(6, { transform: numberAttribute });
   /** Accessible text; default `ATH_LABELS.loading`. */
   readonly label = input<string | null>(null);
 
@@ -104,14 +111,12 @@ export class AthSkeletonListComponent {
 })
 export class AthSkeletonTableComponent {
   /** Number of rows */
-  @Input() rows = 5;
+  readonly rows = input(5, { transform: numberAttribute });
 
   /** Column widths in percent */
-  @Input() columns: number[] = [20, 30, 25, 25];
+  readonly columns = input<number[]>([20, 30, 25, 25]);
 
-  get rowsArray(): number[] {
-    return Array.from({ length: this.rows }, (_, i) => i);
-  }
+  protected readonly rowsArray = computed(() => Array.from({ length: this.rows() }, (_, i) => i));
 }
 
 /**
@@ -129,8 +134,8 @@ export class AthSkeletonTableComponent {
 })
 export class AthSkeletonCardComponent {
   /** Show image placeholder */
-  @Input() showImage = true;
+  readonly showImage = input(true, { transform: booleanAttribute });
 
   /** Show action buttons */
-  @Input() showActions = true;
+  readonly showActions = input(true, { transform: booleanAttribute });
 }

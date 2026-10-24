@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  booleanAttribute,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ATH_STATUS_LABELS, type TicketStatus } from '@athene/webcomponents/core';
 
@@ -36,27 +43,25 @@ const LABELS: Readonly<Record<TicketStatus, string>> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './status-pill.component.html',
   styleUrl: './status-pill.component.scss',
+  host: {
+    '[attr.data-status]': 'status()',
+    '[attr.data-size]': 'size()',
+  },
 })
 export class AthStatusPillComponent {
-  @Input() status: TicketStatus = 'open';
-  @Input() showDot = true;
-  @Input() showLabel = true;
-  @Input() size: StatusPillSize = 'md';
+  readonly status = input<TicketStatus>('open');
+  readonly showDot = input(true, { transform: booleanAttribute });
+  readonly showLabel = input(true, { transform: booleanAttribute });
+  readonly size = input<StatusPillSize>('md');
 
   /** Optional override label (otherwise the app's resolver, then the English default). */
-  @Input() label: string | null = null;
+  readonly label = input<string | null>(null);
 
   private readonly resolveLabel = inject(ATH_STATUS_LABELS, { optional: true });
 
-  @HostBinding('attr.data-status') get hostStatus(): TicketStatus {
-    return this.status;
-  }
-
-  @HostBinding('attr.data-size') get hostSize(): StatusPillSize {
-    return this.size;
-  }
-
-  protected get computedLabel(): string {
-    return this.label ?? this.resolveLabel?.(this.status) ?? LABELS[this.status] ?? this.status;
-  }
+  /** The resolver reads a signal for the language (see `StatusLabelResolver`), so this follows it. */
+  protected readonly computedLabel = computed<string>(() => {
+    const status = this.status();
+    return this.label() ?? this.resolveLabel?.(status) ?? LABELS[status] ?? status;
+  });
 }

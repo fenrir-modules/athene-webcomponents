@@ -1,5 +1,5 @@
-<span [class]="badgeClasses">
-  @if (dot) {
+<span [class]="badgeClasses()">
+  @if (dot()) {
     <span class="ath-badge__dot"></span>
   }
   <ng-content />

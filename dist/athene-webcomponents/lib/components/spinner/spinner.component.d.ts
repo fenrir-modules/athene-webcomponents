@@ -15,8 +15,8 @@ export type SpinnerSize = 'sm' | 'md' | 'lg';
 export declare class AthSpinnerComponent {
     protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     /** Spinner size */
-    size: SpinnerSize;
-    get spinnerClasses(): string;
+    readonly size: import("@angular/core").InputSignal<SpinnerSize>;
+    protected readonly spinnerClasses: import("@angular/core").Signal<string>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthSpinnerComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthSpinnerComponent, "ath-spinner", never, { "size": { "alias": "size"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthSpinnerComponent, "ath-spinner", never, { "size": { "alias": "size"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

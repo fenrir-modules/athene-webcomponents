@@ -1,4 +1,6 @@
 import * as i0 from "@angular/core";
+/** Heading level of the page head's title. */
+export type PageHeaderLevel = 1 | 2;
 /**
  * The page head every app page uses: H1, one muted meta line, actions on
  * the right, a hairline underneath. The breadcrumb lives in the shell's
@@ -21,18 +23,18 @@ import * as i0 from "@angular/core";
  */
 export declare class AthPageHeaderComponent {
     /** Page title. */
-    title: string;
+    readonly title: import("@angular/core").InputSignal<string>;
     /** Multi-segment sub-row, rendered with bullet (•) separators. */
-    subItems: string[];
+    readonly subItems: import("@angular/core").InputSignal<string[]>;
     /** Legacy free-form description (single paragraph). Falls back if subItems empty. */
-    description: string;
+    readonly description: import("@angular/core").InputSignal<string>;
     /** Hairline under the head. On by default: it is part of the contract. */
-    divider: boolean;
+    readonly divider: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /**
      * Heading level of the title. 1 for a page; 2 for a section head inside a
      * page that already has its h1 (the settings sub-pages under "Settings").
      */
-    level: 1 | 2;
+    readonly level: import("@angular/core").InputSignal<PageHeaderLevel>;
     /**
      * The sub-items worth separating.
      *
@@ -41,7 +43,7 @@ export declare class AthPageHeaderComponent {
      * blank segment still earned its bullet, leaving headers reading
      * "All open tickets ·" with nothing after the separator.
      */
-    protected get visibleSubItems(): string[];
+    protected readonly visibleSubItems: import("@angular/core").Signal<string[]>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthPageHeaderComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthPageHeaderComponent, "ath-page-header", never, { "title": { "alias": "title"; "required": true; }; "subItems": { "alias": "subItems"; "required": false; }; "description": { "alias": "description"; "required": false; }; "divider": { "alias": "divider"; "required": false; }; "level": { "alias": "level"; "required": false; }; }, {}, never, ["[athPageLeading]", "[athPageMeta]", "*"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthPageHeaderComponent, "ath-page-header", never, { "title": { "alias": "title"; "required": true; "isSignal": true; }; "subItems": { "alias": "subItems"; "required": false; "isSignal": true; }; "description": { "alias": "description"; "required": false; "isSignal": true; }; "divider": { "alias": "divider"; "required": false; "isSignal": true; }; "level": { "alias": "level"; "required": false; "isSignal": true; }; }, {}, never, ["[athPageLeading]", "[athPageMeta]", "*"], true, never>;
 }

@@ -11,8 +11,8 @@ describe('AthAvatarStackComponent', () => {
     fixture = TestBed.configureTestingModule({
       imports: [AthAvatarStackComponent],
     }).createComponent(AthAvatarStackComponent);
-    fixture.componentInstance.users = users;
-    fixture.componentInstance.max = max;
+    fixture.componentRef.setInput('users', users);
+    fixture.componentRef.setInput('max', max);
     fixture.detectChanges();
   }
 

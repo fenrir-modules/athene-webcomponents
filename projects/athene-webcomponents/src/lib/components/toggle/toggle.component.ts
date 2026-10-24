@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -15,33 +15,33 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './toggle.component.html',
   styleUrl: './toggle.component.scss',
-  host: { '[attr.data-bare]': "label || description ? null : ''" },
+  host: { '[attr.data-bare]': "label() || description() ? null : ''" },
 })
 export class AthToggleComponent {
   /** Checked state */
-  @Input() checked = false;
+  readonly checked = input(false, { transform: booleanAttribute });
 
   /** Disabled state */
-  @Input() disabled = false;
+  readonly disabled = input(false, { transform: booleanAttribute });
 
   /** Label text */
-  @Input() label = '';
+  readonly label = input('');
 
   /** Description text */
-  @Input() description = '';
+  readonly description = input('');
 
   /**
    * Accessible name of the switch when no visible `label` is drawn (a switch
    * in a settings row or a table cell that its row already names).
    */
-  @Input() ariaLabel = '';
+  readonly ariaLabel = input('');
 
-  /** Toggle event emitter */
-  @Output() toggled = new EventEmitter<boolean>();
+  /** Emits the next state; the parent sets `checked`. */
+  readonly toggled = output<boolean>();
 
   toggle(): void {
-    if (!this.disabled) {
-      this.toggled.emit(!this.checked);
+    if (!this.disabled()) {
+      this.toggled.emit(!this.checked());
     }
   }
 }

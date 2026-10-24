@@ -1,12 +1,13 @@
 import {
-  Component,
-  Input,
-  forwardRef,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  inject,
+  Component,
+  booleanAttribute,
+  computed,
+  forwardRef,
+  input,
+  signal,
 } from '@angular/core';
-import { ATH_DEFAULT_LABELS, ATH_LABELS } from '../../i18n/labels';
+import { injectAthLabels } from '../../i18n/labels';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { LucideAngularModule, Eye, EyeOff, AlertCircle } from 'lucide-angular';
@@ -15,6 +16,9 @@ import { LucideAngularModule, Eye, EyeOff, AlertCircle } from 'lucide-angular';
  * Input type variants
  */
 export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search';
+
+/** Field height: `md` 44px, `sm` 33px. */
+export type InputSize = 'sm' | 'md';
 
 /**
  * Athene Input Component
@@ -39,59 +43,59 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
   styleUrl: './input.component.scss',
 })
 export class AthInputComponent implements ControlValueAccessor {
-  /** Input label */
-  /** Field height: `md` 44px (default), `sm` 33px (compact settings rows). */
-  @Input() size: 'sm' | 'md' = 'md';
+  private readonly labels = injectAthLabels();
 
-  private readonly labels = inject(ATH_LABELS, { optional: true });
+  /** Field height: `md` 44px (default), `sm` 33px (compact settings rows). */
+  readonly size = input<InputSize>('md');
 
   /** Accessible names of the password reveal toggle; default `ATH_LABELS`. */
-  @Input() showPasswordLabel: string | null = null;
-  @Input() hidePasswordLabel: string | null = null;
+  readonly showPasswordLabel = input<string | null>(null);
+  readonly hidePasswordLabel = input<string | null>(null);
 
-  protected get showPasswordText(): string {
-    return (
-      this.showPasswordLabel ?? (this.labels?.showPassword ?? ATH_DEFAULT_LABELS.showPassword)()
-    );
-  }
-
-  protected get hidePasswordText(): string {
-    return (
-      this.hidePasswordLabel ?? (this.labels?.hidePassword ?? ATH_DEFAULT_LABELS.hidePassword)()
-    );
-  }
-
-  @Input() label = '';
+  /** Input label */
+  readonly label = input('');
 
   /** Input type */
-  @Input() type: InputType = 'text';
+  readonly type = input<InputType>('text');
 
   /** Placeholder text */
-  @Input() placeholder = '';
+  readonly placeholder = input('');
 
   /** Error message */
-  @Input() error = '';
+  readonly error = input('');
 
   /** Hint text */
-  @Input() hint = '';
+  readonly hint = input('');
 
-  /** Disabled state */
-  @Input() disabled = false;
+  /** Disabled state (also set by the forms API, see `setDisabledState`). */
+  readonly disabled = input(false, { transform: booleanAttribute });
 
   /** Readonly state */
-  @Input() readonly = false;
+  readonly readonly = input(false, { transform: booleanAttribute });
 
   /** Required field */
-  @Input() required = false;
+  readonly required = input(false, { transform: booleanAttribute });
 
   /** Autocomplete attribute */
-  @Input() autocomplete = 'off';
+  readonly autocomplete = input('off');
 
   /** Unique input ID */
-  @Input() inputId = `ath-input-${Math.random().toString(36).substr(2, 9)}`;
+  readonly inputId = input(`ath-input-${Math.random().toString(36).substr(2, 9)}`);
 
-  protected value = '';
-  protected showPassword = false;
+  // Written by the forms API (e.g. a setValue after an async lookup) outside
+  // an input change; signals, so OnPush (and zoneless) views follow. Not
+  // `value`: Storybook copies a story prop of that name onto the instance.
+  protected readonly fieldValue = signal('');
+  private readonly formDisabled = signal(false);
+  protected readonly isDisabled = computed(() => this.disabled() || this.formDisabled());
+  protected readonly showPassword = signal(false);
+
+  protected readonly showPasswordText = computed(
+    () => this.showPasswordLabel() ?? this.labels.showPassword()
+  );
+  protected readonly hidePasswordText = computed(
+    () => this.hidePasswordLabel() ?? this.labels.hidePassword()
+  );
 
   protected readonly eyeIcon = Eye;
   protected readonly eyeOffIcon = EyeOff;
@@ -100,13 +104,8 @@ export class AthInputComponent implements ControlValueAccessor {
   private onChange: (value: string) => void = () => {};
   protected onTouched: () => void = () => {};
 
-  // OnPush: values written by the forms API (e.g. a setValue after an async
-  // lookup) arrive outside an input change, so the view must be told.
-  private readonly cdr = inject(ChangeDetectorRef);
-
   writeValue(value: string): void {
-    this.value = value ?? '';
-    this.cdr.markForCheck();
+    this.fieldValue.set(value ?? '');
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -118,17 +117,16 @@ export class AthInputComponent implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
-    this.cdr.markForCheck();
+    this.formDisabled.set(isDisabled);
   }
 
   onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
-    this.value = target.value;
-    this.onChange(this.value);
+    this.fieldValue.set(target.value);
+    this.onChange(target.value);
   }
 
   togglePassword(): void {
-    this.showPassword = !this.showPassword;
+    this.showPassword.update((shown) => !shown);
   }
 }

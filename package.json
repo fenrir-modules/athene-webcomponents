@@ -46,6 +46,7 @@
     "prepublishOnly": "npm run build:lib",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:zoneless": "ng test -c zoneless",
     "test:tokens": "node --test scripts/tokens/*.test.mjs",
     "lint": "npm run lint:shared && npm run lint:es && npm run lint:styles && npm run lint:i18n && npm run lint:ts && npm run lint:a11y && npm run tokens:check && npm run format:check && npm run lint:knip",
     "lint:shared": "node scripts/shared-config.mjs",

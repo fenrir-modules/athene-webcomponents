@@ -62,7 +62,10 @@ export declare class AthSheetComponent implements OnChanges, OnDestroy {
     private readonly entry;
     /** The panel element while open. */
     get panel(): HTMLElement | null;
-    private set panelRef(value);
+    /** The panel; rendered while `open` is true. */
+    private readonly panelRef;
+    constructor();
+    private attach;
     ngOnChanges(changes: SimpleChanges): void;
     ngOnDestroy(): void;
     /** Asks to close, as Escape does. */

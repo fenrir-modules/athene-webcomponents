@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  booleanAttribute,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ATH_PRIORITY_LABELS, type TicketPriority } from '@athene/webcomponents/core';
 
@@ -30,23 +37,22 @@ const LABELS: Readonly<Record<TicketPriority, string>> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './priority.component.html',
   styleUrl: './priority.component.scss',
+  host: {
+    '[attr.data-priority]': 'priority()',
+  },
 })
 export class AthPriorityComponent {
   private readonly resolveLabel = inject(ATH_PRIORITY_LABELS, { optional: true });
 
-  @Input() priority: TicketPriority = 'medium';
-  @Input() showLabel = true;
+  readonly priority = input<TicketPriority>('medium');
+  readonly showLabel = input(true, { transform: booleanAttribute });
 
   /** Optional override label. */
-  @Input() label: string | null = null;
+  readonly label = input<string | null>(null);
 
-  @HostBinding('attr.data-priority') get hostPriority(): TicketPriority {
-    return this.priority;
-  }
-
-  protected get computedLabel(): string {
-    return (
-      this.label ?? this.resolveLabel?.(this.priority) ?? LABELS[this.priority] ?? this.priority
-    );
-  }
+  /** The resolver reads a signal for the language (see `PriorityLabelResolver`), so this follows it. */
+  protected readonly computedLabel = computed<string>(() => {
+    const priority = this.priority();
+    return this.label() ?? this.resolveLabel?.(priority) ?? LABELS[priority] ?? priority;
+  });
 }

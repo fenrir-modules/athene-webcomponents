@@ -1,4 +1,11 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Copy, Check } from 'lucide-angular';
 import { injectAthLabels } from '../../i18n/labels';
@@ -24,49 +31,39 @@ export class AthCopyButtonComponent {
   protected readonly labels = injectAthLabels();
 
   /** Value to copy to clipboard */
-  @Input({ required: true }) value = '';
+  readonly value = input.required<string>();
 
   /** Optional tooltip/label */
-  @Input() label: string | null = null;
+  readonly label = input<string | null>(null);
 
-  protected copied = false;
+  protected readonly copied = signal(false);
   protected readonly copyIcon = Copy;
   protected readonly checkIcon = Check;
 
-  private resetTimeout: ReturnType<typeof setTimeout> | null = null;
+  private resetTimeout: ReturnType<typeof setTimeout> | undefined;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor() {
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.resetTimeout));
+  }
 
   async copy(): Promise<void> {
+    const value = this.value();
     try {
-      await navigator.clipboard.writeText(this.value);
-      this.copied = true;
-      this.cdr.markForCheck();
-
-      if (this.resetTimeout) clearTimeout(this.resetTimeout);
-      this.resetTimeout = setTimeout(() => {
-        this.copied = false;
-        this.cdr.markForCheck();
-      }, 2000);
+      await navigator.clipboard.writeText(value);
     } catch {
       // Fallback for older browsers
       const textarea = document.createElement('textarea');
-      textarea.value = this.value;
+      textarea.value = value;
       textarea.style.position = 'fixed';
       textarea.style.opacity = '0';
       document.body.appendChild(textarea);
       textarea.select();
       document.execCommand('copy');
       document.body.removeChild(textarea);
-
-      this.copied = true;
-      this.cdr.markForCheck();
-
-      if (this.resetTimeout) clearTimeout(this.resetTimeout);
-      this.resetTimeout = setTimeout(() => {
-        this.copied = false;
-        this.cdr.markForCheck();
-      }, 2000);
     }
+    this.copied.set(true);
+    // Feedback timer, not change detection: the signal schedules the render.
+    clearTimeout(this.resetTimeout);
+    this.resetTimeout = setTimeout(() => this.copied.set(false), 2000);
   }
 }

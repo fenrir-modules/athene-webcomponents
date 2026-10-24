@@ -1,38 +1,38 @@
-@if (size === 'compact') {
-  <div class="ath-empty-state ath-empty-state--compact" [class.ath-empty-state--bare]="bare">
+@if (size() === 'compact') {
+  <div class="ath-empty-state ath-empty-state--compact" [class.ath-empty-state--bare]="bare()">
     <div class="ath-empty-state__lead">
-      @if (icon) {
+      @if (icon(); as icon) {
         <span class="ath-empty-state__tile" aria-hidden="true">
           <lucide-icon [img]="icon" [size]="16" />
         </span>
       }
       <div class="ath-empty-state__text">
-        <p class="ath-empty-state__message">{{ message }}</p>
-        @if (subMessage) {
-          <p class="ath-empty-state__sub">{{ subMessage }}</p>
+        <p class="ath-empty-state__message">{{ message() }}</p>
+        @if (subMessage()) {
+          <p class="ath-empty-state__sub">{{ subMessage() }}</p>
         }
       </div>
-      @if (actionLabel || secondaryActionLabel) {
+      @if (actionLabel() || secondaryActionLabel()) {
         <div class="ath-empty-state__actions">
-          @if (secondaryActionLabel) {
+          @if (secondaryActionLabel()) {
             <ath-button variant="secondary" size="sm" (clicked)="secondaryAction.emit()">
-              {{ secondaryActionLabel }}
+              {{ secondaryActionLabel() }}
             </ath-button>
           }
-          @if (actionLabel) {
+          @if (actionLabel()) {
             <ath-button variant="primary" size="sm" (clicked)="action.emit()">
-              @if (actionIcon) {
+              @if (actionIcon(); as actionIcon) {
                 <lucide-icon [img]="actionIcon" [size]="13" />
               }
-              {{ actionLabel }}
+              {{ actionLabel() }}
             </ath-button>
           }
         </div>
       }
     </div>
-    @if (hints.length > 0) {
+    @if (hints().length > 0) {
       <ul class="ath-empty-state__hints">
-        @for (hint of hints; track hint.label) {
+        @for (hint of hints(); track hint.label) {
           <li class="ath-empty-state__hint">
             <span class="ath-empty-state__hint-icon" aria-hidden="true">
               @if (hint.icon) {
@@ -52,26 +52,26 @@
     <ng-content />
   </div>
 } @else {
-  <div class="ath-empty-state" [class.ath-empty-state--bare]="bare">
-    @if (icon) {
+  <div class="ath-empty-state" [class.ath-empty-state--bare]="bare()">
+    @if (icon(); as icon) {
       <span class="ath-empty-state__icon">
         <lucide-icon [img]="icon" [size]="18" />
       </span>
     }
-    <p class="ath-empty-state__message">{{ message }}</p>
-    @if (subMessage) {
-      <p class="ath-empty-state__sub">{{ subMessage }}</p>
+    <p class="ath-empty-state__message">{{ message() }}</p>
+    @if (subMessage()) {
+      <p class="ath-empty-state__sub">{{ subMessage() }}</p>
     }
-    @if (actionLabel || secondaryActionLabel) {
+    @if (actionLabel() || secondaryActionLabel()) {
       <div class="ath-empty-state__actions ath-empty-state__actions--center">
-        @if (secondaryActionLabel) {
+        @if (secondaryActionLabel()) {
           <ath-button variant="secondary" size="sm" (clicked)="secondaryAction.emit()">
-            {{ secondaryActionLabel }}
+            {{ secondaryActionLabel() }}
           </ath-button>
         }
-        @if (actionLabel) {
+        @if (actionLabel()) {
           <ath-button variant="primary" size="sm" (clicked)="action.emit()">
-            {{ actionLabel }}
+            {{ actionLabel() }}
           </ath-button>
         }
       </div>

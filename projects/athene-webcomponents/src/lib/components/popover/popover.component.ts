@@ -10,12 +10,15 @@ import {
   booleanAttribute,
   computed,
   contentChild,
+  effect,
   inject,
   input,
   model,
   output,
   signal,
+  untracked,
   viewChild,
+  type Signal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import {
@@ -24,7 +27,7 @@ import {
   resolveFloatingTarget,
   type FloatingAnchor,
 } from '../floating/floating.directive';
-import type { FloatingAlign, FloatingSide } from '../floating/floating';
+import type { FloatingAlign, FloatingSide, FloatingVirtualAnchor } from '../floating/floating';
 import {
   AthOverlayStack,
   type AthOverlayCloseReason,
@@ -135,7 +138,9 @@ export class AthPopoverComponent implements OnChanges, OnDestroy {
   readonly anchorElement = computed(() => resolveAnchor(this.anchor()) ?? this.triggerAnchor());
 
   /** What the panel is placed against: the anchor input (element or virtual) or the trigger. */
-  protected readonly floatTarget = computed(
+  // Annotated: an inferred union of two object types prints in type-id
+  // order, which differs between cached and fresh builds (check:dist).
+  protected readonly floatTarget: Signal<HTMLElement | FloatingVirtualAnchor | null> = computed(
     () => resolveFloatingTarget(this.anchor()) ?? this.triggerAnchor()
   );
 
@@ -151,7 +156,8 @@ export class AthPopoverComponent implements OnChanges, OnDestroy {
 
   private registered = false;
   private returnFocus: HTMLElement | null = null;
-  private focusTimer: ReturnType<typeof setTimeout> | undefined;
+  /** Work waiting for the open panel to render (see `whenPanelReady`). */
+  private panelJobs: (() => void)[] = [];
 
   private readonly entry: AthOverlayEntry = {
     panel: () => this.panel,
@@ -166,6 +172,29 @@ export class AthPopoverComponent implements OnChanges, OnDestroy {
     return this.panelRef()?.nativeElement ?? null;
   }
 
+  constructor() {
+    // DOM sync, no state: work on the panel (focus into it, a menu's first
+    // item, a picker's active option) follows the panel element, as in
+    // ath-dialog and ath-sheet, so it runs whichever change detection
+    // rendered the panel. `afterNextRender` ran on the next app render even
+    // when that did not include this view (a fixture without autoDetect, a
+    // view checked by hand), before the panel existed (VERIFY 4.1).
+    effect(() => {
+      if (this.panelRef()) untracked(() => this.runPanelJobs());
+    });
+  }
+
+  /**
+   * Runs `fn` once the open panel is rendered and placed (`athFloating`
+   * places it when it is created); right away when it already is. Dropped
+   * when the popover closes first. For `ath-menu` and `ath-option-picker`.
+   */
+  whenPanelReady(fn: () => void): void {
+    if (!this.open()) return;
+    this.panelJobs.push(fn);
+    if (this.panel) this.runPanelJobs();
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes['open']) return;
     if (this.open() && !this.registered) this.afterOpen();
@@ -173,7 +202,7 @@ export class AthPopoverComponent implements OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    clearTimeout(this.focusTimer);
+    this.panelJobs = [];
     if (this.registered) this.stack.close(this.entry);
   }
 
@@ -237,14 +266,19 @@ export class AthPopoverComponent implements OnChanges, OnDestroy {
         : null;
     this.stack.open(this.entry);
     this.opened.emit();
-    // After the panel has rendered and been positioned.
-    clearTimeout(this.focusTimer);
-    this.focusTimer = setTimeout(() => this.focusPanel());
+    this.whenPanelReady(() => this.focusPanel());
+  }
+
+  private runPanelJobs(): void {
+    if (!this.open() || !this.panel) return;
+    const jobs = this.panelJobs;
+    this.panelJobs = [];
+    for (const job of jobs) job();
   }
 
   private afterClose(reason: AthOverlayCloseReason, restore?: boolean): void {
     this.registered = false;
-    clearTimeout(this.focusTimer);
+    this.panelJobs = [];
     this.stack.close(this.entry);
     const panel = this.panel;
     const doc = panel?.ownerDocument ?? document;
@@ -259,7 +293,9 @@ export class AthPopoverComponent implements OnChanges, OnDestroy {
       focusSafely(back);
     } else if (reason === 'outside' && focusInside && this.restoreFocus()) {
       // The panel takes focus with it; if the click landed on nothing
-      // focusable, put focus back on the trigger instead of the page.
+      // focusable, put focus back on the trigger instead of the page. A task
+      // later: the browser moves focus after this pointerdown (not change
+      // detection).
       setTimeout(() => {
         if (doc.activeElement === doc.body || !doc.activeElement) focusSafely(back);
       });

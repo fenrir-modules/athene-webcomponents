@@ -1,5 +1,11 @@
-import { ChangeDetectionStrategy, Component, signal, viewChild } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ApplicationRef,
+  ChangeDetectionStrategy,
+  Component,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { ComponentFixture, ComponentFixtureAutoDetect, TestBed } from '@angular/core/testing';
 import { AthListboxComponent, type ListboxOption } from './listbox.component';
 import { AthOptionPickerComponent } from './option-picker.component';
 
@@ -386,5 +392,60 @@ describe('AthOptionPickerComponent', () => {
     );
     fixture.detectChanges();
     expect(q('[role=listbox]')).toBeNull();
+  });
+});
+
+const MANY: ListboxOption[] = Array.from({ length: 30 }, (_, i) => ({
+  value: `o${i}`,
+  label: `Option ${i}`,
+}));
+
+@Component({
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AthOptionPickerComponent],
+  template: `
+    <ath-option-picker
+      [options]="options"
+      [(value)]="value"
+      [maxHeight]="120"
+      ariaLabel="Option"
+      placeholder="Pick one"
+    />
+  `,
+})
+class HandCheckedPickerHostComponent {
+  readonly options = MANY;
+  readonly value = signal<string | null>('o27');
+}
+
+// See the popover spec of the same name: focus and the scroll to the
+// selected option wait for the rendered panel, also in a view an app render
+// does not include.
+describe('AthOptionPickerComponent in a view checked by hand', () => {
+  it('focuses the search and shows the selected option when its panel renders', async () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: ComponentFixtureAutoDetect, useValue: false }],
+    });
+    const fixture = TestBed.createComponent(HandCheckedPickerHostComponent);
+    const root = fixture.nativeElement as HTMLElement;
+    document.body.appendChild(root);
+    const render = () => fixture.componentRef.changeDetectorRef.detectChanges();
+    render();
+    root.querySelector<HTMLElement>('.ath-picker__trigger')!.click();
+    TestBed.inject(ApplicationRef).tick();
+    expect(root.querySelector('[role=listbox]')).toBeNull();
+    render();
+    await fixture.whenStable();
+    expect(document.activeElement).toBe(root.querySelector('input'));
+    const list = root.querySelector<HTMLElement>('[role=listbox]')!;
+    const selected = root.querySelector<HTMLElement>('[role=option][aria-selected=true]')!;
+    expect(selected.textContent).toContain('Option 27');
+    const box = list.getBoundingClientRect();
+    const row = selected.getBoundingClientRect();
+    expect(row.top).toBeGreaterThanOrEqual(box.top - 1);
+    expect(row.bottom).toBeLessThanOrEqual(box.bottom + 1);
+    fixture.destroy();
+    root.remove();
   });
 });

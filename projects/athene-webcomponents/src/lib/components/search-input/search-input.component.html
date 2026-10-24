@@ -3,11 +3,11 @@
   <input
     type="text"
     class="ath-search-input__field"
-    [placeholder]="placeholder"
-    [value]="value"
+    [placeholder]="placeholder()"
+    [value]="value()"
     (input)="onInput($event)"
   />
-  @if (value) {
+  @if (value()) {
     <button
       type="button"
       class="ath-search-input__clear"

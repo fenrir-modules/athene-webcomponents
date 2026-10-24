@@ -1,4 +1,3 @@
-import { EventEmitter } from '@angular/core';
 import * as i0 from "@angular/core";
 /**
  * Athene Toggle Component
@@ -9,21 +8,21 @@ import * as i0 from "@angular/core";
  */
 export declare class AthToggleComponent {
     /** Checked state */
-    checked: boolean;
+    readonly checked: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Disabled state */
-    disabled: boolean;
+    readonly disabled: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Label text */
-    label: string;
+    readonly label: import("@angular/core").InputSignal<string>;
     /** Description text */
-    description: string;
+    readonly description: import("@angular/core").InputSignal<string>;
     /**
      * Accessible name of the switch when no visible `label` is drawn (a switch
      * in a settings row or a table cell that its row already names).
      */
-    ariaLabel: string;
-    /** Toggle event emitter */
-    toggled: EventEmitter<boolean>;
+    readonly ariaLabel: import("@angular/core").InputSignal<string>;
+    /** Emits the next state; the parent sets `checked`. */
+    readonly toggled: import("@angular/core").OutputEmitterRef<boolean>;
     toggle(): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthToggleComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthToggleComponent, "ath-toggle", never, { "checked": { "alias": "checked"; "required": false; }; "disabled": { "alias": "disabled"; "required": false; }; "label": { "alias": "label"; "required": false; }; "description": { "alias": "description"; "required": false; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; }; }, { "toggled": "toggled"; }, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthToggleComponent, "ath-toggle", never, { "checked": { "alias": "checked"; "required": false; "isSignal": true; }; "disabled": { "alias": "disabled"; "required": false; "isSignal": true; }; "label": { "alias": "label"; "required": false; "isSignal": true; }; "description": { "alias": "description"; "required": false; "isSignal": true; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; "isSignal": true; }; }, { "toggled": "toggled"; }, never, never, true, never>;
 }

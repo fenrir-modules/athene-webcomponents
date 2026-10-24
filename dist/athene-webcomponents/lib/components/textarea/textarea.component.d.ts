@@ -1,5 +1,7 @@
 import { ControlValueAccessor } from '@angular/forms';
 import * as i0 from "@angular/core";
+/** Which way the user may resize the field. */
+export type TextareaResize = 'none' | 'vertical' | 'both';
 /**
  * Athene Textarea Component
  *
@@ -11,36 +13,39 @@ import * as i0 from "@angular/core";
  */
 export declare class AthTextareaComponent implements ControlValueAccessor {
     /** Textarea label */
-    label: string;
+    readonly label: import("@angular/core").InputSignal<string>;
     /** Placeholder text */
-    placeholder: string;
+    readonly placeholder: import("@angular/core").InputSignal<string>;
     /** Number of rows */
-    rows: number;
+    readonly rows: import("@angular/core").InputSignalWithTransform<number, unknown>;
     /** Error message */
-    error: string;
+    readonly error: import("@angular/core").InputSignal<string>;
     /** Hint text */
-    hint: string;
-    /** Disabled state */
-    disabled: boolean;
+    readonly hint: import("@angular/core").InputSignal<string>;
+    /** Disabled state (also set by the forms API, see `setDisabledState`). */
+    readonly disabled: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Required field */
-    required: boolean;
+    readonly required: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Allow resize */
-    resize: 'none' | 'vertical' | 'both';
+    readonly resize: import("@angular/core").InputSignal<TextareaResize>;
     /** Max length */
-    maxLength: number | null;
+    readonly maxLength: import("@angular/core").InputSignal<number | null>;
     /** Unique textarea ID */
-    textareaId: string;
-    protected value: string;
+    readonly textareaId: import("@angular/core").InputSignal<string>;
+    protected readonly fieldValue: import("@angular/core").WritableSignal<string>;
+    private readonly formDisabled;
+    protected readonly isDisabled: import("@angular/core").Signal<boolean>;
     protected readonly alertIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     private onChange;
     protected onTouched: () => void;
-    get characterCount(): number;
-    private readonly cdr;
+    readonly characterCount: import("@angular/core").Signal<number>;
+    /** Past 90% of `maxLength`. */
+    protected readonly nearLimit: import("@angular/core").Signal<boolean>;
     writeValue(value: string): void;
     registerOnChange(fn: (value: string) => void): void;
     registerOnTouched(fn: () => void): void;
     setDisabledState(isDisabled: boolean): void;
     onInput(event: Event): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthTextareaComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthTextareaComponent, "ath-textarea", never, { "label": { "alias": "label"; "required": false; }; "placeholder": { "alias": "placeholder"; "required": false; }; "rows": { "alias": "rows"; "required": false; }; "error": { "alias": "error"; "required": false; }; "hint": { "alias": "hint"; "required": false; }; "disabled": { "alias": "disabled"; "required": false; }; "required": { "alias": "required"; "required": false; }; "resize": { "alias": "resize"; "required": false; }; "maxLength": { "alias": "maxLength"; "required": false; }; "textareaId": { "alias": "textareaId"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthTextareaComponent, "ath-textarea", never, { "label": { "alias": "label"; "required": false; "isSignal": true; }; "placeholder": { "alias": "placeholder"; "required": false; "isSignal": true; }; "rows": { "alias": "rows"; "required": false; "isSignal": true; }; "error": { "alias": "error"; "required": false; "isSignal": true; }; "hint": { "alias": "hint"; "required": false; "isSignal": true; }; "disabled": { "alias": "disabled"; "required": false; "isSignal": true; }; "required": { "alias": "required"; "required": false; "isSignal": true; }; "resize": { "alias": "resize"; "required": false; "isSignal": true; }; "maxLength": { "alias": "maxLength"; "required": false; "isSignal": true; }; "textareaId": { "alias": "textareaId"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

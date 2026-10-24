@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  booleanAttribute,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Check, Copy } from 'lucide-angular';
 import { injectAthLabels } from '../../i18n/labels';
@@ -21,39 +30,43 @@ import { injectAthLabels } from '../../i18n/labels';
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './code-block.component.html',
   styleUrl: './code-block.component.scss',
+  host: {
+    '[attr.data-language]': 'language()',
+  },
 })
 export class AthCodeBlockComponent {
   protected readonly labels = injectAthLabels();
 
-  @Input({ required: true }) code = '';
-  @Input() language: string | null = null;
+  readonly code = input.required<string>();
+  readonly language = input<string | null>(null);
 
   /** Optional filename to display next to the language label. */
-  @Input() filename: string | null = null;
+  readonly filename = input<string | null>(null);
 
   /** Show line numbers down the left gutter. */
-  @Input() showLineNumbers = false;
+  readonly showLineNumbers = input(false, { transform: booleanAttribute });
 
   /** Hide the copy button (e.g., for short read-only snippets). */
-  @Input() copyable = true;
+  readonly copyable = input(true, { transform: booleanAttribute });
 
   protected readonly copyIcon = Copy;
   protected readonly checkIcon = Check;
   protected readonly copied = signal(false);
+  private resetTimer: ReturnType<typeof setTimeout> | undefined;
 
-  @HostBinding('attr.data-language') get hostLang(): string | null {
-    return this.language;
-  }
+  protected readonly lines = computed(() => this.code().split('\n'));
 
-  protected get lines(): string[] {
-    return this.code.split('\n');
+  constructor() {
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.resetTimer));
   }
 
   async copy(): Promise<void> {
     try {
-      await navigator.clipboard.writeText(this.code);
+      await navigator.clipboard.writeText(this.code());
       this.copied.set(true);
-      window.setTimeout(() => this.copied.set(false), 1500);
+      // Feedback timer, not change detection: the signal schedules the render.
+      clearTimeout(this.resetTimer);
+      this.resetTimer = setTimeout(() => this.copied.set(false), 1500);
     } catch {
       // Fallback: select the text so the user can copy manually
     }

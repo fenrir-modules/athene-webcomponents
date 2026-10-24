@@ -1,4 +1,10 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  booleanAttribute,
+  computed,
+  input,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -25,14 +31,14 @@ export type BadgeVariant = 'default' | 'success' | 'warning' | 'error' | 'info' 
 })
 export class AthBadgeComponent {
   /** Badge variant */
-  @Input() variant: BadgeVariant = 'default';
+  readonly variant = input<BadgeVariant>('default');
 
   /** Show dot indicator */
-  @Input() dot = false;
+  readonly dot = input(false, { transform: booleanAttribute });
 
-  get badgeClasses(): string {
-    return ['ath-badge', `ath-badge--${this.variant}`, this.dot ? 'ath-badge--dot' : '']
+  protected readonly badgeClasses = computed(() =>
+    ['ath-badge', `ath-badge--${this.variant()}`, this.dot() ? 'ath-badge--dot' : '']
       .filter(Boolean)
-      .join(' ');
-  }
+      .join(' ')
+  );
 }

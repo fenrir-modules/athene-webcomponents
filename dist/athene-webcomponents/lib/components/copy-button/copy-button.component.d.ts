@@ -1,4 +1,3 @@
-import { ChangeDetectorRef } from '@angular/core';
 import * as i0 from "@angular/core";
 /**
  * Athene Copy Button Component
@@ -10,18 +9,17 @@ import * as i0 from "@angular/core";
  * <ath-copy-button [value]="secretToken" label="Copy token" />
  */
 export declare class AthCopyButtonComponent {
-    private cdr;
     protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     /** Value to copy to clipboard */
-    value: string;
+    readonly value: import("@angular/core").InputSignal<string>;
     /** Optional tooltip/label */
-    label: string | null;
-    protected copied: boolean;
+    readonly label: import("@angular/core").InputSignal<string | null>;
+    protected readonly copied: import("@angular/core").WritableSignal<boolean>;
     protected readonly copyIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     protected readonly checkIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     private resetTimeout;
-    constructor(cdr: ChangeDetectorRef);
+    constructor();
     copy(): Promise<void>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthCopyButtonComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthCopyButtonComponent, "ath-copy-button", never, { "value": { "alias": "value"; "required": true; }; "label": { "alias": "label"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthCopyButtonComponent, "ath-copy-button", never, { "value": { "alias": "value"; "required": true; "isSignal": true; }; "label": { "alias": "label"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

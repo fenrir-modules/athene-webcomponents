@@ -1,13 +1,13 @@
 <div
   class="ath-select"
-  [class.ath-select--sm]="size === 'sm'"
-  [class.ath-select--error]="error"
-  [class.ath-select--disabled]="disabled"
+  [class.ath-select--sm]="size() === 'sm'"
+  [class.ath-select--error]="error()"
+  [class.ath-select--disabled]="isDisabled()"
 >
-  @if (label) {
-    <label class="ath-select__label" [for]="selectId">
-      {{ label }}
-      @if (required) {
+  @if (label()) {
+    <label class="ath-select__label" [for]="selectId()">
+      {{ label() }}
+      @if (required()) {
         <span class="ath-select__required">*</span>
       }
     </label>
@@ -15,24 +15,24 @@
 
   <div class="ath-select__wrapper">
     <select
-      [id]="selectId"
-      [attr.aria-label]="ariaLabel || null"
-      [disabled]="disabled"
-      [value]="value"
+      [id]="selectId()"
+      [attr.aria-label]="ariaLabel() || null"
+      [disabled]="isDisabled()"
+      [value]="fieldValue()"
       (change)="onSelectionChange($event)"
       (blur)="onTouched()"
       class="ath-select__field"
     >
-      @if (placeholder) {
-        <option value="" disabled [selected]="!value">{{ placeholder }}</option>
+      @if (placeholder()) {
+        <option value="" disabled [selected]="!fieldValue()">{{ placeholder() }}</option>
       }
-      @for (option of options; track option.value) {
+      @for (option of options(); track option.value) {
         <!-- [selected] as well as the select's [value]: options that arrive after
              the value (loaded later) must still show it. -->
         <option
           [value]="option.value"
           [disabled]="option.disabled"
-          [selected]="option.value === value"
+          [selected]="option.value === fieldValue()"
         >
           {{ option.label }}
         </option>
@@ -41,14 +41,14 @@
     <lucide-icon [img]="chevronIcon" [size]="16" class="ath-select__chevron" />
   </div>
 
-  @if (error) {
+  @if (error()) {
     <div class="ath-select__error">
       <lucide-icon [img]="alertIcon" [size]="14" />
-      {{ error }}
+      {{ error() }}
     </div>
   }
 
-  @if (hint && !error) {
-    <div class="ath-select__hint">{{ hint }}</div>
+  @if (hint() && !error()) {
+    <div class="ath-select__hint">{{ hint() }}</div>
   }
 </div>

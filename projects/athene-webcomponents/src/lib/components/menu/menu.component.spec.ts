@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ApplicationRef, ChangeDetectionStrategy, Component } from '@angular/core';
+import { ComponentFixture, ComponentFixtureAutoDetect, TestBed } from '@angular/core/testing';
 import { Pencil } from 'lucide-angular';
 import { AthButtonComponent } from '../button/button.component';
 import { AthMenuComponent } from './menu.component';
@@ -211,5 +211,44 @@ describe('AthMenuComponent', () => {
     inner.click();
     await settle();
     expect(inner.getAttribute('aria-expanded')).toBe('true');
+  });
+});
+
+@Component({
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AthMenuComponent, AthMenuItemComponent, AthMenuTriggerDirective],
+  template: `
+    <button type="button" class="trigger" [athMenuTrigger]="menu">Actions</button>
+    <ath-menu #menu>
+      <button athMenuItem>Edit</button>
+      <button athMenuItem>Copy</button>
+    </ath-menu>
+  `,
+})
+class HandCheckedMenuHostComponent {}
+
+// See the popover spec of the same name: the first item takes focus when the
+// panel renders, also in a view an app render does not include.
+describe('AthMenuComponent in a view checked by hand', () => {
+  it('focuses the first item when its panel renders, not on an app render without it', async () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: ComponentFixtureAutoDetect, useValue: false }],
+    });
+    const fixture = TestBed.createComponent(HandCheckedMenuHostComponent);
+    const root = fixture.nativeElement as HTMLElement;
+    document.body.appendChild(root);
+    const render = () => fixture.componentRef.changeDetectorRef.detectChanges();
+    render();
+    const trigger = root.querySelector<HTMLElement>('.trigger')!;
+    trigger.focus();
+    trigger.click();
+    TestBed.inject(ApplicationRef).tick();
+    expect(root.querySelector('[role=menuitem]')).toBeNull();
+    render();
+    await fixture.whenStable();
+    expect(document.activeElement).toBe(root.querySelector<HTMLElement>('[role=menuitem]'));
+    fixture.destroy();
+    root.remove();
   });
 });

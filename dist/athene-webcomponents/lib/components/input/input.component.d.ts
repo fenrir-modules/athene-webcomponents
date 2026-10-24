@@ -4,6 +4,8 @@ import * as i0 from "@angular/core";
  * Input type variants
  */
 export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search';
+/** Field height: `md` 44px, `sm` 33px. */
+export type InputSize = 'sm' | 'md';
 /**
  * Athene Input Component
  *
@@ -12,42 +14,43 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
  * <ath-input label="Password" type="password" [error]="errorMessage" />
  */
 export declare class AthInputComponent implements ControlValueAccessor {
-    /** Input label */
-    /** Field height: `md` 44px (default), `sm` 33px (compact settings rows). */
-    size: 'sm' | 'md';
     private readonly labels;
+    /** Field height: `md` 44px (default), `sm` 33px (compact settings rows). */
+    readonly size: import("@angular/core").InputSignal<InputSize>;
     /** Accessible names of the password reveal toggle; default `ATH_LABELS`. */
-    showPasswordLabel: string | null;
-    hidePasswordLabel: string | null;
-    protected get showPasswordText(): string;
-    protected get hidePasswordText(): string;
-    label: string;
+    readonly showPasswordLabel: import("@angular/core").InputSignal<string | null>;
+    readonly hidePasswordLabel: import("@angular/core").InputSignal<string | null>;
+    /** Input label */
+    readonly label: import("@angular/core").InputSignal<string>;
     /** Input type */
-    type: InputType;
+    readonly type: import("@angular/core").InputSignal<InputType>;
     /** Placeholder text */
-    placeholder: string;
+    readonly placeholder: import("@angular/core").InputSignal<string>;
     /** Error message */
-    error: string;
+    readonly error: import("@angular/core").InputSignal<string>;
     /** Hint text */
-    hint: string;
-    /** Disabled state */
-    disabled: boolean;
+    readonly hint: import("@angular/core").InputSignal<string>;
+    /** Disabled state (also set by the forms API, see `setDisabledState`). */
+    readonly disabled: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Readonly state */
-    readonly: boolean;
+    readonly readonly: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Required field */
-    required: boolean;
+    readonly required: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Autocomplete attribute */
-    autocomplete: string;
+    readonly autocomplete: import("@angular/core").InputSignal<string>;
     /** Unique input ID */
-    inputId: string;
-    protected value: string;
-    protected showPassword: boolean;
+    readonly inputId: import("@angular/core").InputSignal<string>;
+    protected readonly fieldValue: import("@angular/core").WritableSignal<string>;
+    private readonly formDisabled;
+    protected readonly isDisabled: import("@angular/core").Signal<boolean>;
+    protected readonly showPassword: import("@angular/core").WritableSignal<boolean>;
+    protected readonly showPasswordText: import("@angular/core").Signal<string>;
+    protected readonly hidePasswordText: import("@angular/core").Signal<string>;
     protected readonly eyeIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     protected readonly eyeOffIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     protected readonly alertIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     private onChange;
     protected onTouched: () => void;
-    private readonly cdr;
     writeValue(value: string): void;
     registerOnChange(fn: (value: string) => void): void;
     registerOnTouched(fn: () => void): void;
@@ -55,5 +58,5 @@ export declare class AthInputComponent implements ControlValueAccessor {
     onInput(event: Event): void;
     togglePassword(): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthInputComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthInputComponent, "ath-input", never, { "size": { "alias": "size"; "required": false; }; "showPasswordLabel": { "alias": "showPasswordLabel"; "required": false; }; "hidePasswordLabel": { "alias": "hidePasswordLabel"; "required": false; }; "label": { "alias": "label"; "required": false; }; "type": { "alias": "type"; "required": false; }; "placeholder": { "alias": "placeholder"; "required": false; }; "error": { "alias": "error"; "required": false; }; "hint": { "alias": "hint"; "required": false; }; "disabled": { "alias": "disabled"; "required": false; }; "readonly": { "alias": "readonly"; "required": false; }; "required": { "alias": "required"; "required": false; }; "autocomplete": { "alias": "autocomplete"; "required": false; }; "inputId": { "alias": "inputId"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthInputComponent, "ath-input", never, { "size": { "alias": "size"; "required": false; "isSignal": true; }; "showPasswordLabel": { "alias": "showPasswordLabel"; "required": false; "isSignal": true; }; "hidePasswordLabel": { "alias": "hidePasswordLabel"; "required": false; "isSignal": true; }; "label": { "alias": "label"; "required": false; "isSignal": true; }; "type": { "alias": "type"; "required": false; "isSignal": true; }; "placeholder": { "alias": "placeholder"; "required": false; "isSignal": true; }; "error": { "alias": "error"; "required": false; "isSignal": true; }; "hint": { "alias": "hint"; "required": false; "isSignal": true; }; "disabled": { "alias": "disabled"; "required": false; "isSignal": true; }; "readonly": { "alias": "readonly"; "required": false; "isSignal": true; }; "required": { "alias": "required"; "required": false; "isSignal": true; }; "autocomplete": { "alias": "autocomplete"; "required": false; "isSignal": true; }; "inputId": { "alias": "inputId"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

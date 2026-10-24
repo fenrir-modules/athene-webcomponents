@@ -1,4 +1,8 @@
 import * as i0 from "@angular/core";
+/** Heading level of a panel's title. */
+export type PanelLevel = 2 | 3;
+/** How a panel clips what overflows it. */
+export type PanelOverflow = 'hidden' | 'clip';
 /**
  * A panel: surface, hairline border, `--panel-radius`, and an optional
  * head row (`--panel-head-h`) with title, projected head content, a count
@@ -20,7 +24,7 @@ import * as i0 from "@angular/core";
 export declare class AthPanelComponent {
     readonly title: import("@angular/core").InputSignal<string | null | undefined>;
     /** Heading level of the title (2 under a page's h1). */
-    readonly level: import("@angular/core").InputSignal<2 | 3>;
+    readonly level: import("@angular/core").InputSignal<PanelLevel>;
     /** Quiet count at the head's right ("5 open", 12). */
     readonly count: import("@angular/core").InputSignal<string | number | null | undefined>;
     /** Pad the body with `--panel-pad-y` / `--panel-pad-x` (off for tables and lists). */
@@ -33,7 +37,7 @@ export declare class AthPanelComponent {
      * one, so `position: sticky` inside (an editor toolbar, an outline) sticks
      * to the page's scroller instead. Use `clip` with `[scroll]="false"`.
      */
-    readonly overflow: import("@angular/core").InputSignal<"hidden" | "clip">;
+    readonly overflow: import("@angular/core").InputSignal<PanelOverflow>;
     /** Rows placeholder instead of the content. */
     readonly loading: import("@angular/core").InputSignal<boolean>;
     readonly skeletonRows: import("@angular/core").InputSignal<number>;

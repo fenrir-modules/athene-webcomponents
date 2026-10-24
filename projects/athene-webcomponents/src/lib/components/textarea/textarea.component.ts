@@ -1,14 +1,19 @@
 import {
-  Component,
-  Input,
-  forwardRef,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  inject,
+  Component,
+  booleanAttribute,
+  computed,
+  forwardRef,
+  input,
+  numberAttribute,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { LucideAngularModule, AlertCircle } from 'lucide-angular';
+
+/** Which way the user may resize the field. */
+export type TextareaResize = 'none' | 'vertical' | 'both';
 
 /**
  * Athene Textarea Component
@@ -36,53 +41,57 @@ import { LucideAngularModule, AlertCircle } from 'lucide-angular';
 })
 export class AthTextareaComponent implements ControlValueAccessor {
   /** Textarea label */
-  @Input() label = '';
+  readonly label = input('');
 
   /** Placeholder text */
-  @Input() placeholder = '';
+  readonly placeholder = input('');
 
   /** Number of rows */
-  @Input() rows = 4;
+  readonly rows = input(4, { transform: numberAttribute });
 
   /** Error message */
-  @Input() error = '';
+  readonly error = input('');
 
   /** Hint text */
-  @Input() hint = '';
+  readonly hint = input('');
 
-  /** Disabled state */
-  @Input() disabled = false;
+  /** Disabled state (also set by the forms API, see `setDisabledState`). */
+  readonly disabled = input(false, { transform: booleanAttribute });
 
   /** Required field */
-  @Input() required = false;
+  readonly required = input(false, { transform: booleanAttribute });
 
   /** Allow resize */
-  @Input() resize: 'none' | 'vertical' | 'both' = 'vertical';
+  readonly resize = input<TextareaResize>('vertical');
 
   /** Max length */
-  @Input() maxLength: number | null = null;
+  readonly maxLength = input<number | null>(null);
 
   /** Unique textarea ID */
-  @Input() textareaId = `ath-textarea-${Math.random().toString(36).substr(2, 9)}`;
+  readonly textareaId = input(`ath-textarea-${Math.random().toString(36).substr(2, 9)}`);
 
-  protected value = '';
+  // Written by the forms API (e.g. a setValue after an async lookup) outside
+  // an input change; signals, so OnPush (and zoneless) views follow. Not
+  // `value`: Storybook copies a story prop of that name onto the instance.
+  protected readonly fieldValue = signal('');
+  private readonly formDisabled = signal(false);
+  protected readonly isDisabled = computed(() => this.disabled() || this.formDisabled());
 
   protected readonly alertIcon = AlertCircle;
 
   private onChange: (value: string) => void = () => {};
   protected onTouched: () => void = () => {};
 
-  get characterCount(): number {
-    return this.value?.length ?? 0;
-  }
+  readonly characterCount = computed(() => this.fieldValue().length);
 
-  // OnPush: values written by the forms API (e.g. a setValue after an async
-  // lookup) arrive outside an input change, so the view must be told.
-  private readonly cdr = inject(ChangeDetectorRef);
+  /** Past 90% of `maxLength`. */
+  protected readonly nearLimit = computed(() => {
+    const max = this.maxLength();
+    return max != null && this.characterCount() > max * 0.9;
+  });
 
   writeValue(value: string): void {
-    this.value = value ?? '';
-    this.cdr.markForCheck();
+    this.fieldValue.set(value ?? '');
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -94,13 +103,12 @@ export class AthTextareaComponent implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
-    this.cdr.markForCheck();
+    this.formDisabled.set(isDisabled);
   }
 
   onInput(event: Event): void {
     const target = event.target as HTMLTextAreaElement;
-    this.value = target.value;
-    this.onChange(this.value);
+    this.fieldValue.set(target.value);
+    this.onChange(target.value);
   }
 }

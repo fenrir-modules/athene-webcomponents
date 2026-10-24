@@ -1,6 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { AthSkeletonComponent } from '../skeleton';
 
+/** Heading level of a panel's title. */
+export type PanelLevel = 2 | 3;
+/** How a panel clips what overflows it. */
+export type PanelOverflow = 'hidden' | 'clip';
+
 /**
  * A panel: surface, hairline border, `--panel-radius`, and an optional
  * head row (`--panel-head-h`) with title, projected head content, a count
@@ -36,7 +41,7 @@ import { AthSkeletonComponent } from '../skeleton';
 export class AthPanelComponent {
   readonly title = input<string | null | undefined>(null);
   /** Heading level of the title (2 under a page's h1). */
-  readonly level = input<2 | 3>(2);
+  readonly level = input<PanelLevel>(2);
   /** Quiet count at the head's right ("5 open", 12). */
   readonly count = input<string | number | null | undefined>(null);
   /** Pad the body with `--panel-pad-y` / `--panel-pad-x` (off for tables and lists). */
@@ -49,7 +54,7 @@ export class AthPanelComponent {
    * one, so `position: sticky` inside (an editor toolbar, an outline) sticks
    * to the page's scroller instead. Use `clip` with `[scroll]="false"`.
    */
-  readonly overflow = input<'hidden' | 'clip'>('hidden');
+  readonly overflow = input<PanelOverflow>('hidden');
   /** Rows placeholder instead of the content. */
   readonly loading = input(false);
   readonly skeletonRows = input(5);

@@ -1,6 +1,6 @@
-import { OnChanges, OnDestroy, SimpleChanges, TemplateRef } from '@angular/core';
+import { OnChanges, OnDestroy, SimpleChanges, TemplateRef, type Signal } from '@angular/core';
 import { type FloatingAnchor } from '../floating/floating.directive';
-import type { FloatingAlign, FloatingSide } from '../floating/floating';
+import type { FloatingAlign, FloatingSide, FloatingVirtualAnchor } from '../floating/floating';
 import { type AthOverlayCloseReason } from '../floating/overlay-stack';
 import * as i0 from "@angular/core";
 /** Panel width: `sm` 220px, `md` 280px (default), `lg` 360px, `auto` fits the content. */
@@ -76,20 +76,28 @@ export declare class AthPopoverComponent implements OnChanges, OnDestroy {
     readonly closed: import("@angular/core").OutputEmitterRef<AthOverlayCloseReason>;
     /** Id of the panel, for `aria-controls`. */
     readonly panelId: import("@angular/core").InputSignal<string>;
-    protected readonly lazyContent: import("@angular/core").Signal<AthPopoverContentDirective | undefined>;
+    protected readonly lazyContent: Signal<AthPopoverContentDirective | undefined>;
     private readonly panelRef;
     private readonly triggerAnchor;
     /** The element the panel currently hangs from. */
-    readonly anchorElement: import("@angular/core").Signal<HTMLElement | null>;
+    readonly anchorElement: Signal<HTMLElement | null>;
     /** What the panel is placed against: the anchor input (element or virtual) or the trigger. */
-    protected readonly floatTarget: import("@angular/core").Signal<import("../floating/floating").FloatingVirtualAnchor | HTMLElement | null>;
-    protected readonly panelClasses: import("@angular/core").Signal<string>;
+    protected readonly floatTarget: Signal<HTMLElement | FloatingVirtualAnchor | null>;
+    protected readonly panelClasses: Signal<string>;
     private registered;
     private returnFocus;
-    private focusTimer;
+    /** Work waiting for the open panel to render (see `whenPanelReady`). */
+    private panelJobs;
     private readonly entry;
     /** The panel element while open. */
     get panel(): HTMLElement | null;
+    constructor();
+    /**
+     * Runs `fn` once the open panel is rendered and placed (`athFloating`
+     * places it when it is created); right away when it already is. Dropped
+     * when the popover closes first. For `ath-menu` and `ath-option-picker`.
+     */
+    whenPanelReady(fn: () => void): void;
     ngOnChanges(changes: SimpleChanges): void;
     ngOnDestroy(): void;
     /** Opens the panel, optionally hanging it from `anchor`. */
@@ -105,6 +113,7 @@ export declare class AthPopoverComponent implements OnChanges, OnDestroy {
     protected onKeydown(event: KeyboardEvent): void;
     protected onFocusOut(event: FocusEvent): void;
     private afterOpen;
+    private runPanelJobs;
     private afterClose;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthPopoverComponent, never>;
     static ɵcmp: i0.ɵɵComponentDeclaration<AthPopoverComponent, "ath-popover", ["athPopover"], { "open": { "alias": "open"; "required": false; "isSignal": true; }; "anchor": { "alias": "anchor"; "required": false; "isSignal": true; }; "size": { "alias": "size"; "required": false; "isSignal": true; }; "padding": { "alias": "padding"; "required": false; "isSignal": true; }; "align": { "alias": "align"; "required": false; "isSignal": true; }; "side": { "alias": "side"; "required": false; "isSignal": true; }; "offset": { "alias": "offset"; "required": false; "isSignal": true; }; "matchWidth": { "alias": "matchWidth"; "required": false; "isSignal": true; }; "maxHeight": { "alias": "maxHeight"; "required": false; "isSignal": true; }; "arrow": { "alias": "arrow"; "required": false; "isSignal": true; }; "trapFocus": { "alias": "trapFocus"; "required": false; "isSignal": true; }; "autoFocus": { "alias": "autoFocus"; "required": false; "isSignal": true; }; "restoreFocus": { "alias": "restoreFocus"; "required": false; "isSignal": true; }; "closeOnEscape": { "alias": "closeOnEscape"; "required": false; "isSignal": true; }; "closeOnOutsideClick": { "alias": "closeOnOutsideClick"; "required": false; "isSignal": true; }; "panelRole": { "alias": "panelRole"; "required": false; "isSignal": true; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; "isSignal": true; }; "ariaLabelledby": { "alias": "ariaLabelledby"; "required": false; "isSignal": true; }; "panelClass": { "alias": "panelClass"; "required": false; "isSignal": true; }; "panelId": { "alias": "panelId"; "required": false; "isSignal": true; }; }, { "open": "openChange"; "opened": "opened"; "closed": "closed"; }, ["lazyContent"], ["*"], true, never>;

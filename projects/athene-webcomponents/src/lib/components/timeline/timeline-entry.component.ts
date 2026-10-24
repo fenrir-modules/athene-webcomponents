@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  booleanAttribute,
+  computed,
+  input,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AthAvatarComponent } from '../avatar';
 import { injectAthLabels } from '../../i18n/labels';
@@ -23,28 +29,25 @@ import { injectAthLabels } from '../../i18n/labels';
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './timeline-entry.component.html',
   styleUrl: './timeline-entry.component.scss',
+  host: {
+    '[attr.data-internal]': "internal() ? 'true' : null",
+  },
 })
 export class AthTimelineEntryComponent {
   protected readonly labels = injectAthLabels();
 
-  @Input({ required: true }) author!: string;
+  readonly author = input.required<string>();
 
   /** Defaults to `author` for initials/colors. Override if avatar should differ. */
-  @Input() avatarName: string | null = null;
+  readonly avatarName = input<string | null>(null);
 
-  @Input() avatarSrc = '';
+  readonly avatarSrc = input('');
 
   /** Pre-formatted relative time (e.g., "5m ago"). */
-  @Input() timeLabel = '';
+  readonly timeLabel = input('');
 
   /** Marks the entry as internal (only visible to operators/admins). */
-  @Input() internal = false;
+  readonly internal = input(false, { transform: booleanAttribute });
 
-  @HostBinding('attr.data-internal') get hostInternal(): string | null {
-    return this.internal ? 'true' : null;
-  }
-
-  protected get effectiveAvatarName(): string {
-    return this.avatarName ?? this.author;
-  }
+  protected readonly effectiveAvatarName = computed(() => this.avatarName() ?? this.author());
 }

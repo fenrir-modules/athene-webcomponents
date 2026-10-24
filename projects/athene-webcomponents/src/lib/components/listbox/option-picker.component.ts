@@ -24,6 +24,9 @@ import {
   type ListboxOptionContext,
 } from './listbox.component';
 
+/** `button`: the picker draws its own trigger; `none`: it hangs from `anchor`. */
+export type OptionPickerTrigger = 'button' | 'none';
+
 let nextPickerId = 0;
 
 /**
@@ -74,7 +77,7 @@ export class AthOptionPickerComponent<T = string> {
 
   // ----- Trigger -----
   /** `button`: built-in select-style trigger; `none`: you provide `anchor` and open it. */
-  readonly trigger = input<'button' | 'none'>('button');
+  readonly trigger = input<OptionPickerTrigger>('button');
   /** Trigger text without a selection; defaults to `ATH_LABELS.pickerPlaceholder`. */
   readonly placeholder = input<string | null>(null);
   readonly disabled = input(false, { transform: booleanAttribute });
@@ -164,8 +167,9 @@ export class AthOptionPickerComponent<T = string> {
   protected onOpened(): void {
     if (this.resetQueryOnOpen()) this.query.set('');
     this.opened.emit();
-    // Once the panel (and with it the listbox) is in the document.
-    setTimeout(() => this.listbox().resetActive());
+    // Once the panel (and with it the listbox) is rendered: the active option
+    // is scrolled into view.
+    this.popover().whenPanelReady(() => this.listbox().resetActive());
   }
 
   protected onPicked(option: ListboxOption<T>): void {

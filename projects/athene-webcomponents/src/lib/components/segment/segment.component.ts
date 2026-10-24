@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  HostBinding,
-  Input,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface SegmentOption<T = string> {
@@ -35,36 +28,33 @@ export type SegmentSize = 'sm' | 'md';
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './segment.component.html',
   styleUrl: './segment.component.scss',
+  host: {
+    role: 'tablist',
+    '[attr.aria-label]': 'ariaLabel()',
+    '[attr.data-size]': 'size()',
+  },
 })
 export class AthSegmentComponent<T = string> {
-  @Input({ required: true }) options: SegmentOption<T>[] = [];
-  @Input() value!: T;
-  @Input() size: SegmentSize = 'md';
+  readonly options = input.required<SegmentOption<T>[]>();
+  /** The active option's value. Controlled: pair with `(valueChange)` or `[(value)]`. */
+  readonly value = input.required<T>();
+  readonly size = input<SegmentSize>('md');
 
   /** Optional aria-label for the group (for screen readers). */
-  @Input() ariaLabel: string | null = null;
+  readonly ariaLabel = input<string | null>(null);
 
-  @Output() valueChange = new EventEmitter<T>();
-
-  @HostBinding('attr.role') readonly role = 'tablist';
-  @HostBinding('attr.aria-label') get hostAriaLabel(): string | null {
-    return this.ariaLabel;
-  }
-
-  @HostBinding('attr.data-size') get hostSize(): SegmentSize {
-    return this.size;
-  }
+  readonly valueChange = output<T>();
 
   trackByValue = (_: number, item: SegmentOption<T>): unknown => item.value;
 
   select(option: SegmentOption<T>): void {
     if (option.disabled) return;
-    if (option.value !== this.value) {
+    if (option.value !== this.value()) {
       this.valueChange.emit(option.value);
     }
   }
 
   isActive(option: SegmentOption<T>): boolean {
-    return option.value === this.value;
+    return option.value === this.value();
   }
 }

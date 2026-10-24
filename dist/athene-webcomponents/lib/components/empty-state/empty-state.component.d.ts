@@ -1,4 +1,3 @@
-import { EventEmitter } from '@angular/core';
 import * as i0 from "@angular/core";
 /**
  * Lucide's icon data, mirrored exactly: `lucide-angular` does not export
@@ -41,29 +40,28 @@ export type EmptyStateSize = 'default' | 'compact';
  */
 export declare class AthEmptyStateComponent {
     /** Empty state message */
-    message: string;
+    readonly message: import("@angular/core").InputSignal<string>;
     /** Optional sub-message */
-    subMessage: string;
+    readonly subMessage: import("@angular/core").InputSignal<string>;
     /** Optional lucide icon shown above the message. */
-    icon: EmptyStateIcon | null;
+    readonly icon: import("@angular/core").InputSignal<EmptyStateIcon | null>;
     /**
      * No frame of its own, for an empty state that already sits inside a
      * panel; the dashed box inside a white panel drew a card in a card.
      */
-    bare: boolean;
+    readonly bare: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** `compact`: icon tile left, auto height, optional hint rows. */
-    size: EmptyStateSize;
+    readonly size: import("@angular/core").InputSignal<EmptyStateSize>;
     /** 2–4 rows describing what will appear here (compact layout). */
-    hints: readonly EmptyStateHint[];
+    readonly hints: import("@angular/core").InputSignal<readonly EmptyStateHint[]>;
     /** Primary action label; emits `action` when clicked. */
-    actionLabel: string;
-    actionIcon: EmptyStateIcon | null;
+    readonly actionLabel: import("@angular/core").InputSignal<string>;
+    readonly actionIcon: import("@angular/core").InputSignal<EmptyStateIcon | null>;
     /** Secondary (outline) action label; emits `secondaryAction`. */
-    secondaryActionLabel: string;
-    action: EventEmitter<void>;
-    secondaryAction: EventEmitter<void>;
+    readonly secondaryActionLabel: import("@angular/core").InputSignal<string>;
+    readonly action: import("@angular/core").OutputEmitterRef<void>;
+    readonly secondaryAction: import("@angular/core").OutputEmitterRef<void>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthEmptyStateComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthEmptyStateComponent, "ath-empty-state", never, { "message": { "alias": "message"; "required": true; }; "subMessage": { "alias": "subMessage"; "required": false; }; "icon": { "alias": "icon"; "required": false; }; "bare": { "alias": "bare"; "required": false; }; "size": { "alias": "size"; "required": false; }; "hints": { "alias": "hints"; "required": false; }; "actionLabel": { "alias": "actionLabel"; "required": false; }; "actionIcon": { "alias": "actionIcon"; "required": false; }; "secondaryActionLabel": { "alias": "secondaryActionLabel"; "required": false; }; }, { "action": "action"; "secondaryAction": "secondaryAction"; }, never, ["*", "*"], true, never>;
-    static ngAcceptInputType_bare: unknown;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthEmptyStateComponent, "ath-empty-state", never, { "message": { "alias": "message"; "required": true; "isSignal": true; }; "subMessage": { "alias": "subMessage"; "required": false; "isSignal": true; }; "icon": { "alias": "icon"; "required": false; "isSignal": true; }; "bare": { "alias": "bare"; "required": false; "isSignal": true; }; "size": { "alias": "size"; "required": false; "isSignal": true; }; "hints": { "alias": "hints"; "required": false; "isSignal": true; }; "actionLabel": { "alias": "actionLabel"; "required": false; "isSignal": true; }; "actionIcon": { "alias": "actionIcon"; "required": false; "isSignal": true; }; "secondaryActionLabel": { "alias": "secondaryActionLabel"; "required": false; "isSignal": true; }; }, { "action": "action"; "secondaryAction": "secondaryAction"; }, never, ["*", "*"], true, never>;
 }
 export {};

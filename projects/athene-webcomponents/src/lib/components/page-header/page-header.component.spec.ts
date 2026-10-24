@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AthPageHeaderComponent } from './page-header.component';
@@ -7,7 +7,7 @@ import { AthPageHeaderComponent } from './page-header.component';
   standalone: true,
   imports: [AthPageHeaderComponent],
   template: `
-    <ath-page-header title="Project" [subItems]="['Sprint 2', '', 'No lead']" [divider]="divider">
+    <ath-page-header title="Project" [subItems]="['Sprint 2', '', 'No lead']" [divider]="divider()">
       <span athPageLeading class="key">FP</span>
       <span athPageMeta class="pill">On track</span>
       <button type="button" class="act">More</button>
@@ -15,7 +15,7 @@ import { AthPageHeaderComponent } from './page-header.component';
   `,
 })
 class HostComponent {
-  divider = true;
+  readonly divider = signal(true);
 }
 
 describe('AthPageHeaderComponent', () => {
@@ -51,7 +51,7 @@ describe('AthPageHeaderComponent', () => {
   it('draws the hairline by default and lets a page opt out', () => {
     const header = () => el.querySelector('.ath-page-header') as HTMLElement;
     expect(header().classList).toContain('ath-page-header--divided');
-    fixture.componentInstance.divider = false;
+    fixture.componentInstance.divider.set(false);
     fixture.detectChanges();
     expect(header().classList).not.toContain('ath-page-header--divided');
   });

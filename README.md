@@ -6,6 +6,7 @@ Athene's Angular component library: design tokens, global styles and the `ath-*`
 npm run build:lib        # tokens:build, then ng build athene-webcomponents → dist/
 npm run check:dist       # build:lib, then fail if dist/ differs from the commit (CI runs it)
 npm test                 # Karma unit tests
+npm run test:zoneless    # the same specs without zone.js (see "Signal APIs and zoneless")
 npm run test:tokens      # token pipeline tests (node --test)
 npm run lint             # shared config, ESLint, Stylelint, i18n, tsc, a11y, tokens:check, Prettier, knip
 npm run storybook        # component catalogue on :6006
@@ -357,6 +358,18 @@ Thin presets: `ath-dropdown` = `ath-menu` from a flat `items: DropdownItem[]`, e
 ### Unused components kept (quality step 2.7)
 
 The app does not use these today; they stay because they are not duplicates of a newer primitive and the roadmap has a use for them: `ath-pagination` (server-side lists, `Page<T>`, steps 3.9 and 5.4), `ath-file-drop` (attachments, the later file service), `ath-code-block` (API keys, docs snippets), `ath-divider`, `ath-spinner` (inline busy states; content loading is `ath-skeleton`), `ath-sidebar` (the app shell builds its own rail from `ath-nav-item`; candidate for removal when the shell is split in 4.6). Removed in 2.7 as duplicates: `ath-stat-card` (→ `ath-kpi-strip`), `ath-banner` (→ `ath-alert appearance="banner"`), `ath-card` and `ath-section` (→ `ath-panel`), `ath-project-key-badge` (→ `ath-chip`, `ath-nav-item [chip]`).
+
+## Signal APIs and zoneless (quality step 4.1)
+
+Every component and directive uses the signal APIs and is `OnPush`; the lib does not depend on zone.js.
+
+- **Bindings:** `input()` / `input.required()`, `output()`, `model()` for a two-way `[(x)]` pair the component also writes itself (`ath-sidebar [(collapsed)]`, `ath-user-picker [(value)]`). A controlled pair stays `input()` + `output('xChange')`, which `[(x)]` binds as well (`ath-segment`, `ath-pagination`). Flags take `booleanAttribute`, plain numbers `numberAttribute`, so bare attributes (`<ath-input required>`) work. Host bindings and listeners go in `host: {}`; queries are `viewChild()` / `contentChildren()`. ESLint bans the decorator imports (`@Input`, `@Output`, `EventEmitter`, `@HostBinding`, `@HostListener`, `@ViewChild` …), `ChangeDetectorRef` and `NgZone` in `projects/**`, plus `prefer-output-readonly`.
+- **State:** what a template reads is a `signal` or `computed`, so no `markForCheck`. A value the forms API writes (`writeValue`, `setDisabledState`) is a signal too; `[disabled]` and the form's disabled state combine. `effect()` only syncs the DOM (ARIA on a trigger; `showModal()`, the top layer and focus when a dialog's, sheet's or popover's element appears) and writes no signal; the lib has no `effect` + `set`, so nothing waits for `linkedSignal` (Angular 19).
+- **Timing:** work that needs the rendered panel follows the panel element, not `setTimeout` and not `afterNextRender` (which runs on the next app render even when that render did not include the overlay's view, e.g. a TestBed fixture without autoDetect): the popover focuses into its panel from an effect on the panel query, and `ath-menu` (first item) and `ath-option-picker` (scroll to the active option) hand their work to `popover.whenPanelReady(fn)`. The `setTimeout`s left are real timers: toast lifetime, copy feedback, tooltip delays, the Escape-press marker, focus return after an outside click.
+- **`NgZone`:** one use, `runOutsideAngular` in `athFloating`, so scroll and resize listeners of an open panel do not run the app's change detection under zone.js; it changes no Angular state and is a no-op zoneless. Drop it with zone.js (4.3).
+- **Types in `dist/`:** name a literal union (`export type DividerSpacing = 'none' | 'sm' | 'md' | 'lg'`) or annotate the member instead of `input<'a' | 'b'>()`. An inferred union is printed in the compiler's type-id order, which differs between a cached and a fresh build, and `check:dist` fails on CI.
+- **Zoneless run:** `npm run test:zoneless` (CI too) runs every spec with `provideExperimentalZonelessChangeDetection()` and without zone.js (`src/test-zoneless.ts`, `tsconfig.spec.zoneless.json`). No `fakeAsync` (it needs zone.js): use `async`/`await` with `fixture.whenStable()` or `jasmine.clock()`. A test host changes state through signals, not plain fields.
+- **Storybook:** a story prop whose name matches a non-input member of the story's `component` is copied onto the instance, so internal members do not use names like `value` (the form controls keep it in `fieldValue`).
 
 ## Component catalogue (quality step 1.8)
 

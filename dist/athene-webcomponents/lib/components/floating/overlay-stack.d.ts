@@ -21,7 +21,6 @@ export interface AthOverlayEntry {
  */
 export declare class AthOverlayStack {
     private readonly doc;
-    private readonly zone;
     private readonly entries;
     private listening;
     private escapeTask;
@@ -53,6 +52,13 @@ export declare class AthOverlayStack {
     private readonly onKeydown;
     private readonly onPointerDown;
     private markEscape;
+    /**
+     * Registered only while an overlay is open. No `NgZone`: in a zone.js app
+     * the listeners run in the Angular zone like any template listener, so a
+     * dismissal's handlers (the overlay's `closed`, the app's reaction) are
+     * followed by change detection; zoneless, the signals and output
+     * listeners they touch schedule it.
+     */
     private listen;
     private unlisten;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthOverlayStack, never>;

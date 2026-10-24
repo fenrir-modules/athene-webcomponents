@@ -5,6 +5,8 @@ import * as i0 from "@angular/core";
  * viewport minus a margin.
  */
 export type DialogSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
+/** ARIA role of the dialog: `alertdialog` for confirmations that interrupt. */
+export type DialogRole = 'dialog' | 'alertdialog';
 /**
  * Athene Dialog: the one modal of the library, on a native `<dialog>`
  * opened with `showModal()`. That puts it in the top layer (no z-index, no
@@ -63,7 +65,7 @@ export declare class AthDialogComponent implements OnChanges, OnDestroy {
     /** Accessible name when there is no visible `title`. */
     readonly ariaLabel: import("@angular/core").InputSignal<string | null>;
     /** `alertdialog` for confirmations that interrupt. */
-    readonly role: import("@angular/core").InputSignal<"dialog" | "alertdialog">;
+    readonly role: import("@angular/core").InputSignal<DialogRole>;
     /**
      * Only the content, on a transparent full-viewport layer: the content is
      * the surface and places itself (see the class comment). `title`,
@@ -83,9 +85,12 @@ export declare class AthDialogComponent implements OnChanges, OnDestroy {
     private pressedOnBackdrop;
     private locked;
     private readonly entry;
-    private set dialogRef(value);
+    /** The `<dialog>`; rendered while `open` is true. */
+    private readonly dialogRef;
+    constructor();
     ngOnChanges(changes: SimpleChanges): void;
     ngOnDestroy(): void;
+    private attach;
     /** Requests closing, as the ✕ button does. */
     close(): void;
     protected onKeydown(event: KeyboardEvent): void;

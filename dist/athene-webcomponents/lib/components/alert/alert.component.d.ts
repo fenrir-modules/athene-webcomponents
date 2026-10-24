@@ -1,3 +1,4 @@
+import { type Signal } from '@angular/core';
 import { type AthAction } from '../button';
 import * as i0 from "@angular/core";
 /** Alert tones. `warning` is an alias of `warn`. */
@@ -43,13 +44,13 @@ export declare class AthAlertComponent {
     readonly dismissLabel: import("@angular/core").InputSignal<string | null>;
     readonly dismissed: import("@angular/core").OutputEmitterRef<void>;
     protected readonly closeIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly tone: import("@angular/core").Signal<"warn" | "error" | "success" | "info">;
+    protected readonly tone: Signal<'info' | 'success' | 'warn' | 'error'>;
     /** Errors and warnings interrupt; info and success wait their turn. */
-    protected readonly role: import("@angular/core").Signal<"status" | "alert">;
-    protected readonly showIcon: import("@angular/core").Signal<boolean>;
-    protected readonly glyph: import("@angular/core").Signal<import("node_modules/lucide-angular/icons/types").LucideIconData>;
-    protected readonly retryText: import("@angular/core").Signal<string>;
-    protected readonly dismissText: import("@angular/core").Signal<string>;
+    protected readonly role: Signal<'alert' | 'status'>;
+    protected readonly showIcon: Signal<boolean>;
+    protected readonly glyph: Signal<import("node_modules/lucide-angular/icons/types").LucideIconData>;
+    protected readonly retryText: Signal<string>;
+    protected readonly dismissText: Signal<string>;
     dismiss(): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthAlertComponent, never>;
     static ɵcmp: i0.ɵɵComponentDeclaration<AthAlertComponent, "ath-alert", never, { "variant": { "alias": "variant"; "required": false; "isSignal": true; }; "appearance": { "alias": "appearance"; "required": false; "isSignal": true; }; "message": { "alias": "message"; "required": false; "isSignal": true; }; "title": { "alias": "title"; "required": false; "isSignal": true; }; "icon": { "alias": "icon"; "required": false; "isSignal": true; }; "dismissible": { "alias": "dismissible"; "required": false; "isSignal": true; }; "retry": { "alias": "retry"; "required": false; "isSignal": true; }; "retryLabel": { "alias": "retryLabel"; "required": false; "isSignal": true; }; "dismissLabel": { "alias": "dismissLabel"; "required": false; "isSignal": true; }; }, { "dismissed": "dismissed"; }, never, ["*"], true, never>;

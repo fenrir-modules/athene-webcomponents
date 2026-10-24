@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostBinding,
-  Input,
+  booleanAttribute,
   computed,
-  signal,
+  input,
+  numberAttribute,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -27,50 +27,40 @@ export type ProgressSize = 'xs' | 'sm' | 'md';
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './progress.component.html',
   styleUrl: './progress.component.scss',
+  host: {
+    '[attr.data-tone]': 'tone()',
+    '[attr.data-size]': 'size()',
+  },
 })
 export class AthProgressComponent {
-  private readonly _value = signal(0);
-
-  /** Current value. When `total` is unset, treated as a percentage (0..100). */
-  @Input()
-  set value(v: number) {
-    this._value.set(Math.max(0, v));
-  }
-  get value(): number {
-    return this._value();
-  }
+  /** Current value. When `total` is unset, treated as a percentage (0..100). Negative counts as 0. */
+  readonly value = input(0, { transform: (v: unknown) => Math.max(0, numberAttribute(v, 0)) });
 
   /** Total (denominator). If unset, `value` is a percent. */
-  @Input() total: number | null = null;
+  readonly total = input<number | null>(null);
 
-  @Input() tone: ProgressTone = 'accent';
-  @Input() size: ProgressSize = 'sm';
+  readonly tone = input<ProgressTone>('accent');
+  readonly size = input<ProgressSize>('sm');
 
   /** Show a small `X / Y` (or `X%`) label next to the bar. */
-  @Input() showLabel = false;
+  readonly showLabel = input(false, { transform: booleanAttribute });
 
   /** Optional aria-label for screen readers. */
-  @Input() ariaLabel: string | null = null;
-
-  @HostBinding('attr.data-tone') get hostTone(): ProgressTone {
-    return this.tone;
-  }
-
-  @HostBinding('attr.data-size') get hostSize(): ProgressSize {
-    return this.size;
-  }
+  readonly ariaLabel = input<string | null>(null);
 
   protected readonly pct = computed<number>(() => {
-    const v = this._value();
-    if (this.total != null && this.total > 0) {
-      return Math.min(100, (v / this.total) * 100);
+    const v = this.value();
+    const total = this.total();
+    if (total != null && total > 0) {
+      return Math.min(100, (v / total) * 100);
     }
     return Math.min(100, v);
   });
 
   protected readonly label = computed<string>(() => {
-    if (this.total != null) {
-      return `${Math.round(this._value())} / ${this.total}`;
+    const total = this.total();
+    if (total != null) {
+      return `${Math.round(this.value())} / ${total}`;
     }
     return `${Math.round(this.pct())}%`;
   });

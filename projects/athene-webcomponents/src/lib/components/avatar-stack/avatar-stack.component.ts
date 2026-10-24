@@ -1,10 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostBinding,
-  Input,
   computed,
-  signal,
+  input,
+  numberAttribute,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AthAvatarComponent, AvatarSize } from '../avatar';
@@ -35,29 +34,24 @@ export interface StackedUser {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './avatar-stack.component.html',
   styleUrl: './avatar-stack.component.scss',
+  host: {
+    '[attr.data-size]': 'size()',
+  },
 })
 export class AthAvatarStackComponent {
-  private readonly _users = signal<StackedUser[]>([]);
+  /** The people to show; `null`/`undefined` count as none. */
+  readonly users = input<StackedUser[], StackedUser[] | null | undefined>([], {
+    transform: (value) => value ?? [],
+  });
 
-  @Input()
-  set users(value: StackedUser[] | null | undefined) {
-    this._users.set(value ?? []);
-  }
-  get users(): StackedUser[] {
-    return this._users();
-  }
+  readonly max = input(4, { transform: numberAttribute });
+  readonly size = input<AvatarSize>('sm');
 
-  @Input() max = 4;
-  @Input() size: AvatarSize = 'sm';
-
-  @HostBinding('attr.data-size') get hostSize(): AvatarSize {
-    return this.size;
-  }
-
-  protected readonly visible = computed<StackedUser[]>(() => this._users().slice(0, this.max));
+  protected readonly visible = computed<StackedUser[]>(() => this.users().slice(0, this.max()));
   protected readonly overflowCount = computed<number>(() => {
-    const total = this._users().length;
-    return total > this.max ? total - this.max : 0;
+    const total = this.users().length;
+    const max = this.max();
+    return total > max ? total - max : 0;
   });
 
   trackById = (_: number, user: StackedUser): string => user.id;

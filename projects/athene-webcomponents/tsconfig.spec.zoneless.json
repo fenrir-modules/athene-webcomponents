@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.spec.json",
+  "files": ["src/test-zoneless.ts"]
+}

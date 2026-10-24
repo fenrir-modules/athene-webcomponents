@@ -1,4 +1,6 @@
 import * as i0 from "@angular/core";
+export type DividerOrientation = 'horizontal' | 'vertical';
+export type DividerSpacing = 'none' | 'sm' | 'md' | 'lg';
 /**
  * Athene Divider Component
  *
@@ -11,10 +13,10 @@ import * as i0 from "@angular/core";
  */
 export declare class AthDividerComponent {
     /** Orientation */
-    orientation: 'horizontal' | 'vertical';
+    readonly orientation: import("@angular/core").InputSignal<DividerOrientation>;
     /** Spacing around the divider */
-    spacing: 'none' | 'sm' | 'md' | 'lg';
-    get dividerClasses(): string;
+    readonly spacing: import("@angular/core").InputSignal<DividerSpacing>;
+    protected readonly dividerClasses: import("@angular/core").Signal<string>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthDividerComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthDividerComponent, "ath-divider", never, { "orientation": { "alias": "orientation"; "required": false; }; "spacing": { "alias": "spacing"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthDividerComponent, "ath-divider", never, { "orientation": { "alias": "orientation"; "required": false; "isSignal": true; }; "spacing": { "alias": "spacing"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

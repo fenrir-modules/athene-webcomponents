@@ -134,8 +134,8 @@ export class AthMenuComponent implements AthMenuParent {
     this.opened.emit();
     const focus = this.pendingFocus;
     this.pendingFocus = 'first';
-    // After the projected items are in the open panel.
-    setTimeout(() => this.focusEdge(focus));
+    // Once the projected items are in the rendered panel.
+    this.popover().whenPanelReady(() => this.focusEdge(focus));
   }
 
   protected onKeydown(event: KeyboardEvent): void {

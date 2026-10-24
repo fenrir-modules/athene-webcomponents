@@ -1,11 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
+  booleanAttribute,
   computed,
-  signal,
+  input,
+  numberAttribute,
+  output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -48,35 +48,28 @@ export class AthPaginationComponent {
     return formatAthLabel(this.labels.pageNumber(), { page });
   }
 
-  @Input() mode: PaginationMode = 'numbered';
+  readonly mode = input<PaginationMode>('numbered');
 
   // --- Numbered mode ---
-  private readonly _page = signal(1);
+  /** Current page (1-based); values below 1 count as 1. */
+  readonly page = input(1, { transform: (v: unknown) => Math.max(1, numberAttribute(v, 1)) });
 
-  @Input()
-  set page(v: number) {
-    this._page.set(Math.max(1, v));
-  }
-  get page(): number {
-    return this._page();
-  }
-
-  @Input() totalPages = 1;
+  readonly totalPages = input(1, { transform: numberAttribute });
 
   /** How many siblings of the current page to always show (default 1). */
-  @Input() siblingCount = 1;
+  readonly siblingCount = input(1, { transform: numberAttribute });
 
-  @Output() pageChange = new EventEmitter<number>();
+  readonly pageChange = output<number>();
 
   // --- Cursor mode ---
-  @Input() hasPrev = false;
-  @Input() hasNext = false;
+  readonly hasPrev = input(false, { transform: booleanAttribute });
+  readonly hasNext = input(false, { transform: booleanAttribute });
 
   /** Caption shown between prev/next in cursor mode (e.g., "1–30 of 412"). */
-  @Input() summary = '';
+  readonly summary = input('');
 
-  @Output() previous = new EventEmitter<void>();
-  @Output() next = new EventEmitter<void>();
+  readonly previous = output<void>();
+  readonly next = output<void>();
 
   protected readonly prevIcon = ChevronLeft;
   protected readonly nextIcon = ChevronRight;
@@ -85,9 +78,9 @@ export class AthPaginationComponent {
   protected readonly ellipsisIcon = MoreHorizontal;
 
   protected readonly pages = computed<(number | 'ellipsis')[]>(() => {
-    const total = Math.max(1, this.totalPages);
-    const current = this._page();
-    const siblings = Math.max(0, this.siblingCount);
+    const total = Math.max(1, this.totalPages());
+    const current = this.page();
+    const siblings = Math.max(0, this.siblingCount());
 
     // Always show first + last; show siblings around current; gaps → ellipsis
     if (total <= 5 + siblings * 2) {
@@ -116,23 +109,23 @@ export class AthPaginationComponent {
   });
 
   goTo(page: number): void {
-    if (page < 1 || page > this.totalPages || page === this._page()) return;
+    if (page < 1 || page > this.totalPages() || page === this.page()) return;
     this.pageChange.emit(page);
   }
 
   goPrev(): void {
-    if (this.mode === 'cursor') {
-      if (this.hasPrev) this.previous.emit();
+    if (this.mode() === 'cursor') {
+      if (this.hasPrev()) this.previous.emit();
     } else {
-      this.goTo(this._page() - 1);
+      this.goTo(this.page() - 1);
     }
   }
 
   goNext(): void {
-    if (this.mode === 'cursor') {
-      if (this.hasNext) this.next.emit();
+    if (this.mode() === 'cursor') {
+      if (this.hasNext()) this.next.emit();
     } else {
-      this.goTo(this._page() + 1);
+      this.goTo(this.page() + 1);
     }
   }
 
@@ -141,7 +134,7 @@ export class AthPaginationComponent {
   }
 
   goLast(): void {
-    this.goTo(this.totalPages);
+    this.goTo(this.totalPages());
   }
 }
 

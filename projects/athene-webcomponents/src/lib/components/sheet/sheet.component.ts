@@ -5,11 +5,13 @@ import {
   OnChanges,
   OnDestroy,
   SimpleChanges,
-  ViewChild,
   booleanAttribute,
+  effect,
   inject,
   input,
   output,
+  untracked,
+  viewChild,
 } from '@angular/core';
 import { supportsTopLayer } from '../floating/floating';
 import { AthOverlayStack, type AthOverlayEntry } from '../floating/overlay-stack';
@@ -102,9 +104,19 @@ export class AthSheetComponent implements OnChanges, OnDestroy {
     return this.panelEl;
   }
 
-  @ViewChild('panel')
-  private set panelRef(ref: ElementRef<HTMLElement> | undefined) {
-    const el = ref?.nativeElement ?? null;
+  /** The panel; rendered while `open` is true. */
+  private readonly panelRef = viewChild<ElementRef<HTMLElement>>('panel');
+
+  constructor() {
+    // DOM sync, no state: the top layer, the overlay stack and focus follow
+    // the panel element as `@if (open())` adds and removes it.
+    effect(() => {
+      const el = this.panelRef()?.nativeElement ?? null;
+      untracked(() => this.attach(el));
+    });
+  }
+
+  private attach(el: HTMLElement | null): void {
     if (el === this.panelEl) return;
     if (this.panelEl) this.teardown();
     this.panelEl = el;

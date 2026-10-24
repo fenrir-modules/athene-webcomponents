@@ -24,15 +24,14 @@ export interface SlaTarget {
  *   [progressPct]="68" />
  */
 export declare class AthSlaBarComponent {
-    response: SlaTarget | null;
-    resolution: SlaTarget | null;
-    /** 0..100. The progress bar reflects the most "at risk" target. */
-    set progressPct(value: number);
-    get progressPct(): number;
-    private readonly _progress;
+    readonly response: import("@angular/core").InputSignal<SlaTarget | null>;
+    readonly resolution: import("@angular/core").InputSignal<SlaTarget | null>;
+    /** 0..100 (clamped). The progress bar reflects the most "at risk" target. */
+    readonly progressPct: import("@angular/core").InputSignalWithTransform<number, unknown>;
     protected readonly severity: import("@angular/core").Signal<SlaStatus>;
-    get hostSeverity(): SlaStatus;
+    /** The target the bar is labelled by: resolution, else response. */
+    protected readonly barTarget: import("@angular/core").Signal<SlaTarget | null>;
     protected statusColor(s: SlaStatus): string;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthSlaBarComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthSlaBarComponent, "ath-sla-bar", never, { "response": { "alias": "response"; "required": false; }; "resolution": { "alias": "resolution"; "required": false; }; "progressPct": { "alias": "progressPct"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthSlaBarComponent, "ath-sla-bar", never, { "response": { "alias": "response"; "required": false; "isSignal": true; }; "resolution": { "alias": "resolution"; "required": false; "isSignal": true; }; "progressPct": { "alias": "progressPct"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

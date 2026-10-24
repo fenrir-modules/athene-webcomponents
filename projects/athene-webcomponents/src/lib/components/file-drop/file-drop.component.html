@@ -2,25 +2,25 @@
   type="button"
   class="ath-fdrop"
   [class.ath-fdrop--dragging]="dragging()"
-  [disabled]="disabled"
+  [disabled]="disabled()"
   (click)="openPicker()"
 >
   <span class="ath-fdrop__icon" aria-hidden="true">
     <lucide-icon [img]="uploadIcon" [size]="20" />
   </span>
   <span class="ath-fdrop__prompt">
-    <ng-content>{{ prompt ?? labels.fileDropPrompt() }}</ng-content>
+    <ng-content>{{ prompt() ?? labels.fileDropPrompt() }}</ng-content>
   </span>
-  @if (accept || maxSizeMb > 0) {
+  @if (accept() || maxSizeMb() > 0) {
     <span class="ath-fdrop__hint">
-      @if (accept) {
-        <span>{{ accept }}</span>
+      @if (accept()) {
+        <span>{{ accept() }}</span>
       }
-      @if (accept && maxSizeMb > 0) {
+      @if (accept() && maxSizeMb() > 0) {
         <span aria-hidden="true">·</span>
       }
-      @if (maxSizeMb > 0) {
-        <span>max {{ maxSizeMb }} MB</span>
+      @if (maxSizeMb() > 0) {
+        <span>max {{ maxSizeMb() }} MB</span>
       }
     </span>
   }
@@ -29,8 +29,8 @@
   #fileInput
   type="file"
   class="ath-fdrop__input"
-  [accept]="accept ?? ''"
-  [multiple]="multiple"
+  [accept]="accept() ?? ''"
+  [multiple]="multiple()"
   (change)="onPickerChange($event)"
   hidden
 />

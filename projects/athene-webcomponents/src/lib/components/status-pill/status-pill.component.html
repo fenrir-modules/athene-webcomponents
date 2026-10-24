@@ -1,6 +1,6 @@
-@if (showDot) {
+@if (showDot()) {
   <i class="ath-status-pill__dot" aria-hidden="true"></i>
 }
-@if (showLabel) {
-  <span class="ath-status-pill__label">{{ computedLabel }}</span>
+@if (showLabel()) {
+  <span class="ath-status-pill__label">{{ computedLabel() }}</span>
 }

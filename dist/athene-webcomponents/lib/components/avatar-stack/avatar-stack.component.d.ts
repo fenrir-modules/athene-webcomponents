@@ -19,15 +19,13 @@ export interface StackedUser {
  * <ath-avatar-stack [users]="watchers" [max]="5" size="md" />
  */
 export declare class AthAvatarStackComponent {
-    private readonly _users;
-    set users(value: StackedUser[] | null | undefined);
-    get users(): StackedUser[];
-    max: number;
-    size: AvatarSize;
-    get hostSize(): AvatarSize;
+    /** The people to show; `null`/`undefined` count as none. */
+    readonly users: import("@angular/core").InputSignalWithTransform<StackedUser[], StackedUser[] | null | undefined>;
+    readonly max: import("@angular/core").InputSignalWithTransform<number, unknown>;
+    readonly size: import("@angular/core").InputSignal<AvatarSize>;
     protected readonly visible: import("@angular/core").Signal<StackedUser[]>;
     protected readonly overflowCount: import("@angular/core").Signal<number>;
     trackById: (_: number, user: StackedUser) => string;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthAvatarStackComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthAvatarStackComponent, "ath-avatar-stack", never, { "users": { "alias": "users"; "required": false; }; "max": { "alias": "max"; "required": false; }; "size": { "alias": "size"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthAvatarStackComponent, "ath-avatar-stack", never, { "users": { "alias": "users"; "required": false; "isSignal": true; }; "max": { "alias": "max"; "required": false; "isSignal": true; }; "size": { "alias": "size"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

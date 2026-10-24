@@ -20,14 +20,6 @@
       "count": 1
     }
   },
-  "projects/athene-webcomponents/src/lib/components/section/section.component.html": {
-    "@angular-eslint/template/click-events-have-key-events": {
-      "count": 1
-    },
-    "@angular-eslint/template/interactive-supports-focus": {
-      "count": 1
-    }
-  },
   "projects/athene-webcomponents/src/lib/components/segment/segment.component.html": {
     "@angular-eslint/template/eqeqeq": {
       "count": 1
@@ -46,20 +38,6 @@
   },
   "projects/athene-webcomponents/src/lib/components/tabs/tabs.component.html": {
     "@angular-eslint/template/eqeqeq": {
-      "count": 1
-    }
-  },
-  "projects/athene-webcomponents/src/lib/components/tooltip/tooltip.component.ts": {
-    "@typescript-eslint/no-unsafe-assignment": {
-      "count": 8
-    },
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-member-access": {
-      "count": 13
-    },
-    "@typescript-eslint/no-unused-vars": {
       "count": 1
     }
   }

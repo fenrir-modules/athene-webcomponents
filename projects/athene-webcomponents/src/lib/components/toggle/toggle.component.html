@@ -1,25 +1,25 @@
 <button
   type="button"
   class="ath-toggle"
-  [class.ath-toggle--boxed]="label || description"
-  [class.ath-toggle--checked]="checked"
-  [class.ath-toggle--disabled]="disabled"
+  [class.ath-toggle--boxed]="label() || description()"
+  [class.ath-toggle--checked]="checked()"
+  [class.ath-toggle--disabled]="disabled()"
   role="switch"
-  [attr.aria-checked]="checked"
-  [attr.aria-label]="ariaLabel || null"
-  [disabled]="disabled"
+  [attr.aria-checked]="checked()"
+  [attr.aria-label]="ariaLabel() || null"
+  [disabled]="disabled()"
   (click)="toggle()"
 >
   <span class="ath-toggle__track">
     <span class="ath-toggle__thumb"></span>
   </span>
-  @if (label || description) {
+  @if (label() || description()) {
     <span class="ath-toggle__content">
-      @if (label) {
-        <span class="ath-toggle__label">{{ label }}</span>
+      @if (label()) {
+        <span class="ath-toggle__label">{{ label() }}</span>
       }
-      @if (description) {
-        <span class="ath-toggle__description">{{ description }}</span>
+      @if (description()) {
+        <span class="ath-toggle__description">{{ description() }}</span>
       }
     </span>
   }

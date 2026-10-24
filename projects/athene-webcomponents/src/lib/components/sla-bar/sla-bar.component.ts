@@ -1,10 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostBinding,
-  Input,
   computed,
-  signal,
+  input,
+  numberAttribute,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -41,35 +40,32 @@ export interface SlaTarget {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sla-bar.component.html',
   styleUrl: './sla-bar.component.scss',
+  host: {
+    '[attr.data-severity]': 'severity()',
+  },
 })
 export class AthSlaBarComponent {
-  @Input() response: SlaTarget | null = null;
-  @Input() resolution: SlaTarget | null = null;
+  readonly response = input<SlaTarget | null>(null);
+  readonly resolution = input<SlaTarget | null>(null);
 
-  /** 0..100. The progress bar reflects the most "at risk" target. */
-  @Input()
-  set progressPct(value: number) {
-    this._progress.set(Math.max(0, Math.min(100, value)));
-  }
-  get progressPct(): number {
-    return this._progress();
-  }
-
-  private readonly _progress = signal(0);
+  /** 0..100 (clamped). The progress bar reflects the most "at risk" target. */
+  readonly progressPct = input(0, {
+    transform: (value: unknown) => Math.max(0, Math.min(100, numberAttribute(value, 0))),
+  });
 
   protected readonly severity = computed<SlaStatus>(() => {
-    const r = this.resolution?.status;
-    const rs = this.response?.status;
+    const r = this.resolution()?.status;
+    const rs = this.response()?.status;
+    const progress = this.progressPct();
     if (r === 'breached' || rs === 'breached') return 'breached';
-    if (this._progress() >= 95) return 'breached';
-    if (this._progress() >= 80) return 'pending';
+    if (progress >= 95) return 'breached';
+    if (progress >= 80) return 'pending';
     if (r === 'met' && rs === 'met') return 'met';
     return 'pending';
   });
 
-  @HostBinding('attr.data-severity') get hostSeverity(): SlaStatus {
-    return this.severity();
-  }
+  /** The target the bar is labelled by: resolution, else response. */
+  protected readonly barTarget = computed(() => this.resolution() ?? this.response());
 
   protected statusColor(s: SlaStatus): string {
     switch (s) {

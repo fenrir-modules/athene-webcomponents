@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Injectable, NgZone, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { installTopLayerStyles, supportsTopLayer } from './floating';
 
 /** Why an overlay closed. */
@@ -27,7 +27,6 @@ export interface AthOverlayEntry {
 @Injectable({ providedIn: 'root' })
 export class AthOverlayStack {
   private readonly doc = inject(DOCUMENT);
-  private readonly zone = inject(NgZone);
   private readonly entries: AthOverlayEntry[] = [];
   private listening = false;
   private escapeTask = 0;
@@ -117,7 +116,7 @@ export class AthOverlayStack {
     if (!top || top.modal) return;
     event.preventDefault();
     this.markEscape();
-    if (top.closeOnEscape()) this.zone.run(() => top.dismiss('escape'));
+    if (top.closeOnEscape()) top.dismiss('escape');
   };
 
   private readonly onPointerDown = (event: Event): void => {
@@ -129,7 +128,7 @@ export class AthOverlayStack {
       const anchor = entry.anchor();
       if ((panel && path.includes(panel)) || (anchor && path.includes(anchor))) return;
       if (!entry.closeOnOutsideClick()) return;
-      this.zone.run(() => entry.dismiss('outside'));
+      entry.dismiss('outside');
     }
   };
 
@@ -140,13 +139,18 @@ export class AthOverlayStack {
     this.escapeTask = view.setTimeout(() => (this.escapeTask = 0));
   }
 
+  /**
+   * Registered only while an overlay is open. No `NgZone`: in a zone.js app
+   * the listeners run in the Angular zone like any template listener, so a
+   * dismissal's handlers (the overlay's `closed`, the app's reaction) are
+   * followed by change detection; zoneless, the signals and output
+   * listeners they touch schedule it.
+   */
   private listen(): void {
     if (this.listening) return;
     this.listening = true;
-    this.zone.runOutsideAngular(() => {
-      this.doc.addEventListener('keydown', this.onKeydown);
-      this.doc.addEventListener('pointerdown', this.onPointerDown, true);
-    });
+    this.doc.addEventListener('keydown', this.onKeydown);
+    this.doc.addEventListener('pointerdown', this.onPointerDown, true);
   }
 
   private unlisten(): void {

@@ -1,8 +1,14 @@
 import { ErrorHandler } from '@angular/core';
-import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Subject, of, throwError } from 'rxjs';
 import { AthButtonComponent } from './button.component';
 import { runAthAction } from './button.action';
+
+/**
+ * Lets pending promise callbacks run. A macrotask, not `fakeAsync`: the
+ * zoneless run (`npm run test:zoneless`) has no zone.js.
+ */
+const settle = (): Promise<void> => new Promise((resolve) => setTimeout(resolve));
 
 describe('AthButtonComponent', () => {
   let fixture: ComponentFixture<AthButtonComponent>;
@@ -42,7 +48,7 @@ describe('AthButtonComponent', () => {
   });
 
   describe('[action]', () => {
-    it('runs once per busy period: a double click does not submit twice (QA-13)', fakeAsync(() => {
+    it('runs once per busy period: a double click does not submit twice (QA-13)', async () => {
       let resolve!: () => void;
       const action = jasmine
         .createSpy('action')
@@ -57,15 +63,15 @@ describe('AthButtonComponent', () => {
       expect(inner().getAttribute('aria-busy')).toBe('true');
       expect(inner().querySelector('.ath-button__loader')).not.toBeNull();
       resolve();
-      flushMicrotasks();
+      await settle();
       fixture.detectChanges();
       expect(inner().disabled).toBeFalse();
       expect(inner().querySelector('.ath-button__loader')).toBeNull();
       inner().click();
       expect(action).toHaveBeenCalledTimes(2);
-    }));
+    });
 
-    it('stays busy until an Observable emits', fakeAsync(() => {
+    it('stays busy until an Observable emits', async () => {
       const result = new Subject<number>();
       const done = jasmine.createSpy('done');
       fixture.componentInstance.done.subscribe(done);
@@ -75,30 +81,30 @@ describe('AthButtonComponent', () => {
       fixture.detectChanges();
       expect(fixture.componentInstance.busy()).toBeTrue();
       result.next(7);
-      flushMicrotasks();
+      await settle();
       fixture.detectChanges();
       expect(fixture.componentInstance.busy()).toBeFalse();
       expect(done).toHaveBeenCalledWith(7);
       expect(result.observed).toBeFalse();
-    }));
+    });
 
-    it('reports a failure and becomes usable again', fakeAsync(() => {
+    it('reports a failure and becomes usable again', async () => {
       const failed = jasmine.createSpy('failed');
       fixture.componentInstance.failed.subscribe(failed);
       fixture.componentRef.setInput('action', () => throwError(() => new Error('nope')));
       fixture.detectChanges();
       inner().click();
-      flushMicrotasks();
+      await settle();
       fixture.detectChanges();
       expect(failed).toHaveBeenCalled();
       expect(errorHandler.handleError.calls.count()).toBe(1);
       expect(inner().disabled).toBeFalse();
-    }));
+    });
 
     // NG0953 (quality 2.5): an action that removes its own button (deleting
     // a doc navigates away; "Mark all read" hides the button) used to settle
     // after the destroy, and `done` was emitted on a destroyed component.
-    it('emits nothing once destroyed while the action is pending (NG0953)', fakeAsync(() => {
+    it('emits nothing once destroyed while the action is pending (NG0953)', async () => {
       let resolve!: (value: number) => void;
       const done = jasmine.createSpy('done');
       fixture.componentInstance.done.subscribe(done);
@@ -107,12 +113,12 @@ describe('AthButtonComponent', () => {
       inner().click();
       fixture.destroy();
       resolve(1);
-      expect(() => flushMicrotasks()).not.toThrow();
+      await expectAsync(settle()).toBeResolved();
       expect(done).not.toHaveBeenCalled();
       expect(errorHandler.handleError.calls.count()).toBe(0);
-    }));
+    });
 
-    it('still reports a failure that settles after the destroy', fakeAsync(() => {
+    it('still reports a failure that settles after the destroy', async () => {
       let reject!: (err: unknown) => void;
       const failed = jasmine.createSpy('failed');
       fixture.componentInstance.failed.subscribe(failed);
@@ -121,19 +127,19 @@ describe('AthButtonComponent', () => {
       inner().click();
       fixture.destroy();
       reject(new Error('late'));
-      expect(() => flushMicrotasks()).not.toThrow();
+      await expectAsync(settle()).toBeResolved();
       expect(failed).not.toHaveBeenCalled();
       expect(errorHandler.handleError.calls.count()).toBe(1);
-    }));
+    });
 
-    it('blocks a busy submit button from submitting its form', fakeAsync(() => {
+    it('blocks a busy submit button from submitting its form', () => {
       fixture.componentRef.setInput('type', 'submit');
       fixture.componentRef.setInput('loading', true);
       fixture.detectChanges();
       const event = new MouseEvent('click', { cancelable: true });
       fixture.componentInstance.handleClick(event);
       expect(event.defaultPrevented).toBeTrue();
-    }));
+    });
   });
 });
 

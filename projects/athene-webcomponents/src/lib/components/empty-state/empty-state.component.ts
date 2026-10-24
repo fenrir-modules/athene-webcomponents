@@ -1,11 +1,4 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  ChangeDetectionStrategy,
-  booleanAttribute,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { AthButtonComponent } from '../button/button.component';
@@ -63,32 +56,32 @@ export type EmptyStateSize = 'default' | 'compact';
 })
 export class AthEmptyStateComponent {
   /** Empty state message */
-  @Input({ required: true }) message = '';
+  readonly message = input.required<string>();
 
   /** Optional sub-message */
-  @Input() subMessage = '';
+  readonly subMessage = input('');
 
   /** Optional lucide icon shown above the message. */
-  @Input() icon: EmptyStateIcon | null = null;
+  readonly icon = input<EmptyStateIcon | null>(null);
 
   /**
    * No frame of its own, for an empty state that already sits inside a
    * panel; the dashed box inside a white panel drew a card in a card.
    */
-  @Input({ transform: booleanAttribute }) bare = false;
+  readonly bare = input(false, { transform: booleanAttribute });
 
   /** `compact`: icon tile left, auto height, optional hint rows. */
-  @Input() size: EmptyStateSize = 'default';
+  readonly size = input<EmptyStateSize>('default');
 
   /** 2–4 rows describing what will appear here (compact layout). */
-  @Input() hints: readonly EmptyStateHint[] = [];
+  readonly hints = input<readonly EmptyStateHint[]>([]);
 
   /** Primary action label; emits `action` when clicked. */
-  @Input() actionLabel = '';
-  @Input() actionIcon: EmptyStateIcon | null = null;
+  readonly actionLabel = input('');
+  readonly actionIcon = input<EmptyStateIcon | null>(null);
   /** Secondary (outline) action label; emits `secondaryAction`. */
-  @Input() secondaryActionLabel = '';
+  readonly secondaryActionLabel = input('');
 
-  @Output() action = new EventEmitter<void>();
-  @Output() secondaryAction = new EventEmitter<void>();
+  readonly action = output<void>();
+  readonly secondaryAction = output<void>();
 }

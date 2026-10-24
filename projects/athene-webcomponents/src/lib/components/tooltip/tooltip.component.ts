@@ -1,11 +1,4 @@
-import {
-  Directive,
-  Input,
-  ElementRef,
-  OnDestroy,
-  ChangeDetectorRef,
-  Renderer2,
-} from '@angular/core';
+import { Directive, ElementRef, OnDestroy, Renderer2, inject, input } from '@angular/core';
 
 /**
  * Tooltip position variants
@@ -26,10 +19,13 @@ export type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 })
 export class AthTooltipDirective implements OnDestroy {
   /** Tooltip text */
-  @Input('athTooltip') text = '';
+  readonly text = input('', { alias: 'athTooltip' });
 
   /** Tooltip position */
-  @Input() tooltipPosition: TooltipPosition = 'top';
+  readonly tooltipPosition = input<TooltipPosition>('top');
+
+  private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly renderer = inject(Renderer2);
 
   private tooltipElement: HTMLElement | null = null;
   private showTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -38,10 +34,7 @@ export class AthTooltipDirective implements OnDestroy {
   private mouseEnterListener: (() => void) | null = null;
   private mouseLeaveListener: (() => void) | null = null;
 
-  constructor(
-    private el: ElementRef,
-    private renderer: Renderer2
-  ) {
+  constructor() {
     this.mouseEnterListener = this.renderer.listen(this.el.nativeElement, 'mouseenter', () =>
       this.show()
     );
@@ -57,7 +50,7 @@ export class AthTooltipDirective implements OnDestroy {
   }
 
   private show(): void {
-    if (!this.text) return;
+    if (!this.text()) return;
     if (this.hideTimeout) {
       clearTimeout(this.hideTimeout);
       this.hideTimeout = null;
@@ -82,14 +75,16 @@ export class AthTooltipDirective implements OnDestroy {
   private createTooltip(): void {
     if (this.tooltipElement) return;
 
-    this.tooltipElement = this.renderer.createElement('div');
-    this.renderer.addClass(this.tooltipElement, 'ath-tooltip');
-    this.renderer.addClass(this.tooltipElement, `ath-tooltip--${this.tooltipPosition}`);
-    this.tooltipElement!.textContent = this.text;
+    const tooltip: HTMLElement = this.renderer.createElement('div') as HTMLElement;
+    this.tooltipElement = tooltip;
+    this.renderer.addClass(tooltip, 'ath-tooltip');
+    this.renderer.addClass(tooltip, `ath-tooltip--${this.tooltipPosition()}`);
+    tooltip.textContent = this.text();
 
-    this.renderer.appendChild(document.body, this.tooltipElement);
+    this.renderer.appendChild(document.body, tooltip);
     this.positionTooltip();
 
+    // Next frame, so the CSS transition runs from the hidden state (not change detection).
     requestAnimationFrame(() => {
       if (this.tooltipElement) {
         this.renderer.addClass(this.tooltipElement, 'ath-tooltip--visible');
@@ -107,7 +102,7 @@ export class AthTooltipDirective implements OnDestroy {
     let top = 0;
     let left = 0;
 
-    switch (this.tooltipPosition) {
+    switch (this.tooltipPosition()) {
       case 'top':
         top = hostRect.top - tooltipRect.height - gap;
         left = hostRect.left + (hostRect.width - tooltipRect.width) / 2;

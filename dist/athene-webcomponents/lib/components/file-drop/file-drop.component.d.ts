@@ -1,4 +1,3 @@
-import { EventEmitter } from '@angular/core';
 import * as i0 from "@angular/core";
 /**
  * Drag-and-drop file upload zone with click-to-browse fallback.
@@ -16,22 +15,22 @@ import * as i0 from "@angular/core";
 export declare class AthFileDropComponent {
     protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     /** Filter for the file picker (e.g., `image/*,.pdf`). */
-    accept: string | null;
-    multiple: boolean;
+    readonly accept: import("@angular/core").InputSignal<string | null>;
+    readonly multiple: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Reject files larger than this (in MB). 0 = no limit. */
-    maxSizeMb: number;
-    disabled: boolean;
+    readonly maxSizeMb: import("@angular/core").InputSignalWithTransform<number, unknown>;
+    readonly disabled: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Custom prompt text. Defaults to "Drop files or click to browse". */
-    prompt: string | null;
-    filesPicked: EventEmitter<File[]>;
+    readonly prompt: import("@angular/core").InputSignal<string | null>;
+    readonly filesPicked: import("@angular/core").OutputEmitterRef<File[]>;
     /** Emits when files are rejected (size limit, wrong type). */
-    rejected: EventEmitter<{
+    readonly rejected: import("@angular/core").OutputEmitterRef<{
         file: File;
         reason: "size" | "type";
     }[]>;
     protected readonly uploadIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     protected readonly dragging: import("@angular/core").WritableSignal<boolean>;
-    private fileInput;
+    private readonly fileInput;
     onDragOver(event: DragEvent): void;
     onDragLeave(event: DragEvent): void;
     onDrop(event: DragEvent): void;
@@ -40,5 +39,5 @@ export declare class AthFileDropComponent {
     private handle;
     private matchesAccept;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthFileDropComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthFileDropComponent, "ath-file-drop", never, { "accept": { "alias": "accept"; "required": false; }; "multiple": { "alias": "multiple"; "required": false; }; "maxSizeMb": { "alias": "maxSizeMb"; "required": false; }; "disabled": { "alias": "disabled"; "required": false; }; "prompt": { "alias": "prompt"; "required": false; }; }, { "filesPicked": "filesPicked"; "rejected": "rejected"; }, never, ["*"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthFileDropComponent, "ath-file-drop", never, { "accept": { "alias": "accept"; "required": false; "isSignal": true; }; "multiple": { "alias": "multiple"; "required": false; "isSignal": true; }; "maxSizeMb": { "alias": "maxSizeMb"; "required": false; "isSignal": true; }; "disabled": { "alias": "disabled"; "required": false; "isSignal": true; }; "prompt": { "alias": "prompt"; "required": false; "isSignal": true; }; }, { "filesPicked": "filesPicked"; "rejected": "rejected"; }, never, ["*"], true, never>;
 }

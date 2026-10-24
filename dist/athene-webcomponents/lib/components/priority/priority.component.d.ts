@@ -10,12 +10,12 @@ export { ATH_PRIORITY_LABELS, type PriorityLabelResolver, type TicketPriority, }
  */
 export declare class AthPriorityComponent {
     private readonly resolveLabel;
-    priority: TicketPriority;
-    showLabel: boolean;
+    readonly priority: import("@angular/core").InputSignal<TicketPriority>;
+    readonly showLabel: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Optional override label. */
-    label: string | null;
-    get hostPriority(): TicketPriority;
-    protected get computedLabel(): string;
+    readonly label: import("@angular/core").InputSignal<string | null>;
+    /** The resolver reads a signal for the language (see `PriorityLabelResolver`), so this follows it. */
+    protected readonly computedLabel: import("@angular/core").Signal<string>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthPriorityComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthPriorityComponent, "ath-priority", never, { "priority": { "alias": "priority"; "required": false; }; "showLabel": { "alias": "showLabel"; "required": false; }; "label": { "alias": "label"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthPriorityComponent, "ath-priority", never, { "priority": { "alias": "priority"; "required": false; "isSignal": true; }; "showLabel": { "alias": "showLabel"; "required": false; "isSignal": true; }; "label": { "alias": "label"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

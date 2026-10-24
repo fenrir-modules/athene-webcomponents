@@ -1,18 +1,18 @@
 <!-- The pill holds two sibling buttons (open, clear): a button inside a button is invalid and unreachable for AT. -->
 <span class="ath-fchip">
-  <button type="button" class="ath-fchip__main" [disabled]="disabled" (click)="onClick()">
-    <span class="ath-fchip__label">{{ label }}</span>
-    <span class="ath-fchip__value">{{ value }}</span>
-    @if (!(clearable && active)) {
+  <button type="button" class="ath-fchip__main" [disabled]="disabled()" (click)="onClick()">
+    <span class="ath-fchip__label">{{ label() }}</span>
+    <span class="ath-fchip__value">{{ value() }}</span>
+    @if (!(clearable() && active())) {
       <lucide-icon [img]="chevronIcon" [size]="11" class="ath-fchip__chevron" />
     }
   </button>
 
-  @if (clearable && active) {
+  @if (clearable() && active()) {
     <button
       type="button"
       class="ath-fchip__clear"
-      [disabled]="disabled"
+      [disabled]="disabled()"
       [attr.aria-label]="clearLabel()"
       (click)="onClear($event)"
     >

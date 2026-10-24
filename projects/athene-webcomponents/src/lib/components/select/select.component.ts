@@ -1,10 +1,11 @@
 import {
-  Component,
-  Input,
-  forwardRef,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  inject,
+  Component,
+  booleanAttribute,
+  computed,
+  forwardRef,
+  input,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
@@ -18,6 +19,9 @@ export interface SelectOption {
   label: string;
   disabled?: boolean;
 }
+
+/** Field height: `md` 44px, `sm` 33px. */
+export type SelectSize = 'sm' | 'md';
 
 /**
  * Athene Select Component
@@ -44,40 +48,45 @@ export interface SelectOption {
   styleUrl: './select.component.scss',
 })
 export class AthSelectComponent implements ControlValueAccessor {
-  /** Select label */
   /** Field height: `md` 44px (default), `sm` 33px (compact settings rows). */
-  @Input() size: 'sm' | 'md' = 'md';
+  readonly size = input<SelectSize>('md');
 
-  @Input() label = '';
+  /** Select label */
+  readonly label = input('');
 
   /** Placeholder text */
-  @Input() placeholder = 'Select an option';
+  readonly placeholder = input('Select an option');
 
   /** Select options */
-  @Input() options: SelectOption[] = [];
+  readonly options = input<SelectOption[]>([]);
 
   /** Error message */
-  @Input() error = '';
+  readonly error = input('');
 
   /** Hint text */
-  @Input() hint = '';
+  readonly hint = input('');
 
-  /** Disabled state */
-  @Input() disabled = false;
+  /** Disabled state (also set by the forms API, see `setDisabledState`). */
+  readonly disabled = input(false, { transform: booleanAttribute });
 
   /** Required field */
-  @Input() required = false;
+  readonly required = input(false, { transform: booleanAttribute });
 
   /**
    * Accessible name of the native select when no visible `label` is drawn
    * (a select in a settings row or a table cell that its row already names).
    */
-  @Input() ariaLabel = '';
+  readonly ariaLabel = input('');
 
   /** Unique select ID */
-  @Input() selectId = `ath-select-${Math.random().toString(36).substr(2, 9)}`;
+  readonly selectId = input(`ath-select-${Math.random().toString(36).substr(2, 9)}`);
 
-  protected value = '';
+  // Written by the forms API (e.g. a setValue after an async lookup) outside
+  // an input change; signals, so OnPush (and zoneless) views follow. Not
+  // `value`: Storybook copies a story prop of that name onto the instance.
+  protected readonly fieldValue = signal('');
+  private readonly formDisabled = signal(false);
+  protected readonly isDisabled = computed(() => this.disabled() || this.formDisabled());
 
   protected readonly chevronIcon = ChevronDown;
   protected readonly alertIcon = AlertCircle;
@@ -85,13 +94,8 @@ export class AthSelectComponent implements ControlValueAccessor {
   private onChange: (value: string) => void = () => {};
   protected onTouched: () => void = () => {};
 
-  // OnPush: values written by the forms API (e.g. a setValue after an async
-  // lookup) arrive outside an input change, so the view must be told.
-  private readonly cdr = inject(ChangeDetectorRef);
-
   writeValue(value: string): void {
-    this.value = value ?? '';
-    this.cdr.markForCheck();
+    this.fieldValue.set(value ?? '');
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -103,13 +107,12 @@ export class AthSelectComponent implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
-    this.cdr.markForCheck();
+    this.formDisabled.set(isDisabled);
   }
 
   onSelectionChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
-    this.value = target.value;
-    this.onChange(this.value);
+    this.fieldValue.set(target.value);
+    this.onChange(target.value);
   }
 }

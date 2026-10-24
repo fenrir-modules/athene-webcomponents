@@ -1,4 +1,4 @@
-<aside [class]="sidebarClasses">
+<aside [class]="sidebarClasses()">
   <div class="ath-sidebar__header">
     <ng-content select="[slot=header]" />
   </div>
@@ -12,10 +12,10 @@
     <button
       class="ath-sidebar__toggle"
       type="button"
-      [attr.aria-label]="collapsed ? labels.sidebarExpand() : labels.sidebarCollapse()"
+      [attr.aria-label]="collapsed() ? labels.sidebarExpand() : labels.sidebarCollapse()"
       (click)="toggleCollapse()"
     >
-      <lucide-icon [img]="collapsed ? expandIcon : collapseIcon" [size]="18" />
+      <lucide-icon [img]="collapsed() ? expandIcon : collapseIcon" [size]="18" />
     </button>
   </div>
 </aside>

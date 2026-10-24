@@ -30,6 +30,13 @@
             "tsConfig": "projects/athene-webcomponents/tsconfig.spec.json",
             "polyfills": ["zone.js", "zone.js/testing"],
             "styles": ["projects/athene-webcomponents/src/lib/styles/main.scss"]
+          },
+          "configurations": {
+            "zoneless": {
+              "main": "projects/athene-webcomponents/src/test-zoneless.ts",
+              "tsConfig": "projects/athene-webcomponents/tsconfig.spec.zoneless.json",
+              "polyfills": []
+            }
           }
         },
         "storybook": {

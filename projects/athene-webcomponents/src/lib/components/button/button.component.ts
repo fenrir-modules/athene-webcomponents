@@ -33,6 +33,9 @@ export type ButtonVariant =
  */
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';
 
+/** The native button's `type`. */
+export type ButtonType = 'button' | 'submit' | 'reset';
+
 /**
  * Athene Button Component
  *
@@ -71,7 +74,7 @@ export class AthButtonComponent {
   readonly variant = input<ButtonVariant>('primary');
   readonly size = input<ButtonSize>('md');
   /** Button type attribute. */
-  readonly type = input<'button' | 'submit' | 'reset'>('button');
+  readonly type = input<ButtonType>('button');
   readonly disabled = input(false);
   /** Busy from outside (an action started elsewhere). `[action]` sets its own. */
   readonly loading = input(false);

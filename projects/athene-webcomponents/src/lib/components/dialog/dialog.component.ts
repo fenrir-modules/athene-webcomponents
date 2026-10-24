@@ -5,12 +5,14 @@ import {
   OnChanges,
   OnDestroy,
   SimpleChanges,
-  ViewChild,
   booleanAttribute,
   computed,
+  effect,
   inject,
   input,
   output,
+  untracked,
+  viewChild,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { LucideAngularModule, X } from 'lucide-angular';
@@ -23,6 +25,9 @@ import { focusSafely, tabbables, trapTab } from '../floating/focus';
  * viewport minus a margin.
  */
 export type DialogSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
+
+/** ARIA role of the dialog: `alertdialog` for confirmations that interrupt. */
+export type DialogRole = 'dialog' | 'alertdialog';
 
 let nextDialogId = 0;
 
@@ -98,7 +103,7 @@ export class AthDialogComponent implements OnChanges, OnDestroy {
   /** Accessible name when there is no visible `title`. */
   readonly ariaLabel = input<string | null>(null);
   /** `alertdialog` for confirmations that interrupt. */
-  readonly role = input<'dialog' | 'alertdialog'>('dialog');
+  readonly role = input<DialogRole>('dialog');
   /**
    * Only the content, on a transparent full-viewport layer: the content is
    * the surface and places itself (see the class comment). `title`,
@@ -130,13 +135,16 @@ export class AthDialogComponent implements OnChanges, OnDestroy {
     dismiss: () => this.requestClose(),
   };
 
-  @ViewChild('dialog')
-  private set dialogRef(ref: ElementRef<HTMLDialogElement> | undefined) {
-    const el = ref?.nativeElement ?? null;
-    if (el === this.dialogEl) return;
-    if (this.dialogEl) this.teardown();
-    this.dialogEl = el;
-    if (el) this.present(el);
+  /** The `<dialog>`; rendered while `open` is true. */
+  private readonly dialogRef = viewChild<ElementRef<HTMLDialogElement>>('dialog');
+
+  constructor() {
+    // DOM sync, no state: `showModal()`, the overlay stack and focus follow
+    // the `<dialog>` element as `@if (open())` adds and removes it.
+    effect(() => {
+      const el = this.dialogRef()?.nativeElement ?? null;
+      untracked(() => this.attach(el));
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -149,6 +157,13 @@ export class AthDialogComponent implements OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.dialogEl) this.teardown();
+  }
+
+  private attach(el: HTMLDialogElement | null): void {
+    if (el === this.dialogEl) return;
+    if (this.dialogEl) this.teardown();
+    this.dialogEl = el;
+    if (el) this.present(el);
   }
 
   /** Requests closing, as the ✕ button does. */

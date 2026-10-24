@@ -1,4 +1,4 @@
-@if (response) {
+@if (response(); as response) {
   <div class="ath-sla__row">
     <span class="ath-sla__name">{{ response.label }}</span>
     <span class="ath-sla__text" [style.color]="statusColor(response.status)">{{
@@ -6,7 +6,7 @@
     }}</span>
   </div>
 }
-@if (resolution) {
+@if (resolution(); as resolution) {
   <div class="ath-sla__row">
     <span class="ath-sla__name">{{ resolution.label }}</span>
     <span class="ath-sla__text" [style.color]="statusColor(resolution.status)">{{
@@ -17,11 +17,11 @@
 <div
   class="ath-sla__track"
   role="progressbar"
-  [attr.aria-label]="(resolution ?? response)?.label ?? null"
-  [attr.aria-valuetext]="(resolution ?? response)?.text ?? null"
-  [attr.aria-valuenow]="progressPct"
+  [attr.aria-label]="barTarget()?.label ?? null"
+  [attr.aria-valuetext]="barTarget()?.text ?? null"
+  [attr.aria-valuenow]="progressPct()"
   aria-valuemin="0"
   aria-valuemax="100"
 >
-  <div class="ath-sla__fill" [style.width.%]="progressPct"></div>
+  <div class="ath-sla__fill" [style.width.%]="progressPct()"></div>
 </div>

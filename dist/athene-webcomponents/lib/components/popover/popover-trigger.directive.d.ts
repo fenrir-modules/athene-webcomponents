@@ -1,6 +1,8 @@
 import { AthOverlayTriggerBase } from '../floating/trigger';
 import { AthPopoverComponent } from './popover.component';
 import * as i0 from "@angular/core";
+/** The `aria-haspopup` value of a popover trigger. */
+export type PopoverTriggerPopup = 'dialog' | 'listbox' | 'menu';
 /**
  * Opens an `ath-popover` from a button and anchors it there. Sets
  * `aria-haspopup`, `aria-expanded` and `aria-controls` on the real control
@@ -13,7 +15,7 @@ import * as i0 from "@angular/core";
 export declare class AthPopoverTriggerDirective extends AthOverlayTriggerBase {
     readonly popover: import("@angular/core").InputSignal<AthPopoverComponent>;
     /** `aria-haspopup` value; `listbox` for a picker without a search field. */
-    readonly popupType: import("@angular/core").InputSignal<"dialog" | "menu" | "listbox">;
+    readonly popupType: import("@angular/core").InputSignal<PopoverTriggerPopup>;
     protected popupKind(): string;
     protected isOpen(): boolean;
     protected popupId(): string;

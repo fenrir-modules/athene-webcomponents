@@ -46,6 +46,10 @@ jobs:
       # No continue-on-error: a red unit test fails the build (QA-16).
       - name: Unit tests
         run: npx ng test --watch=false --browsers=ChromeHeadless
+      # The same specs without zone.js (quality step 4.1): a component that
+      # only updates because zone.js ticked fails here.
+      - name: Unit tests (zoneless)
+        run: npm run test:zoneless -- --watch=false --browsers=ChromeHeadless
       - name: Build library
         run: npm run build:lib
       # Git installs ship the committed dist/ and never build (package.json

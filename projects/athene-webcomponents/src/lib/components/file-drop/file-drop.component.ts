@@ -2,12 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EventEmitter,
-  HostListener,
-  Input,
-  Output,
-  ViewChild,
+  booleanAttribute,
+  input,
+  numberAttribute,
+  output,
   signal,
+  viewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Upload } from 'lucide-angular';
@@ -33,36 +33,40 @@ import { injectAthLabels } from '../../i18n/labels';
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './file-drop.component.html',
   styleUrl: './file-drop.component.scss',
+  host: {
+    '(dragover)': 'onDragOver($event)',
+    '(dragleave)': 'onDragLeave($event)',
+    '(drop)': 'onDrop($event)',
+  },
 })
 export class AthFileDropComponent {
   protected readonly labels = injectAthLabels();
 
   /** Filter for the file picker (e.g., `image/*,.pdf`). */
-  @Input() accept: string | null = null;
+  readonly accept = input<string | null>(null);
 
-  @Input() multiple = true;
+  readonly multiple = input(true, { transform: booleanAttribute });
 
   /** Reject files larger than this (in MB). 0 = no limit. */
-  @Input() maxSizeMb = 0;
+  readonly maxSizeMb = input(0, { transform: numberAttribute });
 
-  @Input() disabled = false;
+  readonly disabled = input(false, { transform: booleanAttribute });
 
   /** Custom prompt text. Defaults to "Drop files or click to browse". */
-  @Input() prompt: string | null = null;
+  readonly prompt = input<string | null>(null);
 
-  @Output() filesPicked = new EventEmitter<File[]>();
+  readonly filesPicked = output<File[]>();
 
   /** Emits when files are rejected (size limit, wrong type). */
-  @Output() rejected = new EventEmitter<{ file: File; reason: 'size' | 'type' }[]>();
+  readonly rejected = output<{ file: File; reason: 'size' | 'type' }[]>();
 
   protected readonly uploadIcon = Upload;
   protected readonly dragging = signal(false);
 
-  @ViewChild('fileInput') private fileInput!: ElementRef<HTMLInputElement>;
+  private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
 
-  @HostListener('dragover', ['$event'])
   onDragOver(event: DragEvent): void {
-    if (this.disabled) return;
+    if (this.disabled()) return;
     event.preventDefault();
     event.stopPropagation();
     if (event.dataTransfer) {
@@ -71,9 +75,8 @@ export class AthFileDropComponent {
     this.dragging.set(true);
   }
 
-  @HostListener('dragleave', ['$event'])
   onDragLeave(event: DragEvent): void {
-    if (this.disabled) return;
+    if (this.disabled()) return;
     event.preventDefault();
     event.stopPropagation();
     // Only flip off if leaving the host, not a child element
@@ -82,9 +85,8 @@ export class AthFileDropComponent {
     }
   }
 
-  @HostListener('drop', ['$event'])
   onDrop(event: DragEvent): void {
-    if (this.disabled) return;
+    if (this.disabled()) return;
     event.preventDefault();
     event.stopPropagation();
     this.dragging.set(false);
@@ -93,8 +95,8 @@ export class AthFileDropComponent {
   }
 
   openPicker(): void {
-    if (this.disabled) return;
-    this.fileInput.nativeElement.click();
+    if (this.disabled()) return;
+    this.fileInput().nativeElement.click();
   }
 
   onPickerChange(event: Event): void {
@@ -110,12 +112,13 @@ export class AthFileDropComponent {
     const accepted: File[] = [];
     const rejected: { file: File; reason: 'size' | 'type' }[] = [];
 
+    const maxSizeMb = this.maxSizeMb();
     for (const file of files) {
-      if (this.maxSizeMb > 0 && file.size > this.maxSizeMb * 1024 * 1024) {
+      if (maxSizeMb > 0 && file.size > maxSizeMb * 1024 * 1024) {
         rejected.push({ file, reason: 'size' });
         continue;
       }
-      if (this.accept && !this.matchesAccept(file)) {
+      if (this.accept() && !this.matchesAccept(file)) {
         rejected.push({ file, reason: 'type' });
         continue;
       }
@@ -126,13 +129,14 @@ export class AthFileDropComponent {
       this.rejected.emit(rejected);
     }
     if (accepted.length > 0) {
-      this.filesPicked.emit(this.multiple ? accepted : [accepted[0]]);
+      this.filesPicked.emit(this.multiple() ? accepted : [accepted[0]]);
     }
   }
 
   private matchesAccept(file: File): boolean {
-    if (!this.accept) return true;
-    const patterns = this.accept.split(',').map((p) => p.trim().toLowerCase());
+    const accept = this.accept();
+    if (!accept) return true;
+    const patterns = accept.split(',').map((p) => p.trim().toLowerCase());
     const type = file.type.toLowerCase();
     const name = file.name.toLowerCase();
 

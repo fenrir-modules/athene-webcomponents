@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, PanelLeftClose, PanelLeft } from 'lucide-angular';
 import { injectAthLabels } from '../../i18n/labels';
@@ -26,23 +26,17 @@ import { injectAthLabels } from '../../i18n/labels';
 export class AthSidebarComponent {
   protected readonly labels = injectAthLabels();
 
-  /** Collapsed state */
-  @Input() collapsed = false;
-
-  /** Collapsed change event */
-  @Output() collapsedChange = new EventEmitter<boolean>();
+  /** Collapsed state. Two-way: `[(collapsed)]` (`collapsedChange`). */
+  readonly collapsed = model(false);
 
   protected readonly collapseIcon = PanelLeftClose;
   protected readonly expandIcon = PanelLeft;
 
-  get sidebarClasses(): string {
-    return ['ath-sidebar', this.collapsed ? 'ath-sidebar--collapsed' : '']
-      .filter(Boolean)
-      .join(' ');
-  }
+  protected readonly sidebarClasses = computed(() =>
+    ['ath-sidebar', this.collapsed() ? 'ath-sidebar--collapsed' : ''].filter(Boolean).join(' ')
+  );
 
   toggleCollapse(): void {
-    this.collapsed = !this.collapsed;
-    this.collapsedChange.emit(this.collapsed);
+    this.collapsed.update((collapsed) => !collapsed);
   }
 }

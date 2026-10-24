@@ -1,5 +1,7 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+export type KbdSize = 'sm' | 'md' | 'lg';
 
 /**
  * Athene Kbd (Keyboard) Component
@@ -22,15 +24,13 @@ import { CommonModule } from '@angular/common';
 })
 export class AthKbdComponent {
   /** Size variant */
-  @Input() size: 'sm' | 'md' | 'lg' = 'md';
+  readonly size = input<KbdSize>('md');
 
   /**
    * Keys as text, for a self-closing tag. Callers wrote `label="⌘K"`
    * before this input existed, which rendered an empty chip.
    */
-  @Input() label = '';
+  readonly label = input('');
 
-  get kbdClasses(): string {
-    return `ath-kbd ath-kbd--${this.size}`;
-  }
+  protected readonly kbdClasses = computed(() => `ath-kbd ath-kbd--${this.size()}`);
 }

@@ -8,6 +8,8 @@ export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'dan
  * Button size types
  */
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';
+/** The native button's `type`. */
+export type ButtonType = 'button' | 'submit' | 'reset';
 /**
  * Athene Button Component
  *
@@ -34,7 +36,7 @@ export declare class AthButtonComponent {
     readonly variant: import("@angular/core").InputSignal<ButtonVariant>;
     readonly size: import("@angular/core").InputSignal<ButtonSize>;
     /** Button type attribute. */
-    readonly type: import("@angular/core").InputSignal<"reset" | "submit" | "button">;
+    readonly type: import("@angular/core").InputSignal<ButtonType>;
     readonly disabled: import("@angular/core").InputSignal<boolean>;
     /** Busy from outside (an action started elsewhere). `[action]` sets its own. */
     readonly loading: import("@angular/core").InputSignal<boolean>;

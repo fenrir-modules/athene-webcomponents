@@ -1,9 +1,9 @@
 <ath-combobox
   [options]="options()"
-  [value]="value"
-  [placeholder]="placeholder ?? labels.userPickerPlaceholder()"
-  [searchPlaceholder]="searchPlaceholder ?? labels.userPickerSearch()"
-  [disabled]="disabled"
-  [clearable]="clearable && allowUnassigned"
+  [value]="value()"
+  [placeholder]="placeholder() ?? labels.userPickerPlaceholder()"
+  [searchPlaceholder]="searchPlaceholder() ?? labels.userPickerSearch()"
+  [disabled]="disabled()"
+  [clearable]="clearable() && allowUnassigned()"
   (valueChange)="onValueChange($event)"
 />

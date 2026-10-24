@@ -12,20 +12,21 @@ import * as i0 from "@angular/core";
  */
 export declare class AthCodeBlockComponent {
     protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
-    code: string;
-    language: string | null;
+    readonly code: import("@angular/core").InputSignal<string>;
+    readonly language: import("@angular/core").InputSignal<string | null>;
     /** Optional filename to display next to the language label. */
-    filename: string | null;
+    readonly filename: import("@angular/core").InputSignal<string | null>;
     /** Show line numbers down the left gutter. */
-    showLineNumbers: boolean;
+    readonly showLineNumbers: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Hide the copy button (e.g., for short read-only snippets). */
-    copyable: boolean;
+    readonly copyable: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     protected readonly copyIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     protected readonly checkIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     protected readonly copied: import("@angular/core").WritableSignal<boolean>;
-    get hostLang(): string | null;
-    protected get lines(): string[];
+    private resetTimer;
+    protected readonly lines: import("@angular/core").Signal<string[]>;
+    constructor();
     copy(): Promise<void>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthCodeBlockComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthCodeBlockComponent, "ath-code-block", never, { "code": { "alias": "code"; "required": true; }; "language": { "alias": "language"; "required": false; }; "filename": { "alias": "filename"; "required": false; }; "showLineNumbers": { "alias": "showLineNumbers"; "required": false; }; "copyable": { "alias": "copyable"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthCodeBlockComponent, "ath-code-block", never, { "code": { "alias": "code"; "required": true; "isSignal": true; }; "language": { "alias": "language"; "required": false; "isSignal": true; }; "filename": { "alias": "filename"; "required": false; "isSignal": true; }; "showLineNumbers": { "alias": "showLineNumbers"; "required": false; "isSignal": true; }; "copyable": { "alias": "copyable"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }
