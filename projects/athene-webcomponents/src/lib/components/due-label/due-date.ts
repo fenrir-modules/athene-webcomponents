@@ -25,7 +25,10 @@ export {
 
 /** Label templates the compact text is built from (`{count}` placeholder). */
 export interface DueTextLabels {
+  /** Two or more days past the date. */
   overdue: string;
+  /** One day past the date ("1 day overdue"); `overdue` when missing. */
+  overdueOne?: string;
   today: string;
   tomorrow: string;
   inDays: string;
@@ -67,16 +70,26 @@ export function zonedWallClock(date: Date, timeZone?: string): Date {
 export function calendarDayOf(value: string, timeZone?: string): Date | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
   if (!m) return null;
+  if (isDayOnly(value)) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 12);
   const at = new Date(value);
-  const dayOnly =
+  const wall = zonedWallClock(at, timeZone);
+  return new Date(wall.getFullYear(), wall.getMonth(), wall.getDate(), 12);
+}
+
+/**
+ * Whether a due value names a day rather than a moment: a bare
+ * `YYYY-MM-DD`, or a timestamp at UTC midnight or noon (what the date
+ * pickers write for a day). Only a moment has a time worth showing.
+ */
+export function isDayOnly(value: string): boolean {
+  const at = new Date(value);
+  return (
     value.length === 10 ||
     Number.isNaN(at.getTime()) ||
     (at.getUTCMinutes() === 0 &&
       at.getUTCSeconds() === 0 &&
-      (at.getUTCHours() === 0 || at.getUTCHours() === 12));
-  if (dayOnly) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 12);
-  const wall = zonedWallClock(at, timeZone);
-  return new Date(wall.getFullYear(), wall.getMonth(), wall.getDate(), 12);
+      (at.getUTCHours() === 0 || at.getUTCHours() === 12))
+  );
 }
 
 /** Whole calendar days from `now` (in `timeZone`) to `day`; negative = past. */
@@ -116,13 +129,39 @@ export function shortDay(day: Date, ctx: AthDateContext = {}): string {
   }
 }
 
+/**
+ * The full date, for the tooltip and screen readers: "Freitag, 30. Oktober
+ * 2026" ("Friday 30 October 2026"), with the clock time when the value is
+ * a moment rather than a day ("…, 18:00"). The ISO format keeps its digits.
+ */
+export function fullDueDate(value: string, day: Date, ctx: AthDateContext = {}): string {
+  const locale = ctx.locale || undefined;
+  const date =
+    ctx.dateFormat === 'iso'
+      ? `${day.toLocaleDateString(locale, { weekday: 'long' })}, ${shortDay(day, ctx)}`
+      : day.toLocaleDateString(locale, {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        });
+  if (isDayOnly(value)) return date;
+  const time = new Date(value).toLocaleTimeString(locale, {
+    hour: '2-digit',
+    minute: '2-digit',
+    ...(ctx.hour12 === undefined ? {} : { hour12: ctx.hour12 }),
+    ...(ctx.timeZone ? { timeZone: ctx.timeZone } : {}),
+  });
+  return `${date}, ${time}`;
+}
+
 function fill(template: string, count: number): string {
   return template.replace(/\{count\}/g, String(count));
 }
 
 /**
- * The compact due text: "2d overdue", "Today", "Tomorrow", "3d" up to six
- * days ahead, then the short date.
+ * The compact due text: "2 days overdue" ("1 day overdue"), "today",
+ * "tomorrow", "in 3 days" up to six days ahead, then the short date.
  */
 export function compactDueText(
   days: number,
@@ -130,6 +169,7 @@ export function compactDueText(
   labels: DueTextLabels,
   ctx: AthDateContext = {}
 ): string {
+  if (days === -1 && labels.overdueOne) return fill(labels.overdueOne, 1);
   if (days < 0) return fill(labels.overdue, -days);
   if (days === 0) return labels.today;
   if (days === 1) return labels.tomorrow;
@@ -155,6 +195,8 @@ export interface DueView {
   days: number;
   /** The short date, e.g. for a tooltip. */
   day: string;
+  /** The full date (and time, for a moment): tooltip and screen readers. */
+  full: string;
 }
 
 /** Everything `ath-due-label` draws, from a date; `null` without one. */
@@ -175,5 +217,6 @@ export function describeDue(
     text: plain ? short : compactDueText(days, day, labels, ctx),
     days,
     day: short,
+    full: fullDueDate(input.date, day, ctx),
   };
 }

@@ -15,8 +15,10 @@ import { ATH_DATE_CONTEXT, type AthDateContext, type DueSource, describeDue } fr
  *
  * One colour rule (tokens `--due-*`): overdue and today red, the next two
  * days amber, later muted; finished work is always muted and shows its
- * plain date. Compact words: "2d overdue", "Today", "Tomorrow", "3d", then
- * the short date. A sprint-derived date reads "Sprint end · 31 Oct" with a
+ * plain date. Words: "2 days overdue" ("1 day overdue"), "today",
+ * "tomorrow", "in 3 days" up to six days ahead, then the short date. The
+ * full date (and time, for a moment) is the tooltip and is read out to
+ * screen readers. A sprint-derived date reads "Sprint end · 31 Oct" with a
  * sprint icon; `afterSprintEnd` adds an amber warning.
  *
  * The app provides `ATH_DATE_CONTEXT` (locale, time zone, date format) and
@@ -73,6 +75,7 @@ export class AthDueLabelComponent {
       },
       {
         overdue: this.labels.dueOverdue(),
+        overdueOne: this.labels.dueOverdueOne(),
         today: this.labels.dueToday(),
         tomorrow: this.labels.dueTomorrow(),
         inDays: this.labels.dueInDays(),
@@ -84,12 +87,21 @@ export class AthDueLabelComponent {
   protected readonly isSprint = computed(() => this.source() === 'sprint');
   protected readonly sprintEndText = computed(() => this.labels.dueSprintEnd());
 
+  /** "Due Friday 30 October 2026" — the tooltip and the screen-reader text. */
+  protected readonly dueOnText = computed(() => {
+    const v = this.view();
+    return v ? formatAthLabel(this.labels.dueOn(), { date: v.full }) : null;
+  });
+
+  /** The full date; a sprint-derived one also names its sprint. */
   protected readonly title = computed(() => {
-    if (!this.isSprint()) return null;
+    const on = this.dueOnText();
+    if (!this.isSprint()) return on;
     const sprint = this.sprintName();
-    return sprint
+    const source = sprint
       ? formatAthLabel(this.labels.dueSprintTooltip(), { sprint })
       : this.sprintEndText();
+    return on ? `${source} · ${on}` : source;
   });
 
   protected readonly showWarn = computed(() => this.afterSprintEnd() && !this.done());

@@ -4779,16 +4779,24 @@ function calendarDayOf(value, timeZone) {
     const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
     if (!m)
         return null;
+    if (isDayOnly(value))
+        return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 12);
     const at = new Date(value);
-    const dayOnly = value.length === 10 ||
+    const wall = zonedWallClock(at, timeZone);
+    return new Date(wall.getFullYear(), wall.getMonth(), wall.getDate(), 12);
+}
+/**
+ * Whether a due value names a day rather than a moment: a bare
+ * `YYYY-MM-DD`, or a timestamp at UTC midnight or noon (what the date
+ * pickers write for a day). Only a moment has a time worth showing.
+ */
+function isDayOnly(value) {
+    const at = new Date(value);
+    return (value.length === 10 ||
         Number.isNaN(at.getTime()) ||
         (at.getUTCMinutes() === 0 &&
             at.getUTCSeconds() === 0 &&
-            (at.getUTCHours() === 0 || at.getUTCHours() === 12));
-    if (dayOnly)
-        return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 12);
-    const wall = zonedWallClock(at, timeZone);
-    return new Date(wall.getFullYear(), wall.getMonth(), wall.getDate(), 12);
+            (at.getUTCHours() === 0 || at.getUTCHours() === 12)));
 }
 /** Whole calendar days from `now` (in `timeZone`) to `day`; negative = past. */
 function calendarDaysUntil(day, now, timeZone) {
@@ -4829,14 +4837,41 @@ function shortDay(day, ctx = {}) {
             return day.toLocaleDateString(ctx.locale || undefined, { month: 'short', day: 'numeric' });
     }
 }
+/**
+ * The full date, for the tooltip and screen readers: "Freitag, 30. Oktober
+ * 2026" ("Friday 30 October 2026"), with the clock time when the value is
+ * a moment rather than a day ("…, 18:00"). The ISO format keeps its digits.
+ */
+function fullDueDate(value, day, ctx = {}) {
+    const locale = ctx.locale || undefined;
+    const date = ctx.dateFormat === 'iso'
+        ? `${day.toLocaleDateString(locale, { weekday: 'long' })}, ${shortDay(day, ctx)}`
+        : day.toLocaleDateString(locale, {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        });
+    if (isDayOnly(value))
+        return date;
+    const time = new Date(value).toLocaleTimeString(locale, {
+        hour: '2-digit',
+        minute: '2-digit',
+        ...(ctx.hour12 === undefined ? {} : { hour12: ctx.hour12 }),
+        ...(ctx.timeZone ? { timeZone: ctx.timeZone } : {}),
+    });
+    return `${date}, ${time}`;
+}
 function fill(template, count) {
     return template.replace(/\{count\}/g, String(count));
 }
 /**
- * The compact due text: "2d overdue", "Today", "Tomorrow", "3d" up to six
- * days ahead, then the short date.
+ * The compact due text: "2 days overdue" ("1 day overdue"), "today",
+ * "tomorrow", "in 3 days" up to six days ahead, then the short date.
  */
 function compactDueText(days, day, labels, ctx = {}) {
+    if (days === -1 && labels.overdueOne)
+        return fill(labels.overdueOne, 1);
     if (days < 0)
         return fill(labels.overdue, -days);
     if (days === 0)
@@ -4863,6 +4898,7 @@ function describeDue(input, labels, ctx = {}) {
         text: plain ? short : compactDueText(days, day, labels, ctx),
         days,
         day: short,
+        full: fullDueDate(input.date, day, ctx),
     };
 }
 
@@ -4871,8 +4907,10 @@ function describeDue(input, labels, ctx = {}) {
  *
  * One colour rule (tokens `--due-*`): overdue and today red, the next two
  * days amber, later muted; finished work is always muted and shows its
- * plain date. Compact words: "2d overdue", "Today", "Tomorrow", "3d", then
- * the short date. A sprint-derived date reads "Sprint end · 31 Oct" with a
+ * plain date. Words: "2 days overdue" ("1 day overdue"), "today",
+ * "tomorrow", "in 3 days" up to six days ahead, then the short date. The
+ * full date (and time, for a moment) is the tooltip and is read out to
+ * screen readers. A sprint-derived date reads "Sprint end · 31 Oct" with a
  * sprint icon; `afterSprintEnd` adds an amber warning.
  *
  * The app provides `ATH_DATE_CONTEXT` (locale, time zone, date format) and
@@ -4916,19 +4954,28 @@ class AthDueLabelComponent {
             now: this.now() ?? undefined,
         }, {
             overdue: this.labels.dueOverdue(),
+            overdueOne: this.labels.dueOverdueOne(),
             today: this.labels.dueToday(),
             tomorrow: this.labels.dueTomorrow(),
             inDays: this.labels.dueInDays(),
         }, this.ctx()));
         this.isSprint = computed(() => this.source() === 'sprint');
         this.sprintEndText = computed(() => this.labels.dueSprintEnd());
+        /** "Due Friday 30 October 2026" — the tooltip and the screen-reader text. */
+        this.dueOnText = computed(() => {
+            const v = this.view();
+            return v ? formatAthLabel(this.labels.dueOn(), { date: v.full }) : null;
+        });
+        /** The full date; a sprint-derived one also names its sprint. */
         this.title = computed(() => {
+            const on = this.dueOnText();
             if (!this.isSprint())
-                return null;
+                return on;
             const sprint = this.sprintName();
-            return sprint
+            const source = sprint
                 ? formatAthLabel(this.labels.dueSprintTooltip(), { sprint })
                 : this.sprintEndText();
+            return on ? `${source} · ${on}` : source;
         });
         this.showWarn = computed(() => this.afterSprintEnd() && !this.done());
         this.warnText = computed(() => this.labels.dueAfterSprint());
@@ -4938,11 +4985,11 @@ class AthDueLabelComponent {
         });
     }
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthDueLabelComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthDueLabelComponent, isStandalone: true, selector: "ath-due-label", inputs: { date: { classPropertyName: "date", publicName: "date", isSignal: true, isRequired: false, transformFunction: null }, done: { classPropertyName: "done", publicName: "done", isSignal: true, isRequired: false, transformFunction: null }, source: { classPropertyName: "source", publicName: "source", isSignal: true, isRequired: false, transformFunction: null }, sprintName: { classPropertyName: "sprintName", publicName: "sprintName", isSignal: true, isRequired: false, transformFunction: null }, afterSprintEnd: { classPropertyName: "afterSprintEnd", publicName: "afterSprintEnd", isSignal: true, isRequired: false, transformFunction: null }, placeholder: { classPropertyName: "placeholder", publicName: "placeholder", isSignal: true, isRequired: false, transformFunction: null }, compact: { classPropertyName: "compact", publicName: "compact", isSignal: true, isRequired: false, transformFunction: null }, now: { classPropertyName: "now", publicName: "now", isSignal: true, isRequired: false, transformFunction: null } }, ngImport: i0, template: "@if (view(); as v) {\n  <span class=\"ath-due\" [attr.data-tone]=\"v.tone\" [attr.title]=\"title()\">\n    @if (isSprint()) {\n      <lucide-icon class=\"ath-due__icon\" [img]=\"ic.sprint\" [size]=\"11\" aria-hidden=\"true\" />\n      @if (compact()) {\n        <span class=\"ath-due__sr\">{{ sprintEndText() }}</span>\n      } @else {\n        <span class=\"ath-due__source\">{{ sprintEndText() }} \u00B7 </span>\n      }\n    }\n    <span class=\"ath-due__text\">{{ v.text }}</span>\n    @if (showWarn()) {\n      <lucide-icon\n        class=\"ath-due__warn\"\n        [img]=\"ic.warn\"\n        [size]=\"11\"\n        role=\"img\"\n        [attr.aria-label]=\"warnText()\"\n        [attr.title]=\"warnTitle()\"\n      />\n    }\n  </span>\n} @else if (placeholder()) {\n  <span class=\"ath-due ath-due--none\">{{ placeholder() }}</span>\n}\n", styles: [":host{display:inline-flex;min-width:0}.ath-due{display:inline-flex;align-items:center;gap:var(--space-1);min-width:0;font-family:var(--font-sans);font-size:var(--text-sm);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--due-later)}.ath-due[data-tone=overdue]{color:var(--due-overdue)}.ath-due[data-tone=today]{color:var(--due-today)}.ath-due[data-tone=soon]{color:var(--due-soon)}.ath-due--none{color:var(--due-none)}.ath-due__text{overflow:hidden;text-overflow:ellipsis}.ath-due__icon,.ath-due__source{flex:none;color:var(--fg-3)}.ath-due__warn{flex:none;color:var(--amber)}.ath-due__sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}\n"], dependencies: [{ kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthDueLabelComponent, isStandalone: true, selector: "ath-due-label", inputs: { date: { classPropertyName: "date", publicName: "date", isSignal: true, isRequired: false, transformFunction: null }, done: { classPropertyName: "done", publicName: "done", isSignal: true, isRequired: false, transformFunction: null }, source: { classPropertyName: "source", publicName: "source", isSignal: true, isRequired: false, transformFunction: null }, sprintName: { classPropertyName: "sprintName", publicName: "sprintName", isSignal: true, isRequired: false, transformFunction: null }, afterSprintEnd: { classPropertyName: "afterSprintEnd", publicName: "afterSprintEnd", isSignal: true, isRequired: false, transformFunction: null }, placeholder: { classPropertyName: "placeholder", publicName: "placeholder", isSignal: true, isRequired: false, transformFunction: null }, compact: { classPropertyName: "compact", publicName: "compact", isSignal: true, isRequired: false, transformFunction: null }, now: { classPropertyName: "now", publicName: "now", isSignal: true, isRequired: false, transformFunction: null } }, ngImport: i0, template: "@if (view(); as v) {\n  <span class=\"ath-due\" [attr.data-tone]=\"v.tone\" [attr.title]=\"title()\">\n    @if (isSprint()) {\n      <lucide-icon class=\"ath-due__icon\" [img]=\"ic.sprint\" [size]=\"11\" aria-hidden=\"true\" />\n      @if (compact()) {\n        <span class=\"ath-due__sr\">{{ sprintEndText() }}</span>\n      } @else {\n        <span class=\"ath-due__source\">{{ sprintEndText() }} \u00B7 </span>\n      }\n    }\n    <span class=\"ath-due__text\">{{ v.text }}</span>\n    <span class=\"ath-due__sr\">, {{ dueOnText() }}</span>\n    @if (showWarn()) {\n      <lucide-icon\n        class=\"ath-due__warn\"\n        [img]=\"ic.warn\"\n        [size]=\"11\"\n        role=\"img\"\n        [attr.aria-label]=\"warnText()\"\n        [attr.title]=\"warnTitle()\"\n      />\n    }\n  </span>\n} @else if (placeholder()) {\n  <span class=\"ath-due ath-due--none\">{{ placeholder() }}</span>\n}\n", styles: [":host{display:inline-flex;min-width:0}.ath-due{display:inline-flex;align-items:center;gap:var(--space-1);min-width:0;font-family:var(--font-sans);font-size:var(--text-sm);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--due-later)}.ath-due[data-tone=overdue]{color:var(--due-overdue)}.ath-due[data-tone=today]{color:var(--due-today)}.ath-due[data-tone=soon]{color:var(--due-soon)}.ath-due--none{color:var(--due-none)}.ath-due__text{overflow:hidden;text-overflow:ellipsis}.ath-due__icon,.ath-due__source{flex:none;color:var(--fg-3)}.ath-due__warn{flex:none;color:var(--amber)}.ath-due__sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}\n"], dependencies: [{ kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
 }
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthDueLabelComponent, decorators: [{
             type: Component,
-            args: [{ selector: 'ath-due-label', imports: [LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "@if (view(); as v) {\n  <span class=\"ath-due\" [attr.data-tone]=\"v.tone\" [attr.title]=\"title()\">\n    @if (isSprint()) {\n      <lucide-icon class=\"ath-due__icon\" [img]=\"ic.sprint\" [size]=\"11\" aria-hidden=\"true\" />\n      @if (compact()) {\n        <span class=\"ath-due__sr\">{{ sprintEndText() }}</span>\n      } @else {\n        <span class=\"ath-due__source\">{{ sprintEndText() }} \u00B7 </span>\n      }\n    }\n    <span class=\"ath-due__text\">{{ v.text }}</span>\n    @if (showWarn()) {\n      <lucide-icon\n        class=\"ath-due__warn\"\n        [img]=\"ic.warn\"\n        [size]=\"11\"\n        role=\"img\"\n        [attr.aria-label]=\"warnText()\"\n        [attr.title]=\"warnTitle()\"\n      />\n    }\n  </span>\n} @else if (placeholder()) {\n  <span class=\"ath-due ath-due--none\">{{ placeholder() }}</span>\n}\n", styles: [":host{display:inline-flex;min-width:0}.ath-due{display:inline-flex;align-items:center;gap:var(--space-1);min-width:0;font-family:var(--font-sans);font-size:var(--text-sm);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--due-later)}.ath-due[data-tone=overdue]{color:var(--due-overdue)}.ath-due[data-tone=today]{color:var(--due-today)}.ath-due[data-tone=soon]{color:var(--due-soon)}.ath-due--none{color:var(--due-none)}.ath-due__text{overflow:hidden;text-overflow:ellipsis}.ath-due__icon,.ath-due__source{flex:none;color:var(--fg-3)}.ath-due__warn{flex:none;color:var(--amber)}.ath-due__sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}\n"] }]
+            args: [{ selector: 'ath-due-label', imports: [LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "@if (view(); as v) {\n  <span class=\"ath-due\" [attr.data-tone]=\"v.tone\" [attr.title]=\"title()\">\n    @if (isSprint()) {\n      <lucide-icon class=\"ath-due__icon\" [img]=\"ic.sprint\" [size]=\"11\" aria-hidden=\"true\" />\n      @if (compact()) {\n        <span class=\"ath-due__sr\">{{ sprintEndText() }}</span>\n      } @else {\n        <span class=\"ath-due__source\">{{ sprintEndText() }} \u00B7 </span>\n      }\n    }\n    <span class=\"ath-due__text\">{{ v.text }}</span>\n    <span class=\"ath-due__sr\">, {{ dueOnText() }}</span>\n    @if (showWarn()) {\n      <lucide-icon\n        class=\"ath-due__warn\"\n        [img]=\"ic.warn\"\n        [size]=\"11\"\n        role=\"img\"\n        [attr.aria-label]=\"warnText()\"\n        [attr.title]=\"warnTitle()\"\n      />\n    }\n  </span>\n} @else if (placeholder()) {\n  <span class=\"ath-due ath-due--none\">{{ placeholder() }}</span>\n}\n", styles: [":host{display:inline-flex;min-width:0}.ath-due{display:inline-flex;align-items:center;gap:var(--space-1);min-width:0;font-family:var(--font-sans);font-size:var(--text-sm);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--due-later)}.ath-due[data-tone=overdue]{color:var(--due-overdue)}.ath-due[data-tone=today]{color:var(--due-today)}.ath-due[data-tone=soon]{color:var(--due-soon)}.ath-due--none{color:var(--due-none)}.ath-due__text{overflow:hidden;text-overflow:ellipsis}.ath-due__icon,.ath-due__source{flex:none;color:var(--fg-3)}.ath-due__warn{flex:none;color:var(--amber)}.ath-due__sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}\n"] }]
         }] });
 
 /**
@@ -5345,5 +5392,5 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImpo
  * Generated bundle index. Do not edit.
  */
 
-export { AVATAR_TONE_COUNT, AthAlertComponent, AthAvatarComponent, AthAvatarStackComponent, AthBadgeComponent, AthBreadcrumbComponent, AthButtonComponent, AthChipComponent, AthCodeBlockComponent, AthComboboxComponent, AthCopyButtonComponent, AthDialogComponent, AthDividerComponent, AthDropdownComponent, AthDueLabelComponent, AthEmptyStateComponent, AthFileDropComponent, AthFilterChipComponent, AthFloatingDirective, AthInputComponent, AthKbdComponent, AthKpiStripComponent, AthKpiTileComponent, AthListboxComponent, AthMarkdownComponent, AthMenuComponent, AthMenuItemComponent, AthMenuSeparatorComponent, AthMenuTriggerDirective, AthNavItemComponent, AthOptionPickerComponent, AthOverlayStack, AthPageComponent, AthPageHeaderComponent, AthPaginationComponent, AthPanelComponent, AthPanelGridComponent, AthPopoverComponent, AthPopoverContentDirective, AthPopoverTriggerDirective, AthPriorityComponent, AthProgressComponent, AthSearchInputComponent, AthSegmentComponent, AthSelectComponent, AthSheetComponent, AthSidebarComponent, AthSkeletonCardComponent, AthSkeletonComponent, AthSkeletonListComponent, AthSkeletonTableComponent, AthSlaBarComponent, AthSparklineComponent, AthSpinnerComponent, AthStatusPillComponent, AthTableComponent, AthTabsComponent, AthTextareaComponent, AthTimelineComponent, AthTimelineEntryComponent, AthTimelineEventComponent, AthTimerPillComponent, AthToastContainerComponent, AthToggleComponent, AthTooltipDirective, AthUserPickerComponent, DROPDOWN_SEPARATOR, athEscapeHtml, athPlainTextHtml, avatarInitials, avatarToneFor, calendarDayOf, calendarDaysUntil, compactDueText, describeDue, dueToneOf, floatPanel, formatAthLabel, hasKpiTrend, injectAthLabels, installTopLayerStyles, isDropdownSeparator, isVirtualAnchor, panelGridColumns, resolveAnchor, resolveFloatingTarget, runAthAction, shortDay, sparklineGeometry, supportsTopLayer, toneOfKey, zonedWallClock };
+export { AVATAR_TONE_COUNT, AthAlertComponent, AthAvatarComponent, AthAvatarStackComponent, AthBadgeComponent, AthBreadcrumbComponent, AthButtonComponent, AthChipComponent, AthCodeBlockComponent, AthComboboxComponent, AthCopyButtonComponent, AthDialogComponent, AthDividerComponent, AthDropdownComponent, AthDueLabelComponent, AthEmptyStateComponent, AthFileDropComponent, AthFilterChipComponent, AthFloatingDirective, AthInputComponent, AthKbdComponent, AthKpiStripComponent, AthKpiTileComponent, AthListboxComponent, AthMarkdownComponent, AthMenuComponent, AthMenuItemComponent, AthMenuSeparatorComponent, AthMenuTriggerDirective, AthNavItemComponent, AthOptionPickerComponent, AthOverlayStack, AthPageComponent, AthPageHeaderComponent, AthPaginationComponent, AthPanelComponent, AthPanelGridComponent, AthPopoverComponent, AthPopoverContentDirective, AthPopoverTriggerDirective, AthPriorityComponent, AthProgressComponent, AthSearchInputComponent, AthSegmentComponent, AthSelectComponent, AthSheetComponent, AthSidebarComponent, AthSkeletonCardComponent, AthSkeletonComponent, AthSkeletonListComponent, AthSkeletonTableComponent, AthSlaBarComponent, AthSparklineComponent, AthSpinnerComponent, AthStatusPillComponent, AthTableComponent, AthTabsComponent, AthTextareaComponent, AthTimelineComponent, AthTimelineEntryComponent, AthTimelineEventComponent, AthTimerPillComponent, AthToastContainerComponent, AthToggleComponent, AthTooltipDirective, AthUserPickerComponent, DROPDOWN_SEPARATOR, athEscapeHtml, athPlainTextHtml, avatarInitials, avatarToneFor, calendarDayOf, calendarDaysUntil, compactDueText, describeDue, dueToneOf, floatPanel, formatAthLabel, fullDueDate, hasKpiTrend, injectAthLabels, installTopLayerStyles, isDayOnly, isDropdownSeparator, isVirtualAnchor, panelGridColumns, resolveAnchor, resolveFloatingTarget, runAthAction, shortDay, sparklineGeometry, supportsTopLayer, toneOfKey, zonedWallClock };
 //# sourceMappingURL=athene-webcomponents.mjs.map

@@ -14,6 +14,8 @@ export interface AthDateContext {
   /** IANA zone "today" is computed in. */
   timeZone?: string;
   dateFormat?: DueDateFormat;
+  /** 12- or 24-hour clock for a due time; missing = the locale's own. */
+  hour12?: boolean;
 }
 
 /**

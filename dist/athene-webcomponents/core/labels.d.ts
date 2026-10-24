@@ -22,12 +22,16 @@ export interface AthLabels {
     removeItem: () => string;
     /** The "+N" overflow chip; `{count}` is N. */
     moreCount: () => string;
-    /** `ath-due-label`, compact: `{count}` days past the date. */
+    /** `ath-due-label`: `{count}` days past the date (2 or more). */
     dueOverdue: () => string;
+    /** `ath-due-label`: one day past the date; `{count}` is 1. */
+    dueOverdueOne: () => string;
     dueToday: () => string;
     dueTomorrow: () => string;
     /** `{count}` days ahead, 2 to 6. */
     dueInDays: () => string;
+    /** Tooltip and screen-reader text; `{date}` is the full date (and time, when it has one). */
+    dueOn: () => string;
     dueSprintEnd: () => string;
     /** Tooltip of a sprint-derived date; `{sprint}` is the sprint name. */
     dueSprintTooltip: () => string;

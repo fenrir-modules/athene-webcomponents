@@ -4,14 +4,17 @@ import {
   compactDueText,
   describeDue,
   dueToneOf,
+  fullDueDate,
+  isDayOnly,
   shortDay,
 } from './due-date';
 
 const LABELS = {
-  overdue: '{count}d overdue',
-  today: 'Today',
-  tomorrow: 'Tomorrow',
-  inDays: '{count}d',
+  overdue: '{count} days overdue',
+  overdueOne: '{count} day overdue',
+  today: 'today',
+  tomorrow: 'tomorrow',
+  inDays: 'in {count} days',
 };
 // Wednesday 22 Oct 2026, 10:00 local.
 const NOW = new Date(2026, 9, 22, 10, 0);
@@ -71,12 +74,41 @@ describe('due-date', () => {
 
   describe('compactDueText', () => {
     const day = new Date(2026, 10, 5, 12);
-    it('says overdue, today, tomorrow, Nd, then the date', () => {
-      expect(compactDueText(-2, day, LABELS)).toBe('2d overdue');
-      expect(compactDueText(0, day, LABELS)).toBe('Today');
-      expect(compactDueText(1, day, LABELS)).toBe('Tomorrow');
-      expect(compactDueText(6, day, LABELS)).toBe('6d');
+    it('says overdue, today, tomorrow, in N days, then the date', () => {
+      expect(compactDueText(-2, day, LABELS)).toBe('2 days overdue');
+      expect(compactDueText(-1, day, LABELS)).toBe('1 day overdue');
+      expect(compactDueText(0, day, LABELS)).toBe('today');
+      expect(compactDueText(1, day, LABELS)).toBe('tomorrow');
+      expect(compactDueText(6, day, LABELS)).toBe('in 6 days');
       expect(compactDueText(7, day, LABELS, { dateFormat: 'iso' })).toBe('2026-11-05');
+    });
+
+    it('falls back to the plural template without a singular one', () => {
+      expect(compactDueText(-1, day, { ...LABELS, overdueOne: undefined })).toBe('1 days overdue');
+    });
+  });
+
+  describe('fullDueDate', () => {
+    const day = new Date(2026, 9, 30, 12);
+    it('spells out a day in the locale', () => {
+      expect(fullDueDate('2026-10-30', day, { locale: 'de' })).toBe('Freitag, 30. Oktober 2026');
+      expect(fullDueDate('2026-10-30', day, { locale: 'en-GB' })).toBe('Friday, 30 October 2026');
+      expect(fullDueDate('2026-10-30', day, { locale: 'de', dateFormat: 'iso' })).toBe(
+        'Freitag, 2026-10-30'
+      );
+    });
+
+    it('adds the time of a moment, in the reader zone, never of a day', () => {
+      expect(isDayOnly('2026-10-30T12:00:00Z')).toBeTrue();
+      expect(isDayOnly('2026-10-30T00:00:00Z')).toBeTrue();
+      expect(isDayOnly('2026-10-30T16:00:00Z')).toBeFalse();
+      expect(
+        fullDueDate('2026-10-30T16:00:00Z', day, {
+          locale: 'de',
+          timeZone: 'Europe/Berlin',
+          hour12: false,
+        })
+      ).toBe('Freitag, 30. Oktober 2026, 17:00');
     });
   });
 
@@ -97,10 +129,10 @@ describe('due-date', () => {
 
     it('marks today red and tomorrow amber', () => {
       expect(describeDue({ date: '2026-10-22', now: NOW }, LABELS)).toEqual(
-        jasmine.objectContaining({ tone: 'today', text: 'Today', days: 0 })
+        jasmine.objectContaining({ tone: 'today', text: 'today', days: 0 })
       );
       expect(describeDue({ date: '2026-10-23', now: NOW }, LABELS)?.tone).toBe('soon');
-      expect(describeDue({ date: '2026-10-20', now: NOW }, LABELS)?.text).toBe('2d overdue');
+      expect(describeDue({ date: '2026-10-20', now: NOW }, LABELS)?.text).toBe('2 days overdue');
     });
 
     it('shows finished work as its plain date, muted', () => {

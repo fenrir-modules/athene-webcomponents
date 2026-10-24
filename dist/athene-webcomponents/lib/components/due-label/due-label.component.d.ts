@@ -5,8 +5,10 @@ import * as i0 from "@angular/core";
  *
  * One colour rule (tokens `--due-*`): overdue and today red, the next two
  * days amber, later muted; finished work is always muted and shows its
- * plain date. Compact words: "2d overdue", "Today", "Tomorrow", "3d", then
- * the short date. A sprint-derived date reads "Sprint end · 31 Oct" with a
+ * plain date. Words: "2 days overdue" ("1 day overdue"), "today",
+ * "tomorrow", "in 3 days" up to six days ahead, then the short date. The
+ * full date (and time, for a moment) is the tooltip and is read out to
+ * screen readers. A sprint-derived date reads "Sprint end · 31 Oct" with a
  * sprint icon; `afterSprintEnd` adds an amber warning.
  *
  * The app provides `ATH_DATE_CONTEXT` (locale, time zone, date format) and
@@ -45,6 +47,9 @@ export declare class AthDueLabelComponent {
     protected readonly view: import("@angular/core").Signal<import("./due-date").DueView | null>;
     protected readonly isSprint: import("@angular/core").Signal<boolean>;
     protected readonly sprintEndText: import("@angular/core").Signal<string>;
+    /** "Due Friday 30 October 2026" — the tooltip and the screen-reader text. */
+    protected readonly dueOnText: import("@angular/core").Signal<string | null>;
+    /** The full date; a sprint-derived one also names its sprint. */
     protected readonly title: import("@angular/core").Signal<string | null>;
     protected readonly showWarn: import("@angular/core").Signal<boolean>;
     protected readonly warnText: import("@angular/core").Signal<string>;

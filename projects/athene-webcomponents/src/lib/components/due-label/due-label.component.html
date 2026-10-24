@@ -9,6 +9,7 @@
       }
     }
     <span class="ath-due__text">{{ v.text }}</span>
+    <span class="ath-due__sr">, {{ dueOnText() }}</span>
     @if (showWarn()) {
       <lucide-icon
         class="ath-due__warn"

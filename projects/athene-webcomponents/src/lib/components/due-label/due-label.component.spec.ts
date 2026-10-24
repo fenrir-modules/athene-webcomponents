@@ -9,6 +9,13 @@ describe('AthDueLabelComponent', () => {
   let fixture: ComponentFixture<AthDueLabelComponent>;
   const el = () => fixture.nativeElement as HTMLElement;
   const label = () => el().querySelector<HTMLElement>('.ath-due');
+  /** What is drawn, without the screen-reader text. */
+  const shown = () =>
+    Array.from(label()!.querySelectorAll<HTMLElement>('.ath-due__source, .ath-due__text'))
+      .map((e) => e.textContent)
+      .join('')
+      .replace(/\s+/g, ' ')
+      .trim();
 
   function create(inputs: Record<string, unknown>, providers: unknown[] = []): void {
     TestBed.configureTestingModule({
@@ -27,7 +34,7 @@ describe('AthDueLabelComponent', () => {
   it('draws today in the red text shade via the --due-today token', () => {
     create({ date: '2026-10-22' });
     expect(label()!.dataset['tone']).toBe('today');
-    expect(label()!.textContent!.trim()).toBe('Today');
+    expect(shown()).toBe('today');
     const color = getComputedStyle(label()!).color;
     const probe = document.createElement('span');
     probe.style.color = 'var(--red-text)';
@@ -42,20 +49,20 @@ describe('AthDueLabelComponent', () => {
     fixture.componentRef.setInput('date', '2026-11-20');
     fixture.detectChanges();
     expect(label()!.dataset['tone']).toBe('later');
-    expect(label()!.textContent!.trim()).toBe('20.11.');
+    expect(shown()).toBe('20.11.');
   });
 
   it('mutes finished work and shows its date', () => {
     create({ date: '2026-10-01', done: true });
     expect(label()!.dataset['tone']).toBe('done');
-    expect(label()!.textContent!.trim()).toBe('1.10.');
+    expect(shown()).toBe('1.10.');
   });
 
   it('reads "Sprint end · <day>" with the sprint icon and a tooltip', () => {
     create({ date: '2026-10-31', source: 'sprint', sprintName: 'Sprint 24' });
-    expect(label()!.textContent!.replace(/\s+/g, ' ').trim()).toBe('Sprint end · 31.10.');
+    expect(shown()).toBe('Sprint end · 31.10.');
     expect(label()!.querySelector('.ath-due__icon')).not.toBeNull();
-    expect(label()!.getAttribute('title')).toBe('Due with Sprint 24');
+    expect(label()!.getAttribute('title')).toMatch(/^Due with Sprint 24 · Due .*2026$/);
   });
 
   it('compact keeps the icon and moves the words out of sight', () => {
@@ -82,10 +89,43 @@ describe('AthDueLabelComponent', () => {
     expect(el().querySelector('.ath-due--none')!.textContent).toBe('—');
   });
 
-  it('takes its words from ATH_LABELS', () => {
+  it('takes its words from ATH_LABELS, one day and several apart', () => {
     create({ date: '2026-10-19' }, [
-      { provide: ATH_LABELS, useValue: { dueOverdue: () => '{count} T überfällig' } },
+      {
+        provide: ATH_LABELS,
+        useValue: {
+          dueOverdue: () => 'seit {count} Tagen überfällig',
+          dueOverdueOne: () => 'seit {count} Tag überfällig',
+          dueOn: () => 'Fällig am {date}',
+        },
+      },
     ]);
-    expect(label()!.textContent!.trim()).toBe('3 T überfällig');
+    expect(shown()).toBe('seit 3 Tagen überfällig');
+    fixture.componentRef.setInput('date', '2026-10-21');
+    fixture.detectChanges();
+    expect(shown()).toBe('seit 1 Tag überfällig');
+    expect(label()!.getAttribute('title')).toMatch(/^Fällig am /);
+  });
+
+  it('says "in N days" ahead and names the full date for hover and screen readers', () => {
+    create({ date: '2026-10-27' }, [
+      { provide: ATH_DATE_CONTEXT, useValue: () => ({ locale: 'en-GB' }) },
+    ]);
+    expect(shown()).toBe('in 5 days');
+    expect(label()!.getAttribute('title')).toBe('Due Tuesday, 27 October 2026');
+    const sr = Array.from(el().querySelectorAll('.ath-due__sr'))
+      .map((e) => e.textContent)
+      .join('');
+    expect(sr).toContain('Due Tuesday, 27 October 2026');
+  });
+
+  it('adds the clock time when the due value is a moment', () => {
+    create({ date: '2026-10-27T17:30:00Z' }, [
+      {
+        provide: ATH_DATE_CONTEXT,
+        useValue: () => ({ locale: 'de', timeZone: 'Europe/Berlin', hour12: false }),
+      },
+    ]);
+    expect(label()!.getAttribute('title')).toBe('Due Dienstag, 27. Oktober 2026, 18:30');
   });
 });
