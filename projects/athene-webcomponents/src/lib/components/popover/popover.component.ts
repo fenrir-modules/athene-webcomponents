@@ -58,7 +58,6 @@ let nextPopoverId = 0;
  */
 @Directive({
   selector: 'ng-template[athPopoverContent]',
-  standalone: true,
 })
 export class AthPopoverContentDirective {
   readonly template = inject(TemplateRef);
@@ -80,7 +79,6 @@ export class AthPopoverContentDirective {
  */
 @Component({
   selector: 'ath-popover',
-  standalone: true,
   imports: [AthFloatingDirective, NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './popover.component.html',

@@ -38,7 +38,6 @@ export type PageMode = 'scroll' | 'fill';
  */
 @Component({
   selector: 'ath-page',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   // Global (element-scoped) styles: the rules size projected children.
   encapsulation: ViewEncapsulation.None,

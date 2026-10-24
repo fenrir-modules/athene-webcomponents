@@ -42,7 +42,6 @@ let nextPickerId = 0;
  */
 @Component({
   selector: 'ath-option-picker',
-  standalone: true,
   imports: [
     AthPopoverComponent,
     AthPopoverTriggerDirective,

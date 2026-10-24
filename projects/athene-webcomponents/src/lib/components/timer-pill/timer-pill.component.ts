@@ -29,7 +29,6 @@ export type TimerPillWarning = 'warn' | 'alert';
  */
 @Component({
   selector: 'ath-timer-pill',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './timer-pill.component.html',

@@ -32,7 +32,6 @@ import type { ListboxOption, ListboxOptionContext } from '../listbox/listbox.com
  */
 @Component({
   selector: 'ath-combobox',
-  standalone: true,
   imports: [AthOptionPickerComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './combobox.component.html',

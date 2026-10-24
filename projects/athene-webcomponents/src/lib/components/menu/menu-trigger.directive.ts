@@ -14,7 +14,6 @@ import { AthMenuComponent } from './menu.component';
  */
 @Directive({
   selector: '[athMenuTrigger]',
-  standalone: true,
   exportAs: 'athMenuTrigger',
   host: {
     '(click)': 'onClick()',

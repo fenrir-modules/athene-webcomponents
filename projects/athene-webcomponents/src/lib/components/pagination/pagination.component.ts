@@ -35,7 +35,6 @@ export type PaginationMode = 'numbered' | 'cursor';
  */
 @Component({
   selector: 'ath-pagination',
-  standalone: true,
   imports: [CommonModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pagination.component.html',

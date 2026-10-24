@@ -45,7 +45,6 @@ export type AlertAppearance = 'inline' | 'banner';
  */
 @Component({
   selector: 'ath-alert',
-  standalone: true,
   imports: [LucideAngularModule, AthButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {

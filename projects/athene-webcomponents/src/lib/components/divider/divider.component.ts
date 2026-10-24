@@ -16,7 +16,6 @@ export type DividerSpacing = 'none' | 'sm' | 'md' | 'lg';
  */
 @Component({
   selector: 'ath-divider',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './divider.component.html',

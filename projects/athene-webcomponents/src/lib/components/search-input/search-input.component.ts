@@ -23,7 +23,6 @@ import { injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-search-input',
-  standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './search-input.component.html',

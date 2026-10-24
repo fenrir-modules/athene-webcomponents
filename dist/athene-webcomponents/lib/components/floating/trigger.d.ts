@@ -18,5 +18,5 @@ export declare abstract class AthOverlayTriggerBase {
     controlId(): string;
     private syncAria;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthOverlayTriggerBase, never>;
-    static ɵdir: i0.ɵɵDirectiveDeclaration<AthOverlayTriggerBase, never, never, {}, {}, never, never, false, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<AthOverlayTriggerBase, never, never, {}, {}, never, never, true, never>;
 }

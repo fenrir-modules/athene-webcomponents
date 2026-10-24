@@ -53,7 +53,6 @@ export function panelGridColumns(columns: PanelGridColumns): string {
  */
 @Component({
   selector: 'ath-panel-grid',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   // Global (element-scoped) styles: the rules place projected panels.
   encapsulation: ViewEncapsulation.None,

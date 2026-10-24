@@ -9,7 +9,6 @@ const VIEWS: SegmentOption[] = [
 ];
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthSegmentComponent],
   template: `<ath-segment

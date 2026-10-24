@@ -107,7 +107,6 @@ const VIEWPORTS = [
 ];
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AthPageComponent,

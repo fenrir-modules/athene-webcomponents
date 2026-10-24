@@ -26,7 +26,6 @@ export type TextareaResize = 'none' | 'vertical' | 'both';
  */
 @Component({
   selector: 'ath-textarea',
-  standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [

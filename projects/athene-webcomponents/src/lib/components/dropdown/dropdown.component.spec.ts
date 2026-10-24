@@ -11,7 +11,6 @@ const ITEMS: DropdownItem[] = [
 ];
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthDropdownComponent, AthButtonComponent],
   template: `

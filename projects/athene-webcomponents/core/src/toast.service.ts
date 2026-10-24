@@ -46,7 +46,7 @@ const ACTION_MIN_DURATION = 8000;
  */
 @Injectable({ providedIn: 'root' })
 export class AthToastService {
-  private toastsSignal = signal<ToastMessage[]>([]);
+  private readonly toastsSignal = signal<ToastMessage[]>([]);
   readonly toasts = this.toastsSignal.asReadonly();
 
   success(message: string, options: number | ToastOptions = 4000): void {

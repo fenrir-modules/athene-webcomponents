@@ -21,7 +21,6 @@ import { injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-copy-button',
-  standalone: true,
   imports: [CommonModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './copy-button.component.html',

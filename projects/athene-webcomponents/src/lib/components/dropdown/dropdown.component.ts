@@ -77,7 +77,6 @@ const CONTROL = 'button, a[href], input, select, textarea, [tabindex]:not([tabin
  */
 @Component({
   selector: 'ath-dropdown',
-  standalone: true,
   imports: [AthMenuComponent, AthMenuItemComponent, AthMenuSeparatorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dropdown.component.html',

@@ -6,7 +6,6 @@ import { AthOverlayStack } from '../floating/overlay-stack';
 import { AthSheetComponent, type SheetAutoFocus } from './sheet.component';
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthSheetComponent, AthPopoverComponent, AthPopoverTriggerDirective],
   template: `

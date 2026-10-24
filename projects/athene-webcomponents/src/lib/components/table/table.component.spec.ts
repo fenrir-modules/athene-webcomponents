@@ -4,7 +4,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AthTableComponent } from './table.component';
 
 @Component({
-  standalone: true,
   imports: [AthTableComponent],
   template: `
     <ath-table>

@@ -8,7 +8,6 @@ import { AthToastContainerComponent } from './toast.component';
 /** Shows one toast per variant that stays (duration 0) for the screenshot. */
 @Component({
   selector: 'ath-story-toasts',
-  standalone: true,
   imports: [AthButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ath-button variant="secondary" (clicked)="more()">Show another toast</ath-button>`,

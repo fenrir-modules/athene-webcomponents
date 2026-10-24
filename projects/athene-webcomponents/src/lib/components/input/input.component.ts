@@ -29,7 +29,6 @@ export type InputSize = 'sm' | 'md';
  */
 @Component({
   selector: 'ath-input',
-  standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [

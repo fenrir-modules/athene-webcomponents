@@ -35,7 +35,6 @@ export interface SlaTarget {
  */
 @Component({
   selector: 'ath-sla-bar',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sla-bar.component.html',

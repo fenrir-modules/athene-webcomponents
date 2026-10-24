@@ -4,7 +4,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AthPageHeaderComponent } from './page-header.component';
 
 @Component({
-  standalone: true,
   imports: [AthPageHeaderComponent],
   template: `
     <ath-page-header title="Project" [subItems]="['Sprint 2', '', 'No lead']" [divider]="divider()">

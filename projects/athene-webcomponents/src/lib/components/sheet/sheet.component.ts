@@ -55,7 +55,6 @@ let nextSheetId = 0;
  */
 @Component({
   selector: 'ath-sheet',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sheet.component.html',
   styleUrl: './sheet.component.scss',

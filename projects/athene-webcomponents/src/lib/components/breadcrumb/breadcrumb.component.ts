@@ -46,7 +46,6 @@ const NARROW_QUERY = '(max-width: 640px)';
  */
 @Component({
   selector: 'ath-breadcrumb',
-  standalone: true,
   imports: [RouterLink, LucideAngularModule, AthDropdownComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './breadcrumb.component.html',

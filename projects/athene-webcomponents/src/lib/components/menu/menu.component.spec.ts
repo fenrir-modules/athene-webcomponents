@@ -7,7 +7,6 @@ import { AthMenuItemComponent, AthMenuSeparatorComponent } from './menu-item.com
 import { AthMenuTriggerDirective } from './menu-trigger.directive';
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AthMenuComponent,
@@ -215,7 +214,6 @@ describe('AthMenuComponent', () => {
 });
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthMenuComponent, AthMenuItemComponent, AthMenuTriggerDirective],
   template: `

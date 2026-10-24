@@ -29,7 +29,6 @@ export interface StackedUser {
  */
 @Component({
   selector: 'ath-avatar-stack',
-  standalone: true,
   imports: [CommonModule, AthAvatarComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './avatar-stack.component.html',

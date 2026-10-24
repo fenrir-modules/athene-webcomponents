@@ -31,7 +31,6 @@ import { ATH_DATE_CONTEXT, type AthDateContext, type DueSource, describeDue } fr
  */
 @Component({
   selector: 'ath-due-label',
-  standalone: true,
   imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './due-label.component.html',

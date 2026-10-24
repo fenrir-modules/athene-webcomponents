@@ -18,7 +18,6 @@ const OPTIONS: SelectOption[] = [
  */
 @Component({
   selector: 'ath-story-late-options',
-  standalone: true,
   imports: [AthSelectComponent, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div style="max-width:280px">

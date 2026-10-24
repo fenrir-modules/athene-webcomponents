@@ -46,7 +46,6 @@ export function sparklineGeometry(
  */
 @Component({
   selector: 'ath-sparkline',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sparkline.component.html',
   styleUrl: './sparkline.component.scss',

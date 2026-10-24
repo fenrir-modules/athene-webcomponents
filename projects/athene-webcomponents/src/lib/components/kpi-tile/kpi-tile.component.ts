@@ -50,7 +50,6 @@ export function hasKpiTrend(spark: readonly number[] | null | undefined): boolea
  */
 @Component({
   selector: 'ath-kpi-tile',
-  standalone: true,
   imports: [RouterLink, AthSparklineComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -119,7 +118,6 @@ export class AthKpiTileComponent {
  */
 @Component({
   selector: 'ath-kpi-strip',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { role: 'group' },
   template: `<div class="ath-kpi-strip" [style.--_kpi-cols]="columns()"><ng-content /></div>`,

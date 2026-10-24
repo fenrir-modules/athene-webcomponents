@@ -38,7 +38,6 @@ const LABELS: Readonly<Record<TicketStatus, string>> = {
  */
 @Component({
   selector: 'ath-status-pill',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './status-pill.component.html',

@@ -101,7 +101,6 @@ function foldText(text: string): string {
  */
 @Component({
   selector: 'ath-listbox',
-  standalone: true,
   imports: [NgTemplateOutlet, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './listbox.component.html',

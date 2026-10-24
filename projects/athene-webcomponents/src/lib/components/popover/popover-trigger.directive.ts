@@ -16,7 +16,6 @@ export type PopoverTriggerPopup = 'dialog' | 'listbox' | 'menu';
  */
 @Directive({
   selector: '[athPopoverTrigger]',
-  standalone: true,
   exportAs: 'athPopoverTrigger',
   host: {
     '(click)': 'onClick()',

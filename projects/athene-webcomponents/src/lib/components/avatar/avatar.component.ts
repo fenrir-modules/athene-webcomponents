@@ -31,7 +31,6 @@ const ICON_SIZE: Record<AvatarSize, number> = { xs: 12, sm: 13, md: 18, lg: 22, 
  */
 @Component({
   selector: 'ath-avatar',
-  standalone: true,
   imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './avatar.component.html',

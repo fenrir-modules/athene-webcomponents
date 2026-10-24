@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { AthSelectComponent, type SelectOption } from './select.component';
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthSelectComponent, FormsModule],
   template: `

@@ -62,7 +62,6 @@ export function athPlainTextHtml(text: string): string {
  */
 @Component({
   selector: 'ath-markdown',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: { class: 'ath-markdown' },

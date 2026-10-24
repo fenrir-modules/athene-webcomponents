@@ -32,7 +32,6 @@ let nextReasonId = 0;
  */
 @Component({
   selector: 'ath-menu-item, button[athMenuItem], a[athMenuItem]',
-  standalone: true,
   imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   exportAs: 'athMenuItem',
@@ -145,7 +144,6 @@ export class AthMenuItemComponent {
 /** A divider between groups of menu items. */
 @Component({
   selector: 'ath-menu-separator',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '',
   styleUrl: './menu-item.component.scss',

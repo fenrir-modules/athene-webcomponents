@@ -23,7 +23,6 @@ export type SegmentSize = 'sm' | 'md';
  */
 @Component({
   selector: 'ath-segment',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './segment.component.html',

@@ -17,7 +17,6 @@ const FRUIT: ListboxOption[] = [
 ];
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthListboxComponent],
   template: `
@@ -222,7 +221,6 @@ describe('AthListboxComponent', () => {
 });
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthListboxComponent],
   template: `
@@ -292,7 +290,6 @@ describe('AthListboxComponent driven from an outside field', () => {
 });
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthOptionPickerComponent],
   template: `
@@ -401,7 +398,6 @@ const MANY: ListboxOption[] = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthOptionPickerComponent],
   template: `

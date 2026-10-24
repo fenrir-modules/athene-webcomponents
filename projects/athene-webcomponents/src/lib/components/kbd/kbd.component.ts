@@ -16,7 +16,6 @@ export type KbdSize = 'sm' | 'md' | 'lg';
  */
 @Component({
   selector: 'ath-kbd',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './kbd.component.html',

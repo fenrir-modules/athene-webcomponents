@@ -33,7 +33,6 @@ export type SkeletonVariant = 'line' | 'row' | 'card' | 'text' | 'circular' | 'r
  */
 @Component({
   selector: 'ath-skeleton',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     'aria-hidden': 'true',
@@ -70,7 +69,6 @@ export type SkeletonListVariant = 'row' | 'card' | 'card-grid';
  */
 @Component({
   selector: 'ath-skeleton-list',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="ath-skeleton-list" [attr.data-variant]="variant()" role="status">
@@ -103,7 +101,6 @@ export class AthSkeletonListComponent {
  */
 @Component({
   selector: 'ath-skeleton-table',
-  standalone: true,
   imports: [CommonModule, AthSkeletonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './skeleton-table.component.html',
@@ -126,7 +123,6 @@ export class AthSkeletonTableComponent {
  */
 @Component({
   selector: 'ath-skeleton-card',
-  standalone: true,
   imports: [CommonModule, AthSkeletonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './skeleton-card.component.html',

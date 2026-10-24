@@ -41,7 +41,6 @@ let nextMenuId = 0;
  */
 @Component({
   selector: 'ath-menu',
-  standalone: true,
   imports: [AthPopoverComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   exportAs: 'athMenu',

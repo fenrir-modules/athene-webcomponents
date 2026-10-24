@@ -24,7 +24,6 @@ import { injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-timeline-entry',
-  standalone: true,
   imports: [CommonModule, AthAvatarComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './timeline-entry.component.html',

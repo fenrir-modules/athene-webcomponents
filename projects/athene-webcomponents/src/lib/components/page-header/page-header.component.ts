@@ -32,7 +32,6 @@ export type PageHeaderLevel = 1 | 2;
  */
 @Component({
   selector: 'ath-page-header',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './page-header.component.html',

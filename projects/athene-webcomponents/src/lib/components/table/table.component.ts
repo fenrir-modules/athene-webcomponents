@@ -20,7 +20,6 @@ import { CommonModule } from '@angular/common';
  */
 @Component({
   selector: 'ath-table',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,

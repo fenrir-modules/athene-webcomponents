@@ -28,7 +28,6 @@ import { injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-file-drop',
-  standalone: true,
   imports: [CommonModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './file-drop.component.html',

@@ -18,7 +18,6 @@ export type SpinnerSize = 'sm' | 'md' | 'lg';
  */
 @Component({
   selector: 'ath-spinner',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './spinner.component.html',

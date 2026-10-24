@@ -38,7 +38,7 @@ export interface ToastOptions {
  * this.toast.error('Something went wrong');
  */
 export declare class AthToastService {
-    private toastsSignal;
+    private readonly toastsSignal;
     readonly toasts: import("@angular/core").Signal<ToastMessage[]>;
     success(message: string, options?: number | ToastOptions): void;
     error(message: string, options?: number | ToastOptions): void;

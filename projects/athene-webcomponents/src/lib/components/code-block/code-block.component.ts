@@ -25,7 +25,6 @@ import { injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-code-block',
-  standalone: true,
   imports: [CommonModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './code-block.component.html',

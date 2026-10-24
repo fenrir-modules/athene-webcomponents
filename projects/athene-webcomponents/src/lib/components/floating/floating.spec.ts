@@ -202,7 +202,6 @@ describe('floatPanel', () => {
 });
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthFloatingDirective],
   template: `

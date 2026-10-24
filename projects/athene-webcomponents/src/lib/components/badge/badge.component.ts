@@ -23,7 +23,6 @@ export type BadgeVariant = 'default' | 'success' | 'warning' | 'error' | 'info' 
  */
 @Component({
   selector: 'ath-badge',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './badge.component.html',

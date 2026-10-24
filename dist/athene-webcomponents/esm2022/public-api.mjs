@@ -1,8 +1,0 @@
-// ===========================================
-// ATHENE WEBCOMPONENTS - PUBLIC API
-// ===========================================
-// Components
-export * from './lib/components';
-export * from './lib/i18n/labels';
-// Note: Styles are imported via main.scss in consuming applications
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicHVibGljLWFwaS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3Byb2plY3RzL2F0aGVuZS13ZWJjb21wb25lbnRzL3NyYy9wdWJsaWMtYXBpLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLDhDQUE4QztBQUM5QyxvQ0FBb0M7QUFDcEMsOENBQThDO0FBRTlDLGFBQWE7QUFDYixjQUFjLGtCQUFrQixDQUFDO0FBQ2pDLGNBQWMsbUJBQW1CLENBQUM7QUFFbEMsb0VBQW9FIiwic291cmNlc0NvbnRlbnQiOlsiLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuLy8gQVRIRU5FIFdFQkNPTVBPTkVOVFMgLSBQVUJMSUMgQVBJXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG5cbi8vIENvbXBvbmVudHNcbmV4cG9ydCAqIGZyb20gJy4vbGliL2NvbXBvbmVudHMnO1xuZXhwb3J0ICogZnJvbSAnLi9saWIvaTE4bi9sYWJlbHMnO1xuXG4vLyBOb3RlOiBTdHlsZXMgYXJlIGltcG9ydGVkIHZpYSBtYWluLnNjc3MgaW4gY29uc3VtaW5nIGFwcGxpY2F0aW9uc1xuIl19

@@ -7,11 +7,12 @@
 // has one of the scripts below, so the package must have none of them. In
 // return the committed dist/ must be exactly what the sources build to.
 //
-//   node scripts/check-package.mjs           no install-time scripts
+//   node scripts/check-package.mjs           no install-time scripts, every
+//                                            entry point exists in dist/
 //   node scripts/check-package.mjs --dist    … and dist/ equals the last build
 //                                            (`npm run check:dist` builds first)
 import { spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -22,11 +23,31 @@ const GIT_PREPARE_SCRIPTS = ['preinstall', 'install', 'postinstall', 'build', 'p
 
 const problems = [];
 
-const { scripts = {} } = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8'));
+const manifest = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8'));
+const { scripts = {} } = manifest;
 for (const name of GIT_PREPARE_SCRIPTS.filter((s) => s in scripts)) {
   problems.push(
     `package.json has a "${name}" script: a git install would run \`npm install\` with all devDependencies in the consumer. Use another name (build:lib).`
   );
+}
+
+// The app resolves this package through the root manifest, not dist's own
+// package.json, so every path it names must exist in the committed dist/.
+// ng-packagr 19 stopped emitting esm2022/ (quality step 4.2); a stale
+// `exports` entry only fails in a consumer whose bundler asks for it.
+const targets = (value) =>
+  typeof value === 'string'
+    ? [value]
+    : value && typeof value === 'object'
+      ? Object.values(value).flatMap(targets)
+      : [];
+for (const target of new Set([manifest.module, manifest.typings, ...targets(manifest.exports)])) {
+  if (!target || target === './package.json') continue;
+  // `./dist/x/styles/*`: the directory before the wildcard must exist.
+  const path = resolve(ROOT, target.includes('*') ? dirname(target) : target);
+  if (!existsSync(path)) {
+    problems.push(`package.json names ${target}, which the build does not produce.`);
+  }
 }
 
 if (process.argv.includes('--dist')) {

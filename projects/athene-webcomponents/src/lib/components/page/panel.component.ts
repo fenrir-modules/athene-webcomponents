@@ -26,7 +26,6 @@ export type PanelOverflow = 'hidden' | 'clip';
  */
 @Component({
   selector: 'ath-panel',
-  standalone: true,
   imports: [AthSkeletonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {

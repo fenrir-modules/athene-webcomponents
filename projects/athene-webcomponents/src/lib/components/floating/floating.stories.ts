@@ -18,7 +18,6 @@ import { AthFloatingDirective } from './floating.directive';
  */
 @Component({
   selector: 'ath-story-selection-toolbar',
-  standalone: true,
   imports: [AthFloatingDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

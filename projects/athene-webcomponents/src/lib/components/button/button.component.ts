@@ -52,7 +52,6 @@ export type ButtonType = 'button' | 'submit' | 'reset';
  */
 @Component({
   selector: 'ath-button',
-  standalone: true,
   imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './button.component.html',

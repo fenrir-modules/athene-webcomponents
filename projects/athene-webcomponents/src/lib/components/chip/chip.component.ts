@@ -47,7 +47,6 @@ export type ChipShape = 'pill' | 'square';
  */
 @Component({
   selector: 'ath-chip',
-  standalone: true,
   imports: [LucideAngularModule, AthTooltipDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './chip.component.html',

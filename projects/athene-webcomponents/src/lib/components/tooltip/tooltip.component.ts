@@ -15,7 +15,6 @@ export type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
  */
 @Directive({
   selector: '[athTooltip]',
-  standalone: true,
 })
 export class AthTooltipDirective implements OnDestroy {
   /** Tooltip text */

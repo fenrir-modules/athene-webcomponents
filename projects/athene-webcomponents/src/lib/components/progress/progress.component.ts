@@ -22,7 +22,6 @@ export type ProgressSize = 'xs' | 'sm' | 'md';
  */
 @Component({
   selector: 'ath-progress',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './progress.component.html',

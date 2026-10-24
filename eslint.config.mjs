@@ -9,9 +9,12 @@ const nonSpec = ['**/*.spec.ts', '**/*.stories.ts'];
 
 /**
  * Signal APIs only (quality step 4.1, guideline A2), lib-only until the app
- * is migrated (4.1b/c). angular-eslint 18 has no `prefer-signals` (it comes
- * with 19, step 4.2), so the decorator APIs are banned at the import. A
- * remaining `NgZone` or `ChangeDetectorRef` needs an
+ * is migrated (4.1b/c). `@angular-eslint/prefer-signals` (angular-eslint 19,
+ * step 4.2) reports decorator inputs and queries and signal fields that are
+ * not `readonly`. The import ban below stays: it also covers `@Output`,
+ * `EventEmitter`, `@HostBinding`, `@HostListener`, `NgZone` and
+ * `ChangeDetectorRef`, which the rule does not see. A remaining `NgZone` or
+ * `ChangeDetectorRef` needs an
  * `eslint-disable-next-line no-restricted-imports -- <reason>`.
  */
 const SIGNAL_APIS = {
@@ -60,6 +63,7 @@ export default [
     files: ['projects/**/*.ts'],
     rules: {
       '@angular-eslint/prefer-output-readonly': 'error',
+      '@angular-eslint/prefer-signals': 'error',
       '@angular-eslint/no-queries-metadata-property': 'error',
       '@angular-eslint/no-attribute-decorator': 'error',
       'no-restricted-imports': [

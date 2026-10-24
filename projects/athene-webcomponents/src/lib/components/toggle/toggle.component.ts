@@ -10,7 +10,6 @@ import { CommonModule } from '@angular/common';
  */
 @Component({
   selector: 'ath-toggle',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './toggle.component.html',

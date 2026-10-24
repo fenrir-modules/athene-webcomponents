@@ -5,7 +5,6 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { AthInputComponent } from './input.component';
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthInputComponent, ReactiveFormsModule],
   template: `<ath-input label="Email" required [formControl]="email" />`,

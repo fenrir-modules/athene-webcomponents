@@ -34,7 +34,6 @@ export type SelectSize = 'sm' | 'md';
  */
 @Component({
   selector: 'ath-select',
-  standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [

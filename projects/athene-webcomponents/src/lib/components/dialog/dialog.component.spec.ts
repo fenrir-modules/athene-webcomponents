@@ -5,7 +5,6 @@ import { AthPopoverTriggerDirective } from '../popover/popover-trigger.directive
 import { AthDialogComponent } from './dialog.component';
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthDialogComponent, AthPopoverComponent, AthPopoverTriggerDirective],
   template: `
@@ -200,7 +199,6 @@ describe('AthDialogComponent', () => {
 });
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthDialogComponent],
   template: `

@@ -12,7 +12,6 @@ import { AthPopoverComponent, AthPopoverContentDirective } from './popover.compo
 import { AthPopoverTriggerDirective } from './popover-trigger.directive';
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthPopoverComponent, AthPopoverTriggerDirective, AthPopoverContentDirective],
   template: `
@@ -216,7 +215,6 @@ describe('AthPopoverComponent', () => {
 });
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthPopoverComponent],
   template: `
@@ -285,7 +283,6 @@ describe('AthPopoverComponent with a virtual anchor', () => {
 });
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthPopoverComponent, AthPopoverTriggerDirective],
   template: `
@@ -317,7 +314,6 @@ describe('AthPopoverComponent inside a styled spot', () => {
 });
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthPopoverComponent],
   template: `

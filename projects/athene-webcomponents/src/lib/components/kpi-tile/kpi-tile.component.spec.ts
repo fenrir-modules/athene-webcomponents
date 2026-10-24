@@ -4,7 +4,6 @@ import { provideRouter } from '@angular/router';
 import { AthKpiStripComponent, AthKpiTileComponent, hasKpiTrend } from './kpi-tile.component';
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthKpiStripComponent, AthKpiTileComponent],
   template: `

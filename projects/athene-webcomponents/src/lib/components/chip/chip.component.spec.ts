@@ -4,7 +4,6 @@ import { Bug } from 'lucide-angular';
 import { AthChipComponent } from './chip.component';
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthChipComponent],
   template: `

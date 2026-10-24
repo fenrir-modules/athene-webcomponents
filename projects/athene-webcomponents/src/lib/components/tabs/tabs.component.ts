@@ -22,7 +22,6 @@ export interface TabItem {
  */
 @Component({
   selector: 'ath-tabs',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tabs.component.html',

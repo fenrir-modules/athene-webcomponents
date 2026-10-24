@@ -4,7 +4,6 @@ import { TestBed } from '@angular/core/testing';
 import { AthKbdComponent } from './kbd.component';
 
 @Component({
-  standalone: true,
   imports: [AthKbdComponent],
   template: `<ath-kbd class="a" label="⌘K" size="sm" /><ath-kbd class="b">Esc</ath-kbd>`,
 })

@@ -3,7 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { AthSidebarComponent } from './sidebar.component';
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthSidebarComponent],
   template: `<ath-sidebar [(collapsed)]="collapsed" />`,

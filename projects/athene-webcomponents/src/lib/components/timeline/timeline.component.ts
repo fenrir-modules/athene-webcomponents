@@ -17,7 +17,6 @@ import { CommonModule } from '@angular/common';
  */
 @Component({
   selector: 'ath-timeline',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './timeline.component.html',

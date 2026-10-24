@@ -33,7 +33,6 @@ export {
  */
 @Component({
   selector: 'ath-toast-container',
-  standalone: true,
   imports: [CommonModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './toast.component.html',

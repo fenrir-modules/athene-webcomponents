@@ -54,8 +54,10 @@ jobs:
         run: npm run build:lib
       # Git installs ship the committed dist/ and never build (package.json
       # has no build/prepare/install scripts), so dist/ must be exactly what
-      # the sources build to. Locally: npm run check:dist.
-      - name: dist/ matches the build, no install-time scripts
+      # the sources build to, and every entry point the root package.json
+      # names must exist in it (ng-packagr 19 no longer writes esm2022/).
+      # Locally: npm run check:dist.
+      - name: dist/ matches the build, entry points exist, no install-time scripts
         run: node scripts/check-package.mjs --dist
 
   # axe on every story in light and dark. Platform independent, so Linux.

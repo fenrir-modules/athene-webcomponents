@@ -15,7 +15,6 @@ import { formatAthLabel, injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-filter-chip',
-  standalone: true,
   imports: [CommonModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './filter-chip.component.html',

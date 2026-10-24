@@ -48,7 +48,6 @@ export type EmptyStateSize = 'default' | 'compact';
  */
 @Component({
   selector: 'ath-empty-state',
-  standalone: true,
   imports: [CommonModule, LucideAngularModule, AthButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './empty-state.component.html',

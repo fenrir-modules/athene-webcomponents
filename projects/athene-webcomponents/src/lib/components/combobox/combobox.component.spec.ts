@@ -4,7 +4,6 @@ import type { ListboxOption } from '../listbox/listbox.component';
 import { AthComboboxComponent } from './combobox.component';
 
 @Component({
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AthComboboxComponent],
   template: `

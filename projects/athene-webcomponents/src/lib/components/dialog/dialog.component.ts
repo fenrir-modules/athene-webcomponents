@@ -67,7 +67,6 @@ let nextDialogId = 0;
  */
 @Component({
   selector: 'ath-dialog',
-  standalone: true,
   imports: [LucideAngularModule, NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dialog.component.html',

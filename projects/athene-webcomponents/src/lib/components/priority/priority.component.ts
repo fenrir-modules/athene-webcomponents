@@ -32,7 +32,6 @@ const LABELS: Readonly<Record<TicketPriority, string>> = {
  */
 @Component({
   selector: 'ath-priority',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './priority.component.html',

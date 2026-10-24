@@ -69,7 +69,6 @@ export function resolveFloatingTarget(
  */
 @Directive({
   selector: '[athFloating]',
-  standalone: true,
   exportAs: 'athFloating',
 })
 export class AthFloatingDirective implements AfterViewInit, OnChanges, OnDestroy {

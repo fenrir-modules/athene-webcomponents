@@ -36,7 +36,6 @@ export type AthNavDot = 'ok' | 'warn' | 'error';
  */
 @Component({
   selector: 'ath-nav-item',
-  standalone: true,
   imports: [RouterLink, RouterLinkActive, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './nav-item.component.html',
