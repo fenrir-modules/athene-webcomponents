@@ -1,34 +1,50 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
-  HostListener,
+  Component,
   ElementRef,
   OnChanges,
+  OnDestroy,
   SimpleChanges,
+  ViewChild,
+  booleanAttribute,
+  computed,
   inject,
+  input,
+  output,
 } from '@angular/core';
-import { ATH_DEFAULT_LABELS, ATH_LABELS } from '../../i18n/labels';
-import { CommonModule } from '@angular/common';
 import { LucideAngularModule, X } from 'lucide-angular';
-import { AthButtonComponent } from '../button/button.component';
+import { injectAthLabels } from '../../i18n/label-utils';
+import { AthOverlayStack, type AthOverlayEntry } from '../floating/overlay-stack';
+import { focusSafely, tabbables, trapTab } from '../floating/focus';
 
 /**
- * Dialog size variants
+ * Dialog size variants: max widths 400 / 520 / 680 / 860px, `full` = the
+ * viewport minus a margin.
  */
-export type DialogSize = 'sm' | 'md' | 'lg' | 'xl';
+export type DialogSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 
 let nextDialogId = 0;
 
 /**
- * Athene Dialog Component
+ * Athene Dialog: the one modal of the library, on a native `<dialog>`
+ * opened with `showModal()`. That puts it in the top layer (no z-index, no
+ * clipping), makes the rest of the page inert and gives a `::backdrop`
+ * (`--scrim`). On top: Tab stays inside, page scroll is locked, Escape and
+ * backdrop clicks follow `closeOnEscape` / `closeOnBackdrop`, and focus goes
+ * back to where it was when the dialog closes.
  *
- * Modal dialog for confirmations, forms, and content overlays.
+ * Controlled: a close request (✕, Escape, backdrop) emits `closed` and
+ * `openChange(false)`; the dialog closes when `open` becomes false, so a
+ * parent can refuse (unsaved changes). `[(open)]` works.
+ *
+ * Content: the default slot is the scrolling body; `[slot=header]` (or
+ * `[athDialogHeader]`) goes into the header under the title,
+ * `[slot=footer]` (or `[athDialogFooter]`) into the footer. Initial focus:
+ * an element with `autofocus`, else the first control in the body/footer,
+ * else the close button.
  *
  * @example
- * <ath-dialog [open]="isOpen" title="Create Item" (closed)="isOpen = false">
+ * <ath-dialog [(open)]="isOpen" title="Create item" (closed)="onClose()">
  *   <p>Dialog content here</p>
  *   <div slot="footer">
  *     <ath-button variant="secondary" (clicked)="isOpen = false">Cancel</ath-button>
@@ -39,126 +55,178 @@ let nextDialogId = 0;
 @Component({
   selector: 'ath-dialog',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, AthButtonComponent],
+  imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dialog.component.html',
   styleUrl: './dialog.component.scss',
+  host: {
+    '(pointerdown)': 'onPointerDown($event)',
+    '(click)': 'onClick($event)',
+  },
 })
-export class AthDialogComponent implements OnChanges {
-  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
-  private returnFocus: HTMLElement | null = null;
+export class AthDialogComponent implements OnChanges, OnDestroy {
+  private readonly stack = inject(AthOverlayStack);
+  private readonly labels = injectAthLabels();
 
   /** Ids that name and describe the dialog (`aria-labelledby/-describedby`). */
   protected readonly titleId = `ath-dialog-title-${++nextDialogId}`;
   protected readonly descriptionId = `ath-dialog-desc-${nextDialogId}`;
 
-  /** Whether the dialog is open */
-  private readonly labels = inject(ATH_LABELS, { optional: true });
+  /** Whether the dialog is open. Two-way: `[(open)]`. */
+  readonly open = input(false, { transform: booleanAttribute });
+  /** Dialog title (names the dialog). */
+  readonly title = input('');
+  /** Dialog description (describes the dialog). */
+  readonly description = input('');
+  readonly size = input<DialogSize>('md');
+  /** Whether clicking the backdrop requests closing. */
+  readonly closeOnBackdrop = input(true, { transform: booleanAttribute });
+  /** Whether Escape requests closing. */
+  readonly closeOnEscape = input(true, { transform: booleanAttribute });
+  /** Show the ✕ button in the header. */
+  readonly showClose = input(true, { transform: booleanAttribute });
+  /** Accessible name of the close button; defaults to `ATH_LABELS.closeDialog`. */
+  readonly closeLabel = input<string | null>(null);
+  /** Accessible name when there is no visible `title`. */
+  readonly ariaLabel = input<string | null>(null);
+  /** `alertdialog` for confirmations that interrupt. */
+  readonly role = input<'dialog' | 'alertdialog'>('dialog');
 
-  /** Accessible name of the close controls; defaults to `ATH_LABELS`. */
-  @Input() closeLabel: string | null = null;
-
-  protected get closeText(): string {
-    return this.closeLabel ?? (this.labels?.closeDialog ?? ATH_DEFAULT_LABELS.closeDialog)();
-  }
-
-  @Input() open = false;
-
-  /** Dialog title */
-  @Input() title = '';
-
-  /** Dialog description */
-  @Input() description = '';
-
-  /** Dialog size */
-  @Input() size: DialogSize = 'md';
-
-  /** Whether clicking the backdrop closes the dialog */
-  @Input() closeOnBackdrop = true;
-
-  /** Whether pressing Escape closes the dialog */
-  @Input() closeOnEscape = true;
-
-  /** Close event */
-  @Output() closed = new EventEmitter<void>();
+  /** The user asked to close (✕, Escape, backdrop). */
+  readonly closed = output<void>();
+  /** Two-way partner of `open`; emits `false` on a close request. */
+  readonly openChange = output<boolean>();
+  /** The dialog is shown (after `showModal()`). */
+  readonly opened = output<void>();
 
   protected readonly closeIcon = X;
+  protected readonly closeText = computed(() => this.closeLabel() ?? this.labels.closeDialog());
 
-  @HostListener('document:keydown.escape')
-  onEscapeKey(): void {
-    if (this.open && this.closeOnEscape) {
-      this.close();
-    }
+  private dialogEl: HTMLDialogElement | null = null;
+  private returnFocus: HTMLElement | null = null;
+  private pressedOnBackdrop = false;
+  private locked = false;
+
+  private readonly entry: AthOverlayEntry = {
+    modal: true,
+    panel: () => this.dialogEl,
+    anchor: () => null,
+    closeOnEscape: () => this.closeOnEscape(),
+    closeOnOutsideClick: () => false,
+    dismiss: () => this.requestClose(),
+  };
+
+  @ViewChild('dialog')
+  private set dialogRef(ref: ElementRef<HTMLDialogElement> | undefined) {
+    const el = ref?.nativeElement ?? null;
+    if (el === this.dialogEl) return;
+    if (this.dialogEl) this.teardown();
+    this.dialogEl = el;
+    if (el) this.present(el);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!changes['open']) return;
-    if (this.open) {
-      // Move focus into the dialog once it has rendered; remember where it was.
-      this.returnFocus = document.activeElement as HTMLElement | null;
-      setTimeout(() => {
-        const panel = this.panel();
-        if (!panel || panel.contains(document.activeElement)) return;
-        (this.focusables()[0] ?? panel).focus();
-      });
-    } else if (this.returnFocus && document.contains(this.returnFocus)) {
-      this.returnFocus.focus();
-      this.returnFocus = null;
+    // Remember the focus before the dialog renders and takes it.
+    if (changes['open'] && this.open() && !this.dialogEl) {
+      const active = document.activeElement;
+      this.returnFocus = active instanceof HTMLElement && active !== document.body ? active : null;
     }
   }
 
-  /** Keep Tab inside the open dialog. */
-  onPanelKeydown(event: KeyboardEvent): void {
-    if (event.key !== 'Tab') return;
-    const items = this.focusables();
-    if (items.length === 0) return;
-    const first = items[0];
-    const last = items[items.length - 1];
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
+  ngOnDestroy(): void {
+    if (this.dialogEl) this.teardown();
+  }
+
+  /** Requests closing, as the ✕ button does. */
+  close(): void {
+    this.requestClose();
+  }
+
+  protected onKeydown(event: KeyboardEvent): void {
+    if (this.dialogEl) trapTab(event, this.dialogEl);
+  }
+
+  /** Escape: the browser's close request. Always prevented; the parent decides. */
+  protected onCancel(event: Event): void {
+    event.preventDefault();
+    if (!this.closeOnEscape() || this.stack.escapeConsumed() || !this.stack.isTop(this.entry)) {
+      return;
     }
+    this.requestClose();
   }
 
-  private panel(): HTMLElement | null {
-    return this.host.nativeElement.querySelector<HTMLElement>('.ath-dialog__panel');
+  /** The browser closed it anyway (e.g. a forced close request). */
+  protected onNativeClose(): void {
+    if (this.open() && this.dialogEl && !this.dialogEl.open) this.requestClose();
   }
 
-  private focusables(): HTMLElement[] {
-    const panel = this.panel();
-    if (!panel) return [];
-    return Array.from(
-      panel.querySelectorAll<HTMLElement>(
-        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      )
+  protected onPointerDown(event: PointerEvent): void {
+    this.pressedOnBackdrop = this.isBackdropEvent(event);
+  }
+
+  protected onClick(event: MouseEvent): void {
+    const onBackdrop = this.pressedOnBackdrop && this.isBackdropEvent(event);
+    this.pressedOnBackdrop = false;
+    if (onBackdrop && this.closeOnBackdrop() && this.stack.isTop(this.entry)) this.requestClose();
+  }
+
+  private requestClose(): void {
+    this.closed.emit();
+    this.openChange.emit(false);
+  }
+
+  /** A press on the `::backdrop`: it targets the dialog, outside its box. */
+  private isBackdropEvent(event: MouseEvent): boolean {
+    const el = this.dialogEl;
+    if (!el || event.target !== el) return false;
+    const r = el.getBoundingClientRect();
+    return (
+      event.clientX < r.left ||
+      event.clientX > r.right ||
+      event.clientY < r.top ||
+      event.clientY > r.bottom
     );
   }
 
-  get dialogClasses(): string {
-    return `ath-dialog__panel ath-dialog__panel--${this.size}`;
+  private present(el: HTMLDialogElement): void {
+    this.stack.open(this.entry);
+    this.stack.lockScroll();
+    this.locked = true;
+    try {
+      if (!el.open) el.showModal();
+    } catch {
+      // Not connected (yet): show it non-modally rather than not at all.
+      el.setAttribute('open', '');
+    }
+    this.stack.raiseTopLayer();
+    this.focusInitial(el);
+    this.opened.emit();
   }
 
-  close(): void {
-    this.closed.emit();
+  private focusInitial(el: HTMLDialogElement): void {
+    const auto = el.querySelector<HTMLElement>('[autofocus]');
+    if (auto && focusSafely(auto)) return;
+    const parts = el.querySelectorAll<HTMLElement>('.ath-dialog__body, .ath-dialog__footer');
+    for (const part of Array.from(parts)) {
+      const first = tabbables(part)[0];
+      if (first && focusSafely(first)) return;
+    }
+    if (!focusSafely(tabbables(el)[0])) focusSafely(el);
   }
 
-  onBackdropClick(): void {
-    if (this.closeOnBackdrop) {
-      this.close();
+  private teardown(): void {
+    const el = this.dialogEl;
+    this.dialogEl = null;
+    this.stack.close(this.entry);
+    if (this.locked) this.stack.unlockScroll();
+    this.locked = false;
+    try {
+      if (el?.open) el.close();
+    } catch {
+      // Already removed.
     }
-  }
-
-  onBackdropKeydown(event: KeyboardEvent): void {
-    if (!this.closeOnBackdrop) {
-      return;
-    }
-
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      this.close();
-    }
+    const back = this.returnFocus;
+    this.returnFocus = null;
+    focusSafely(back);
   }
 }

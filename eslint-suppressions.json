@@ -1,31 +1,4 @@
 {
-  "projects/athene-webcomponents/src/lib/components/combobox/combobox.component.ts": {
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-member-access": {
-      "count": 1
-    }
-  },
-  "projects/athene-webcomponents/src/lib/components/dropdown/dropdown.component.spec.ts": {
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 7
-    },
-    "@typescript-eslint/no-unsafe-member-access": {
-      "count": 7
-    }
-  },
-  "projects/athene-webcomponents/src/lib/components/dropdown/dropdown.component.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-member-access": {
-      "count": 1
-    }
-  },
   "projects/athene-webcomponents/src/lib/components/input/input.component.spec.ts": {
     "@typescript-eslint/no-unsafe-assignment": {
       "count": 1
@@ -39,11 +12,6 @@
   },
   "projects/athene-webcomponents/src/lib/components/kbd/kbd.component.spec.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    }
-  },
-  "projects/athene-webcomponents/src/lib/components/kpi-tile/kpi-tile.component.html": {
-    "@angular-eslint/template/eqeqeq": {
       "count": 1
     }
   },
@@ -68,11 +36,6 @@
   "projects/athene-webcomponents/src/lib/components/segment/segment.component.html": {
     "@angular-eslint/template/eqeqeq": {
       "count": 1
-    }
-  },
-  "projects/athene-webcomponents/src/lib/components/stat-card/stat-card.component.html": {
-    "@angular-eslint/template/eqeqeq": {
-      "count": 2
     }
   },
   "projects/athene-webcomponents/src/lib/components/table/table.component.spec.ts": {

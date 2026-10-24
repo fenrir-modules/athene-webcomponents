@@ -1,0 +1,196 @@
+import { InjectionToken } from '@angular/core';
+
+/**
+ * Due dates as the product shows them: pure functions, no Angular, so the
+ * thresholds are tested with plain values (`due-date.spec.ts`).
+ *
+ * A due date names a calendar day. "Today" is today in the reader's time
+ * zone; a bare `YYYY-MM-DD` (or a timestamp at UTC midnight/noon, which is
+ * what the date pickers write) is that day everywhere.
+ */
+
+/** How urgent a due date reads. One rule, one place (DS-08). */
+export type DueTone = 'overdue' | 'today' | 'soon' | 'later' | 'done';
+
+/** Where a due date comes from: the ticket's own, or its sprint's end. */
+export type DueSource = 'own' | 'sprint';
+
+/** Short-date order: the locale's own, or one the reader chose. */
+export type DueDateFormat = 'auto' | 'dmy' | 'mdy' | 'iso';
+
+/** The reader's date settings. All optional; missing = the browser's. */
+export interface AthDateContext {
+  /** BCP-47 tag for month names (`auto` format). */
+  locale?: string;
+  /** IANA zone "today" is computed in. */
+  timeZone?: string;
+  dateFormat?: DueDateFormat;
+}
+
+/**
+ * The app's date settings for every `ath-due-label`, provided once at the
+ * root. A function, so a provider that reads signals (language, the
+ * reader's preferences) keeps the labels current.
+ *
+ * @example
+ * { provide: ATH_DATE_CONTEXT, useFactory: () => {
+ *     const prefs = inject(UserPreferencesService);
+ *     return () => ({ locale: prefs.locale(), timeZone: prefs.timeZone(), dateFormat: prefs.dateFormat() });
+ * } }
+ */
+export const ATH_DATE_CONTEXT = new InjectionToken<() => AthDateContext>('ATH_DATE_CONTEXT');
+
+/** Label templates the compact text is built from (`{count}` placeholder). */
+export interface DueTextLabels {
+  overdue: string;
+  today: string;
+  tomorrow: string;
+  inDays: string;
+}
+
+const DAY_MS = 86_400_000;
+
+/**
+ * `date` as wall-clock time in `timeZone`: a Date whose local fields read
+ * what a clock in that zone shows. Only for day comparisons.
+ */
+export function zonedWallClock(date: Date, timeZone?: string): Date {
+  if (!timeZone) return new Date(date);
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  }).formatToParts(date);
+  const get = (t: string) => Number(parts.find((p) => p.type === t)?.value ?? 0);
+  return new Date(
+    get('year'),
+    get('month') - 1,
+    get('day'),
+    get('hour'),
+    get('minute'),
+    get('second')
+  );
+}
+
+/**
+ * The calendar day a due value names, as local midday; `null` when the
+ * value is not a date.
+ */
+export function calendarDayOf(value: string, timeZone?: string): Date | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+  if (!m) return null;
+  const at = new Date(value);
+  const dayOnly =
+    value.length === 10 ||
+    Number.isNaN(at.getTime()) ||
+    (at.getUTCMinutes() === 0 &&
+      at.getUTCSeconds() === 0 &&
+      (at.getUTCHours() === 0 || at.getUTCHours() === 12));
+  if (dayOnly) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 12);
+  const wall = zonedWallClock(at, timeZone);
+  return new Date(wall.getFullYear(), wall.getMonth(), wall.getDate(), 12);
+}
+
+/** Whole calendar days from `now` (in `timeZone`) to `day`; negative = past. */
+export function calendarDaysUntil(day: Date, now: Date, timeZone?: string): number {
+  const today = zonedWallClock(now, timeZone);
+  const midnight = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  return Math.round((midnight(day) - midnight(today)) / DAY_MS);
+}
+
+/**
+ * The one colour rule: before today overdue, today today (both red), the
+ * next two days soon (amber), later muted. Finished work is never urgent.
+ */
+export function dueToneOf(days: number | null, done = false): DueTone {
+  if (done) return 'done';
+  if (days === null) return 'later';
+  if (days < 0) return 'overdue';
+  if (days === 0) return 'today';
+  if (days <= 2) return 'soon';
+  return 'later';
+}
+
+/** A calendar day in the chosen short format ("30 Oct", "30.10.", "10/30", "2026-10-30"). */
+export function shortDay(day: Date, ctx: AthDateContext = {}): string {
+  const y = day.getFullYear();
+  const m = day.getMonth() + 1;
+  const d = day.getDate();
+  switch (ctx.dateFormat) {
+    case 'dmy':
+      return `${d}.${m}.`;
+    case 'mdy':
+      return `${m}/${d}`;
+    case 'iso':
+      return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    default:
+      return day.toLocaleDateString(ctx.locale || undefined, { month: 'short', day: 'numeric' });
+  }
+}
+
+function fill(template: string, count: number): string {
+  return template.replace(/\{count\}/g, String(count));
+}
+
+/**
+ * The compact due text: "2d overdue", "Today", "Tomorrow", "3d" up to six
+ * days ahead, then the short date.
+ */
+export function compactDueText(
+  days: number,
+  day: Date,
+  labels: DueTextLabels,
+  ctx: AthDateContext = {}
+): string {
+  if (days < 0) return fill(labels.overdue, -days);
+  if (days === 0) return labels.today;
+  if (days === 1) return labels.tomorrow;
+  if (days < 7) return fill(labels.inDays, days);
+  return shortDay(day, ctx);
+}
+
+export interface DueInput {
+  /** ISO date or timestamp; empty = no due date. */
+  date: string | null | undefined;
+  /** Finished work: muted, and the plain date instead of "overdue". */
+  done?: boolean;
+  /** A sprint-derived date names its day ("Sprint end · 31 Oct"). */
+  source?: DueSource;
+  now?: Date;
+}
+
+export interface DueView {
+  tone: DueTone;
+  /** The date part of the label (without the "Sprint end ·" prefix). */
+  text: string;
+  /** Calendar days from today; negative = past. */
+  days: number;
+  /** The short date, e.g. for a tooltip. */
+  day: string;
+}
+
+/** Everything `ath-due-label` draws, from a date; `null` without one. */
+export function describeDue(
+  input: DueInput,
+  labels: DueTextLabels,
+  ctx: AthDateContext = {}
+): DueView | null {
+  if (!input.date) return null;
+  const day = calendarDayOf(input.date, ctx.timeZone);
+  if (!day) return null;
+  const days = calendarDaysUntil(day, input.now ?? new Date(), ctx.timeZone);
+  const done = !!input.done;
+  const plain = done || input.source === 'sprint';
+  const short = shortDay(day, ctx);
+  return {
+    tone: dueToneOf(days, done),
+    text: plain ? short : compactDueText(days, day, labels, ctx),
+    days,
+    day: short,
+  };
+}

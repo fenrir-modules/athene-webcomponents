@@ -1,0 +1,60 @@
+// The due-date tone CSS exists exactly once, here (DS-08). Pages never
+// colour a due date themselves.
+
+:host {
+  display: inline-flex;
+  min-width: 0;
+}
+
+.ath-due {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--due-later);
+
+  &[data-tone='overdue'] {
+    color: var(--due-overdue);
+  }
+
+  &[data-tone='today'] {
+    color: var(--due-today);
+  }
+
+  &[data-tone='soon'] {
+    color: var(--due-soon);
+  }
+
+  &--none {
+    color: var(--due-none);
+  }
+}
+
+.ath-due__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ath-due__icon,
+.ath-due__source {
+  flex: none;
+  color: var(--fg-3);
+}
+
+.ath-due__warn {
+  flex: none;
+  color: var(--amber);
+}
+
+.ath-due__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

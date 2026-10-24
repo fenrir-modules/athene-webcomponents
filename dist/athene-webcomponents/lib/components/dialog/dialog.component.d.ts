@@ -1,16 +1,30 @@
-import { EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import * as i0 from "@angular/core";
 /**
- * Dialog size variants
+ * Dialog size variants: max widths 400 / 520 / 680 / 860px, `full` = the
+ * viewport minus a margin.
  */
-export type DialogSize = 'sm' | 'md' | 'lg' | 'xl';
+export type DialogSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 /**
- * Athene Dialog Component
+ * Athene Dialog: the one modal of the library, on a native `<dialog>`
+ * opened with `showModal()`. That puts it in the top layer (no z-index, no
+ * clipping), makes the rest of the page inert and gives a `::backdrop`
+ * (`--scrim`). On top: Tab stays inside, page scroll is locked, Escape and
+ * backdrop clicks follow `closeOnEscape` / `closeOnBackdrop`, and focus goes
+ * back to where it was when the dialog closes.
  *
- * Modal dialog for confirmations, forms, and content overlays.
+ * Controlled: a close request (✕, Escape, backdrop) emits `closed` and
+ * `openChange(false)`; the dialog closes when `open` becomes false, so a
+ * parent can refuse (unsaved changes). `[(open)]` works.
+ *
+ * Content: the default slot is the scrolling body; `[slot=header]` (or
+ * `[athDialogHeader]`) goes into the header under the title,
+ * `[slot=footer]` (or `[athDialogFooter]`) into the footer. Initial focus:
+ * an element with `autofocus`, else the first control in the body/footer,
+ * else the close button.
  *
  * @example
- * <ath-dialog [open]="isOpen" title="Create Item" (closed)="isOpen = false">
+ * <ath-dialog [(open)]="isOpen" title="Create item" (closed)="onClose()">
  *   <p>Dialog content here</p>
  *   <div slot="footer">
  *     <ath-button variant="secondary" (clicked)="isOpen = false">Cancel</ath-button>
@@ -18,41 +32,62 @@ export type DialogSize = 'sm' | 'md' | 'lg' | 'xl';
  *   </div>
  * </ath-dialog>
  */
-export declare class AthDialogComponent implements OnChanges {
-    private readonly host;
-    private returnFocus;
+export declare class AthDialogComponent implements OnChanges, OnDestroy {
+    private readonly stack;
+    private readonly labels;
     /** Ids that name and describe the dialog (`aria-labelledby/-describedby`). */
     protected readonly titleId: string;
     protected readonly descriptionId: string;
-    /** Whether the dialog is open */
-    private readonly labels;
-    /** Accessible name of the close controls; defaults to `ATH_LABELS`. */
-    closeLabel: string | null;
-    protected get closeText(): string;
-    open: boolean;
-    /** Dialog title */
-    title: string;
-    /** Dialog description */
-    description: string;
-    /** Dialog size */
-    size: DialogSize;
-    /** Whether clicking the backdrop closes the dialog */
-    closeOnBackdrop: boolean;
-    /** Whether pressing Escape closes the dialog */
-    closeOnEscape: boolean;
-    /** Close event */
-    closed: EventEmitter<void>;
+    /** Whether the dialog is open. Two-way: `[(open)]`. */
+    readonly open: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+    /** Dialog title (names the dialog). */
+    readonly title: import("@angular/core").InputSignal<string>;
+    /** Dialog description (describes the dialog). */
+    readonly description: import("@angular/core").InputSignal<string>;
+    readonly size: import("@angular/core").InputSignal<DialogSize>;
+    /** Whether clicking the backdrop requests closing. */
+    readonly closeOnBackdrop: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+    /** Whether Escape requests closing. */
+    readonly closeOnEscape: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+    /** Show the ✕ button in the header. */
+    readonly showClose: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+    /** Accessible name of the close button; defaults to `ATH_LABELS.closeDialog`. */
+    readonly closeLabel: import("@angular/core").InputSignal<string | null>;
+    /** Accessible name when there is no visible `title`. */
+    readonly ariaLabel: import("@angular/core").InputSignal<string | null>;
+    /** `alertdialog` for confirmations that interrupt. */
+    readonly role: import("@angular/core").InputSignal<"dialog" | "alertdialog">;
+    /** The user asked to close (✕, Escape, backdrop). */
+    readonly closed: import("@angular/core").OutputEmitterRef<void>;
+    /** Two-way partner of `open`; emits `false` on a close request. */
+    readonly openChange: import("@angular/core").OutputEmitterRef<boolean>;
+    /** The dialog is shown (after `showModal()`). */
+    readonly opened: import("@angular/core").OutputEmitterRef<void>;
     protected readonly closeIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    onEscapeKey(): void;
+    protected readonly closeText: import("@angular/core").Signal<string>;
+    private dialogEl;
+    private returnFocus;
+    private pressedOnBackdrop;
+    private locked;
+    private readonly entry;
+    private set dialogRef(value);
     ngOnChanges(changes: SimpleChanges): void;
-    /** Keep Tab inside the open dialog. */
-    onPanelKeydown(event: KeyboardEvent): void;
-    private panel;
-    private focusables;
-    get dialogClasses(): string;
+    ngOnDestroy(): void;
+    /** Requests closing, as the ✕ button does. */
     close(): void;
-    onBackdropClick(): void;
-    onBackdropKeydown(event: KeyboardEvent): void;
+    protected onKeydown(event: KeyboardEvent): void;
+    /** Escape: the browser's close request. Always prevented; the parent decides. */
+    protected onCancel(event: Event): void;
+    /** The browser closed it anyway (e.g. a forced close request). */
+    protected onNativeClose(): void;
+    protected onPointerDown(event: PointerEvent): void;
+    protected onClick(event: MouseEvent): void;
+    private requestClose;
+    /** A press on the `::backdrop`: it targets the dialog, outside its box. */
+    private isBackdropEvent;
+    private present;
+    private focusInitial;
+    private teardown;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthDialogComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthDialogComponent, "ath-dialog", never, { "closeLabel": { "alias": "closeLabel"; "required": false; }; "open": { "alias": "open"; "required": false; }; "title": { "alias": "title"; "required": false; }; "description": { "alias": "description"; "required": false; }; "size": { "alias": "size"; "required": false; }; "closeOnBackdrop": { "alias": "closeOnBackdrop"; "required": false; }; "closeOnEscape": { "alias": "closeOnEscape"; "required": false; }; }, { "closed": "closed"; }, never, ["*", "[slot=footer]"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthDialogComponent, "ath-dialog", never, { "open": { "alias": "open"; "required": false; "isSignal": true; }; "title": { "alias": "title"; "required": false; "isSignal": true; }; "description": { "alias": "description"; "required": false; "isSignal": true; }; "size": { "alias": "size"; "required": false; "isSignal": true; }; "closeOnBackdrop": { "alias": "closeOnBackdrop"; "required": false; "isSignal": true; }; "closeOnEscape": { "alias": "closeOnEscape"; "required": false; "isSignal": true; }; "showClose": { "alias": "showClose"; "required": false; "isSignal": true; }; "closeLabel": { "alias": "closeLabel"; "required": false; "isSignal": true; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; "isSignal": true; }; "role": { "alias": "role"; "required": false; "isSignal": true; }; }, { "closed": "closed"; "openChange": "openChange"; "opened": "opened"; }, never, ["[slot=header],[athDialogHeader]", "*", "[slot=footer],[athDialogFooter]"], true, never>;
 }

@@ -1,27 +1,28 @@
 @if (geometry(); as g) {
   <svg
     class="ath-sparkline"
-    [attr.width]="width"
-    [attr.height]="height"
-    [attr.viewBox]="'0 0 ' + width + ' ' + height"
+    [attr.width]="width()"
+    [attr.height]="height()"
+    [attr.viewBox]="'0 0 ' + width() + ' ' + height()"
     aria-hidden="true"
+    focusable="false"
   >
-    @if (showArea) {
-      <path class="ath-sparkline__area" [attr.d]="g.areaPath" [attr.fill]="color" />
+    @if (showArea()) {
+      <path class="ath-sparkline__area" [attr.d]="g.areaPath" [attr.fill]="color()" />
     }
     <path
       class="ath-sparkline__line"
       [attr.d]="g.linePath"
-      [attr.stroke]="color"
-      [attr.stroke-width]="strokeWidth"
+      [attr.stroke]="color()"
+      [attr.stroke-width]="strokeWidth()"
     />
-    @if (showDot) {
+    @if (showDot()) {
       <circle
         class="ath-sparkline__dot"
         [attr.cx]="g.lastX"
         [attr.cy]="g.lastY"
         r="2"
-        [attr.fill]="color"
+        [attr.fill]="color()"
       />
     }
   </svg>

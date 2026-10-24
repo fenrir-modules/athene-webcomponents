@@ -1,6 +1,6 @@
 :host {
   display: inline-flex;
-  align-items: center;
+  line-height: 0;
 }
 
 .ath-sparkline {
@@ -9,7 +9,7 @@
 }
 
 .ath-sparkline__area {
-  opacity: 0.1;
+  opacity: 0.15;
   stroke: none;
 }
 
@@ -20,5 +20,5 @@
 }
 
 .ath-sparkline__dot {
-  // Inherits from inline fill="color"
+  opacity: 0.95;
 }

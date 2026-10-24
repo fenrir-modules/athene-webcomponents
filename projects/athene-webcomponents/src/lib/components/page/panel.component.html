@@ -1,0 +1,29 @@
+<header class="ath-panel__head">
+  @if (title()) {
+    @if (level() === 3) {
+      <h3 class="ath-panel__title">{{ title() }}</h3>
+    } @else {
+      <h2 class="ath-panel__title">{{ title() }}</h2>
+    }
+  }
+  <ng-content select="[athPanelHead]" />
+  <span class="ath-panel__spring"></span>
+  @if (count() !== null && count() !== undefined) {
+    <span class="ath-panel__count">{{ count() }}</span>
+  }
+  <ng-content select="[athPanelActions]" />
+</header>
+<div
+  class="ath-panel__body"
+  [class.ath-panel__body--padded]="padded()"
+  [class.ath-panel__body--scroll]="scroll()"
+>
+  @if (loading()) {
+    @for (i of rows(); track i) {
+      <ath-skeleton variant="row" />
+    }
+  } @else {
+    <ng-content />
+  }
+</div>
+<ng-content select="[athPanelFoot]" />

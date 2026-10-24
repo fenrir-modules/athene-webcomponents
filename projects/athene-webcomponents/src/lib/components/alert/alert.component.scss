@@ -1,73 +1,103 @@
 // ===========================================
 // ATH-ALERT STYLES
 // ===========================================
+// Inline: the app's error-banner look (tinted box, 13px, a quiet retry
+// button on the right). Banner: full width, no radius, an icon.
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+// Nothing to say: out of the layout, so an empty alert does not take a
+// slot (and a gap) in its page's flex column.
+:host(.ath-alert--empty):has(.ath-alert__extra:empty) {
+  display: none;
+}
 
 .ath-alert {
+  --_tone: var(--blue);
+  --_text: var(--blue);
+  --_tint: var(--blue-tint);
+
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--ath-space-3);
-  padding: var(--ath-space-3) var(--ath-space-4);
-  border-radius: var(--ath-border-radius-md);
-  font-size: var(--ath-font-size-sm);
+  gap: var(--space-3);
+  padding: 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--_tone) 30%, transparent);
+  border-radius: var(--r);
+  background: var(--_tint);
+  color: var(--_text);
+  font-size: var(--control-font);
+  line-height: var(--line-normal);
 
-  // -------------------------------------------
-  // Message
-  // -------------------------------------------
-  &__message {
-    flex: 1;
+  &[data-tone='success'] {
+    --_tone: var(--green);
+    --_text: var(--green);
+    --_tint: var(--green-tint);
   }
 
-  // -------------------------------------------
-  // Dismiss Button
-  // -------------------------------------------
+  &[data-tone='warn'] {
+    --_tone: var(--amber);
+    --_text: var(--amber-text);
+    --_tint: var(--amber-tint);
+  }
+
+  &[data-tone='error'] {
+    --_tone: var(--red);
+    --_text: var(--red);
+    --_tint: var(--red-tint);
+  }
+
+  &[data-appearance='banner'] {
+    padding: var(--space-2) var(--content-pad-x);
+    border-width: 0 0 1px;
+    border-radius: 0;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    color: var(--_tone);
+  }
+
+  &__message {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    margin-right: var(--space-1);
+    font-weight: var(--weight-semibold);
+  }
+
+  &__retry {
+    flex-shrink: 0;
+  }
+
   &__dismiss {
-    display: flex;
+    display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     width: 20px;
     height: 20px;
     padding: 0;
     border: none;
-    border-radius: var(--ath-border-radius-sm);
+    border-radius: var(--r-sm);
     background: transparent;
     color: inherit;
-    font-size: 16px;
-    line-height: 1;
     cursor: pointer;
     opacity: 0.7;
-    transition: opacity var(--ath-transition-fast), background var(--ath-transition-fast);
+    transition: opacity var(--t-fast);
 
     &:hover {
       opacity: 1;
-      background: rgba(255, 255, 255, 0.1);
     }
-  }
 
-  // -------------------------------------------
-  // Variants
-  // -------------------------------------------
-  &--info {
-    background: var(--blue-tint);
-    border: 1px solid color-mix(in srgb, var(--blue) 25%, transparent);
-    color: var(--ath-color-info);
-  }
-
-  &--success {
-    background: var(--green-tint);
-    border: 1px solid color-mix(in srgb, var(--green) 25%, transparent);
-    color: var(--ath-color-success);
-  }
-
-  &--warning {
-    background: var(--accent-ring);
-    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
-    color: var(--ath-color-primary);
-  }
-
-  &--error {
-    background: var(--red-tint);
-    border: 1px solid color-mix(in srgb, var(--red) 25%, transparent);
-    color: var(--ath-color-error);
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring-shadow);
+      opacity: 1;
+    }
   }
 }

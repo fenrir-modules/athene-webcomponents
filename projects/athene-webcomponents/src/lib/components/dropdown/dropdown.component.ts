@@ -1,19 +1,17 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
+  AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  HostListener,
+  Component,
   ElementRef,
-  OnDestroy,
-  ViewChild,
-  inject,
+  effect,
+  input,
+  output,
+  viewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { LucideAngularModule } from 'lucide-angular';
-import { floatPanel } from '../floating/floating';
+import type { AthIconData } from '../floating/icon';
+import type { FloatingAlign } from '../floating/floating';
+import { AthMenuComponent } from '../menu/menu.component';
+import { AthMenuItemComponent, AthMenuSeparatorComponent } from '../menu/menu-item.component';
 
 /**
  * Dropdown menu item
@@ -21,12 +19,15 @@ import { floatPanel } from '../floating/floating';
 export interface DropdownItem {
   id: string;
   label: string;
-  icon?: any;
+  /** A Lucide icon (`import { Pencil } from 'lucide-angular'`). */
+  icon?: AthIconData;
   variant?: 'default' | 'danger';
   disabled?: boolean;
   divider?: boolean;
-  /** A tooltip — e.g. why a disabled item cannot be chosen. */
+  /** A tooltip — e.g. why a disabled item cannot be chosen (also read by screen readers). */
   title?: string;
+  /** Shortcut hint at the end of the item, e.g. `⌘E`. */
+  shortcut?: string;
 }
 
 /**
@@ -35,12 +36,20 @@ export interface DropdownItem {
  */
 export type DropdownAlign = 'left' | 'right' | 'auto';
 
+const ALIGN: Record<DropdownAlign, FloatingAlign> = { left: 'start', right: 'end', auto: 'auto' };
+
+/** The controls a projected trigger may be (or contain). */
+const CONTROL = 'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
 /**
- * Athene Dropdown Component
+ * Athene Dropdown: an action menu from a flat `items` list. A preset on
+ * `ath-menu` (keyboard, focus and ARIA come from there); for custom rows use
+ * `ath-menu` + `athMenuItem` directly.
  *
- * Smart-positioning action menu.
- * Automatically opens upward/downward and left/right depending
- * on where the trigger sits in the viewport.
+ * The projected content is the trigger. When it is (or contains) a button,
+ * that button is the menu button: one tab stop, with `aria-haspopup`,
+ * `aria-expanded` and `aria-controls` on it. Plain content (text, an icon)
+ * gets a `role="button"` wrapper instead.
  *
  * @example
  * <ath-dropdown [items]="menuItems" (itemClicked)="onAction($event)">
@@ -50,17 +59,18 @@ export type DropdownAlign = 'left' | 'right' | 'auto';
 @Component({
   selector: 'ath-dropdown',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [AthMenuComponent, AthMenuItemComponent, AthMenuSeparatorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dropdown.component.html',
   styleUrl: './dropdown.component.scss',
+  host: {
+    '(click)': 'onHostClick($event)',
+    '(keydown)': 'onHostKeydown($event)',
+  },
 })
-export class AthDropdownComponent implements OnDestroy {
-  private readonly el = inject(ElementRef);
-  private readonly cdr = inject(ChangeDetectorRef);
-
+export class AthDropdownComponent implements AfterViewInit {
   /** Menu items */
-  @Input() items: DropdownItem[] = [];
+  readonly items = input<DropdownItem[]>([]);
 
   /**
    * Horizontal alignment hint.
@@ -70,115 +80,90 @@ export class AthDropdownComponent implements OnDestroy {
    *
    * Vertical direction is always auto-detected.
    */
-  @Input() align: DropdownAlign = 'auto';
+  readonly align = input<DropdownAlign>('auto');
 
   /** Item click event */
-  @Output() itemClicked = new EventEmitter<string>();
+  readonly itemClicked = output<string>();
 
   /** Emits `true` when the menu opens, `false` when it closes. */
-  @Output() openChange = new EventEmitter<boolean>();
+  readonly openChange = output<boolean>();
 
-  protected isOpen = false;
+  protected readonly menuAlign = (): FloatingAlign => ALIGN[this.align()];
 
-  /**
-   * The open menu floats (`position: fixed`, kept inside the viewport), so a
-   * side panel's or table's overflow never cuts it off.
-   */
-  private unfloat: (() => void) | null = null;
-  @ViewChild('menu')
-  private set menuEl(ref: ElementRef<HTMLElement> | undefined) {
-    this.unfloat?.();
-    this.unfloat = null;
-    if (!ref) return;
-    const trigger = (this.el.nativeElement as HTMLElement).querySelector<HTMLElement>(
-      '.ath-dropdown__trigger'
-    );
-    if (!trigger) return;
-    this.unfloat = floatPanel(ref.nativeElement, trigger, {
-      align: this.align === 'left' ? 'start' : this.align === 'right' ? 'end' : 'auto',
+  protected readonly menu = viewChild.required(AthMenuComponent);
+  private readonly triggerRef = viewChild.required<ElementRef<HTMLElement>>('trigger');
+  private readonly menuQuery = viewChild(AthMenuComponent);
+  private viewReady = false;
+
+  constructor() {
+    effect(() => {
+      const open = this.menuQuery()?.open() ?? false;
+      if (this.viewReady) this.syncAria(open);
     });
   }
 
-  ngOnDestroy(): void {
-    this.unfloat?.();
+  ngAfterViewInit(): void {
+    this.viewReady = true;
+    this.syncAria(this.menu().open());
   }
 
-  // Computed placement — set each time the menu opens
-  protected placementX: 'left' | 'right' = 'right';
-  protected placementY: 'down' | 'up' = 'down';
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (!this.el.nativeElement.contains(event.target)) {
-      this.close();
-    }
-  }
-
-  @HostListener('document:keydown.escape')
-  onEscapeKey(): void {
-    this.close();
-  }
-
+  /** Opens or closes the menu (focus goes to the first item when opening). */
   toggle(): void {
-    if (this.isOpen) {
-      this.close();
-    } else {
-      this.isOpen = true;
-      this.openChange.emit(true);
-      this.computePlacement();
-    }
+    this.menu().toggle(this.triggerRef().nativeElement, 'first');
   }
 
-  onTriggerKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Enter' || event.key === ' ') {
+  /** Emits the item's id, as a click on it does. */
+  selectItem(item: DropdownItem): void {
+    if (item.disabled || item.divider) return;
+    this.itemClicked.emit(item.id);
+    this.menu().hide();
+  }
+
+  protected onOpenChange(open: boolean): void {
+    this.openChange.emit(open);
+  }
+
+  protected onHostClick(event: MouseEvent): void {
+    if (this.inTrigger(event)) this.toggle();
+  }
+
+  protected onHostKeydown(event: KeyboardEvent): void {
+    if (!this.inTrigger(event)) return;
+    const wrapperIsControl = this.control() === this.triggerRef().nativeElement;
+    const key = event.key;
+    if (key === 'ArrowDown' || key === 'ArrowUp') {
+      event.preventDefault();
+      this.menu().show(this.triggerRef().nativeElement, key === 'ArrowUp' ? 'last' : 'first');
+    } else if (wrapperIsControl && (key === 'Enter' || key === ' ')) {
+      // A real button clicks on its own; the role="button" wrapper does not.
       event.preventDefault();
       this.toggle();
     }
   }
 
-  selectItem(item: DropdownItem): void {
-    if (item.disabled || item.divider) return;
-    this.itemClicked.emit(item.id);
-    this.close();
+  /** The trigger's real control, or the wrapper when there is none. */
+  private control(): HTMLElement {
+    const wrapper = this.triggerRef().nativeElement;
+    return wrapper.querySelector<HTMLElement>(CONTROL) ?? wrapper;
   }
 
-  private close(): void {
-    if (!this.isOpen) return;
-    this.isOpen = false;
-    this.openChange.emit(false);
+  private inTrigger(event: Event): boolean {
+    return event.target instanceof Node && this.triggerRef().nativeElement.contains(event.target);
   }
 
-  getItemClasses(item: DropdownItem): string {
-    return [
-      'ath-dropdown__item',
-      item.variant === 'danger' ? 'ath-dropdown__item--danger' : '',
-      item.disabled ? 'ath-dropdown__item--disabled' : '',
-    ]
-      .filter(Boolean)
-      .join(' ');
-  }
-
-  /** Determine where to place the menu based on trigger position */
-  private computePlacement(): void {
-    const trigger = this.el.nativeElement as HTMLElement;
-    const rect = trigger.getBoundingClientRect();
-    const vh = window.innerHeight;
-    const vw = window.innerWidth;
-
-    // Vertical: if trigger is in the bottom 40% of viewport → open upward
-    this.placementY = rect.bottom > vh * 0.6 ? 'up' : 'down';
-
-    // Horizontal: respect explicit hint, otherwise auto-detect
-    if (this.align === 'left') {
-      this.placementX = 'left';
-    } else if (this.align === 'right') {
-      this.placementX = 'right';
+  private syncAria(open: boolean): void {
+    const wrapper = this.triggerRef().nativeElement;
+    const control = this.control();
+    if (control === wrapper) {
+      wrapper.setAttribute('role', 'button');
+      wrapper.tabIndex = 0;
     } else {
-      // auto: if trigger center is in the right half → anchor right
-      const center = rect.left + rect.width / 2;
-      this.placementX = center > vw / 2 ? 'right' : 'left';
+      wrapper.removeAttribute('role');
+      wrapper.removeAttribute('tabindex');
     }
-
-    this.cdr.markForCheck();
+    control.setAttribute('aria-haspopup', 'menu');
+    control.setAttribute('aria-expanded', String(open));
+    if (open) control.setAttribute('aria-controls', this.menu().panelId);
+    else control.removeAttribute('aria-controls');
   }
 }

@@ -28,7 +28,8 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/athene-webcomponents/tsconfig.spec.json",
-            "polyfills": ["zone.js", "zone.js/testing"]
+            "polyfills": ["zone.js", "zone.js/testing"],
+            "styles": ["projects/athene-webcomponents/src/lib/styles/main.scss"]
           }
         }
       }

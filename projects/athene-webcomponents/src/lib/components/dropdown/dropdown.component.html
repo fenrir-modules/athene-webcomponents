@@ -1,45 +1,33 @@
-<div class="ath-dropdown">
-  <div
-    class="ath-dropdown__trigger"
-    role="button"
-    tabindex="0"
-    aria-haspopup="menu"
-    [attr.aria-expanded]="isOpen"
-    (click)="toggle()"
-    (keydown)="onTriggerKeydown($event)"
-  >
-    <ng-content />
-  </div>
+<span #trigger class="ath-dropdown__trigger">
+  <ng-content />
+</span>
 
-  @if (isOpen) {
-    <div
-      #menu
-      class="ath-dropdown__menu"
-      role="menu"
-      [class.ath-dropdown__menu--left]="placementX === 'left'"
-      [class.ath-dropdown__menu--right]="placementX === 'right'"
-      [class.ath-dropdown__menu--down]="placementY === 'down'"
-      [class.ath-dropdown__menu--up]="placementY === 'up'"
-    >
-      @for (item of items; track item.id) {
-        @if (item.divider) {
-          <div class="ath-dropdown__divider"></div>
-        } @else {
-          <button
-            type="button"
-            [class]="getItemClasses(item)"
-            [disabled]="item.disabled"
-            [attr.title]="item.title || null"
-            (click)="selectItem(item)"
-            role="menuitem"
-          >
-            @if (item.icon) {
-              <lucide-icon [img]="item.icon" [size]="16" class="ath-dropdown__item-icon" />
-            }
-            <span>{{ item.label }}</span>
-          </button>
-        }
-      }
-    </div>
+<!-- ath-dropdown__menu: app code checks for an open dropdown by this class. -->
+<ath-menu
+  panelClass="ath-dropdown__menu"
+  [anchor]="trigger"
+  [align]="menuAlign()"
+  (openChange)="onOpenChange($event)"
+>
+  @for (item of items(); track item.id) {
+    @if (item.divider) {
+      <ath-menu-separator />
+    } @else {
+      <button
+        athMenuItem
+        role="menuitem"
+        class="ath-dropdown__item"
+        [class.ath-dropdown__item--danger]="item.variant === 'danger'"
+        [icon]="item.icon"
+        [variant]="item.variant ?? 'default'"
+        [disabled]="!!item.disabled"
+        [disabledReason]="item.title"
+        [tooltip]="item.title"
+        [shortcut]="item.shortcut ?? null"
+        (triggered)="itemClicked.emit(item.id)"
+      >
+        {{ item.label }}
+      </button>
+    }
   }
-</div>
+</ath-menu>

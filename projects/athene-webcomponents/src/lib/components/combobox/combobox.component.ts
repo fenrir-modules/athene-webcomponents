@@ -2,39 +2,29 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EventEmitter,
-  HostListener,
-  Input,
-  OnDestroy,
-  Output,
   TemplateRef,
-  ViewChild,
-  computed,
+  booleanAttribute,
   inject,
-  signal,
+  input,
+  model,
+  output,
+  viewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { floatPanel } from '../floating/floating';
-import { LucideAngularModule, ChevronDown, Check, Search, X } from 'lucide-angular';
-
-export interface ComboboxOption<T = string> {
-  value: T;
-  label: string;
-  /** Optional sub-label shown below the main label (e.g., email under name). */
-  sublabel?: string;
-  /** Optional icon-name (Lucide) or arbitrary string handled by `optionTpl`. */
-  icon?: string;
-  disabled?: boolean;
-  /** Free-form group label — items with the same group are grouped together. */
-  group?: string;
-}
+import { AthOptionPickerComponent } from '../listbox/option-picker.component';
+import type { ListboxOption, ListboxOptionContext } from '../listbox/listbox.component';
 
 /**
- * Searchable single-select dropdown. The foundation for UserPicker,
- * LabelPicker, ProjectPicker, AssigneePicker, etc.
+ * A combobox option. Same shape as `ListboxOption`: `icon` may be a Lucide
+ * icon (rendered) or a name your `optionTpl` resolves.
+ */
+export type ComboboxOption<T = string> = ListboxOption<T>;
+
+/**
+ * Searchable single-select dropdown: a preset on `ath-option-picker`
+ * (popover + listbox), kept for its established API. For multi-select,
+ * "create" rows or a custom anchor use `ath-option-picker` directly.
  *
- * For custom rendering pass an `optionTpl` template.
+ * For custom rendering pass an `optionTpl` template (`let-option`).
  *
  * @example
  * <ath-combobox
@@ -46,200 +36,60 @@ export interface ComboboxOption<T = string> {
 @Component({
   selector: 'ath-combobox',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [AthOptionPickerComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './combobox.component.html',
   styleUrl: './combobox.component.scss',
 })
-export class AthComboboxComponent<T = string> implements OnDestroy {
-  /**
-   * The open panel floats (`position: fixed`, kept inside the viewport), so
-   * a side panel's or dialog's overflow never cuts it off.
-   */
-  private unfloat: (() => void) | null = null;
-  @ViewChild('panel')
-  private set panelEl(ref: ElementRef<HTMLElement> | undefined) {
-    this.unfloat?.();
-    this.unfloat = null;
-    if (!ref) return;
-    const root = this.host.nativeElement as HTMLElement;
-    const anchor = root.querySelector<HTMLElement>('.ath-cb__trigger') ?? root;
-    this.unfloat = floatPanel(ref.nativeElement, anchor, { align: 'auto', matchWidth: !this.bare });
-  }
+export class AthComboboxComponent<T = string> {
+  protected readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
-  ngOnDestroy(): void {
-    this.unfloat?.();
-  }
+  readonly options = input<ComboboxOption<T>[]>([]);
+  /** The selected value. Two-way: `[(value)]`. */
+  readonly value = model<T | null>(null);
+  /** Trigger text without a value; defaults to `ATH_LABELS.pickerPlaceholder`. */
+  readonly placeholder = input<string | null>(null);
+  /** Search field placeholder; defaults to `ATH_LABELS.listboxSearch`. */
+  readonly searchPlaceholder = input<string | null>(null);
+  readonly disabled = input(false, { transform: booleanAttribute });
+  readonly clearable = input(false, { transform: booleanAttribute });
+  readonly loading = input(false, { transform: booleanAttribute });
 
-  private readonly host = inject(ElementRef<HTMLElement>);
-
-  @Input() options: ComboboxOption<T>[] = [];
-  @Input() value: T | null = null;
-  @Input() placeholder = 'Select…';
-  @Input() searchPlaceholder = 'Search';
-  @Input() disabled = false;
-  @Input() clearable = false;
-  @Input() loading = false;
-
-  /** Hide the trigger's button styling; render only the popup (controlled mode). */
-  @Input() bare = false;
+  /** Hide the trigger; render only the popup (controlled mode, see `openPanel()`). */
+  readonly bare = input(false, { transform: booleanAttribute });
 
   /** Optional custom template for each option (`<ng-template let-option>`). */
-  @Input() optionTpl: TemplateRef<unknown> | null = null;
-
-  @Output() valueChange = new EventEmitter<T | null>();
+  readonly optionTpl = input<TemplateRef<ListboxOptionContext<T>> | null>(null);
 
   /** Emits the search query when it changes (for async/server search). */
-  @Output() queryChange = new EventEmitter<string>();
+  readonly queryChange = output<string>();
+  readonly opened = output<void>();
+  readonly closed = output<void>();
 
-  @Output() opened = new EventEmitter<void>();
-  @Output() closed = new EventEmitter<void>();
-
-  @ViewChild('searchInput') private searchInput!: ElementRef<HTMLInputElement>;
-
-  protected readonly chevronIcon = ChevronDown;
-  protected readonly checkIcon = Check;
-  protected readonly searchIcon = Search;
-  protected readonly clearIcon = X;
-
-  protected readonly open = signal(false);
-  protected readonly query = signal('');
-  protected readonly highlighted = signal(0);
-
-  protected readonly filtered = computed<ComboboxOption<T>[]>(() => {
-    const q = this.query().trim().toLowerCase();
-    if (!q) return this.options;
-    return this.options.filter(
-      (o) => o.label.toLowerCase().includes(q) || (o.sublabel ?? '').toLowerCase().includes(q)
-    );
-  });
-
-  /** Result with `null` separators inserted between groups. */
-  protected readonly grouped = computed<(ComboboxOption<T> | { _group: string })[]>(() => {
-    const items = this.filtered();
-    if (!items.some((i) => i.group)) return items;
-
-    const byGroup = new Map<string, ComboboxOption<T>[]>();
-    const noGroup: ComboboxOption<T>[] = [];
-    for (const item of items) {
-      if (item.group) {
-        const arr = byGroup.get(item.group) ?? [];
-        arr.push(item);
-        byGroup.set(item.group, arr);
-      } else {
-        noGroup.push(item);
-      }
-    }
-
-    const result: (ComboboxOption<T> | { _group: string })[] = [];
-    for (const [group, list] of byGroup) {
-      result.push({ _group: group });
-      result.push(...list);
-    }
-    if (noGroup.length) {
-      if (byGroup.size > 0) result.push({ _group: 'Other' });
-      result.push(...noGroup);
-    }
-    return result;
-  });
-
-  protected readonly selectedOption = computed<ComboboxOption<T> | null>(
-    () => this.options.find((o) => o.value === this.value) ?? null
-  );
+  private readonly picker =
+    viewChild.required<AthOptionPickerComponent<T>>(AthOptionPickerComponent);
 
   toggle(): void {
-    if (this.disabled) return;
-    if (this.open()) {
-      this.close();
-    } else {
-      this.openPanel();
-    }
+    this.picker().toggle();
   }
 
   openPanel(): void {
-    if (this.disabled) return;
-    this.open.set(true);
-    this.query.set('');
-    this.highlighted.set(0);
-    this.opened.emit();
-    queueMicrotask(() => this.searchInput?.nativeElement.focus());
+    this.picker().show();
   }
 
   close(): void {
-    if (!this.open()) return;
-    this.open.set(false);
-    this.closed.emit();
+    this.picker().hide();
   }
 
   select(option: ComboboxOption<T>): void {
     if (option.disabled) return;
-    this.value = option.value;
-    this.valueChange.emit(option.value);
+    this.value.set(option.value);
     this.close();
   }
 
-  clearValue(event: MouseEvent): void {
-    event.stopPropagation();
-    this.value = null;
-    this.valueChange.emit(null);
-  }
-
-  onQueryInput(value: string): void {
-    this.query.set(value);
-    this.highlighted.set(0);
-    this.queryChange.emit(value);
-  }
-
-  isOption(item: ComboboxOption<T> | { _group: string }): item is ComboboxOption<T> {
-    return !('_group' in item);
-  }
-
-  isHighlighted(index: number, item: ComboboxOption<T> | { _group: string }): boolean {
-    if (!this.isOption(item)) return false;
-    const realIndex = this.filtered().indexOf(item);
-    return realIndex === this.highlighted();
-  }
-
-  trackByValue = (index: number, item: ComboboxOption<T> | { _group: string }): unknown => {
-    return this.isOption(item) ? item.value : `__group_${item._group}`;
-  };
-
-  // ---------- Keyboard navigation ----------
-
-  onSearchKey(event: KeyboardEvent): void {
-    const items = this.filtered();
-    if (items.length === 0) {
-      if (event.key === 'Escape') this.close();
-      return;
-    }
-
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault();
-        this.highlighted.update((i) => Math.min(i + 1, items.length - 1));
-        break;
-      case 'ArrowUp':
-        event.preventDefault();
-        this.highlighted.update((i) => Math.max(i - 1, 0));
-        break;
-      case 'Enter':
-        event.preventDefault();
-        this.select(items[this.highlighted()]);
-        break;
-      case 'Escape':
-        event.preventDefault();
-        this.close();
-        break;
-    }
-  }
-
-  // ---------- Click-outside ----------
-
-  @HostListener('document:mousedown', ['$event'])
-  onDocumentMouseDown(event: MouseEvent): void {
-    if (!this.open()) return;
-    if (!this.host.nativeElement.contains(event.target as Node)) {
-      this.close();
-    }
+  /** @deprecated The clear button is built in (`clearable`); call `value.set(null)`. */
+  clearValue(event?: Event): void {
+    event?.stopPropagation();
+    this.value.set(null);
   }
 }

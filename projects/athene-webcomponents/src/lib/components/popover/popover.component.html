@@ -1,0 +1,29 @@
+@if (open()) {
+  <div
+    #panel
+    class="ath-popover__panel"
+    [class]="panelClasses()"
+    [id]="panelId()"
+    [attr.role]="panelRole()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-labelledby]="ariaLabelledby()"
+    [attr.aria-modal]="trapFocus() && panelRole() === 'dialog' ? 'true' : null"
+    tabindex="-1"
+    [athFloating]="anchorElement()"
+    [align]="align()"
+    [side]="side()"
+    [offset]="offset()"
+    [matchWidth]="matchWidth()"
+    [maxHeight]="maxHeight()"
+    [arrow]="arrow() ? arrowEl : null"
+    (keydown)="onKeydown($event)"
+    (focusout)="onFocusOut($event)"
+  >
+    <span #arrowEl class="ath-popover__arrow" [hidden]="!arrow()" aria-hidden="true"></span>
+    @if (lazyContent(); as lazy) {
+      <ng-container [ngTemplateOutlet]="lazy.template" />
+    } @else {
+      <ng-content />
+    }
+  </div>
+}

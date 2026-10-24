@@ -1,43 +1,59 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AthSparklineComponent } from '../sparkline';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { AthKpiStripComponent, AthKpiTileComponent, type KpiDeltaDirection } from '../kpi-tile';
 
 /**
- * Stat card with label + value, optional trend arrow, optional delta badge,
- * optional sparkline.
+ * A single label/value card.
  *
- * For dashboard-style KPI tiles prefer `<ath-kpi-tile>`. This stays as the
- * simpler label/value/sub primitive.
+ * @deprecated One KPI API: use `ath-kpi-tile` inside `ath-kpi-strip`. This
+ * renders exactly that (a strip of one tile) and maps the old inputs:
+ * `subValue` → `note`, `sparkData` → `spark`, `trend` → a "↑"/"↓" delta.
+ * Removed in quality step 2.7.
  *
  * @example
- * <ath-stat-card label="Total Users" value="1,234" />
- * <ath-stat-card label="Active" value="89%" trend="up" />
- * <ath-stat-card label="Open" value="42" delta="+5" deltaDirection="up"
- *                [sparkData]="[10,12,15,18,22,28,30]" />
+ * <ath-stat-card label="Open" value="42" delta="+5" deltaDirection="up" />
  */
 @Component({
   selector: 'ath-stat-card',
   standalone: true,
-  imports: [CommonModule, AthSparklineComponent],
+  imports: [AthKpiStripComponent, AthKpiTileComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './stat-card.component.html',
-  styleUrl: './stat-card.component.scss',
+  template: `
+    <ath-kpi-strip [columns]="1">
+      <ath-kpi-tile
+        [label]="label()"
+        [value]="value()"
+        [delta]="shownDelta()"
+        [deltaDirection]="shownDirection()"
+        [note]="subValue() || null"
+        [spark]="sparkData()"
+        [sparkColor]="sparkColor()"
+      />
+    </ath-kpi-strip>
+  `,
+  styles: `
+    :host {
+      display: block;
+    }
+  `,
 })
 export class AthStatCardComponent {
-  @Input({ required: true }) label = '';
-  @Input({ required: true }) value: string | number = '';
-  @Input() subValue = '';
+  readonly label = input.required<string>();
+  readonly value = input<string | number>('');
+  readonly subValue = input('');
+  readonly trend = input<'up' | 'down' | null>(null);
+  readonly delta = input<string | null>(null);
+  readonly deltaDirection = input<KpiDeltaDirection | null>(null);
+  readonly sparkData = input<readonly number[] | null>(null);
+  readonly sparkColor = input<string | null>(null);
 
-  /** Quick up/down arrow. Use delta+deltaDirection for richer badges. */
-  @Input() trend: 'up' | 'down' | null = null;
+  protected readonly shownDelta = computed(() => {
+    const delta = this.delta();
+    if (delta != null) return delta;
+    const trend = this.trend();
+    return trend ? (trend === 'up' ? '↑' : '↓') : null;
+  });
 
-  /** Delta text (e.g., `+12`, `-3`). Displayed as colored badge. */
-  @Input() delta: string | null = null;
-
-  /** Color cue for the delta badge. */
-  @Input() deltaDirection: 'up' | 'down' | 'neutral' | null = null;
-
-  /** Optional sparkline data — min 2 points. */
-  @Input() sparkData: number[] | null = null;
-  @Input() sparkColor = 'var(--accent)';
+  protected readonly shownDirection = computed<KpiDeltaDirection | null>(
+    () => this.deltaDirection() ?? this.trend() ?? null
+  );
 }

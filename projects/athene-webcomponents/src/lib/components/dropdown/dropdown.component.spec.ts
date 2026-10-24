@@ -1,57 +1,138 @@
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { AthButtonComponent } from '../button/button.component';
 import { AthDropdownComponent, DropdownItem } from './dropdown.component';
 
-describe('AthDropdownComponent', () => {
-  let fixture: ComponentFixture<AthDropdownComponent>;
-  let component: AthDropdownComponent;
+const ITEMS: DropdownItem[] = [
+  { id: 'profile', label: 'Profile' },
+  { id: 'sep', label: '', divider: true },
+  { id: 'locked', label: 'Locked', disabled: true, title: 'Not allowed' },
+  { id: 'logout', label: 'Logout', variant: 'danger' },
+];
 
-  const items: DropdownItem[] = [
-    { id: 'profile', label: 'Profile' },
-    { id: 'logout', label: 'Logout', variant: 'danger' },
-  ];
+@Component({
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AthDropdownComponent, AthButtonComponent],
+  template: `
+    <ath-dropdown
+      class="with-button"
+      [items]="items"
+      align="right"
+      (itemClicked)="clicked.push($event)"
+      (openChange)="openLog.push($event)"
+    >
+      <ath-button variant="ghost">Actions</ath-button>
+    </ath-dropdown>
+    @if (plain()) {
+      <ath-dropdown class="plain" [items]="items">More</ath-dropdown>
+    }
+  `,
+})
+class DropdownHostComponent {
+  readonly items = ITEMS;
+  readonly plain = signal(true);
+  readonly clicked: string[] = [];
+  readonly openLog: boolean[] = [];
+}
+
+const wait = (): Promise<void> => new Promise((r) => setTimeout(r));
+
+describe('AthDropdownComponent', () => {
+  let fixture: ComponentFixture<DropdownHostComponent>;
+  let root: HTMLElement;
+  const q = <T extends HTMLElement = HTMLElement>(sel: string): T | null =>
+    root.querySelector<T>(sel);
+  const menu = (): HTMLElement | null => q('.ath-dropdown__menu');
+  const label = (el: Element | null): string =>
+    (el?.querySelector('.ath-menu-item__label')?.textContent ?? '').trim();
+
+  async function settle(): Promise<void> {
+    fixture.detectChanges();
+    await wait();
+    fixture.detectChanges();
+  }
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [AthDropdownComponent],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(AthDropdownComponent);
-    component = fixture.componentInstance;
-    component.items = items;
-    fixture.detectChanges();
+    fixture = TestBed.createComponent(DropdownHostComponent);
+    root = fixture.nativeElement as HTMLElement;
+    await settle();
   });
 
-  it('opens and closes when toggled', () => {
-    const trigger = fixture.nativeElement.querySelector('.ath-dropdown__trigger') as HTMLElement;
-    trigger.click();
-    fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('.ath-dropdown__menu')).not.toBeNull();
+  afterEach(() => fixture.destroy());
 
-    trigger.click();
-    fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('.ath-dropdown__menu')).toBeNull();
+  it('makes the projected button the menu button (one tab stop, no role=button wrapper)', () => {
+    const wrapper = q('.with-button .ath-dropdown__trigger')!;
+    const button = wrapper.querySelector('button')!;
+    expect(wrapper.getAttribute('role')).toBeNull();
+    expect(wrapper.hasAttribute('tabindex')).toBeFalse();
+    expect(button.getAttribute('aria-haspopup')).toBe('menu');
+    expect(button.getAttribute('aria-expanded')).toBe('false');
   });
 
-  it('emits clicked item id', () => {
-    const clicked = jasmine.createSpy('clicked');
-    component.itemClicked.subscribe(clicked);
+  it('opens and closes when toggled, focusing the first item', async () => {
+    const button = q('.with-button button')!;
+    button.focus();
+    button.click();
+    await settle();
+    expect(menu()).not.toBeNull();
+    expect(menu()!.getAttribute('role')).toBe('menu');
+    expect(button.getAttribute('aria-expanded')).toBe('true');
+    expect(label(document.activeElement)).toBe('Profile');
+    expect(fixture.componentInstance.openLog).toEqual([true]);
 
-    const trigger = fixture.nativeElement.querySelector('.ath-dropdown__trigger') as HTMLElement;
-    trigger.click();
-    fixture.detectChanges();
-
-    const firstItem = fixture.nativeElement.querySelector(
-      '.ath-dropdown__item'
-    ) as HTMLButtonElement;
-    firstItem.click();
-    expect(clicked).toHaveBeenCalledWith('profile');
+    button.click();
+    await settle();
+    expect(menu()).toBeNull();
+    expect(fixture.componentInstance.openLog).toEqual([true, false]);
   });
 
-  it('supports keyboard toggle from trigger', () => {
-    const trigger = fixture.nativeElement.querySelector('.ath-dropdown__trigger') as HTMLElement;
-    trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+  it('emits the clicked item id and closes', async () => {
+    q('.with-button button')!.click();
+    await settle();
+    const items = Array.from(root.querySelectorAll<HTMLElement>('[role=menuitem]'));
+    expect(items.map((i) => label(i))).toEqual(['Profile', 'Locked', 'Logout']);
+    expect(root.querySelector('[role=separator]')).not.toBeNull();
+    expect(items[1].getAttribute('aria-disabled')).toBe('true');
+    expect(items[1].getAttribute('title')).toBe('Not allowed');
+    items[1].click();
+    expect(fixture.componentInstance.clicked).toEqual([]);
+    items[2].click();
     fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('.ath-dropdown__menu')).not.toBeNull();
+    expect(fixture.componentInstance.clicked).toEqual(['logout']);
+    expect(menu()).toBeNull();
+  });
+
+  it('opens with ArrowDown and moves with the arrow keys', async () => {
+    const button = q('.with-button button')!;
+    button.focus();
+    button.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true })
+    );
+    await settle();
+    expect(label(document.activeElement)).toBe('Profile');
+    document.activeElement!.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true })
+    );
+    expect(label(document.activeElement)).toBe('Locked');
+    document.activeElement!.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })
+    );
+    fixture.detectChanges();
+    expect(menu()).toBeNull();
+    expect(document.activeElement).toBe(button);
+  });
+
+  it('gives a plain-text trigger a role=button wrapper that opens on Enter', async () => {
+    const wrapper = q('.plain .ath-dropdown__trigger')!;
+    expect(wrapper.getAttribute('role')).toBe('button');
+    expect(wrapper.tabIndex).toBe(0);
+    expect(wrapper.getAttribute('aria-haspopup')).toBe('menu');
+    wrapper.focus();
+    wrapper.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
+    );
+    await settle();
+    expect(q('.plain .ath-dropdown__menu')).not.toBeNull();
   });
 });

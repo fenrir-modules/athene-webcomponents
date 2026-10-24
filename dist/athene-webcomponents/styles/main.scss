@@ -9,6 +9,7 @@
 @use 'typography';
 @use 'animations';
 @use 'mixins';
+@use 'layout';
 
 // Global component styles (for directives that render outside component scope)
 @use 'tooltip';

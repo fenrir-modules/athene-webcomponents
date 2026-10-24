@@ -1,44 +1,115 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { RouterLink, type Params } from '@angular/router';
 import { AthSparklineComponent } from '../sparkline';
 
 export type KpiDeltaDirection = 'up' | 'down' | 'neutral';
 
+/** Tint of the trend line. */
+export type KpiTone = 'neutral' | 'amber' | 'blue' | 'green' | 'red';
+
+const SPARK_COLOR: Record<KpiTone, string> = {
+  neutral: 'var(--fg-3)',
+  amber: 'var(--amber)',
+  blue: 'var(--blue)',
+  green: 'var(--green)',
+  red: 'var(--red)',
+};
+
+/** A trend worth drawing: two samples or more, and not all zero. */
+export function hasKpiTrend(spark: readonly number[] | null | undefined): boolean {
+  return !!spark && spark.length >= 2 && spark.some((n) => n !== 0);
+}
+
 /**
- * Compact KPI widget for dashboards. Shows label + value + optional delta + sparkline.
+ * One cell of a KPI strip (`ath-kpi-strip`): label, figure, an optional
+ * delta badge, and a trend or a quiet note bottom-right. The tile carries
+ * no chrome of its own; the strip draws one card and hairlines between the
+ * tiles, so the row reads as one instrument panel.
+ *
+ * With `link` the whole cell is the hit area (a stretched link on the
+ * label), still drawn as part of the strip.
+ *
+ * Replaces the app's `metric-card`; `ath-stat-card` is a deprecated alias.
  *
  * @example
- * <ath-kpi-tile label="Assigned" [value]="3" delta="+1" deltaDirection="up"
- *               [sparkData]="[12,14,13,18,22,20,24]" sparkColor="var(--accent)" />
+ * <ath-kpi-strip>
+ *   <ath-kpi-tile label="Due today" [value]="1" [alert]="true" delta="+1" deltaDirection="down"
+ *                 deltaTitle="1 overdue" />
+ *   <ath-kpi-tile label="This week" [value]="3" tone="blue" [spark]="[1,2,2,3,2,4,3]" />
+ *   <ath-kpi-tile label="Story points" [value]="24" note="3 done" />
+ *   <ath-kpi-tile label="In review" [value]="2" link="/app/tickets" [linkParams]="{ status: 'review' }"
+ *                 linkLabel="Show in-review tickets" />
+ * </ath-kpi-strip>
  */
 @Component({
   selector: 'ath-kpi-tile',
   standalone: true,
-  imports: [CommonModule, AthSparklineComponent],
+  imports: [RouterLink, AthSparklineComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.data-tone]': 'tone()',
+    '[class.ath-kpi--link]': 'link() !== null',
+  },
   templateUrl: './kpi-tile.component.html',
   styleUrl: './kpi-tile.component.scss',
 })
 export class AthKpiTileComponent {
-  @Input({ required: true }) label!: string;
-  @Input({ required: true }) value!: number | string;
+  readonly label = input.required<string>();
+  readonly value = input<number | string | null | undefined>(0);
 
-  /** Free-form delta text (e.g., `+12`, `-2`, ` 0`). */
-  @Input() delta: string | null = null;
+  /** Pre-formatted delta ("+1", "−2"); `null` hides the badge. */
+  readonly delta = input<string | null | undefined>(null);
+  readonly deltaDirection = input<KpiDeltaDirection | null | undefined>(null);
+  /** Long form of a compact delta ("+1" → "1 overdue"): tooltip and accessible name. */
+  readonly deltaTitle = input<string | null | undefined>(null);
 
-  /** Influences color of the delta badge. */
-  @Input() deltaDirection: KpiDeltaDirection | null = null;
+  /** Tints the trend line. */
+  readonly tone = input<KpiTone>('neutral');
+  /** Trend samples; fewer than two, or all zero, draw nothing. */
+  readonly spark = input<readonly number[] | null | undefined>(null);
+  /** @deprecated Use `spark`. */
+  readonly sparkData = input<readonly number[] | null | undefined>(null);
+  /** Overrides the tone's trend colour. */
+  readonly sparkColor = input<string | null>(null);
 
-  /** Optional sparkline data — at least 2 points. */
-  @Input() sparkData: number[] | null = null;
+  /** A small quiet note bottom-right ("3 done"), drawn instead of a trend. */
+  readonly note = input<string | null | undefined>(null);
+  readonly noteTitle = input<string | null | undefined>(null);
 
-  /** Sparkline color (any CSS color). */
-  @Input() sparkColor = 'var(--accent)';
+  /** The figure in red: something needs attention now. */
+  readonly alert = input(false);
+  /** Nothing to count: a quiet figure (pass "–" for a zero), no trend. */
+  readonly muted = input(false);
 
-  /** Hides the value's color emphasis (useful for empty/loading state). */
-  @Input() muted = false;
+  /** Where the tile leads (router link). */
+  readonly link = input<string | readonly unknown[] | null>(null);
+  readonly linkParams = input<Params | null>(null);
+  /** Accessible name of the link; defaults to the label. */
+  readonly linkLabel = input<string | null>(null);
 
-  @HostBinding('attr.data-muted') get hostMuted(): string | null {
-    return this.muted ? 'true' : null;
-  }
+  protected readonly samples = computed(() => this.spark() ?? this.sparkData() ?? null);
+  protected readonly showTrend = computed(() => !this.muted() && hasKpiTrend(this.samples()));
+  protected readonly trendColor = computed(() => this.sparkColor() ?? SPARK_COLOR[this.tone()]);
+  protected readonly routerLink = computed(() => this.link() as string | unknown[]);
+}
+
+/**
+ * The card around a row of `ath-kpi-tile`s: one border, radius and shadow,
+ * hairlines between the tiles, `columns` equal columns (default: one per
+ * tile up to 4); two columns when the strip is narrower than 920px.
+ *
+ * @example
+ * <ath-kpi-strip [columns]="4"> <ath-kpi-tile … /> … </ath-kpi-strip>
+ */
+@Component({
+  selector: 'ath-kpi-strip',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { role: 'group' },
+  template: `<div class="ath-kpi-strip" [style.--_kpi-cols]="columns()"><ng-content /></div>`,
+  styleUrl: './kpi-strip.component.scss',
+})
+export class AthKpiStripComponent {
+  /** Number of columns on wide screens. */
+  readonly columns = input(4);
 }

@@ -1,20 +1,32 @@
+// One cell of a KPI strip. No border, radius or shadow of its own: the
+// strip (kpi-strip.component.scss) owns those, the tiles are separated by
+// a hairline on their left edge.
+
 :host {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 10px;
-  padding: 14px 16px;
+  min-width: 0;
+  padding: 11px var(--space-4);
+  border-left: 1px solid var(--border-faint);
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow-1);
-  min-height: 80px;
-  transition:
-    border-color var(--t-fast),
-    box-shadow var(--t-fast);
+}
 
-  &:hover {
-    border-color: var(--border-strong);
+// The strip's outer border already closes the left edge.
+:host(:first-child) {
+  border-left: none;
+}
+
+// Inside a narrow strip (two columns): no hairline at the row start, one
+// above the second row.
+@container ath-kpi-strip (max-width: 920px) {
+  :host(:nth-child(odd)) {
+    border-left: none;
+  }
+
+  :host(:nth-child(n + 3)) {
+    border-top: 1px solid var(--border-faint);
   }
 }
 
@@ -22,40 +34,42 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .ath-kpi__label {
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 500;
+  overflow: hidden;
   color: var(--fg-3);
-  letter-spacing: -0.005em;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: -0.003em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ath-kpi__delta {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--font-mono);
-  font-feature-settings: 'tnum';
-  font-size: 11px;
-  font-weight: 500;
-  padding: 1px 6px;
+  // Above a linked tile's stretched hit area, so its tooltip still shows.
+  position: relative;
+  z-index: var(--z-raised);
+  padding: 0 var(--space-1);
   border-radius: var(--r-xs);
-  letter-spacing: 0;
-  line-height: 1.5;
+  background: var(--bg-2);
+  color: var(--fg-3);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-feature-settings: 'tnum';
+  font-weight: var(--weight-medium);
+  line-height: 14px;
+  white-space: nowrap;
 
   &[data-direction='up'] {
+    background: color-mix(in srgb, var(--green) 14%, transparent);
     color: var(--green);
-    background: var(--green-tint);
   }
+
   &[data-direction='down'] {
+    background: color-mix(in srgb, var(--red) 14%, transparent);
     color: var(--red);
-    background: var(--red-tint);
-  }
-  &[data-direction='neutral'] {
-    color: var(--fg-3);
-    background: var(--bg-2);
   }
 }
 
@@ -64,32 +78,71 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 10px;
-  min-height: 28px;
 }
 
 .ath-kpi__value {
-  font-family: var(--font-sans);
-  font-size: 24px;
-  font-weight: 600;
   color: var(--fg);
-  line-height: 1;
+  font-family: var(--font-sans);
+  font-size: var(--text-2xl);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-semibold);
   letter-spacing: -0.02em;
-  font-feature-settings: 'tnum';
+  line-height: 1;
+
+  &--alert {
+    color: var(--red);
+  }
+
+  // Nothing to count yet: a quiet dash, not a confident zero.
+  &--muted {
+    color: var(--fg-4);
+    font-weight: var(--weight-medium);
+  }
 }
 
-.ath-kpi__spark {
-  flex-shrink: 0;
-}
-
-:host([data-muted='true']) .ath-kpi__value {
+.ath-kpi__note {
   color: var(--fg-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 22px;
+  white-space: nowrap;
 }
 
-body.compact :host {
-  padding: 10px 12px;
-  min-height: 64px;
+// 70 × 22: the sparkline's footprint, so tiles keep their mass without a trend.
+.ath-kpi__spark-slot {
+  display: inline-block;
+  width: 70px;
+  height: 22px;
+}
 
-  .ath-kpi__value {
-    font-size: 20px;
+// ── Linked tile: the label's ::after stretches over the whole cell ──
+:host(.ath-kpi--link) {
+  position: relative;
+  transition: background var(--t-fast);
+
+  &:hover {
+    background: var(--bg-2);
+  }
+
+  &:has(.ath-kpi__link:focus-visible) {
+    box-shadow: inset 0 0 0 2px var(--focus-ring-color);
+  }
+}
+
+.ath-kpi__link {
+  text-decoration: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  :host(.ath-kpi--link:hover) & {
+    color: var(--fg);
   }
 }

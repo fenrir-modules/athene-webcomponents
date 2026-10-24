@@ -1,0 +1,72 @@
+@if (trigger() === 'button') {
+  <div
+    class="ath-picker__control"
+    [class.ath-picker__control--open]="open()"
+    [class.ath-picker__control--clearable]="clearable() && hasValue() && !disabled()"
+  >
+    @if (ariaLabel()) {
+      <span class="ath-picker__label" [id]="labelId" hidden>{{ ariaLabel() }}</span>
+    }
+    <button
+      #triggerBtn
+      type="button"
+      class="ath-picker__trigger"
+      [disabled]="disabled()"
+      [attr.aria-labelledby]="ariaLabel() ? labelId + ' ' + valueId : null"
+      [athPopoverTrigger]="pop"
+      [popupType]="searchable() ? 'dialog' : 'listbox'"
+    >
+      <span
+        class="ath-picker__value"
+        [id]="valueId"
+        [class.ath-picker__value--placeholder]="!hasValue()"
+        >{{ summary() }}</span
+      >
+      <lucide-icon class="ath-picker__chevron" [img]="chevronIcon" [size]="14" aria-hidden="true" />
+    </button>
+    @if (clearable() && hasValue() && !disabled()) {
+      <button
+        type="button"
+        class="ath-picker__clear"
+        [attr.aria-label]="labels.pickerClear()"
+        (click)="clear()"
+      >
+        <lucide-icon [img]="clearIcon" [size]="12" aria-hidden="true" />
+      </button>
+    }
+  </div>
+}
+
+<ath-popover
+  #pop
+  [(open)]="open"
+  [anchor]="popupAnchor()"
+  [size]="size()"
+  padding="sm"
+  [align]="align()"
+  [matchWidth]="matchWidth()"
+  [panelRole]="searchable() ? 'dialog' : null"
+  [ariaLabel]="ariaLabel() ?? placeholderText()"
+  (opened)="onOpened()"
+  (closed)="closed.emit($event)"
+>
+  <ath-listbox
+    [options]="options()"
+    [multiple]="multiple()"
+    [(value)]="value"
+    [(values)]="values"
+    [(query)]="query"
+    [searchable]="searchable()"
+    [localFilter]="localFilter()"
+    [creatable]="creatable()"
+    [loading]="loading()"
+    [searchPlaceholder]="searchPlaceholder()"
+    [emptyLabel]="emptyLabel()"
+    [optionTemplate]="optionTemplate()"
+    [compareWith]="compareWith()"
+    [maxHeight]="maxHeight()"
+    [ariaLabel]="ariaLabel() ?? placeholderText()"
+    (picked)="onPicked($event)"
+    (create)="create.emit($event)"
+  />
+</ath-popover>

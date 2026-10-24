@@ -1,0 +1,261 @@
+// ===========================================
+// MARKDOWN CONTENT TYPOGRAPHY
+// ===========================================
+// The look of rendered Markdown, shared by `ath-markdown` (read-only) and
+// any editor that shows the same document (the app's block editor), so
+// reading and writing look the same. A mixin rather than a global class:
+// Angular removes a component's global styles with its last instance, and
+// an editor must not depend on a renderer being on screen.
+//
+//   @use '@athene/webcomponents/styles/markdown' as md;
+//   .my-editor { @include md.content; }
+//
+// The renderer keeps headings below the page's own title in the outline
+// (`#` → h3.ath-md__h1); an editor may use h1–h3 directly.
+
+@mixin content {
+  font-size: inherit;
+  line-height: 1.6;
+  color: inherit;
+  overflow-wrap: anywhere;
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+  p,
+  ul,
+  ol,
+  blockquote,
+  pre {
+    margin: 0 0 0.7em;
+  }
+
+  // Headings at content sizes. The renderer keeps them below the page's
+  // own title in the outline (`#` → h3.ath-md__h1); the editor uses h1–h3.
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 1.1em 0 0.35em;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.005em;
+    color: var(--fg);
+  }
+
+  h1,
+  .ath-md__h1 {
+    font-size: var(--text-2xl);
+    letter-spacing: -0.01em;
+  }
+
+  h2,
+  .ath-md__h2 {
+    font-size: var(--text-xl);
+  }
+
+  h3,
+  h4,
+  h5,
+  h6,
+  .ath-md__h3 {
+    font-size: 15px;
+  }
+
+  // Explicit, because the app's reset strips list markers everywhere.
+  ul,
+  ol {
+    padding-left: 1.4em;
+  }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  li {
+    display: list-item;
+  }
+
+  li + li {
+    margin-top: 0.2em;
+  }
+
+  li > ul,
+  li > ol {
+    margin: 0.2em 0 0;
+  }
+
+  // The editor wraps list text in paragraphs; keep its lists as tight.
+  li > p,
+  li > div > p {
+    margin: 0;
+  }
+
+  // Task lists (read-only): a box, then the text.
+  .ath-md__tasks {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .ath-md__task {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .ath-md__box {
+    flex: 0 0 auto;
+    width: 15px;
+    height: 15px;
+    margin-top: calc((1.6em - 15px) / 2);
+    border: 1.5px solid var(--border-strong);
+    border-radius: 4px;
+    background: var(--surface);
+  }
+
+  .ath-md__task--done {
+    > .ath-md__box {
+      border-color: var(--ink);
+      position: relative;
+      background: var(--ink);
+
+      // The tick, drawn in the page colour so it inverts with the theme.
+      &::after {
+        content: '';
+        position: absolute;
+        left: 4px;
+        top: 1px;
+        width: 4px;
+        height: 8px;
+        border: solid var(--surface);
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+
+    > .ath-md__task-body {
+      color: var(--fg-3);
+      text-decoration: line-through;
+      text-decoration-color: var(--border-strong);
+    }
+  }
+
+  .ath-md__task-body {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  // Tables: hairline grid, a quiet header row; wide ones scroll sideways.
+  .ath-md__table {
+    margin: 0 0 0.8em;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.93em;
+  }
+
+  th,
+  td {
+    min-width: 60px;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+
+    > p {
+      margin: 0;
+    }
+  }
+
+  th {
+    background: var(--table-head-bg);
+    color: var(--fg-2);
+    font-weight: 600;
+  }
+
+  .ath-md__center {
+    text-align: center;
+  }
+
+  .ath-md__right {
+    text-align: right;
+  }
+
+  strong {
+    font-weight: 600;
+    color: var(--fg);
+  }
+
+  del {
+    color: var(--fg-3);
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    text-underline-offset: 2px;
+
+    &:hover {
+      text-decoration-color: var(--accent);
+    }
+  }
+
+  code {
+    padding: 0.1em 0.35em;
+    border-radius: var(--r-xs);
+    background: var(--surface-3);
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+  }
+
+  pre {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    background: var(--bg-1);
+    overflow-x: auto;
+
+    code {
+      padding: 0;
+      background: none;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+  }
+
+  blockquote {
+    padding: 0.1em 0 0.1em 0.9em;
+    border-left: 3px solid var(--border-strong);
+    color: var(--fg-2);
+  }
+
+  hr {
+    height: 1px;
+    margin: 1em 0;
+    border: 0;
+    background: var(--border);
+  }
+
+  .ath-md__mention {
+    padding: 0 4px;
+    border-radius: var(--r-xs);
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+}

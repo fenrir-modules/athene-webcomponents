@@ -1,4 +1,7 @@
-import { EventEmitter, OnDestroy } from '@angular/core';
+import { AfterViewInit } from '@angular/core';
+import type { AthIconData } from '../floating/icon';
+import type { FloatingAlign } from '../floating/floating';
+import { AthMenuComponent } from '../menu/menu.component';
 import * as i0 from "@angular/core";
 /**
  * Dropdown menu item
@@ -6,12 +9,15 @@ import * as i0 from "@angular/core";
 export interface DropdownItem {
     id: string;
     label: string;
-    icon?: any;
+    /** A Lucide icon (`import { Pencil } from 'lucide-angular'`). */
+    icon?: AthIconData;
     variant?: 'default' | 'danger';
     disabled?: boolean;
     divider?: boolean;
-    /** A tooltip — e.g. why a disabled item cannot be chosen. */
+    /** A tooltip — e.g. why a disabled item cannot be chosen (also read by screen readers). */
     title?: string;
+    /** Shortcut hint at the end of the item, e.g. `⌘E`. */
+    shortcut?: string;
 }
 /**
  * Horizontal alignment hint.
@@ -19,22 +25,23 @@ export interface DropdownItem {
  */
 export type DropdownAlign = 'left' | 'right' | 'auto';
 /**
- * Athene Dropdown Component
+ * Athene Dropdown: an action menu from a flat `items` list. A preset on
+ * `ath-menu` (keyboard, focus and ARIA come from there); for custom rows use
+ * `ath-menu` + `athMenuItem` directly.
  *
- * Smart-positioning action menu.
- * Automatically opens upward/downward and left/right depending
- * on where the trigger sits in the viewport.
+ * The projected content is the trigger. When it is (or contains) a button,
+ * that button is the menu button: one tab stop, with `aria-haspopup`,
+ * `aria-expanded` and `aria-controls` on it. Plain content (text, an icon)
+ * gets a `role="button"` wrapper instead.
  *
  * @example
  * <ath-dropdown [items]="menuItems" (itemClicked)="onAction($event)">
  *   <ath-button variant="ghost">Actions</ath-button>
  * </ath-dropdown>
  */
-export declare class AthDropdownComponent implements OnDestroy {
-    private readonly el;
-    private readonly cdr;
+export declare class AthDropdownComponent implements AfterViewInit {
     /** Menu items */
-    items: DropdownItem[];
+    readonly items: import("@angular/core").InputSignal<DropdownItem[]>;
     /**
      * Horizontal alignment hint.
      * - `'left'`  – menu anchored to the left edge of trigger
@@ -43,30 +50,29 @@ export declare class AthDropdownComponent implements OnDestroy {
      *
      * Vertical direction is always auto-detected.
      */
-    align: DropdownAlign;
+    readonly align: import("@angular/core").InputSignal<DropdownAlign>;
     /** Item click event */
-    itemClicked: EventEmitter<string>;
+    readonly itemClicked: import("@angular/core").OutputEmitterRef<string>;
     /** Emits `true` when the menu opens, `false` when it closes. */
-    openChange: EventEmitter<boolean>;
-    protected isOpen: boolean;
-    /**
-     * The open menu floats (`position: fixed`, kept inside the viewport), so a
-     * side panel's or table's overflow never cuts it off.
-     */
-    private unfloat;
-    private set menuEl(value);
-    ngOnDestroy(): void;
-    protected placementX: 'left' | 'right';
-    protected placementY: 'down' | 'up';
-    onDocumentClick(event: MouseEvent): void;
-    onEscapeKey(): void;
+    readonly openChange: import("@angular/core").OutputEmitterRef<boolean>;
+    protected readonly menuAlign: () => FloatingAlign;
+    protected readonly menu: import("@angular/core").Signal<AthMenuComponent>;
+    private readonly triggerRef;
+    private readonly menuQuery;
+    private viewReady;
+    constructor();
+    ngAfterViewInit(): void;
+    /** Opens or closes the menu (focus goes to the first item when opening). */
     toggle(): void;
-    onTriggerKeydown(event: KeyboardEvent): void;
+    /** Emits the item's id, as a click on it does. */
     selectItem(item: DropdownItem): void;
-    private close;
-    getItemClasses(item: DropdownItem): string;
-    /** Determine where to place the menu based on trigger position */
-    private computePlacement;
+    protected onOpenChange(open: boolean): void;
+    protected onHostClick(event: MouseEvent): void;
+    protected onHostKeydown(event: KeyboardEvent): void;
+    /** The trigger's real control, or the wrapper when there is none. */
+    private control;
+    private inTrigger;
+    private syncAria;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthDropdownComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthDropdownComponent, "ath-dropdown", never, { "items": { "alias": "items"; "required": false; }; "align": { "alias": "align"; "required": false; }; }, { "itemClicked": "itemClicked"; "openChange": "openChange"; }, never, ["*"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthDropdownComponent, "ath-dropdown", never, { "items": { "alias": "items"; "required": false; "isSignal": true; }; "align": { "alias": "align"; "required": false; "isSignal": true; }; }, { "itemClicked": "itemClicked"; "openChange": "openChange"; }, never, ["*"], true, never>;
 }

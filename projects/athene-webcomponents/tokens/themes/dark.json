@@ -36,6 +36,9 @@
       "selected": {
         "$value": "#ffffff0d",
         "$description": "Selected row tint"
+      },
+      "scrim": {
+        "$value": "#000000b3"
       }
     },
     "border": {

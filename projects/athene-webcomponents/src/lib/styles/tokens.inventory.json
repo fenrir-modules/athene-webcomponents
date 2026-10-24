@@ -46,6 +46,11 @@
       "type": "color"
     },
     {
+      "name": "--scrim",
+      "path": "color.surface.scrim",
+      "type": "color"
+    },
+    {
       "name": "--border",
       "path": "color.border.border",
       "type": "color"
@@ -546,6 +551,36 @@
       "type": "color"
     },
     {
+      "name": "--due-overdue",
+      "path": "color.due.due-overdue",
+      "type": "color"
+    },
+    {
+      "name": "--due-today",
+      "path": "color.due.due-today",
+      "type": "color"
+    },
+    {
+      "name": "--due-soon",
+      "path": "color.due.due-soon",
+      "type": "color"
+    },
+    {
+      "name": "--due-later",
+      "path": "color.due.due-later",
+      "type": "color"
+    },
+    {
+      "name": "--due-none",
+      "path": "color.due.due-none",
+      "type": "color"
+    },
+    {
+      "name": "--chip-type-fg",
+      "path": "color.chip.chip-type-fg",
+      "type": "color"
+    },
+    {
       "name": "--deco-mix",
       "path": "color.deco.deco-mix",
       "type": null
@@ -786,6 +821,16 @@
       "type": "dimension"
     },
     {
+      "name": "--content-pad-bottom",
+      "path": "density.page.content-pad-bottom",
+      "type": "dimension"
+    },
+    {
+      "name": "--page-max-w",
+      "path": "density.page.page-max-w",
+      "type": "dimension"
+    },
+    {
       "name": "--control-h-xs",
       "path": "density.control.control-h-xs",
       "type": "dimension"
@@ -888,6 +933,46 @@
     {
       "name": "--avatar-sm",
       "path": "size.avatar.avatar-sm",
+      "type": "dimension"
+    },
+    {
+      "name": "--avatar-md",
+      "path": "size.avatar.avatar-md",
+      "type": "dimension"
+    },
+    {
+      "name": "--avatar-lg",
+      "path": "size.avatar.avatar-lg",
+      "type": "dimension"
+    },
+    {
+      "name": "--avatar-xl",
+      "path": "size.avatar.avatar-xl",
+      "type": "dimension"
+    },
+    {
+      "name": "--avatar-font-xs",
+      "path": "size.avatar.avatar-font-xs",
+      "type": "dimension"
+    },
+    {
+      "name": "--avatar-font-sm",
+      "path": "size.avatar.avatar-font-sm",
+      "type": "dimension"
+    },
+    {
+      "name": "--avatar-font-md",
+      "path": "size.avatar.avatar-font-md",
+      "type": "dimension"
+    },
+    {
+      "name": "--avatar-font-lg",
+      "path": "size.avatar.avatar-font-lg",
+      "type": "dimension"
+    },
+    {
+      "name": "--avatar-font-xl",
+      "path": "size.avatar.avatar-font-xl",
       "type": "dimension"
     },
     {

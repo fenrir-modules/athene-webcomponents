@@ -1,33 +1,65 @@
-/** Which edge of the anchor a floating panel lines up with. */
+/** Which edge of the anchor a floating panel lines up with (`start` follows `dir`). */
 export type FloatingAlign = 'start' | 'end' | 'auto';
+
+/** The side of the anchor a panel prefers; it flips when the other side has more room. */
+export type FloatingSide = 'bottom' | 'top';
 
 export interface FloatingOptions {
   align?: FloatingAlign;
-  /** Gap between anchor and panel, in px. */
+  /** Preferred side; default `bottom`. */
+  side?: FloatingSide;
+  /** Gap between anchor and panel, in px. Default 4. */
   offset?: number;
   /** At least as wide as the anchor. */
   matchWidth?: boolean;
+  /** Upper bound for the panel's height in px; the viewport caps it anyway. */
+  maxHeight?: number | null;
+  /**
+   * Promote the panel into the browser's top layer (`popover="manual"`), so no
+   * ancestor's `overflow`, `transform` or `z-index` can clip or cover it. Default
+   * true; without Popover API support the panel stays `position: fixed` with
+   * `z-index: var(--z-popover)`.
+   */
+  topLayer?: boolean;
+  /** An arrow element inside the panel; its `left` is set to point at the anchor's centre. */
+  arrow?: HTMLElement | null;
+}
+
+/** Stops following when called; `update()` re-measures right away. */
+export interface FloatingCleanup {
+  (): void;
+  update(): void;
 }
 
 /** Space kept between a floating panel and the viewport's edges. */
 const MARGIN = 8;
+/** Below this much room a side is not worth capping to; the panel flips or overlaps. */
+const MIN_ROOM = 120;
+/** An arrow stays this far from the panel's corners. */
+const ARROW_INSET = 12;
 
 /**
- * Pins a menu or popover to its anchor as a `position: fixed` layer, so an
- * `overflow: hidden/auto` ancestor (a side panel, a dialog body, a table
- * scroller) can never clip it, and keeps it inside the viewport: below the
- * anchor when it fits, above when there is more room there, shifted
- * sideways to stay on screen, height-capped (scrolling inside) when
- * neither side has room. Follows scrolls, resizes and its own size.
+ * The one positioning engine of the library (menus, listboxes, popovers,
+ * pickers; the `athFloating` directive wraps it).
  *
- * The panel stays where the template rendered it; only its box moves.
- * Returns the function that stops following.
+ * Pins `panel` to `anchor` and keeps it inside the viewport: on the preferred
+ * side when it fits, on the other side when that has more room, shifted
+ * sideways to stay on screen, height-capped (scrolling inside) when neither
+ * side has room for all of it. Follows scrolls in any container, viewport
+ * resizes, and size changes of the panel and the anchor.
+ *
+ * The panel stays where the template rendered it (focus order, event
+ * bubbling and "click outside" checks keep working). It is promoted into the
+ * top layer, or, without Popover API support, made `position: fixed` with a
+ * correction for transformed ancestors that would otherwise move a fixed box.
+ *
+ * Writes `data-placement="bottom|top"` on the panel for side-dependent styles.
  */
 export function floatPanel(
   panel: HTMLElement,
   anchor: HTMLElement,
   options: FloatingOptions = {}
-): () => void {
+): FloatingCleanup {
   const style = panel.style;
   style.position = 'fixed';
   style.top = '0';
@@ -36,66 +68,143 @@ export function floatPanel(
   style.bottom = 'auto';
   style.margin = '0';
   style.zIndex = 'var(--z-popover)';
+  // Measured before it is shown, so it never flashes at the wrong place.
   style.visibility = 'hidden';
+  panel.setAttribute('data-ath-floating', '');
+
+  const inTopLayer = (options.topLayer ?? true) && promote(panel);
 
   let frame = 0;
   const place = (): void => {
-    if (!anchor.isConnected) return;
+    if (!anchor.isConnected || !panel.isConnected) return;
     const a = anchor.getBoundingClientRect();
     const vw = document.documentElement.clientWidth;
     const vh = window.innerHeight;
     const gap = options.offset ?? 4;
 
     if (options.matchWidth) style.minWidth = `${Math.round(a.width)}px`;
+    // Its natural height, without an earlier cap.
     style.maxHeight = '';
+    style.overflowY = '';
     const width = Math.min(panel.offsetWidth, vw - MARGIN * 2);
     const natural = panel.offsetHeight;
 
     const below = vh - a.bottom - gap - MARGIN;
     const above = a.top - gap - MARGIN;
-    const down = natural <= below || below >= above;
-    const room = Math.max(down ? below : above, 120);
+    const down =
+      options.side === 'top'
+        ? !(natural <= above || above >= below)
+        : natural <= below || below >= above;
+    let room = Math.max(down ? below : above, MIN_ROOM);
+    if (options.maxHeight) room = Math.min(room, options.maxHeight);
     const height = Math.min(natural, room);
     if (natural > room) {
       style.maxHeight = `${Math.floor(room)}px`;
       style.overflowY = 'auto';
     }
 
+    const rtl = getComputedStyle(anchor).direction === 'rtl';
+    const leftEdge = a.left;
+    const rightEdge = a.right - width;
+    const fromStart = rtl ? rightEdge : leftEdge;
+    const fromEnd = rtl ? leftEdge : rightEdge;
+    const fits = (x: number): boolean => x >= MARGIN && x + width <= vw - MARGIN;
     const align = options.align ?? 'start';
-    const fromEnd = a.right - width;
     let left =
-      align === 'end'
-        ? fromEnd
-        : align === 'auto' && a.left + width > vw - MARGIN
-          ? fromEnd
-          : a.left;
+      align === 'end' ? fromEnd : align === 'auto' && !fits(fromStart) ? fromEnd : fromStart;
     left = Math.max(MARGIN, Math.min(left, vw - width - MARGIN));
-    const top = down ? a.bottom + gap : a.top - gap - height;
+    const top = Math.max(MARGIN, down ? a.bottom + gap : a.top - gap - height);
 
-    const origin = fixedOrigin(panel);
+    const origin = inTopLayer ? { x: 0, y: 0 } : fixedOrigin(panel);
     style.left = `${Math.round(left - origin.x)}px`;
-    style.top = `${Math.round(Math.max(MARGIN, top) - origin.y)}px`;
+    style.top = `${Math.round(top - origin.y)}px`;
     style.maxWidth = `${vw - MARGIN * 2}px`;
     style.visibility = '';
     panel.dataset['placement'] = down ? 'bottom' : 'top';
+
+    if (options.arrow) {
+      const x = a.left + a.width / 2 - left;
+      const clamped = Math.max(ARROW_INSET, Math.min(x, width - ARROW_INSET));
+      options.arrow.style.left = `${Math.round(clamped)}px`;
+    }
   };
-  const schedule = (): void => {
+  const schedule = (event?: Event): void => {
+    // Scrolling inside the panel itself does not move it.
+    if (event?.type === 'scroll' && event.target instanceof Node && panel.contains(event.target)) {
+      return;
+    }
     cancelAnimationFrame(frame);
     frame = requestAnimationFrame(place);
   };
 
   window.addEventListener('resize', schedule);
+  // Capture: a scroll in any container moves the anchor.
   document.addEventListener('scroll', schedule, true);
-  const resize = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
+  const resize =
+    typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => schedule());
   resize?.observe(panel);
+  resize?.observe(anchor);
   place();
 
-  return () => {
+  const stop = (): void => {
     cancelAnimationFrame(frame);
     window.removeEventListener('resize', schedule);
     document.removeEventListener('scroll', schedule, true);
     resize?.disconnect();
+    if (inTopLayer) demote(panel);
   };
+  return Object.assign(stop, { update: place });
+}
+
+/** Whether this browser has the Popover API (top layer for non-modal panels). */
+export function supportsTopLayer(): boolean {
+  return typeof HTMLElement !== 'undefined' && 'showPopover' in HTMLElement.prototype;
+}
+
+function promote(panel: HTMLElement): boolean {
+  if (!supportsTopLayer() || !panel.isConnected) return false;
+  installTopLayerStyles();
+  if (!panel.hasAttribute('popover')) panel.setAttribute('popover', 'manual');
+  try {
+    if (!panel.matches(':popover-open')) panel.showPopover();
+    return true;
+  } catch {
+    panel.removeAttribute('popover');
+    return false;
+  }
+}
+
+function demote(panel: HTMLElement): void {
+  try {
+    if (panel.matches(':popover-open')) panel.hidePopover();
+  } catch {
+    // Already gone from the document.
+  }
+}
+
+/**
+ * `[popover]` brings UA styles (border, padding, canvas colours, centring).
+ * This resets them at zero specificity, so any component style still wins.
+ */
+let baseStylesInstalled = false;
+const BASE_STYLES =
+  ':where([data-ath-floating][popover],[data-ath-top-layer][popover]){inset:auto;margin:0;' +
+  'border:0;padding:0;' +
+  'background:none;color:inherit;overflow:visible}';
+
+/** @internal Installs the reset once; used by `floatPanel` and `AthOverlayStack`. */
+export function installTopLayerStyles(): void {
+  if (baseStylesInstalled) return;
+  baseStylesInstalled = true;
+  try {
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(BASE_STYLES);
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+  } catch {
+    const el = document.createElement('style');
+    el.textContent = BASE_STYLES;
+    document.head.appendChild(el);
+  }
 }
 
 /**

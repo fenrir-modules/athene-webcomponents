@@ -1,49 +1,92 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { injectAthLabels } from '../../i18n/labels';
 
 /**
- * Skeleton variant types
- */
-export type SkeletonVariant = 'text' | 'circular' | 'rectangular';
-
-/**
- * Athene Skeleton Component
+ * Skeleton variants.
  *
- * Loading placeholder for content
+ * - `line`: one line of text, as tall as the surrounding text's line box
+ * - `row`: one list or table row (`--row-h`), full width
+ * - `card`: one compact card (64px)
+ * - `text` / `circular` / `rectangular`: free-form shapes sized by `width` / `height`
+ */
+export type SkeletonVariant = 'line' | 'row' | 'card' | 'text' | 'circular' | 'rectangular';
+
+/**
+ * Athene Skeleton
+ *
+ * A loading placeholder shaped like the content it stands in for, so the
+ * page does not jump when the data arrives. Pulses gently; still under
+ * `prefers-reduced-motion`.
  *
  * @example
- * <ath-skeleton variant="text" width="200px" />
- * <ath-skeleton variant="circular" width="48px" height="48px" />
- * <ath-skeleton variant="rectangular" height="200px" />
+ * <ath-skeleton variant="line" width="60%" />
+ * <ath-skeleton variant="row" />
+ * <ath-skeleton variant="circular" width="22px" height="22px" />
  */
 @Component({
   selector: 'ath-skeleton',
   standalone: true,
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './skeleton.component.html',
+  host: {
+    'aria-hidden': 'true',
+    class: 'ath-skeleton',
+    '[attr.data-variant]': 'variant()',
+    '[class.ath-skeleton--animated]': 'animated()',
+    '[style.width]': 'width()',
+    '[style.height]': 'height() || null',
+  },
+  template: '',
   styleUrl: './skeleton.component.scss',
 })
 export class AthSkeletonComponent {
-  /** Skeleton variant */
-  @Input() variant: SkeletonVariant = 'text';
+  readonly variant = input<SkeletonVariant>('text');
+  /** Width (CSS value). */
+  readonly width = input('100%');
+  /** Height (CSS value); the variant's own height when empty. */
+  readonly height = input('');
+  /** Pulse; off is also forced by `prefers-reduced-motion`. */
+  readonly animated = input(true);
+}
 
-  /** Width (CSS value) */
-  @Input() width = '100%';
+/** Layout of `ath-skeleton-list`. */
+export type SkeletonListVariant = 'row' | 'card' | 'card-grid';
 
-  /** Height (CSS value) */
-  @Input() height = '';
+/**
+ * A list's or grid's loading state: `count` placeholders the size of real
+ * rows (`--row-h`), cards (64px) or grid cards (168px), in a panel-like
+ * frame. Announced once as "Loading" to assistive tech.
+ *
+ * @example
+ * <ath-skeleton-list variant="row" [count]="8" />
+ * <ath-skeleton-list variant="card-grid" [count]="6" />
+ */
+@Component({
+  selector: 'ath-skeleton-list',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <div class="ath-skeleton-list" [attr.data-variant]="variant()" role="status">
+      <span class="ath-skeleton-list__sr">{{ loadingLabel() }}</span>
+      @for (i of indexes(); track i) {
+        <div class="ath-skeleton-list__cell" aria-hidden="true"></div>
+      }
+    </div>
+  `,
+  styleUrl: './skeleton-list.component.scss',
+})
+export class AthSkeletonListComponent {
+  private readonly labels = injectAthLabels();
 
-  /** Animation enabled */
-  @Input() animated = true;
+  readonly variant = input<SkeletonListVariant>('row');
+  readonly count = input(6);
+  /** Accessible text; default `ATH_LABELS.loading`. */
+  readonly label = input<string | null>(null);
 
-  get skeletonClasses(): string {
-    return [
-      'ath-skeleton',
-      `ath-skeleton--${this.variant}`,
-      this.animated ? 'ath-skeleton--animated' : '',
-    ].filter(Boolean).join(' ');
-  }
+  protected readonly indexes = computed(() =>
+    Array.from({ length: Math.max(1, Math.floor(this.count() || 0)) }, (_, i) => i)
+  );
+  protected readonly loadingLabel = computed(() => this.label() ?? this.labels.loading());
 }
 
 /**

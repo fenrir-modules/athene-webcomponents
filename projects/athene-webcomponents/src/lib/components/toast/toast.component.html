@@ -1,4 +1,5 @@
-<div class="ath-toast-container" aria-live="polite">
+<!-- data-ath-top-layer: kept above modal dialogs (AthOverlayStack.raiseTopLayer). -->
+<div class="ath-toast-container" aria-live="polite" data-ath-top-layer>
   @for (toast of toasts; track toast.id) {
     <div class="ath-toast" [class]="'ath-toast ath-toast--' + toast.variant">
       <lucide-icon [img]="getIcon(toast.variant)" [size]="18" class="ath-toast__icon" />

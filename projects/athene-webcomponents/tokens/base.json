@@ -39,6 +39,10 @@
       "selected": {
         "$value": "#4f46e50e",
         "$description": "Subtle accent tint for selected rows"
+      },
+      "scrim": {
+        "$value": "#00000066",
+        "$description": "Backdrop behind modal dialogs and sheets (::backdrop of ath-dialog)."
       }
     },
     "border": {
@@ -436,6 +440,36 @@
         "$value": "#db27770f"
       }
     },
+    "due": {
+      "$description": "Due-date text (ath-due-label). One rule: overdue and today red, the next two days amber, later muted, finished work muted.",
+      "$type": "color",
+      "due-overdue": {
+        "$value": "{color.status.red}"
+      },
+      "due-today": {
+        "$value": "{color.status.red}",
+        "$description": "today is red, as in the reference screens (04-mywork, 05-tickets)"
+      },
+      "due-soon": {
+        "$value": "{color.status.amber-text}",
+        "$description": "tomorrow and the day after"
+      },
+      "due-later": {
+        "$value": "{color.text.fg-3}"
+      },
+      "due-none": {
+        "$value": "{color.text.fg-4}",
+        "$description": "placeholder without a date"
+      }
+    },
+    "chip": {
+      "$description": "ath-chip.",
+      "$type": "color",
+      "chip-type-fg": {
+        "$value": "#ffffff",
+        "$description": "glyph on a type square (the square carries the type colour), white in both themes"
+      }
+    },
     "deco": {
       "$description": "Decorative status marks (board column bars, ticket-group dots, sidebar project-key chips): the status hue at ~60% strength over the surface. Status icons and due text keep the full colour.",
       "deco-mix": {
@@ -625,6 +659,14 @@
       },
       "section-gap": {
         "$value": "16px"
+      },
+      "content-pad-bottom": {
+        "$value": "32px",
+        "$description": "stage padding under the page; the shell reads it, ath-page trims it to --content-pad-top"
+      },
+      "page-max-w": {
+        "$value": "1680px",
+        "$description": "widest a page body grows (ath-page)"
       }
     },
     "control": {
@@ -708,7 +750,36 @@
         "$description": "topbar, dense rows (ref 20px)"
       },
       "avatar-sm": {
-        "$value": "22px"
+        "$value": "22px",
+        "$description": "row avatar, assignee column"
+      },
+      "avatar-md": {
+        "$value": "36px",
+        "$description": "lists with a second line (members, comments)"
+      },
+      "avatar-lg": {
+        "$value": "44px"
+      },
+      "avatar-xl": {
+        "$value": "56px",
+        "$description": "profile header"
+      },
+      "avatar-font-xs": {
+        "$value": "9px",
+        "$description": "initials in an xs avatar"
+      },
+      "avatar-font-sm": {
+        "$value": "9.5px",
+        "$description": "initials in an sm avatar"
+      },
+      "avatar-font-md": {
+        "$value": "{font.size.text-sm}"
+      },
+      "avatar-font-lg": {
+        "$value": "{font.size.text-md}"
+      },
+      "avatar-font-xl": {
+        "$value": "{font.size.text-lg}"
       }
     },
     "icon": {

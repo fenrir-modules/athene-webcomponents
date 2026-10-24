@@ -1,40 +1,56 @@
-import { SafeHtml } from '@angular/platform-browser';
+import { InjectionToken } from '@angular/core';
 import * as i0 from "@angular/core";
+/** Turns Markdown into HTML. Its output is sanitized before it is shown. */
+export type AthMarkdownParser = (source: string) => string;
 /**
- * Styled container for rendered Markdown content.
+ * The app's Markdown parser, provided once at the root so every
+ * `<ath-markdown [text]>` renders the same dialect. An explicit `[parse]`
+ * input wins.
+ */
+export declare const ATH_MARKDOWN_PARSER: InjectionToken<AthMarkdownParser>;
+/** Escapes text for HTML. */
+export declare function athEscapeHtml(text: string): string;
+/** Plain text as paragraphs and line breaks: the fallback without a parser. */
+export declare function athPlainTextHtml(text: string): string;
+/**
+ * Rendered Markdown, styled.
  *
- * The library deliberately does NOT bundle a Markdown parser to keep the
- * footprint small. Two ways to use it:
+ * **Security (SEC-14):** every path ends in Angular's HTML sanitizer
+ * (`DomSanitizer.sanitize(SecurityContext.HTML, …)`): script, event
+ * handlers, `style`, `javascript:` URLs and unknown elements are removed.
+ * There is no bypass: neither a parser nor `[html]` can put unsanitized
+ * markup on the page. A parser that escapes its input first (the app's
+ * `renderMarkdown`) is the first line; the sanitizer is the second.
  *
- *  1. **Server-rendered:** parse + sanitize Markdown on the server, pass
- *     the HTML via `[html]`. This is the recommended path for V1 (the
- *     wiki-service uses pulldown-cmark for this).
+ * Sources, first match wins:
+ *  1. `[html]`: HTML rendered elsewhere (e.g. the server); sanitized too.
+ *  2. `[text]` (alias `[source]`): Markdown, parsed with `[parse]` or the
+ *     `ATH_MARKDOWN_PARSER` the app provides; without a parser it shows as
+ *     escaped paragraphs.
  *
- *  2. **Client-rendered:** pass raw Markdown via `[source]`; the consuming
- *     app provides a `parse` function (e.g., marked, markdown-it). The
- *     resulting HTML is sanitized by Angular's `DomSanitizer` and styled.
- *
- * **Security:** When using `[html]`, the caller is responsible for
- * sanitization (or guarantees the HTML is trusted). When using `[source]`
- * with a parser, the output is bypassed via `bypassSecurityTrustHtml` — so
- * the parser must produce safe HTML (most popular parsers do, but verify).
+ * The rendered elements are not part of this component's template, so the
+ * styles are global, scoped under `.ath-markdown .ath-md` (the
+ * `styles/_markdown.scss` mixin, shared with editors).
  *
  * @example
+ * <ath-markdown [text]="ticket.description" />
+ * <ath-markdown [text]="comment.body" [parse]="renderMarkdown" />
  * <ath-markdown [html]="serverRenderedHtml" />
- * <ath-markdown [source]="rawMd" [parse]="markdownIt" />
  */
 export declare class AthMarkdownComponent {
     private readonly sanitizer;
-    private readonly _html;
-    private readonly _source;
-    private readonly _parse;
-    set html(value: string);
-    get html(): string;
-    set source(value: string);
-    get source(): string;
-    set parse(fn: ((src: string) => string) | null);
-    protected readonly renderedHtml: import("@angular/core").Signal<SafeHtml>;
-    private escapeAsPre;
+    private readonly defaultParser;
+    /** Markdown source. */
+    readonly text: import("@angular/core").InputSignal<string | null | undefined>;
+    /** @deprecated Use `text`. Markdown source, read when `text` is empty. */
+    readonly source: import("@angular/core").InputSignal<string | null | undefined>;
+    /** Parser for this instance; defaults to `ATH_MARKDOWN_PARSER`. */
+    readonly parse: import("@angular/core").InputSignal<AthMarkdownParser | null>;
+    /** Pre-rendered HTML (still sanitized). Wins over `text`. */
+    readonly html: import("@angular/core").InputSignal<string | null | undefined>;
+    /** The sanitized HTML, as a string (Angular sanitizes `innerHTML` again on binding). */
+    protected readonly renderedHtml: import("@angular/core").Signal<string>;
+    private clean;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthMarkdownComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthMarkdownComponent, "ath-markdown", never, { "html": { "alias": "html"; "required": false; }; "source": { "alias": "source"; "required": false; }; "parse": { "alias": "parse"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthMarkdownComponent, "ath-markdown", never, { "text": { "alias": "text"; "required": false; "isSignal": true; }; "source": { "alias": "source"; "required": false; "isSignal": true; }; "parse": { "alias": "parse"; "required": false; "isSignal": true; }; "html": { "alias": "html"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

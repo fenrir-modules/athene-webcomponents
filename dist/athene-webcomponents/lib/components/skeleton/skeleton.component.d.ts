@@ -1,30 +1,57 @@
 import * as i0 from "@angular/core";
 /**
- * Skeleton variant types
- */
-export type SkeletonVariant = 'text' | 'circular' | 'rectangular';
-/**
- * Athene Skeleton Component
+ * Skeleton variants.
  *
- * Loading placeholder for content
+ * - `line`: one line of text, as tall as the surrounding text's line box
+ * - `row`: one list or table row (`--row-h`), full width
+ * - `card`: one compact card (64px)
+ * - `text` / `circular` / `rectangular`: free-form shapes sized by `width` / `height`
+ */
+export type SkeletonVariant = 'line' | 'row' | 'card' | 'text' | 'circular' | 'rectangular';
+/**
+ * Athene Skeleton
+ *
+ * A loading placeholder shaped like the content it stands in for, so the
+ * page does not jump when the data arrives. Pulses gently; still under
+ * `prefers-reduced-motion`.
  *
  * @example
- * <ath-skeleton variant="text" width="200px" />
- * <ath-skeleton variant="circular" width="48px" height="48px" />
- * <ath-skeleton variant="rectangular" height="200px" />
+ * <ath-skeleton variant="line" width="60%" />
+ * <ath-skeleton variant="row" />
+ * <ath-skeleton variant="circular" width="22px" height="22px" />
  */
 export declare class AthSkeletonComponent {
-    /** Skeleton variant */
-    variant: SkeletonVariant;
-    /** Width (CSS value) */
-    width: string;
-    /** Height (CSS value) */
-    height: string;
-    /** Animation enabled */
-    animated: boolean;
-    get skeletonClasses(): string;
+    readonly variant: import("@angular/core").InputSignal<SkeletonVariant>;
+    /** Width (CSS value). */
+    readonly width: import("@angular/core").InputSignal<string>;
+    /** Height (CSS value); the variant's own height when empty. */
+    readonly height: import("@angular/core").InputSignal<string>;
+    /** Pulse; off is also forced by `prefers-reduced-motion`. */
+    readonly animated: import("@angular/core").InputSignal<boolean>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthSkeletonComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthSkeletonComponent, "ath-skeleton", never, { "variant": { "alias": "variant"; "required": false; }; "width": { "alias": "width"; "required": false; }; "height": { "alias": "height"; "required": false; }; "animated": { "alias": "animated"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthSkeletonComponent, "ath-skeleton", never, { "variant": { "alias": "variant"; "required": false; "isSignal": true; }; "width": { "alias": "width"; "required": false; "isSignal": true; }; "height": { "alias": "height"; "required": false; "isSignal": true; }; "animated": { "alias": "animated"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
+}
+/** Layout of `ath-skeleton-list`. */
+export type SkeletonListVariant = 'row' | 'card' | 'card-grid';
+/**
+ * A list's or grid's loading state: `count` placeholders the size of real
+ * rows (`--row-h`), cards (64px) or grid cards (168px), in a panel-like
+ * frame. Announced once as "Loading" to assistive tech.
+ *
+ * @example
+ * <ath-skeleton-list variant="row" [count]="8" />
+ * <ath-skeleton-list variant="card-grid" [count]="6" />
+ */
+export declare class AthSkeletonListComponent {
+    private readonly labels;
+    readonly variant: import("@angular/core").InputSignal<SkeletonListVariant>;
+    readonly count: import("@angular/core").InputSignal<number>;
+    /** Accessible text; default `ATH_LABELS.loading`. */
+    readonly label: import("@angular/core").InputSignal<string | null>;
+    protected readonly indexes: import("@angular/core").Signal<number[]>;
+    protected readonly loadingLabel: import("@angular/core").Signal<string>;
+    static ɵfac: i0.ɵɵFactoryDeclaration<AthSkeletonListComponent, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthSkeletonListComponent, "ath-skeleton-list", never, { "variant": { "alias": "variant"; "required": false; "isSignal": true; }; "count": { "alias": "count"; "required": false; "isSignal": true; }; "label": { "alias": "label"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }
 /**
  * Skeleton Table Component

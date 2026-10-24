@@ -1,30 +1,27 @@
+import { type KpiDeltaDirection } from '../kpi-tile';
 import * as i0 from "@angular/core";
 /**
- * Stat card with label + value, optional trend arrow, optional delta badge,
- * optional sparkline.
+ * A single label/value card.
  *
- * For dashboard-style KPI tiles prefer `<ath-kpi-tile>`. This stays as the
- * simpler label/value/sub primitive.
+ * @deprecated One KPI API: use `ath-kpi-tile` inside `ath-kpi-strip`. This
+ * renders exactly that (a strip of one tile) and maps the old inputs:
+ * `subValue` → `note`, `sparkData` → `spark`, `trend` → a "↑"/"↓" delta.
+ * Removed in quality step 2.7.
  *
  * @example
- * <ath-stat-card label="Total Users" value="1,234" />
- * <ath-stat-card label="Active" value="89%" trend="up" />
- * <ath-stat-card label="Open" value="42" delta="+5" deltaDirection="up"
- *                [sparkData]="[10,12,15,18,22,28,30]" />
+ * <ath-stat-card label="Open" value="42" delta="+5" deltaDirection="up" />
  */
 export declare class AthStatCardComponent {
-    label: string;
-    value: string | number;
-    subValue: string;
-    /** Quick up/down arrow. Use delta+deltaDirection for richer badges. */
-    trend: 'up' | 'down' | null;
-    /** Delta text (e.g., `+12`, `-3`). Displayed as colored badge. */
-    delta: string | null;
-    /** Color cue for the delta badge. */
-    deltaDirection: 'up' | 'down' | 'neutral' | null;
-    /** Optional sparkline data — min 2 points. */
-    sparkData: number[] | null;
-    sparkColor: string;
+    readonly label: import("@angular/core").InputSignal<string>;
+    readonly value: import("@angular/core").InputSignal<string | number>;
+    readonly subValue: import("@angular/core").InputSignal<string>;
+    readonly trend: import("@angular/core").InputSignal<"up" | "down" | null>;
+    readonly delta: import("@angular/core").InputSignal<string | null>;
+    readonly deltaDirection: import("@angular/core").InputSignal<KpiDeltaDirection | null>;
+    readonly sparkData: import("@angular/core").InputSignal<readonly number[] | null>;
+    readonly sparkColor: import("@angular/core").InputSignal<string | null>;
+    protected readonly shownDelta: import("@angular/core").Signal<string | null>;
+    protected readonly shownDirection: import("@angular/core").Signal<KpiDeltaDirection | null>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthStatCardComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthStatCardComponent, "ath-stat-card", never, { "label": { "alias": "label"; "required": true; }; "value": { "alias": "value"; "required": true; }; "subValue": { "alias": "subValue"; "required": false; }; "trend": { "alias": "trend"; "required": false; }; "delta": { "alias": "delta"; "required": false; }; "deltaDirection": { "alias": "deltaDirection"; "required": false; }; "sparkData": { "alias": "sparkData"; "required": false; }; "sparkColor": { "alias": "sparkColor"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthStatCardComponent, "ath-stat-card", never, { "label": { "alias": "label"; "required": true; "isSignal": true; }; "value": { "alias": "value"; "required": false; "isSignal": true; }; "subValue": { "alias": "subValue"; "required": false; "isSignal": true; }; "trend": { "alias": "trend"; "required": false; "isSignal": true; }; "delta": { "alias": "delta"; "required": false; "isSignal": true; }; "deltaDirection": { "alias": "deltaDirection"; "required": false; "isSignal": true; }; "sparkData": { "alias": "sparkData"; "required": false; "isSignal": true; }; "sparkColor": { "alias": "sparkColor"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

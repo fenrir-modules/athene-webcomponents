@@ -1,0 +1,30 @@
+// The card around a row of KPI tiles: one border, radius and shadow; the
+// tiles draw the hairlines between them.
+
+:host {
+  display: block;
+  min-width: 0;
+  container: ath-kpi-strip / inline-size;
+}
+
+.ath-kpi-strip {
+  // Set inline from [columns].
+  --_kpi-cols: 4;
+
+  display: grid;
+  grid-template-columns: repeat(var(--_kpi-cols), minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--panel-radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+// Two columns when narrow; the tiles redraw their hairlines for it
+// (kpi-tile.component.scss), since projected content is outside this
+// component's style scope.
+@container ath-kpi-strip (max-width: 920px) {
+  .ath-kpi-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

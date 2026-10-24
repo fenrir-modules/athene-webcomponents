@@ -1,0 +1,97 @@
+// ===========================================
+// ATH-POPOVER
+// ===========================================
+// The panel is positioned by athFloating (top layer); only its look lives here.
+
+@use '../../styles/mixins' as m;
+
+:host {
+  display: contents;
+}
+
+.ath-popover__panel {
+  box-sizing: border-box;
+  max-width: calc(100vw - var(--space-4));
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3);
+  animation: ath-popover-in var(--t-base);
+
+  &:focus {
+    // Focus only lands on the panel itself as a fallback target.
+    outline: none;
+  }
+
+  &:focus-visible {
+    @include m.focus-ring;
+  }
+
+  &--sm {
+    width: 220px;
+  }
+
+  &--md {
+    width: 280px;
+  }
+
+  &--lg {
+    width: 360px;
+  }
+
+  &--auto {
+    width: max-content;
+    min-width: 180px;
+  }
+
+  &--pad-md {
+    padding: var(--space-3);
+  }
+
+  &--pad-sm {
+    padding: var(--space-1);
+  }
+
+  &--pad-none {
+    padding: 0;
+  }
+
+  &[data-placement='top'] {
+    animation-name: ath-popover-in-up;
+  }
+}
+
+.ath-popover__arrow {
+  position: absolute;
+  top: -6px;
+  width: 10px;
+  height: 10px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  transform: translateX(-50%) rotate(45deg);
+  pointer-events: none;
+
+  [data-placement='top'] > & {
+    top: auto;
+    bottom: -6px;
+    transform: translateX(-50%) rotate(225deg);
+  }
+}
+
+@keyframes ath-popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes ath-popover-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}

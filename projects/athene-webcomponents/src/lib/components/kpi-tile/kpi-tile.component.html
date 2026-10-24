@@ -1,18 +1,39 @@
 <div class="ath-kpi__row">
-  <span class="ath-kpi__label">{{ label }}</span>
-  @if (delta != null && deltaDirection) {
-    <span class="ath-kpi__delta" [attr.data-direction]="deltaDirection">{{ delta }}</span>
+  @if (link() !== null) {
+    <a
+      class="ath-kpi__label ath-kpi__link"
+      [routerLink]="routerLink()"
+      [queryParams]="linkParams()"
+      [attr.aria-label]="linkLabel() ?? label()"
+      >{{ label() }}</a
+    >
+  } @else {
+    <span class="ath-kpi__label">{{ label() }}</span>
+  }
+  @if (delta() !== null && delta() !== undefined) {
+    <span
+      class="ath-kpi__delta"
+      [attr.data-direction]="deltaDirection() ?? 'neutral'"
+      [attr.title]="deltaTitle()"
+      [attr.aria-label]="deltaTitle()"
+      >{{ delta() }}</span
+    >
   }
 </div>
+
 <div class="ath-kpi__bottom">
-  <span class="ath-kpi__value">{{ value }}</span>
-  @if (sparkData && sparkData.length >= 2) {
-    <ath-sparkline
-      class="ath-kpi__spark"
-      [data]="sparkData"
-      [color]="sparkColor"
-      [width]="70"
-      [height]="22"
-    />
+  <span
+    class="ath-kpi__value"
+    [class.ath-kpi__value--alert]="alert()"
+    [class.ath-kpi__value--muted]="muted()"
+    >{{ value() }}</span
+  >
+  @if (note()) {
+    <span class="ath-kpi__note" [attr.title]="noteTitle()">{{ note() }}</span>
+  } @else if (showTrend()) {
+    <ath-sparkline [data]="samples()" [color]="trendColor()" />
+  } @else {
+    <!-- No trend: the slot keeps the sparkline's footprint so tiles line up. -->
+    <span class="ath-kpi__spark-slot" aria-hidden="true"></span>
   }
 </div>

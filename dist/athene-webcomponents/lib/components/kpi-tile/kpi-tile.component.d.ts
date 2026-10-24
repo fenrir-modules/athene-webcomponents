@@ -1,26 +1,77 @@
+import { type Params } from '@angular/router';
 import * as i0 from "@angular/core";
 export type KpiDeltaDirection = 'up' | 'down' | 'neutral';
+/** Tint of the trend line. */
+export type KpiTone = 'neutral' | 'amber' | 'blue' | 'green' | 'red';
+/** A trend worth drawing: two samples or more, and not all zero. */
+export declare function hasKpiTrend(spark: readonly number[] | null | undefined): boolean;
 /**
- * Compact KPI widget for dashboards. Shows label + value + optional delta + sparkline.
+ * One cell of a KPI strip (`ath-kpi-strip`): label, figure, an optional
+ * delta badge, and a trend or a quiet note bottom-right. The tile carries
+ * no chrome of its own; the strip draws one card and hairlines between the
+ * tiles, so the row reads as one instrument panel.
+ *
+ * With `link` the whole cell is the hit area (a stretched link on the
+ * label), still drawn as part of the strip.
+ *
+ * Replaces the app's `metric-card`; `ath-stat-card` is a deprecated alias.
  *
  * @example
- * <ath-kpi-tile label="Assigned" [value]="3" delta="+1" deltaDirection="up"
- *               [sparkData]="[12,14,13,18,22,20,24]" sparkColor="var(--accent)" />
+ * <ath-kpi-strip>
+ *   <ath-kpi-tile label="Due today" [value]="1" [alert]="true" delta="+1" deltaDirection="down"
+ *                 deltaTitle="1 overdue" />
+ *   <ath-kpi-tile label="This week" [value]="3" tone="blue" [spark]="[1,2,2,3,2,4,3]" />
+ *   <ath-kpi-tile label="Story points" [value]="24" note="3 done" />
+ *   <ath-kpi-tile label="In review" [value]="2" link="/app/tickets" [linkParams]="{ status: 'review' }"
+ *                 linkLabel="Show in-review tickets" />
+ * </ath-kpi-strip>
  */
 export declare class AthKpiTileComponent {
-    label: string;
-    value: number | string;
-    /** Free-form delta text (e.g., `+12`, `-2`, ` 0`). */
-    delta: string | null;
-    /** Influences color of the delta badge. */
-    deltaDirection: KpiDeltaDirection | null;
-    /** Optional sparkline data — at least 2 points. */
-    sparkData: number[] | null;
-    /** Sparkline color (any CSS color). */
-    sparkColor: string;
-    /** Hides the value's color emphasis (useful for empty/loading state). */
-    muted: boolean;
-    get hostMuted(): string | null;
+    readonly label: import("@angular/core").InputSignal<string>;
+    readonly value: import("@angular/core").InputSignal<string | number | null | undefined>;
+    /** Pre-formatted delta ("+1", "−2"); `null` hides the badge. */
+    readonly delta: import("@angular/core").InputSignal<string | null | undefined>;
+    readonly deltaDirection: import("@angular/core").InputSignal<KpiDeltaDirection | null | undefined>;
+    /** Long form of a compact delta ("+1" → "1 overdue"): tooltip and accessible name. */
+    readonly deltaTitle: import("@angular/core").InputSignal<string | null | undefined>;
+    /** Tints the trend line. */
+    readonly tone: import("@angular/core").InputSignal<KpiTone>;
+    /** Trend samples; fewer than two, or all zero, draw nothing. */
+    readonly spark: import("@angular/core").InputSignal<readonly number[] | null | undefined>;
+    /** @deprecated Use `spark`. */
+    readonly sparkData: import("@angular/core").InputSignal<readonly number[] | null | undefined>;
+    /** Overrides the tone's trend colour. */
+    readonly sparkColor: import("@angular/core").InputSignal<string | null>;
+    /** A small quiet note bottom-right ("3 done"), drawn instead of a trend. */
+    readonly note: import("@angular/core").InputSignal<string | null | undefined>;
+    readonly noteTitle: import("@angular/core").InputSignal<string | null | undefined>;
+    /** The figure in red: something needs attention now. */
+    readonly alert: import("@angular/core").InputSignal<boolean>;
+    /** Nothing to count: a quiet figure (pass "–" for a zero), no trend. */
+    readonly muted: import("@angular/core").InputSignal<boolean>;
+    /** Where the tile leads (router link). */
+    readonly link: import("@angular/core").InputSignal<string | readonly unknown[] | null>;
+    readonly linkParams: import("@angular/core").InputSignal<Params | null>;
+    /** Accessible name of the link; defaults to the label. */
+    readonly linkLabel: import("@angular/core").InputSignal<string | null>;
+    protected readonly samples: import("@angular/core").Signal<readonly number[] | null>;
+    protected readonly showTrend: import("@angular/core").Signal<boolean>;
+    protected readonly trendColor: import("@angular/core").Signal<string>;
+    protected readonly routerLink: import("@angular/core").Signal<string | unknown[]>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthKpiTileComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthKpiTileComponent, "ath-kpi-tile", never, { "label": { "alias": "label"; "required": true; }; "value": { "alias": "value"; "required": true; }; "delta": { "alias": "delta"; "required": false; }; "deltaDirection": { "alias": "deltaDirection"; "required": false; }; "sparkData": { "alias": "sparkData"; "required": false; }; "sparkColor": { "alias": "sparkColor"; "required": false; }; "muted": { "alias": "muted"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthKpiTileComponent, "ath-kpi-tile", never, { "label": { "alias": "label"; "required": true; "isSignal": true; }; "value": { "alias": "value"; "required": false; "isSignal": true; }; "delta": { "alias": "delta"; "required": false; "isSignal": true; }; "deltaDirection": { "alias": "deltaDirection"; "required": false; "isSignal": true; }; "deltaTitle": { "alias": "deltaTitle"; "required": false; "isSignal": true; }; "tone": { "alias": "tone"; "required": false; "isSignal": true; }; "spark": { "alias": "spark"; "required": false; "isSignal": true; }; "sparkData": { "alias": "sparkData"; "required": false; "isSignal": true; }; "sparkColor": { "alias": "sparkColor"; "required": false; "isSignal": true; }; "note": { "alias": "note"; "required": false; "isSignal": true; }; "noteTitle": { "alias": "noteTitle"; "required": false; "isSignal": true; }; "alert": { "alias": "alert"; "required": false; "isSignal": true; }; "muted": { "alias": "muted"; "required": false; "isSignal": true; }; "link": { "alias": "link"; "required": false; "isSignal": true; }; "linkParams": { "alias": "linkParams"; "required": false; "isSignal": true; }; "linkLabel": { "alias": "linkLabel"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
+}
+/**
+ * The card around a row of `ath-kpi-tile`s: one border, radius and shadow,
+ * hairlines between the tiles, `columns` equal columns (default: one per
+ * tile up to 4); two columns when the strip is narrower than 920px.
+ *
+ * @example
+ * <ath-kpi-strip [columns]="4"> <ath-kpi-tile … /> … </ath-kpi-strip>
+ */
+export declare class AthKpiStripComponent {
+    /** Number of columns on wide screens. */
+    readonly columns: import("@angular/core").InputSignal<number>;
+    static ɵfac: i0.ɵɵFactoryDeclaration<AthKpiStripComponent, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthKpiStripComponent, "ath-kpi-strip", never, { "columns": { "alias": "columns"; "required": false; "isSignal": true; }; }, {}, never, ["*"], true, never>;
 }

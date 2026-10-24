@@ -77,3 +77,224 @@ Style Dictionary 5 brings 13 runtime dependencies: prettier, colorjs.io, tinycol
 - a contrast gate over theme × accent
 
 The generator is about 450 lines of plain Node with no dependencies and is covered by `scripts/tokens/tokens.test.mjs`. The sources follow DTCG, so switching to Style Dictionary later only means writing a format; the JSON doesn't change.
+
+## Display primitives (quality step 1.7)
+
+Presentational only: the app passes ids, names, colours and dates; resolving them (directories, ticket types, sprints) stays in the app. Every word comes from `ATH_LABELS` (`core/src/labels.ts`); labels with placeholders (`{count}`, `{name}`, `{sprint}`) keep them in the translation, e.g. `dueOverdue: () => t('time.due.overdue', { count: '{count}' })`.
+
+### `ath-avatar`
+
+```html
+<ath-avatar [person]="{ id: u.id, name: u.name, src: u.avatar_url }" size="sm" />
+<ath-avatar [person]="assignee ?? null" size="sm" />
+<!-- null → empty seat -->
+<ath-avatar [unassigned]="true" size="sm" />
+```
+
+Inputs: `person: {id, name, src} | null`, or the separate `name` / `src` / `id`; `size: xs|sm|md|lg|xl` (`--avatar-<size>` and `--avatar-font-<size>`); `unassigned`; `label` (accessible name and tooltip). The tone is keyed on the **id** (`avatarToneFor`); without an id it falls back to the initials (`avatarTone`, deprecated). `null` or `unassigned` draws the empty seat: a `--bg-2` circle with a user glyph, the size of a person, labelled `ATH_LABELS.unassigned`.
+
+### `ath-due-label`
+
+```html
+<ath-due-label [date]="t.due_date" [done]="closed" />
+<ath-due-label
+  [date]="sprint.end_date"
+  source="sprint"
+  [sprintName]="sprint.name"
+  [compact]="true"
+/>
+<ath-due-label [date]="t.due_date" [afterSprintEnd]="true" sprintName="Sprint 24" placeholder="—" />
+```
+
+One colour rule from the `--due-*` tokens: overdue and **today red**, the next two days amber (`--amber-text`), later muted, finished work muted with its plain date. Compact text: "2d overdue", "Today", "Tomorrow", "3d" (to 6 days), then the short date. `source="sprint"` reads "Sprint end · 31 Oct" with the sprint icon (`compact` keeps only the icon, the words go to the tooltip and a hidden label); `afterSprintEnd` adds an amber warning icon. The date logic is pure and tested (`due-date.ts`: `describeDue`, `dueToneOf`, `calendarDayOf`, `compactDueText`, `shortDay`). The app provides the reader's settings once:
+
+```ts
+{ provide: ATH_DATE_CONTEXT, useFactory: () => { const p = inject(UserPreferencesService);
+    return () => ({ locale: p.locale(), timeZone: p.timeZone(), dateFormat: p.dateFormat() }); } }
+```
+
+### `ath-chip`
+
+`kind`: `tag` (semantic `variant`: default, primary, success, warning, error, info), `label` (dot in `color`), `epic` (outline, bolt in `color`, default `--purple`), `type` (16px square in `color` with `icon`; no text = the square alone; `muted` = grey glyph), `status` (toned dot or `icon`), `count` (`[count]="3"` → "+3", `tooltip` names the hidden items and is read as "3 more: …"). All kinds are `--chip-h` (20px) tall. `removable` + `(removed)` (does not bubble to a clickable row; `name` feeds "Remove {name}").
+
+### `ath-skeleton`, `ath-skeleton-list`
+
+`<ath-skeleton variant="line|row|card|text|circular|rectangular" [width] [height] [animated] />`: `line` is one text line (0.8em bar in a 1.5em box), `row` is `--row-h`, `card` 64px. `<ath-skeleton-list variant="row|card|card-grid" [count]>` replaces the app's `skeleton-list` (same API) and announces `ATH_LABELS.loading` once. Both pulse and stand still under `prefers-reduced-motion`.
+
+### `ath-alert`
+
+```html
+<ath-alert variant="error" [message]="error()" [retry]="reload" />
+<ath-alert variant="warn" appearance="banner" title="Maintenance" message="Sat 22:00–22:30" />
+```
+
+`variant`: info, success, warn (`warning` is an alias), error; `appearance`: `inline` (tinted box) or `banner` (full width, square, icon); `title`, `icon`, `dismissible` + `(dismissed)`, `retry: AthAction` (an `ath-button [action]`, busy while it runs), `retryLabel`, `dismissLabel`. Without a message (and nothing projected) it takes no space, so `[message]="error()"` can stay in the template. Errors and warnings are `role="alert"`, the others `role="status"`.
+
+### `ath-button [action]`
+
+```html
+<ath-button variant="primary" [action]="save">Save</ath-button>
+```
+
+```ts
+protected readonly save = () => this.sprints.create(this.draft());  // Promise or Observable
+```
+
+While the action runs the button is busy: disabled, spinner, `aria-busy`, further clicks (and a busy submit button's form submit) are ignored. A Promise settles on resolve/reject, an Observable on its first value, completion or error. `(done)` emits the result, `(failed)` the error (also reported to Angular's `ErrorHandler`); `(clicked)` still fires for every accepted click. `[loading]` stays for busy state that starts elsewhere; `busy()` is public. `runAthAction()` is exported for other triggers.
+
+### `ath-markdown`
+
+```html
+<ath-markdown [text]="ticket.description" />
+```
+
+The app provides its parser once (`{ provide: ATH_MARKDOWN_PARSER, useValue: renderMarkdown }`) or per instance (`[parse]`). Every path, including `[html]`, ends in Angular's HTML sanitizer: no `bypassSecurityTrust*` anywhere (SEC-14). Without a parser the text shows as escaped paragraphs. The typography is the `content` mixin in `styles/_markdown.scss`, which an editor can include to look the same (`@use '@athene/webcomponents/styles/markdown' as md;`).
+
+### `ath-kpi-strip`, `ath-kpi-tile`, `ath-sparkline`
+
+```html
+<ath-kpi-strip [columns]="4">
+  <ath-kpi-tile
+    label="Due today"
+    [value]="1"
+    [alert]="true"
+    delta="+1"
+    deltaDirection="down"
+    deltaTitle="1 overdue"
+  />
+  <ath-kpi-tile label="This week" [value]="3" tone="blue" [spark]="trend" />
+  <ath-kpi-tile label="Story points" [value]="24" note="3 done" />
+  <ath-kpi-tile
+    label="In review"
+    [value]="2"
+    link="/app/tickets"
+    [linkParams]="{ status: 'review' }"
+  />
+</ath-kpi-strip>
+```
+
+One KPI API (the app's `metric-card` features): `label`, `value`, `delta`, `deltaDirection`, `deltaTitle`, `tone` (trend colour), `spark` (≥ 2 samples, not all zero), `note`/`noteTitle`, `alert`, `muted`, `link`/`linkParams`/`linkLabel` (the whole tile is the hit area). The strip draws the card and the hairlines and drops to two columns below 920px. `ath-stat-card` is a deprecated alias that renders a strip of one tile. `ath-sparkline` (`data`, `width` 70, `height` 22, `color`, `showDot`, `showArea`, `strokeWidth` 1.2) is decorative; `sparklineGeometry()` is the pure path maths.
+
+## Page frame: `ath-page`, `ath-panel-grid`, `ath-panel`
+
+```html
+<ath-page mode="fill">
+  <ath-page-header title="Inbox" [subItems]="['3 unread']" />
+  <ath-alert variant="error" [message]="error()" [retry]="reload" />
+  <ath-panel-grid columns="side-main">
+    <ath-panel title="Filters" [padded]="true">…</ath-panel>
+    <ath-panel title="Activity" [count]="items().length">…</ath-panel>
+  </ath-panel-grid>
+</ath-page>
+```
+
+- `ath-page mode="scroll"` (default): at least the stage's height, grows with the content, the stage scrolls; panels in the grid stretch to the bottom when the content is short. `mode="fill"`: exactly the stage's height; the filling child (`ath-panel-grid`, `ath-panel` or `[athPageFill]`) takes the height under the head and its panels scroll inside. Toolbars, alerts and KPI strips in the body keep their height. Below 720px of stage width fill falls back to scroll.
+- `ath-panel-grid`: `columns` = `1`–`4`, `main-side`, `side-main` or any `grid-template-columns`; `rows` = `fill` (default: rows share the height, panels in a row are equally tall), `auto`, or any `grid-template-rows`. It stacks into one column below 720px of its own width (container query). Panels span with `ath-panel [colSpan] [rowSpan]`.
+- `ath-panel`: `title`, `level`, `count`, slots `[athPanelHead]`, `[athPanelActions]`, `[athPanelFoot]`, `padded`, `scroll` (default on), `loading` + `skeletonRows`. Frame and head from the `--panel-*` tokens; no head row when it would be empty.
+
+**Contract the app shell must provide** (`styles/_layout.scss`):
+
+1. The scroll container of routed pages has the class `ath-stage` and a definite height: a flex item with `flex: 1; min-height: 0` in a full-height flex column (shell `height: 100dvh; overflow: hidden`). The lib makes it a flex column, `overflow-y: auto`, and a size container named `ath-stage`.
+2. Its padding is `var(--content-pad-top) var(--content-pad-x) var(--content-pad-bottom)`. Phone padding is changed by redefining those properties on the stage, not with a literal, because `ath-page` trims the bottom gutter to `--content-pad-top` with a token `calc()` (16px under the last panel).
+3. `ath-page` is the root element of the routed component's template: stage › route host › `ath-page`. The lib lets that route host grow (`.ath-stage > :has(> ath-page)`); hosts without an `ath-page` keep plain block flow, so pages migrate one at a time. The per-page `:host:has(...) { height: 100% }` rules go away with the migration.
+
+`page/page-frame.spec.ts` renders this contract at 1440×900 and 1110×760 with pages shaped like the ones in `artifacts/phase5/c/fill/numbers.json` and asserts `dead ≤ 16` and `mismatch = 0` for each (plus fill pages never scrolling the stage, a long panel scrolling inside, and stacking at phone width).
+
+## Overlay primitives (quality step 1.6)
+
+One positioning engine, one overlay stack, one modal. App popups (menus, pickers, hover cards, palettes) are built from these instead of measuring rectangles, listening to `document:click` or inventing a z-index.
+
+- **Top layer:** popover panels are promoted with `popover="manual"` (dialogs with `showModal()`), so no container's `overflow`, `transform` or `z-index` clips or covers them. Without Popover API support a panel falls back to `position: fixed` + `z-index: var(--z-popover)` with a correction for transformed ancestors. The panel stays where the template put it in the DOM, so focus order, event bubbling and encapsulated styles keep working.
+- **Overlay stack** (`AthOverlayStack`, root service): Escape closes only the topmost overlay, an outside pointer-down closes the overlays it is outside of (a click in a nested popover keeps its parent open), a modal dialog stops both for what lies below it, and page scroll is locked while a dialog is open. Elements marked `data-ath-top-layer` (the toast container) are raised above a dialog that opens.
+- **Focus:** an overlay returns focus to its trigger on Escape, on a choice and on a programmatic close; after an outside click only when focus would otherwise be lost. Rings use `--focus-ring-*` (`@include focus-ring`); items in scrolling lists use an inset `--focus-ring-color` ring, which no `overflow` clips.
+- **Words** come from `ATH_LABELS`: `listboxSearch`, `listboxNoMatches`, `listboxCreate` (`{query}`), `listboxOtherGroup`, `pickerPlaceholder`, `pickerClear`, `pickerSelected` (`{count}`), plus `loading` and `closeDialog`.
+
+### `athFloating` (`floatPanel`)
+
+```html
+@if (open()) {
+<div class="my-panel" [athFloating]="trigger" align="end" [matchWidth]="true">…</div>
+}
+```
+
+Inputs: `athFloating` (anchor element or `ElementRef`), `align` (`start` | `end` | `auto`, follows `dir`), `side` (`bottom` | `top`, flips when the other side has more room), `offset` (px, 4), `matchWidth`, `maxHeight` (px; the viewport caps anyway), `topLayer` (true), `arrow` (an element kept pointing at the anchor). Writes `data-placement="bottom|top"`. Follows scrolls in any container, resizes, and size changes of panel and anchor; `update()` re-measures. `floatPanel(panel, anchor, options)` is the same as a function and returns the stop function (with `.update()`). This replaces the app's `shared/directives/floating.directive.ts` (same selector and inputs).
+
+### `ath-popover`
+
+```html
+<ath-button [athPopoverTrigger]="pop">Details</ath-button>
+<ath-popover #pop ariaLabel="Details" arrow>
+  …content, or <ng-template athPopoverContent>…</ng-template> for lazy content
+</ath-popover>
+```
+
+`role="dialog"` panel (`panelRole`: `dialog` | `menu` | `listbox` | `null`), named by `ariaLabel` / `ariaLabelledby`. Opens from `athPopoverTrigger` (sets `aria-haspopup`, `aria-expanded`, `aria-controls` on the real button, also inside `<ath-button>`), `show(anchor?)` / `hide()` / `toggle()` or `[(open)]` with `[anchor]`. Inputs: `size` (`sm` 220 · `md` 280 default · `lg` 360 · `auto`), `padding` (`md` | `sm` | `none`), `align`, `side`, `offset`, `matchWidth`, `maxHeight`, `arrow`, `trapFocus` (Tab stays inside, `aria-modal`; otherwise Tab out closes), `autoFocus` (`first` | `panel` | `none`), `restoreFocus`, `closeOnEscape`, `closeOnOutsideClick`, `panelClass`, `panelId`. Outputs: `opened`, `closed` (reason: `escape` | `outside` | `select` | `tab` | `programmatic`).
+
+### `ath-menu`, `athMenuItem`, `ath-menu-separator`
+
+```html
+<ath-button variant="ghost" [athMenuTrigger]="row" ariaLabel="Actions">⋯</ath-button>
+<ath-menu #row>
+  <button athMenuItem [icon]="Pencil" shortcut="E" (triggered)="edit()">Edit</button>
+  <button
+    athMenuItem
+    [disabled]="!canMove"
+    disabledReason="Only leads can move tickets"
+    (triggered)="move()"
+  >
+    Move
+  </button>
+  <ath-menu-separator />
+  <button athMenuItem variant="danger" (triggered)="remove()">Delete</button>
+</ath-menu>
+```
+
+The WAI-ARIA menu button. Trigger: click, Enter, Space and ArrowDown open on the first item, ArrowUp on the last; the menu is labelled by the trigger. Menu: ArrowDown/ArrowUp (wrapping), Home/End, typeahead, Enter/Space activate, Escape closes (focus back to the trigger), Tab closes and moves on. Items (`button[athMenuItem]`, `a[athMenuItem]` or `<ath-menu-item>`): `icon`, `shortcut` (hint, hidden from AT; `keyshortcuts` sets `aria-keyshortcuts`), `variant="danger"`, `disabled` (stays focusable with `aria-disabled`; `disabledReason` is the tooltip and the accessible description), `tooltip`, `checked` (`menuitemcheckbox`), `keepOpen`; output `triggered` (not for disabled items; use it instead of `(click)`). `ath-menu` inputs: `open` (two-way), `anchor`, `align`, `side`, `maxHeight`, `ariaLabel`, `panelClass`; methods `show(anchor?, 'first' | 'last' | 'none')`, `hide(restoreFocus?)`, `toggle()`; outputs `opened`, `closed`.
+
+### `ath-listbox`
+
+```html
+<ath-listbox
+  [options]="labels"
+  multiple
+  searchable
+  creatable
+  [(values)]="selected"
+  (create)="addLabel($event)"
+  ariaLabel="Labels"
+/>
+```
+
+`ListboxOption<T>`: `value`, `label`, `sublabel`, `icon` (Lucide icon, or a string for your own template), `disabled`, `group`, `keywords` (matched, not shown). Single (`[(value)]`) or multi-select (`multiple`, `[(values)]`, check boxes); `searchable` adds a `role="combobox"` field that keeps focus while `aria-activedescendant` marks the active option (without it the list itself is focused, with typeahead). `[(query)]` + `localFilter="false"` for server search; matching ignores case and accents. Groups render as labelled `role="group"`; ungrouped options next to groups go under `listboxOtherGroup`. `creatable` adds a "Create “…”" row for a query without an exact match (`create` emits the text). Keyboard: ArrowDown/ArrowUp, PageDown/PageUp, Home/End and Space (without search field), Enter. Other inputs: `loading`, `emptyLabel`, `searchPlaceholder`, `optionTemplate` (`let-option let-selected="selected" let-active="active"`), `compareWith`, `maxHeight` (320). Output `picked` per choice. Rendering stays cheap at a few hundred options (one element per option, `content-visibility: auto`).
+
+### `ath-option-picker`
+
+```html
+<ath-option-picker [options]="people" [(value)]="assignee" clearable ariaLabel="Assignee" />
+<ath-option-picker [options]="labels" multiple [(values)]="ids" creatable (create)="add($event)" />
+<ath-option-picker
+  trigger="none"
+  [anchor]="cell"
+  [(open)]="editing"
+  [options]="statuses"
+  [(value)]="status"
+/>
+```
+
+`ath-popover` + `ath-listbox` behind a select-style trigger (summary: the selection, "N selected", or the placeholder; a separate clear button, never a button inside the button). All listbox inputs pass through (`searchable` defaults to true), plus `placeholder`, `disabled`, `clearable`, `ariaLabel`, `trigger` (`button` | `none`), `anchor`, `open` (two-way), `size`, `align`, `matchWidth`, `closeOnPick` (default: single yes, multi no), `resetQueryOnOpen`. The base for the person, label and filter pickers.
+
+### `ath-dialog`
+
+```html
+<ath-dialog [(open)]="editing" title="Edit ticket" description="…" size="lg" (closed)="onClose()">
+  …body…
+  <div slot="header">…extra header content…</div>
+  <div slot="footer"><ath-button (clicked)="save()">Save</ath-button></div>
+</ath-dialog>
+```
+
+A native `<dialog>` with `showModal()`: top layer, inert background, `::backdrop` in `--scrim`. Tab stays inside, page scroll is locked, initial focus goes to `[autofocus]`, else the first control in body or footer, else the close button; on close focus returns to where it was. Controlled: ✕, Escape (`closeOnEscape`) and a backdrop click (`closeOnBackdrop`) emit `closed` and `openChange(false)`; it closes when `open` turns false, so a parent may refuse. Escape closes a popover inside the dialog first. Inputs: `open`, `title`, `description`, `size` (`sm` | `md` | `lg` | `xl` | `full`), `closeOnBackdrop`, `closeOnEscape`, `showClose`, `closeLabel`, `ariaLabel` (without a title), `role` (`dialog` | `alertdialog`). Content slots: default (scrolling body), `[slot=header]` / `[athDialogHeader]`, `[slot=footer]` / `[athDialogFooter]`.
+
+### `ath-dropdown`, `ath-combobox` (presets)
+
+Same public API as before, now thin presets: `ath-dropdown` = `ath-menu` from a flat `items: DropdownItem[]` (new optional `shortcut`; `title` is the tooltip and, on disabled items, the accessible reason). The projected button is the menu button itself (one tab stop, ARIA on the button); plain text gets a `role="button"` wrapper. `ath-combobox` = single-select `ath-option-picker` (`options`, `[(value)]`, `placeholder`, `searchPlaceholder`, `disabled`, `clearable`, `loading`, `bare`, `optionTpl`, `queryChange`, `opened`, `closed`, `toggle()`, `openPanel()`, `close()`, `select()`). For anything richer use `ath-menu` or `ath-option-picker` directly.

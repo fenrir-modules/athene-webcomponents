@@ -1,0 +1,25 @@
+@if (view(); as v) {
+  <span class="ath-due" [attr.data-tone]="v.tone" [attr.title]="title()">
+    @if (isSprint()) {
+      <lucide-icon class="ath-due__icon" [img]="ic.sprint" [size]="11" aria-hidden="true" />
+      @if (compact()) {
+        <span class="ath-due__sr">{{ sprintEndText() }}</span>
+      } @else {
+        <span class="ath-due__source">{{ sprintEndText() }} · </span>
+      }
+    }
+    <span class="ath-due__text">{{ v.text }}</span>
+    @if (showWarn()) {
+      <lucide-icon
+        class="ath-due__warn"
+        [img]="ic.warn"
+        [size]="11"
+        role="img"
+        [attr.aria-label]="warnText()"
+        [attr.title]="warnTitle()"
+      />
+    }
+  </span>
+} @else if (placeholder()) {
+  <span class="ath-due ath-due--none">{{ placeholder() }}</span>
+}

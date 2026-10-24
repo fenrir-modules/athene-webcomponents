@@ -1,0 +1,134 @@
+@if (searchable()) {
+  <div class="ath-listbox__search">
+    <lucide-icon
+      class="ath-listbox__search-icon"
+      [img]="searchIcon"
+      [size]="14"
+      aria-hidden="true"
+    />
+    <input
+      #search
+      class="ath-listbox__search-input"
+      type="text"
+      role="combobox"
+      aria-autocomplete="list"
+      aria-expanded="true"
+      autocomplete="off"
+      spellcheck="false"
+      [attr.aria-controls]="listId"
+      [attr.aria-activedescendant]="activeId()"
+      [attr.aria-label]="searchText()"
+      [placeholder]="searchText()"
+      [value]="query()"
+      (input)="onQueryInput($event)"
+      (keydown)="onKeydown($event)"
+    />
+  </div>
+}
+
+@if (loading()) {
+  <div class="ath-listbox__status" role="status">{{ labels.loading() }}</div>
+} @else if (rows().length === 0) {
+  <div class="ath-listbox__status" role="status">{{ emptyText() }}</div>
+}
+
+<ul
+  #list
+  class="ath-listbox__list"
+  role="listbox"
+  [id]="listId"
+  [attr.tabindex]="searchable() ? -1 : 0"
+  [attr.aria-multiselectable]="multiple() || null"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-labelledby]="ariaLabelledby()"
+  [attr.aria-busy]="loading() || null"
+  [attr.aria-activedescendant]="searchable() ? null : activeId()"
+  [style.max-height.px]="maxHeight()"
+  (keydown)="onKeydown($event)"
+  (click)="onListClick($event)"
+  (mousedown)="onListMousedown($event)"
+  (mousemove)="onListHover($event)"
+>
+  @for (section of sections(); track section.key) {
+    @if (section.label) {
+      <li class="ath-listbox__section" role="presentation">
+        <div class="ath-listbox__group-label" [id]="section.labelId">{{ section.label }}</div>
+        <ul class="ath-listbox__group" role="group" [attr.aria-labelledby]="section.labelId">
+          @for (row of section.rows; track row.id) {
+            <ng-container
+              [ngTemplateOutlet]="rowTpl"
+              [ngTemplateOutletContext]="{ $implicit: row }"
+            />
+          }
+        </ul>
+      </li>
+    } @else {
+      @for (row of section.rows; track row.id) {
+        <ng-container [ngTemplateOutlet]="rowTpl" [ngTemplateOutletContext]="{ $implicit: row }" />
+      }
+    }
+  }
+</ul>
+
+<ng-template #rowTpl let-row>
+  @if (row.kind === 'option') {
+    <li
+      class="ath-listbox__option"
+      role="option"
+      [id]="row.id"
+      [attr.data-index]="row.index"
+      [attr.aria-selected]="row.selected"
+      [attr.aria-disabled]="row.option.disabled || null"
+      [class.ath-listbox__option--active]="row.index === activeIndex()"
+      [class.ath-listbox__option--selected]="row.selected"
+      [class.ath-listbox__option--disabled]="row.option.disabled"
+    >
+      @if (multiple()) {
+        <span
+          class="ath-listbox__check"
+          [class.ath-listbox__check--on]="row.selected"
+          aria-hidden="true"
+        >
+          @if (row.selected) {
+            <lucide-icon [img]="checkIcon" [size]="12" />
+          }
+        </span>
+      }
+      @if (optionTemplate(); as tpl) {
+        <ng-container
+          [ngTemplateOutlet]="tpl"
+          [ngTemplateOutletContext]="{
+            $implicit: row.option,
+            selected: row.selected,
+            active: row.index === activeIndex(),
+          }"
+        />
+      } @else {
+        @if (optionIcon(row.option); as icon) {
+          <lucide-icon class="ath-listbox__icon" [img]="icon" [size]="14" aria-hidden="true" />
+        }
+        <span class="ath-listbox__text">
+          <span class="ath-listbox__label">{{ row.option.label }}</span>
+          @if (row.option.sublabel) {
+            <span class="ath-listbox__sub">{{ row.option.sublabel }}</span>
+          }
+        </span>
+        @if (!multiple() && row.selected) {
+          <lucide-icon class="ath-listbox__tick" [img]="checkIcon" [size]="14" aria-hidden="true" />
+        }
+      }
+    </li>
+  } @else {
+    <li
+      class="ath-listbox__option ath-listbox__option--create"
+      role="option"
+      aria-selected="false"
+      [id]="row.id"
+      [attr.data-index]="row.index"
+      [class.ath-listbox__option--active]="row.index === activeIndex()"
+    >
+      <lucide-icon class="ath-listbox__icon" [img]="plusIcon" [size]="14" aria-hidden="true" />
+      <span class="ath-listbox__label">{{ row.label }}</span>
+    </li>
+  }
+</ng-template>

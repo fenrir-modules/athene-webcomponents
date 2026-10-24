@@ -1,0 +1,190 @@
+// ===========================================
+// ATH-LISTBOX
+// ===========================================
+
+@use '../../styles/mixins' as m;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--fg-2);
+}
+
+// ---------- Search ----------
+
+.ath-listbox__search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-1);
+  padding: 0 var(--space-2);
+  background: var(--surface-3);
+  border: 1px solid transparent;
+  border-radius: var(--r);
+
+  &:focus-within {
+    @include m.focus-ring;
+  }
+}
+
+.ath-listbox__search-icon {
+  flex-shrink: 0;
+  color: var(--fg-4);
+}
+
+.ath-listbox__search-input {
+  flex: 1;
+  min-width: 0;
+  height: var(--space-8);
+  padding: 0;
+  font: inherit;
+  color: var(--fg);
+  background: transparent;
+  border: 0;
+
+  &:focus {
+    // The wrapper carries the ring (:focus-within).
+    outline: none;
+  }
+
+  &::placeholder {
+    color: var(--fg-4);
+  }
+}
+
+// ---------- List ----------
+
+.ath-listbox__list {
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+  overscroll-behavior: contain;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    border-radius: var(--r-sm);
+    box-shadow: inset 0 0 0 2px var(--focus-ring-color);
+  }
+}
+
+.ath-listbox__section {
+  display: block;
+}
+
+.ath-listbox__group {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ath-listbox__group-label {
+  padding: var(--space-2) var(--space-2) var(--space-1);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-label);
+}
+
+.ath-listbox__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--space-8);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  user-select: none;
+  // Offscreen rows are not laid out: long lists stay cheap.
+  content-visibility: auto;
+  contain-intrinsic-size: auto var(--space-8);
+
+  &--active {
+    color: var(--fg);
+    background: var(--hover-strong);
+  }
+
+  &--selected {
+    color: var(--fg);
+    font-weight: var(--weight-medium);
+  }
+
+  &--disabled {
+    color: var(--fg-4);
+    cursor: not-allowed;
+  }
+
+  &--create {
+    color: var(--fg);
+  }
+}
+
+// The active row is the focus indicator of the list (aria-activedescendant).
+:host(:has(:focus-visible)) .ath-listbox__option--active {
+  box-shadow: inset 0 0 0 2px var(--focus-ring-color);
+}
+
+.ath-listbox__check {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+
+  &--on {
+    background: var(--control-checked);
+    border-color: var(--control-checked);
+  }
+}
+
+.ath-listbox__icon {
+  flex-shrink: 0;
+  color: var(--fg-3);
+}
+
+.ath-listbox__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ath-listbox__label,
+.ath-listbox__sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ath-listbox__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.ath-listbox__sub {
+  font-size: var(--text-xs);
+  color: var(--fg-3);
+}
+
+.ath-listbox__tick {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.ath-listbox__status {
+  padding: var(--space-3) var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--fg-3);
+  text-align: center;
+}

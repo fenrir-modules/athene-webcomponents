@@ -1,92 +1,110 @@
-import { ChangeDetectionStrategy, Component, Input, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  InjectionToken,
+  SecurityContext,
+  ViewEncapsulation,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+
+/** Turns Markdown into HTML. Its output is sanitized before it is shown. */
+export type AthMarkdownParser = (source: string) => string;
 
 /**
- * Styled container for rendered Markdown content.
+ * The app's Markdown parser, provided once at the root so every
+ * `<ath-markdown [text]>` renders the same dialect. An explicit `[parse]`
+ * input wins.
+ */
+export const ATH_MARKDOWN_PARSER = new InjectionToken<AthMarkdownParser>('ATH_MARKDOWN_PARSER');
+
+/** Escapes text for HTML. */
+export function athEscapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/** Plain text as paragraphs and line breaks: the fallback without a parser. */
+export function athPlainTextHtml(text: string): string {
+  return text
+    .replace(/\r\n?/g, '\n')
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => `<p>${athEscapeHtml(p).replace(/\n/g, '<br>')}</p>`)
+    .join('');
+}
+
+/**
+ * Rendered Markdown, styled.
  *
- * The library deliberately does NOT bundle a Markdown parser to keep the
- * footprint small. Two ways to use it:
+ * **Security (SEC-14):** every path ends in Angular's HTML sanitizer
+ * (`DomSanitizer.sanitize(SecurityContext.HTML, …)`): script, event
+ * handlers, `style`, `javascript:` URLs and unknown elements are removed.
+ * There is no bypass: neither a parser nor `[html]` can put unsanitized
+ * markup on the page. A parser that escapes its input first (the app's
+ * `renderMarkdown`) is the first line; the sanitizer is the second.
  *
- *  1. **Server-rendered:** parse + sanitize Markdown on the server, pass
- *     the HTML via `[html]`. This is the recommended path for V1 (the
- *     wiki-service uses pulldown-cmark for this).
+ * Sources, first match wins:
+ *  1. `[html]`: HTML rendered elsewhere (e.g. the server); sanitized too.
+ *  2. `[text]` (alias `[source]`): Markdown, parsed with `[parse]` or the
+ *     `ATH_MARKDOWN_PARSER` the app provides; without a parser it shows as
+ *     escaped paragraphs.
  *
- *  2. **Client-rendered:** pass raw Markdown via `[source]`; the consuming
- *     app provides a `parse` function (e.g., marked, markdown-it). The
- *     resulting HTML is sanitized by Angular's `DomSanitizer` and styled.
- *
- * **Security:** When using `[html]`, the caller is responsible for
- * sanitization (or guarantees the HTML is trusted). When using `[source]`
- * with a parser, the output is bypassed via `bypassSecurityTrustHtml` — so
- * the parser must produce safe HTML (most popular parsers do, but verify).
+ * The rendered elements are not part of this component's template, so the
+ * styles are global, scoped under `.ath-markdown .ath-md` (the
+ * `styles/_markdown.scss` mixin, shared with editors).
  *
  * @example
+ * <ath-markdown [text]="ticket.description" />
+ * <ath-markdown [text]="comment.body" [parse]="renderMarkdown" />
  * <ath-markdown [html]="serverRenderedHtml" />
- * <ath-markdown [source]="rawMd" [parse]="markdownIt" />
  */
 @Component({
   selector: 'ath-markdown',
   standalone: true,
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './markdown.component.html',
+  encapsulation: ViewEncapsulation.None,
+  host: { class: 'ath-markdown' },
+  template: `<div class="ath-md" [innerHTML]="renderedHtml()"></div>`,
   styleUrl: './markdown.component.scss',
 })
 export class AthMarkdownComponent {
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly defaultParser = inject(ATH_MARKDOWN_PARSER, { optional: true });
 
-  private readonly _html = signal('');
-  private readonly _source = signal('');
-  private readonly _parse = signal<((src: string) => string) | null>(null);
+  /** Markdown source. */
+  readonly text = input<string | null | undefined>('');
+  /** @deprecated Use `text`. Markdown source, read when `text` is empty. */
+  readonly source = input<string | null | undefined>('');
+  /** Parser for this instance; defaults to `ATH_MARKDOWN_PARSER`. */
+  readonly parse = input<AthMarkdownParser | null>(null);
+  /** Pre-rendered HTML (still sanitized). Wins over `text`. */
+  readonly html = input<string | null | undefined>('');
 
-  @Input()
-  set html(value: string) {
-    this._html.set(value ?? '');
-  }
-  get html(): string {
-    return this._html();
-  }
-
-  @Input()
-  set source(value: string) {
-    this._source.set(value ?? '');
-  }
-  get source(): string {
-    return this._source();
-  }
-
-  @Input()
-  set parse(fn: ((src: string) => string) | null) {
-    this._parse.set(fn);
-  }
-
-  protected readonly renderedHtml = computed<SafeHtml>(() => {
-    const direct = this._html();
-    if (direct) {
-      return this.sanitizer.bypassSecurityTrustHtml(direct);
+  /** The sanitized HTML, as a string (Angular sanitizes `innerHTML` again on binding). */
+  protected readonly renderedHtml = computed<string>(() => {
+    const direct = this.html();
+    if (direct) return this.clean(direct);
+    const src = this.text() || this.source() || '';
+    if (!src.trim()) return '';
+    const parser = this.parse() ?? this.defaultParser;
+    if (!parser) return this.clean(athPlainTextHtml(src));
+    try {
+      return this.clean(parser(src));
+    } catch (err) {
+      console.warn('[ath-markdown] parser threw, showing plain text', err);
+      return this.clean(athPlainTextHtml(src));
     }
-    const src = this._source();
-    const parser = this._parse();
-    if (src && parser) {
-      try {
-        return this.sanitizer.bypassSecurityTrustHtml(parser(src));
-      } catch (err) {
-        console.warn('[ath-markdown] parser threw, falling back to plain text', err);
-        return this.escapeAsPre(src);
-      }
-    }
-    if (src) {
-      return this.escapeAsPre(src);
-    }
-    return '';
   });
 
-  private escapeAsPre(src: string): SafeHtml {
-    const escaped = src
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-    return this.sanitizer.bypassSecurityTrustHtml(`<pre>${escaped}</pre>`);
+  private clean(html: string): string {
+    return this.sanitizer.sanitize(SecurityContext.HTML, html) ?? '';
   }
 }

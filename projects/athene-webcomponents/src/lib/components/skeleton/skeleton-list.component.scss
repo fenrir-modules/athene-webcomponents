@@ -1,0 +1,85 @@
+// The loading state of a list or grid, sized like the real content.
+
+:host {
+  display: block;
+}
+
+.ath-skeleton-list {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+
+  &__cell {
+    background: var(--bg-2);
+    animation: ath-skeleton-list-pulse 1.6s ease-in-out infinite;
+  }
+
+  &[data-variant='row'] {
+    display: flex;
+    flex-direction: column;
+
+    .ath-skeleton-list__cell {
+      height: var(--row-h);
+      border-bottom: 1px solid var(--border);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
+  &[data-variant='card'] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: 10px;
+
+    .ath-skeleton-list__cell {
+      height: 64px;
+      border-radius: var(--r);
+    }
+  }
+
+  &[data-variant='card-grid'] {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border: none;
+    background: transparent;
+
+    .ath-skeleton-list__cell {
+      height: 168px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      background: var(--surface);
+    }
+  }
+
+  &__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@keyframes ath-skeleton-list-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ath-skeleton-list__cell {
+    animation: none;
+    opacity: 0.65;
+  }
+}

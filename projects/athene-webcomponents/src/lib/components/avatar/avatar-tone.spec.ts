@@ -1,4 +1,10 @@
-import { AVATAR_TONE_COUNT, avatarInitials, avatarTone } from './avatar-tone';
+import {
+  AVATAR_TONE_COUNT,
+  avatarInitials,
+  avatarTone,
+  avatarToneFor,
+  toneOfKey,
+} from './avatar-tone';
 
 describe('avatarTone', () => {
   it('gives a person the same tone from a full name or their initials', () => {
@@ -25,5 +31,24 @@ describe('avatarInitials', () => {
     expect(avatarInitials('Joel Peter Furter')).toBe('JF');
     expect(avatarInitials('admin')).toBe('AD');
     expect(avatarInitials('')).toBe('?');
+  });
+});
+
+describe('avatarToneFor', () => {
+  it('keys on the id when there is one', () => {
+    // Same initials, different people: the id decides.
+    const ids = ['u-1', 'u-2', 'u-3', 'u-4', 'u-5', 'u-6'];
+    const tones = new Set(ids.map((id) => avatarToneFor({ id, name: 'Mira Voss' })));
+    expect(tones.size).toBeGreaterThan(1);
+    expect(avatarToneFor({ id: 'u-1', name: 'Mira Voss' })).toBe(toneOfKey('u-1'));
+    // One person, however the name is spelled.
+    expect(avatarToneFor({ id: 'u-1', name: 'MV' })).toBe(
+      avatarToneFor({ id: 'u-1', name: 'Mira' })
+    );
+  });
+
+  it('falls back to the initials without an id, and to neutral without anything', () => {
+    expect(avatarToneFor({ name: 'Mira Voss' })).toBe(avatarTone('MV'));
+    expect(avatarToneFor({ id: ' ', name: '' })).toBeNull();
   });
 });

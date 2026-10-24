@@ -1,0 +1,50 @@
+// ===========================================
+// ATHENE LAYOUT: the stage contract of ath-page
+// ===========================================
+// The app shell's scroll container for routed pages carries the class
+// `ath-stage`. It must
+//   1. have a definite height: a flex item with `flex: 1; min-height: 0`
+//      in a full-height flex column (the shell: 100dvh, overflow hidden);
+//   2. scroll itself (`overflow-y: auto`, set here);
+//   3. pad its content with exactly
+//        padding: var(--content-pad-top) var(--content-pad-x) var(--content-pad-bottom);
+//      and change the padding at phone widths by redefining those custom
+//      properties on the stage (not by a literal padding), because ath-page
+//      trims the bottom padding to the top value with a token calc.
+// `ath-page` is the root element of the routed component's template, so
+// the route host is the stage's direct child and the page its direct child.
+//
+// What this file adds: the stage is a flex column, and a route host whose
+// root is an ath-page grows to the stage's height (scroll mode: at least
+// it; fill mode: exactly it). Hosts without an ath-page are untouched
+// (block flow as before), so pages migrate one by one.
+
+.ath-stage {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  // ath-page and ath-panel-grid fall back from fill to scroll when the
+  // stage is narrow: a container query on the stage, not the viewport.
+  container: ath-stage / inline-size;
+
+  > :has(> ath-page) {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    min-width: 0;
+  }
+
+  > :has(> ath-page[data-mode='fill']) {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+}
+
+// Narrow stage (phones): fill pages scroll like any other (see ath-page).
+@container ath-stage (max-width: 720px) {
+  .ath-stage > :has(> ath-page[data-mode='fill']) {
+    flex: 1 0 auto;
+    min-height: auto;
+  }
+}

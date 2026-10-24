@@ -1,8 +1,54 @@
-<span [class]="chipClasses">
-  <ng-content />
-  @if (removable) {
-    <button type="button" class="ath-chip__remove" aria-label="Remove chip" (click)="remove($event)">
-      <lucide-icon [img]="removeIcon" [size]="12" />
-    </button>
+@switch (kind()) {
+  @case ('count') {
+    <span
+      class="ath-chip"
+      data-kind="count"
+      role="img"
+      [attr.aria-label]="countLabel()"
+      [athTooltip]="tooltip() ?? ''"
+      >{{ countText() }}</span
+    >
   }
-</span>
+  @default {
+    <span
+      class="ath-chip"
+      [attr.data-kind]="kind()"
+      [attr.data-variant]="variant()"
+      [attr.data-muted]="muted() ? 'true' : null"
+      [style.--_tint]="color() || null"
+      [athTooltip]="tooltip() ?? ''"
+    >
+      @if (kind() === 'type') {
+        <span class="ath-chip__square" aria-hidden="true">
+          @if (glyph()) {
+            <lucide-icon [img]="glyph()!" [size]="11" [strokeWidth]="2.4" />
+          }
+        </span>
+        @if (tooltip()) {
+          <span class="ath-chip__sr">{{ tooltip() }}</span>
+        }
+      } @else if (glyph()) {
+        <lucide-icon
+          class="ath-chip__glyph"
+          [img]="glyph()!"
+          [size]="11"
+          [strokeWidth]="2.4"
+          aria-hidden="true"
+        />
+      } @else if (kind() === 'label' || kind() === 'status') {
+        <span class="ath-chip__dot" aria-hidden="true"></span>
+      }
+      <span class="ath-chip__text"><ng-content /></span>
+      @if (removable()) {
+        <button
+          type="button"
+          class="ath-chip__remove"
+          [attr.aria-label]="resolvedRemoveLabel()"
+          (click)="remove($event)"
+        >
+          <lucide-icon [img]="removeIcon" [size]="11" aria-hidden="true" />
+        </button>
+      }
+    </span>
+  }
+}

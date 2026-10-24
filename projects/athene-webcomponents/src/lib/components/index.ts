@@ -60,3 +60,12 @@ export * from './kbd';
 export * from './copy-button';
 export * from './timer-pill';
 export * from './pagination';
+
+// Display primitives and page frame (quality step 1.7)
+export * from './due-label';
+export * from './page';
+
+// Overlay primitives (quality step 1.6)
+export * from './popover';
+export * from './menu';
+export * from './listbox';

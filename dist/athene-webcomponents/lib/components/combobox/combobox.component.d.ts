@@ -1,21 +1,17 @@
-import { EventEmitter, OnDestroy, TemplateRef } from '@angular/core';
+import { TemplateRef } from '@angular/core';
+import type { ListboxOption, ListboxOptionContext } from '../listbox/listbox.component';
 import * as i0 from "@angular/core";
-export interface ComboboxOption<T = string> {
-    value: T;
-    label: string;
-    /** Optional sub-label shown below the main label (e.g., email under name). */
-    sublabel?: string;
-    /** Optional icon-name (Lucide) or arbitrary string handled by `optionTpl`. */
-    icon?: string;
-    disabled?: boolean;
-    /** Free-form group label — items with the same group are grouped together. */
-    group?: string;
-}
 /**
- * Searchable single-select dropdown. The foundation for UserPicker,
- * LabelPicker, ProjectPicker, AssigneePicker, etc.
+ * A combobox option. Same shape as `ListboxOption`: `icon` may be a Lucide
+ * icon (rendered) or a name your `optionTpl` resolves.
+ */
+export type ComboboxOption<T = string> = ListboxOption<T>;
+/**
+ * Searchable single-select dropdown: a preset on `ath-option-picker`
+ * (popover + listbox), kept for its established API. For multi-select,
+ * "create" rows or a custom anchor use `ath-option-picker` directly.
  *
- * For custom rendering pass an `optionTpl` template.
+ * For custom rendering pass an `optionTpl` template (`let-option`).
  *
  * @example
  * <ath-combobox
@@ -24,62 +20,33 @@ export interface ComboboxOption<T = string> {
  *   placeholder="Pick assignee"
  *   (queryChange)="search($event)" />
  */
-export declare class AthComboboxComponent<T = string> implements OnDestroy {
-    /**
-     * The open panel floats (`position: fixed`, kept inside the viewport), so
-     * a side panel's or dialog's overflow never cuts it off.
-     */
-    private unfloat;
-    private set panelEl(value);
-    ngOnDestroy(): void;
-    private readonly host;
-    options: ComboboxOption<T>[];
-    value: T | null;
-    placeholder: string;
-    searchPlaceholder: string;
-    disabled: boolean;
-    clearable: boolean;
-    loading: boolean;
-    /** Hide the trigger's button styling; render only the popup (controlled mode). */
-    bare: boolean;
+export declare class AthComboboxComponent<T = string> {
+    protected readonly host: HTMLElement;
+    readonly options: import("@angular/core").InputSignal<ComboboxOption<T>[]>;
+    /** The selected value. Two-way: `[(value)]`. */
+    readonly value: import("@angular/core").ModelSignal<T | null>;
+    /** Trigger text without a value; defaults to `ATH_LABELS.pickerPlaceholder`. */
+    readonly placeholder: import("@angular/core").InputSignal<string | null>;
+    /** Search field placeholder; defaults to `ATH_LABELS.listboxSearch`. */
+    readonly searchPlaceholder: import("@angular/core").InputSignal<string | null>;
+    readonly disabled: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+    readonly clearable: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+    readonly loading: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+    /** Hide the trigger; render only the popup (controlled mode, see `openPanel()`). */
+    readonly bare: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Optional custom template for each option (`<ng-template let-option>`). */
-    optionTpl: TemplateRef<unknown> | null;
-    valueChange: EventEmitter<T | null>;
+    readonly optionTpl: import("@angular/core").InputSignal<TemplateRef<ListboxOptionContext<T>> | null>;
     /** Emits the search query when it changes (for async/server search). */
-    queryChange: EventEmitter<string>;
-    opened: EventEmitter<void>;
-    closed: EventEmitter<void>;
-    private searchInput;
-    protected readonly chevronIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly checkIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly searchIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly clearIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly open: import("@angular/core").WritableSignal<boolean>;
-    protected readonly query: import("@angular/core").WritableSignal<string>;
-    protected readonly highlighted: import("@angular/core").WritableSignal<number>;
-    protected readonly filtered: import("@angular/core").Signal<ComboboxOption<T>[]>;
-    /** Result with `null` separators inserted between groups. */
-    protected readonly grouped: import("@angular/core").Signal<(ComboboxOption<T> | {
-        _group: string;
-    })[]>;
-    protected readonly selectedOption: import("@angular/core").Signal<ComboboxOption<T> | null>;
+    readonly queryChange: import("@angular/core").OutputEmitterRef<string>;
+    readonly opened: import("@angular/core").OutputEmitterRef<void>;
+    readonly closed: import("@angular/core").OutputEmitterRef<void>;
+    private readonly picker;
     toggle(): void;
     openPanel(): void;
     close(): void;
     select(option: ComboboxOption<T>): void;
-    clearValue(event: MouseEvent): void;
-    onQueryInput(value: string): void;
-    isOption(item: ComboboxOption<T> | {
-        _group: string;
-    }): item is ComboboxOption<T>;
-    isHighlighted(index: number, item: ComboboxOption<T> | {
-        _group: string;
-    }): boolean;
-    trackByValue: (index: number, item: ComboboxOption<T> | {
-        _group: string;
-    }) => unknown;
-    onSearchKey(event: KeyboardEvent): void;
-    onDocumentMouseDown(event: MouseEvent): void;
+    /** @deprecated The clear button is built in (`clearable`); call `value.set(null)`. */
+    clearValue(event?: Event): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthComboboxComponent<any>, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthComboboxComponent<any>, "ath-combobox", never, { "options": { "alias": "options"; "required": false; }; "value": { "alias": "value"; "required": false; }; "placeholder": { "alias": "placeholder"; "required": false; }; "searchPlaceholder": { "alias": "searchPlaceholder"; "required": false; }; "disabled": { "alias": "disabled"; "required": false; }; "clearable": { "alias": "clearable"; "required": false; }; "loading": { "alias": "loading"; "required": false; }; "bare": { "alias": "bare"; "required": false; }; "optionTpl": { "alias": "optionTpl"; "required": false; }; }, { "valueChange": "valueChange"; "queryChange": "queryChange"; "opened": "opened"; "closed": "closed"; }, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthComboboxComponent<any>, "ath-combobox", never, { "options": { "alias": "options"; "required": false; "isSignal": true; }; "value": { "alias": "value"; "required": false; "isSignal": true; }; "placeholder": { "alias": "placeholder"; "required": false; "isSignal": true; }; "searchPlaceholder": { "alias": "searchPlaceholder"; "required": false; "isSignal": true; }; "disabled": { "alias": "disabled"; "required": false; "isSignal": true; }; "clearable": { "alias": "clearable"; "required": false; "isSignal": true; }; "loading": { "alias": "loading"; "required": false; "isSignal": true; }; "bare": { "alias": "bare"; "required": false; "isSignal": true; }; "optionTpl": { "alias": "optionTpl"; "required": false; "isSignal": true; }; }, { "value": "valueChange"; "queryChange": "queryChange"; "opened": "opened"; "closed": "closed"; }, never, never, true, never>;
 }

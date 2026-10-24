@@ -1,118 +1,21 @@
 // ===========================================
-// ATH-DROPDOWN STYLES
+// ATH-DROPDOWN
 // ===========================================
-// Smart-positioned dropdown menu.
-// Supports all 4 quadrants via --up/--down + --left/--right.
+// A preset on ath-menu: the panel, items and focus styles live there.
 
-$gap: var(--ath-space-1);
+@use '../../styles/mixins' as m;
 
-.ath-dropdown {
-  position: relative;
+:host {
   display: inline-flex;
-
-  &__trigger {
-    cursor: pointer;
-  }
-
-  // ── Menu ──
-  &__menu {
-    position: absolute;
-    z-index: var(--z-dropdown);
-    min-width: 180px;
-    padding: var(--ath-space-1);
-    background-color: var(--ath-bg-elevated);
-    border: 1px solid var(--ath-border-color);
-    border-radius: var(--ath-border-radius-lg);
-    box-shadow: var(--ath-shadow-lg);
-
-    // ── Vertical ──
-    &--down {
-      top: calc(100% + #{$gap});
-      animation: ath-dd-down 150ms ease;
-    }
-
-    &--up {
-      bottom: calc(100% + #{$gap});
-      animation: ath-dd-up 150ms ease;
-    }
-
-    // ── Horizontal ──
-    &--left {
-      left: 0;
-    }
-
-    &--right {
-      right: 0;
-    }
-  }
-
-  // ── Item ──
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: var(--ath-space-2);
-    width: 100%;
-    padding: var(--ath-space-2) var(--ath-space-3);
-    font-family: var(--ath-font-family);
-    font-size: var(--ath-font-size-sm);
-    color: var(--ath-text-primary);
-    background: none;
-    border: none;
-    border-radius: var(--ath-border-radius-sm);
-    cursor: pointer;
-    text-align: left;
-    transition: background-color var(--ath-transition-fast);
-
-    &:hover:not(:disabled) {
-      background-color: var(--ath-bg-tertiary);
-    }
-
-    &--danger {
-      color: var(--ath-color-error);
-
-      &:hover:not(:disabled) {
-        background-color: var(--red-tint);
-      }
-    }
-
-    &--disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    &-icon {
-      flex-shrink: 0;
-      color: inherit;
-    }
-  }
-
-  // ── Divider ──
-  &__divider {
-    height: 1px;
-    margin: var(--ath-space-1) 0;
-    background-color: var(--ath-border-color);
-  }
 }
 
-// ── Animations ──
-@keyframes ath-dd-down {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+.ath-dropdown__trigger {
+  display: inline-flex;
+  cursor: pointer;
 
-@keyframes ath-dd-up {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  // Only when the wrapper itself is the control (plain-text trigger).
+  &[role='button']:focus-visible {
+    border-radius: var(--r-sm);
+    @include m.focus-ring;
   }
 }

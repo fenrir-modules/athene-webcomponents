@@ -1,4 +1,4 @@
-import { EventEmitter } from '@angular/core';
+import { type AthAction } from './button.action';
 import * as i0 from "@angular/core";
 /**
  * Button variant types
@@ -11,44 +11,57 @@ export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';
 /**
  * Athene Button Component
  *
+ * `[action]` makes the button track its own work: pass a function that
+ * returns a Promise or an Observable and the button is busy until it
+ * settles: disabled, a spinner, `aria-busy`, and a second click (or a
+ * double click) does nothing. No hand-kept `saving` signal (QA-13).
+ *
  * @example
  * <ath-button variant="primary" (clicked)="handleClick()">Click me</ath-button>
+ * <ath-button variant="primary" [action]="save">Save</ath-button>
+ *   // in the component: protected readonly save = () => this.sprints.create(this.draft());
  * <ath-button variant="outline" size="sm" [loading]="true">Loading...</ath-button>
  */
 export declare class AthButtonComponent {
-    /** Button variant */
-    variant: ButtonVariant;
-    /** Button size */
-    size: ButtonSize;
-    /** Button type attribute */
-    type: 'button' | 'submit' | 'reset';
-    /** Disabled state */
-    disabled: boolean;
-    /** Loading state */
-    loading: boolean;
-    /** Full width button */
-    fullWidth: boolean;
+    private readonly errorHandler;
+    readonly variant: import("@angular/core").InputSignal<ButtonVariant>;
+    readonly size: import("@angular/core").InputSignal<ButtonSize>;
+    /** Button type attribute. */
+    readonly type: import("@angular/core").InputSignal<"button" | "submit" | "reset">;
+    readonly disabled: import("@angular/core").InputSignal<boolean>;
+    /** Busy from outside (an action started elsewhere). `[action]` sets its own. */
+    readonly loading: import("@angular/core").InputSignal<boolean>;
+    readonly fullWidth: import("@angular/core").InputSignal<boolean>;
     /**
      * Toggle state. `null` (default) renders a plain button; `true`/`false`
      * make it a toggle button with `aria-pressed` and a sunken pressed look.
      */
-    pressed: boolean | null;
+    readonly pressed: import("@angular/core").InputSignal<boolean | null>;
     /**
      * Disclosure state for a button that opens a panel or menu. `null`
      * (default) omits `aria-expanded`. Set this instead of
      * `[attr.aria-expanded]` on the host: host attributes do not reach the
      * focusable inner `<button>`.
      */
-    expanded: boolean | null;
+    readonly expanded: import("@angular/core").InputSignal<boolean | null>;
     /** Id of the element this button controls (`aria-controls`). */
-    controls: string | null;
-    /** Optional aria-label for icon-only usage */
-    ariaLabel: string | null;
-    /** Click event emitter */
-    clicked: EventEmitter<MouseEvent>;
+    readonly controls: import("@angular/core").InputSignal<string | null>;
+    /** Optional aria-label for icon-only usage. */
+    readonly ariaLabel: import("@angular/core").InputSignal<string | null>;
+    /** Work to run on click; the button is busy until it settles. */
+    readonly action: import("@angular/core").InputSignal<AthAction | null>;
+    /** Every accepted click (also with `[action]`, before it runs). */
+    readonly clicked: import("@angular/core").OutputEmitterRef<MouseEvent>;
+    /** The action settled successfully. */
+    readonly done: import("@angular/core").OutputEmitterRef<unknown>;
+    /** The action failed; the error also goes to Angular's `ErrorHandler`. */
+    readonly failed: import("@angular/core").OutputEmitterRef<unknown>;
+    private readonly running;
+    /** Busy: an `[action]` is running or `[loading]` is set. */
+    readonly busy: import("@angular/core").Signal<boolean>;
     protected readonly loaderIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    get buttonClasses(): string;
+    protected readonly buttonClasses: import("@angular/core").Signal<string>;
     handleClick(event: MouseEvent): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthButtonComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthButtonComponent, "ath-button", never, { "variant": { "alias": "variant"; "required": false; }; "size": { "alias": "size"; "required": false; }; "type": { "alias": "type"; "required": false; }; "disabled": { "alias": "disabled"; "required": false; }; "loading": { "alias": "loading"; "required": false; }; "fullWidth": { "alias": "fullWidth"; "required": false; }; "pressed": { "alias": "pressed"; "required": false; }; "expanded": { "alias": "expanded"; "required": false; }; "controls": { "alias": "controls"; "required": false; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; }; }, { "clicked": "clicked"; }, never, ["*"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthButtonComponent, "ath-button", never, { "variant": { "alias": "variant"; "required": false; "isSignal": true; }; "size": { "alias": "size"; "required": false; "isSignal": true; }; "type": { "alias": "type"; "required": false; "isSignal": true; }; "disabled": { "alias": "disabled"; "required": false; "isSignal": true; }; "loading": { "alias": "loading"; "required": false; "isSignal": true; }; "fullWidth": { "alias": "fullWidth"; "required": false; "isSignal": true; }; "pressed": { "alias": "pressed"; "required": false; "isSignal": true; }; "expanded": { "alias": "expanded"; "required": false; "isSignal": true; }; "controls": { "alias": "controls"; "required": false; "isSignal": true; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; "isSignal": true; }; "action": { "alias": "action"; "required": false; "isSignal": true; }; }, { "clicked": "clicked"; "done": "done"; "failed": "failed"; }, never, ["*"], true, never>;
 }

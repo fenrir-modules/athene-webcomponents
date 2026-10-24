@@ -1,42 +1,60 @@
-/* ===========================================
-   ATH-SKELETON STYLES
-   =========================================== */
+// ===========================================
+// ATH-SKELETON STYLES
+// ===========================================
+// One look for every loading placeholder: a --bg-2 fill that pulses.
 
-.ath-skeleton {
-  background-color: var(--ath-bg-tertiary);
+:host {
+  display: block;
+  background: var(--bg-2);
+  border-radius: var(--r-xs);
 }
 
-/* Variants */
-.ath-skeleton--text {
+:host([data-variant='line']) {
+  // A text line's box (1.5em) with the bar inside it.
+  height: 0.8em;
+  margin-block: 0.35em;
+}
+
+:host([data-variant='text']) {
   height: 1em;
-  border-radius: var(--ath-border-radius-sm);
 }
 
-.ath-skeleton--circular {
-  border-radius: var(--ath-border-radius-full);
+:host([data-variant='row']) {
+  height: var(--row-h);
+  border-radius: 0;
+  border-bottom: 1px solid var(--border);
 }
 
-.ath-skeleton--rectangular {
-  border-radius: var(--ath-border-radius-md);
+:host([data-variant='card']) {
+  height: 64px;
+  border-radius: var(--r);
 }
 
-/* Animation */
-.ath-skeleton--animated {
-  background: linear-gradient(
-    90deg,
-    var(--ath-bg-tertiary) 25%,
-    var(--ath-bg-secondary) 50%,
-    var(--ath-bg-tertiary) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+:host([data-variant='circular']) {
+  border-radius: var(--r-full);
 }
 
-@keyframes skeleton-shimmer {
-  0% {
-    background-position: 200% 0;
-  }
+:host([data-variant='rectangular']) {
+  border-radius: var(--r);
+}
+
+:host(.ath-skeleton--animated) {
+  animation: ath-skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes ath-skeleton-pulse {
+  0%,
   100% {
-    background-position: -200% 0;
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host(.ath-skeleton--animated) {
+    animation: none;
+    opacity: 0.65;
   }
 }

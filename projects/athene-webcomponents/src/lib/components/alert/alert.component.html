@@ -1,8 +1,32 @@
-<div [class]="alertClasses" role="alert">
-  <span class="ath-alert__message">{{ message }}</span>
-  @if (dismissible) {
-    <button class="ath-alert__dismiss" (click)="dismiss()" aria-label="Dismiss">
-      ×
+<div
+  class="ath-alert"
+  [attr.data-tone]="tone()"
+  [attr.data-appearance]="appearance()"
+  [attr.role]="role()"
+>
+  @if (showIcon()) {
+    <lucide-icon class="ath-alert__icon" [img]="glyph()" [size]="16" aria-hidden="true" />
+  }
+  <span class="ath-alert__message">
+    @if (title()) {
+      <strong class="ath-alert__title">{{ title() }}</strong>
+    }
+    {{ message() }}
+    <span class="ath-alert__extra"><ng-content /></span>
+  </span>
+  @if (retry(); as retryAction) {
+    <ath-button class="ath-alert__retry" variant="secondary" size="xs" [action]="retryAction">
+      {{ retryText() }}
+    </ath-button>
+  }
+  @if (dismissible()) {
+    <button
+      type="button"
+      class="ath-alert__dismiss"
+      [attr.aria-label]="dismissText()"
+      (click)="dismiss()"
+    >
+      <lucide-icon [img]="closeIcon" [size]="14" aria-hidden="true" />
     </button>
   }
 </div>

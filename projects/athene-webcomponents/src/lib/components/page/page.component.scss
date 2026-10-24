@@ -1,0 +1,83 @@
+// ath-page: the page frame. Global styles scoped by element name (the
+// component uses ViewEncapsulation.None), because they size projected
+// children. The stage side of the contract is in styles/_layout.scss.
+
+ath-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: var(--page-max-w);
+  margin-inline: auto;
+  // At least the stage's height; grows with the content (scroll mode).
+  flex: 1 0 auto;
+}
+
+ath-page[data-mode='fill'] {
+  // Exactly the stage's height.
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+// The stage pads its bottom by --content-pad-bottom (32px); a page keeps
+// the same gutter under it as above it (--content-pad-top, 16px) instead,
+// so panels reach to 16px from the bottom (DS-11: dead space ≤ 16px).
+// Token-driven: where the shell pads evenly (phones) this is 0.
+ath-page {
+  margin-bottom: calc(var(--content-pad-top) - var(--content-pad-bottom));
+}
+
+ath-page > ath-page-header,
+ath-page > [athPageHead] {
+  flex: none;
+}
+
+.ath-page__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+  flex: 1 0 auto;
+  min-width: 0;
+  min-height: 0;
+
+  // Toolbars, alerts, KPI strips keep their height …
+  > * {
+    flex: none;
+    min-width: 0;
+  }
+
+  // … the filling child takes the rest: at least the remaining height in
+  // scroll mode, exactly it in fill mode.
+  > :is(ath-panel-grid, ath-panel, [athPageFill]) {
+    flex: 1 0 auto;
+  }
+}
+
+ath-page[data-mode='fill'] > .ath-page__body {
+  flex: 1 1 0;
+
+  > :is(ath-panel-grid, ath-panel, [athPageFill]) {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+}
+
+// Narrow stage (phones, ≤ 720px of content): fill falls back to scroll;
+// the panel grid stacks at natural heights (same threshold).
+@container ath-stage (max-width: 720px) {
+  ath-page[data-mode='fill'] {
+    flex: 1 0 auto;
+    min-height: auto;
+  }
+
+  ath-page[data-mode='fill'] > .ath-page__body {
+    flex: 1 0 auto;
+
+    > :is(ath-panel-grid, ath-panel, [athPageFill]) {
+      flex: 1 0 auto;
+      min-height: auto;
+    }
+  }
+}

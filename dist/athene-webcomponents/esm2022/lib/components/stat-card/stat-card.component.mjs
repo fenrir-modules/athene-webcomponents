@@ -1,58 +1,65 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AthSparklineComponent } from '../sparkline';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { AthKpiStripComponent, AthKpiTileComponent } from '../kpi-tile';
 import * as i0 from "@angular/core";
 /**
- * Stat card with label + value, optional trend arrow, optional delta badge,
- * optional sparkline.
+ * A single label/value card.
  *
- * For dashboard-style KPI tiles prefer `<ath-kpi-tile>`. This stays as the
- * simpler label/value/sub primitive.
+ * @deprecated One KPI API: use `ath-kpi-tile` inside `ath-kpi-strip`. This
+ * renders exactly that (a strip of one tile) and maps the old inputs:
+ * `subValue` → `note`, `sparkData` → `spark`, `trend` → a "↑"/"↓" delta.
+ * Removed in quality step 2.7.
  *
  * @example
- * <ath-stat-card label="Total Users" value="1,234" />
- * <ath-stat-card label="Active" value="89%" trend="up" />
- * <ath-stat-card label="Open" value="42" delta="+5" deltaDirection="up"
- *                [sparkData]="[10,12,15,18,22,28,30]" />
+ * <ath-stat-card label="Open" value="42" delta="+5" deltaDirection="up" />
  */
 export class AthStatCardComponent {
     constructor() {
-        this.label = '';
-        this.value = '';
-        this.subValue = '';
-        /** Quick up/down arrow. Use delta+deltaDirection for richer badges. */
-        this.trend = null;
-        /** Delta text (e.g., `+12`, `-3`). Displayed as colored badge. */
-        this.delta = null;
-        /** Color cue for the delta badge. */
-        this.deltaDirection = null;
-        /** Optional sparkline data — min 2 points. */
-        this.sparkData = null;
-        this.sparkColor = 'var(--accent)';
+        this.label = input.required();
+        this.value = input('');
+        this.subValue = input('');
+        this.trend = input(null);
+        this.delta = input(null);
+        this.deltaDirection = input(null);
+        this.sparkData = input(null);
+        this.sparkColor = input(null);
+        this.shownDelta = computed(() => {
+            const delta = this.delta();
+            if (delta != null)
+                return delta;
+            const trend = this.trend();
+            return trend ? (trend === 'up' ? '↑' : '↓') : null;
+        });
+        this.shownDirection = computed(() => this.deltaDirection() ?? this.trend() ?? null);
     }
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthStatCardComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthStatCardComponent, isStandalone: true, selector: "ath-stat-card", inputs: { label: "label", value: "value", subValue: "subValue", trend: "trend", delta: "delta", deltaDirection: "deltaDirection", sparkData: "sparkData", sparkColor: "sparkColor" }, ngImport: i0, template: "<div class=\"ath-stat-card\">\n  <div class=\"ath-stat-card__head\">\n    <span class=\"ath-stat-card__label\">{{ label }}</span>\n    @if (delta != null && deltaDirection) {\n      <span class=\"ath-stat-card__delta\" [attr.data-direction]=\"deltaDirection\">{{ delta }}</span>\n    }\n  </div>\n  <div class=\"ath-stat-card__value-row\">\n    <span class=\"ath-stat-card__value\">{{ value }}</span>\n    @if (trend && delta == null) {\n      <span\n        class=\"ath-stat-card__trend\"\n        [class.ath-stat-card__trend--up]=\"trend === 'up'\"\n        [class.ath-stat-card__trend--down]=\"trend === 'down'\"\n      >\n        {{ trend === 'up' ? '\u2191' : '\u2193' }}\n      </span>\n    }\n    @if (sparkData && sparkData.length >= 2) {\n      <ath-sparkline\n        class=\"ath-stat-card__spark\"\n        [data]=\"sparkData\"\n        [color]=\"sparkColor\"\n        [width]=\"70\"\n        [height]=\"22\"\n      />\n    }\n  </div>\n  @if (subValue) {\n    <span class=\"ath-stat-card__sub\">{{ subValue }}</span>\n  }\n</div>\n", styles: [".ath-stat-card{display:flex;flex-direction:column;gap:var(--ath-space-2);padding:var(--ath-space-4) var(--ath-space-5);background:var(--ath-bg-panel);border:1px solid var(--ath-border-color);border-radius:var(--ath-border-radius-lg)}.ath-stat-card__head{display:flex;align-items:center;justify-content:space-between;gap:8px}.ath-stat-card__label{font-size:12px;font-weight:500;letter-spacing:-.005em;color:var(--fg-3);text-transform:none}.ath-stat-card__delta{display:inline-flex;align-items:center;font-family:var(--font-mono);font-feature-settings:\"tnum\";font-size:11px;font-weight:500;padding:1px 6px;border-radius:var(--r-xs);line-height:1.5}.ath-stat-card__delta[data-direction=up]{color:var(--green);background:var(--green-tint)}.ath-stat-card__delta[data-direction=down]{color:var(--red);background:var(--red-tint)}.ath-stat-card__delta[data-direction=neutral]{color:var(--fg-3);background:var(--bg-2)}.ath-stat-card__value-row{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--ath-space-2)}.ath-stat-card__spark{flex-shrink:0}.ath-stat-card__value{font-size:var(--ath-font-size-3xl);font-weight:var(--ath-font-weight-semibold);color:var(--ath-text-primary);line-height:1;font-variant-numeric:tabular-nums}.ath-stat-card__trend{font-size:var(--ath-font-size-sm);font-weight:var(--ath-font-weight-medium)}.ath-stat-card__trend--up{color:var(--ath-color-success)}.ath-stat-card__trend--down{color:var(--ath-color-error)}.ath-stat-card__sub{font-size:var(--ath-font-size-xs);color:var(--ath-text-tertiary)}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "component", type: AthSparklineComponent, selector: "ath-sparkline", inputs: ["data", "width", "height", "color", "showDot", "showArea", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.1.0", version: "18.2.14", type: AthStatCardComponent, isStandalone: true, selector: "ath-stat-card", inputs: { label: { classPropertyName: "label", publicName: "label", isSignal: true, isRequired: true, transformFunction: null }, value: { classPropertyName: "value", publicName: "value", isSignal: true, isRequired: false, transformFunction: null }, subValue: { classPropertyName: "subValue", publicName: "subValue", isSignal: true, isRequired: false, transformFunction: null }, trend: { classPropertyName: "trend", publicName: "trend", isSignal: true, isRequired: false, transformFunction: null }, delta: { classPropertyName: "delta", publicName: "delta", isSignal: true, isRequired: false, transformFunction: null }, deltaDirection: { classPropertyName: "deltaDirection", publicName: "deltaDirection", isSignal: true, isRequired: false, transformFunction: null }, sparkData: { classPropertyName: "sparkData", publicName: "sparkData", isSignal: true, isRequired: false, transformFunction: null }, sparkColor: { classPropertyName: "sparkColor", publicName: "sparkColor", isSignal: true, isRequired: false, transformFunction: null } }, ngImport: i0, template: `
+    <ath-kpi-strip [columns]="1">
+      <ath-kpi-tile
+        [label]="label()"
+        [value]="value()"
+        [delta]="shownDelta()"
+        [deltaDirection]="shownDirection()"
+        [note]="subValue() || null"
+        [spark]="sparkData()"
+        [sparkColor]="sparkColor()"
+      />
+    </ath-kpi-strip>
+  `, isInline: true, styles: [":host{display:block}\n"], dependencies: [{ kind: "component", type: AthKpiStripComponent, selector: "ath-kpi-strip", inputs: ["columns"] }, { kind: "component", type: AthKpiTileComponent, selector: "ath-kpi-tile", inputs: ["label", "value", "delta", "deltaDirection", "deltaTitle", "tone", "spark", "sparkData", "sparkColor", "note", "noteTitle", "alert", "muted", "link", "linkParams", "linkLabel"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
 }
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthStatCardComponent, decorators: [{
             type: Component,
-            args: [{ selector: 'ath-stat-card', standalone: true, imports: [CommonModule, AthSparklineComponent], changeDetection: ChangeDetectionStrategy.OnPush, template: "<div class=\"ath-stat-card\">\n  <div class=\"ath-stat-card__head\">\n    <span class=\"ath-stat-card__label\">{{ label }}</span>\n    @if (delta != null && deltaDirection) {\n      <span class=\"ath-stat-card__delta\" [attr.data-direction]=\"deltaDirection\">{{ delta }}</span>\n    }\n  </div>\n  <div class=\"ath-stat-card__value-row\">\n    <span class=\"ath-stat-card__value\">{{ value }}</span>\n    @if (trend && delta == null) {\n      <span\n        class=\"ath-stat-card__trend\"\n        [class.ath-stat-card__trend--up]=\"trend === 'up'\"\n        [class.ath-stat-card__trend--down]=\"trend === 'down'\"\n      >\n        {{ trend === 'up' ? '\u2191' : '\u2193' }}\n      </span>\n    }\n    @if (sparkData && sparkData.length >= 2) {\n      <ath-sparkline\n        class=\"ath-stat-card__spark\"\n        [data]=\"sparkData\"\n        [color]=\"sparkColor\"\n        [width]=\"70\"\n        [height]=\"22\"\n      />\n    }\n  </div>\n  @if (subValue) {\n    <span class=\"ath-stat-card__sub\">{{ subValue }}</span>\n  }\n</div>\n", styles: [".ath-stat-card{display:flex;flex-direction:column;gap:var(--ath-space-2);padding:var(--ath-space-4) var(--ath-space-5);background:var(--ath-bg-panel);border:1px solid var(--ath-border-color);border-radius:var(--ath-border-radius-lg)}.ath-stat-card__head{display:flex;align-items:center;justify-content:space-between;gap:8px}.ath-stat-card__label{font-size:12px;font-weight:500;letter-spacing:-.005em;color:var(--fg-3);text-transform:none}.ath-stat-card__delta{display:inline-flex;align-items:center;font-family:var(--font-mono);font-feature-settings:\"tnum\";font-size:11px;font-weight:500;padding:1px 6px;border-radius:var(--r-xs);line-height:1.5}.ath-stat-card__delta[data-direction=up]{color:var(--green);background:var(--green-tint)}.ath-stat-card__delta[data-direction=down]{color:var(--red);background:var(--red-tint)}.ath-stat-card__delta[data-direction=neutral]{color:var(--fg-3);background:var(--bg-2)}.ath-stat-card__value-row{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--ath-space-2)}.ath-stat-card__spark{flex-shrink:0}.ath-stat-card__value{font-size:var(--ath-font-size-3xl);font-weight:var(--ath-font-weight-semibold);color:var(--ath-text-primary);line-height:1;font-variant-numeric:tabular-nums}.ath-stat-card__trend{font-size:var(--ath-font-size-sm);font-weight:var(--ath-font-weight-medium)}.ath-stat-card__trend--up{color:var(--ath-color-success)}.ath-stat-card__trend--down{color:var(--ath-color-error)}.ath-stat-card__sub{font-size:var(--ath-font-size-xs);color:var(--ath-text-tertiary)}\n"] }]
-        }], propDecorators: { label: [{
-                type: Input,
-                args: [{ required: true }]
-            }], value: [{
-                type: Input,
-                args: [{ required: true }]
-            }], subValue: [{
-                type: Input
-            }], trend: [{
-                type: Input
-            }], delta: [{
-                type: Input
-            }], deltaDirection: [{
-                type: Input
-            }], sparkData: [{
-                type: Input
-            }], sparkColor: [{
-                type: Input
-            }] } });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic3RhdC1jYXJkLmNvbXBvbmVudC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uLy4uL3Byb2plY3RzL2F0aGVuZS13ZWJjb21wb25lbnRzL3NyYy9saWIvY29tcG9uZW50cy9zdGF0LWNhcmQvc3RhdC1jYXJkLmNvbXBvbmVudC50cyIsIi4uLy4uLy4uLy4uLy4uLy4uL3Byb2plY3RzL2F0aGVuZS13ZWJjb21wb25lbnRzL3NyYy9saWIvY29tcG9uZW50cy9zdGF0LWNhcmQvc3RhdC1jYXJkLmNvbXBvbmVudC5odG1sIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLE9BQU8sRUFBRSxTQUFTLEVBQUUsS0FBSyxFQUFFLHVCQUF1QixFQUFFLE1BQU0sZUFBZSxDQUFDO0FBQzFFLE9BQU8sRUFBRSxZQUFZLEVBQUUsTUFBTSxpQkFBaUIsQ0FBQztBQUMvQyxPQUFPLEVBQUUscUJBQXFCLEVBQUUsTUFBTSxjQUFjLENBQUM7O0FBRXJEOzs7Ozs7Ozs7Ozs7R0FZRztBQVNILE1BQU0sT0FBTyxvQkFBb0I7SUFSakM7UUFTNkIsVUFBSyxHQUFHLEVBQUUsQ0FBQztRQUNYLFVBQUssR0FBb0IsRUFBRSxDQUFDO1FBQzlDLGFBQVEsR0FBRyxFQUFFLENBQUM7UUFFdkIsdUVBQXVFO1FBQzlELFVBQUssR0FBeUIsSUFBSSxDQUFDO1FBRTVDLGtFQUFrRTtRQUN6RCxVQUFLLEdBQWtCLElBQUksQ0FBQztRQUVyQyxxQ0FBcUM7UUFDNUIsbUJBQWMsR0FBcUMsSUFBSSxDQUFDO1FBRWpFLDhDQUE4QztRQUNyQyxjQUFTLEdBQW9CLElBQUksQ0FBQztRQUNsQyxlQUFVLEdBQUcsZUFBZSxDQUFDO0tBQ3ZDOytHQWpCWSxvQkFBb0I7bUdBQXBCLG9CQUFvQiwrUEN6QmpDLHFoQ0FnQ0EsMmpERFpZLFlBQVksK0JBQUUscUJBQXFCOzs0RkFLbEMsb0JBQW9CO2tCQVJoQyxTQUFTOytCQUNFLGVBQWUsY0FDYixJQUFJLFdBQ1AsQ0FBQyxZQUFZLEVBQUUscUJBQXFCLENBQUMsbUJBQzdCLHVCQUF1QixDQUFDLE1BQU07OEJBS3BCLEtBQUs7c0JBQS9CLEtBQUs7dUJBQUMsRUFBRSxRQUFRLEVBQUUsSUFBSSxFQUFFO2dCQUNFLEtBQUs7c0JBQS9CLEtBQUs7dUJBQUMsRUFBRSxRQUFRLEVBQUUsSUFBSSxFQUFFO2dCQUNoQixRQUFRO3NCQUFoQixLQUFLO2dCQUdHLEtBQUs7c0JBQWIsS0FBSztnQkFHRyxLQUFLO3NCQUFiLEtBQUs7Z0JBR0csY0FBYztzQkFBdEIsS0FBSztnQkFHRyxTQUFTO3NCQUFqQixLQUFLO2dCQUNHLFVBQVU7c0JBQWxCLEtBQUsiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBDb21wb25lbnQsIElucHV0LCBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneSB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgQ29tbW9uTW9kdWxlIH0gZnJvbSAnQGFuZ3VsYXIvY29tbW9uJztcbmltcG9ydCB7IEF0aFNwYXJrbGluZUNvbXBvbmVudCB9IGZyb20gJy4uL3NwYXJrbGluZSc7XG5cbi8qKlxuICogU3RhdCBjYXJkIHdpdGggbGFiZWwgKyB2YWx1ZSwgb3B0aW9uYWwgdHJlbmQgYXJyb3csIG9wdGlvbmFsIGRlbHRhIGJhZGdlLFxuICogb3B0aW9uYWwgc3BhcmtsaW5lLlxuICpcbiAqIEZvciBkYXNoYm9hcmQtc3R5bGUgS1BJIHRpbGVzIHByZWZlciBgPGF0aC1rcGktdGlsZT5gLiBUaGlzIHN0YXlzIGFzIHRoZVxuICogc2ltcGxlciBsYWJlbC92YWx1ZS9zdWIgcHJpbWl0aXZlLlxuICpcbiAqIEBleGFtcGxlXG4gKiA8YXRoLXN0YXQtY2FyZCBsYWJlbD1cIlRvdGFsIFVzZXJzXCIgdmFsdWU9XCIxLDIzNFwiIC8+XG4gKiA8YXRoLXN0YXQtY2FyZCBsYWJlbD1cIkFjdGl2ZVwiIHZhbHVlPVwiODklXCIgdHJlbmQ9XCJ1cFwiIC8+XG4gKiA8YXRoLXN0YXQtY2FyZCBsYWJlbD1cIk9wZW5cIiB2YWx1ZT1cIjQyXCIgZGVsdGE9XCIrNVwiIGRlbHRhRGlyZWN0aW9uPVwidXBcIlxuICogICAgICAgICAgICAgICAgW3NwYXJrRGF0YV09XCJbMTAsMTIsMTUsMTgsMjIsMjgsMzBdXCIgLz5cbiAqL1xuQENvbXBvbmVudCh7XG4gIHNlbGVjdG9yOiAnYXRoLXN0YXQtY2FyZCcsXG4gIHN0YW5kYWxvbmU6IHRydWUsXG4gIGltcG9ydHM6IFtDb21tb25Nb2R1bGUsIEF0aFNwYXJrbGluZUNvbXBvbmVudF0sXG4gIGNoYW5nZURldGVjdGlvbjogQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3kuT25QdXNoLFxuICB0ZW1wbGF0ZVVybDogJy4vc3RhdC1jYXJkLmNvbXBvbmVudC5odG1sJyxcbiAgc3R5bGVVcmw6ICcuL3N0YXQtY2FyZC5jb21wb25lbnQuc2NzcycsXG59KVxuZXhwb3J0IGNsYXNzIEF0aFN0YXRDYXJkQ29tcG9uZW50IHtcbiAgQElucHV0KHsgcmVxdWlyZWQ6IHRydWUgfSkgbGFiZWwgPSAnJztcbiAgQElucHV0KHsgcmVxdWlyZWQ6IHRydWUgfSkgdmFsdWU6IHN0cmluZyB8IG51bWJlciA9ICcnO1xuICBASW5wdXQoKSBzdWJWYWx1ZSA9ICcnO1xuXG4gIC8qKiBRdWljayB1cC9kb3duIGFycm93LiBVc2UgZGVsdGErZGVsdGFEaXJlY3Rpb24gZm9yIHJpY2hlciBiYWRnZXMuICovXG4gIEBJbnB1dCgpIHRyZW5kOiAndXAnIHwgJ2Rvd24nIHwgbnVsbCA9IG51bGw7XG5cbiAgLyoqIERlbHRhIHRleHQgKGUuZy4sIGArMTJgLCBgLTNgKS4gRGlzcGxheWVkIGFzIGNvbG9yZWQgYmFkZ2UuICovXG4gIEBJbnB1dCgpIGRlbHRhOiBzdHJpbmcgfCBudWxsID0gbnVsbDtcblxuICAvKiogQ29sb3IgY3VlIGZvciB0aGUgZGVsdGEgYmFkZ2UuICovXG4gIEBJbnB1dCgpIGRlbHRhRGlyZWN0aW9uOiAndXAnIHwgJ2Rvd24nIHwgJ25ldXRyYWwnIHwgbnVsbCA9IG51bGw7XG5cbiAgLyoqIE9wdGlvbmFsIHNwYXJrbGluZSBkYXRhIOKAlCBtaW4gMiBwb2ludHMuICovXG4gIEBJbnB1dCgpIHNwYXJrRGF0YTogbnVtYmVyW10gfCBudWxsID0gbnVsbDtcbiAgQElucHV0KCkgc3BhcmtDb2xvciA9ICd2YXIoLS1hY2NlbnQpJztcbn1cbiIsIjxkaXYgY2xhc3M9XCJhdGgtc3RhdC1jYXJkXCI+XG4gIDxkaXYgY2xhc3M9XCJhdGgtc3RhdC1jYXJkX19oZWFkXCI+XG4gICAgPHNwYW4gY2xhc3M9XCJhdGgtc3RhdC1jYXJkX19sYWJlbFwiPnt7IGxhYmVsIH19PC9zcGFuPlxuICAgIEBpZiAoZGVsdGEgIT0gbnVsbCAmJiBkZWx0YURpcmVjdGlvbikge1xuICAgICAgPHNwYW4gY2xhc3M9XCJhdGgtc3RhdC1jYXJkX19kZWx0YVwiIFthdHRyLmRhdGEtZGlyZWN0aW9uXT1cImRlbHRhRGlyZWN0aW9uXCI+e3sgZGVsdGEgfX08L3NwYW4+XG4gICAgfVxuICA8L2Rpdj5cbiAgPGRpdiBjbGFzcz1cImF0aC1zdGF0LWNhcmRfX3ZhbHVlLXJvd1wiPlxuICAgIDxzcGFuIGNsYXNzPVwiYXRoLXN0YXQtY2FyZF9fdmFsdWVcIj57eyB2YWx1ZSB9fTwvc3Bhbj5cbiAgICBAaWYgKHRyZW5kICYmIGRlbHRhID09IG51bGwpIHtcbiAgICAgIDxzcGFuXG4gICAgICAgIGNsYXNzPVwiYXRoLXN0YXQtY2FyZF9fdHJlbmRcIlxuICAgICAgICBbY2xhc3MuYXRoLXN0YXQtY2FyZF9fdHJlbmQtLXVwXT1cInRyZW5kID09PSAndXAnXCJcbiAgICAgICAgW2NsYXNzLmF0aC1zdGF0LWNhcmRfX3RyZW5kLS1kb3duXT1cInRyZW5kID09PSAnZG93bidcIlxuICAgICAgPlxuICAgICAgICB7eyB0cmVuZCA9PT0gJ3VwJyA/ICfihpEnIDogJ+KGkycgfX1cbiAgICAgIDwvc3Bhbj5cbiAgICB9XG4gICAgQGlmIChzcGFya0RhdGEgJiYgc3BhcmtEYXRhLmxlbmd0aCA+PSAyKSB7XG4gICAgICA8YXRoLXNwYXJrbGluZVxuICAgICAgICBjbGFzcz1cImF0aC1zdGF0LWNhcmRfX3NwYXJrXCJcbiAgICAgICAgW2RhdGFdPVwic3BhcmtEYXRhXCJcbiAgICAgICAgW2NvbG9yXT1cInNwYXJrQ29sb3JcIlxuICAgICAgICBbd2lkdGhdPVwiNzBcIlxuICAgICAgICBbaGVpZ2h0XT1cIjIyXCJcbiAgICAgIC8+XG4gICAgfVxuICA8L2Rpdj5cbiAgQGlmIChzdWJWYWx1ZSkge1xuICAgIDxzcGFuIGNsYXNzPVwiYXRoLXN0YXQtY2FyZF9fc3ViXCI+e3sgc3ViVmFsdWUgfX08L3NwYW4+XG4gIH1cbjwvZGl2PlxuIl19
+            args: [{ selector: 'ath-stat-card', standalone: true, imports: [AthKpiStripComponent, AthKpiTileComponent], changeDetection: ChangeDetectionStrategy.OnPush, template: `
+    <ath-kpi-strip [columns]="1">
+      <ath-kpi-tile
+        [label]="label()"
+        [value]="value()"
+        [delta]="shownDelta()"
+        [deltaDirection]="shownDirection()"
+        [note]="subValue() || null"
+        [spark]="sparkData()"
+        [sparkColor]="sparkColor()"
+      />
+    </ath-kpi-strip>
+  `, styles: [":host{display:block}\n"] }]
+        }] });
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic3RhdC1jYXJkLmNvbXBvbmVudC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uLy4uL3Byb2plY3RzL2F0aGVuZS13ZWJjb21wb25lbnRzL3NyYy9saWIvY29tcG9uZW50cy9zdGF0LWNhcmQvc3RhdC1jYXJkLmNvbXBvbmVudC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxPQUFPLEVBQUUsdUJBQXVCLEVBQUUsU0FBUyxFQUFFLFFBQVEsRUFBRSxLQUFLLEVBQUUsTUFBTSxlQUFlLENBQUM7QUFDcEYsT0FBTyxFQUFFLG9CQUFvQixFQUFFLG1CQUFtQixFQUEwQixNQUFNLGFBQWEsQ0FBQzs7QUFFaEc7Ozs7Ozs7Ozs7R0FVRztBQXlCSCxNQUFNLE9BQU8sb0JBQW9CO0lBeEJqQztRQXlCVyxVQUFLLEdBQUcsS0FBSyxDQUFDLFFBQVEsRUFBVSxDQUFDO1FBQ2pDLFVBQUssR0FBRyxLQUFLLENBQWtCLEVBQUUsQ0FBQyxDQUFDO1FBQ25DLGFBQVEsR0FBRyxLQUFLLENBQUMsRUFBRSxDQUFDLENBQUM7UUFDckIsVUFBSyxHQUFHLEtBQUssQ0FBdUIsSUFBSSxDQUFDLENBQUM7UUFDMUMsVUFBSyxHQUFHLEtBQUssQ0FBZ0IsSUFBSSxDQUFDLENBQUM7UUFDbkMsbUJBQWMsR0FBRyxLQUFLLENBQTJCLElBQUksQ0FBQyxDQUFDO1FBQ3ZELGNBQVMsR0FBRyxLQUFLLENBQTJCLElBQUksQ0FBQyxDQUFDO1FBQ2xELGVBQVUsR0FBRyxLQUFLLENBQWdCLElBQUksQ0FBQyxDQUFDO1FBRTlCLGVBQVUsR0FBRyxRQUFRLENBQUMsR0FBRyxFQUFFO1lBQzVDLE1BQU0sS0FBSyxHQUFHLElBQUksQ0FBQyxLQUFLLEVBQUUsQ0FBQztZQUMzQixJQUFJLEtBQUssSUFBSSxJQUFJO2dCQUFFLE9BQU8sS0FBSyxDQUFDO1lBQ2hDLE1BQU0sS0FBSyxHQUFHLElBQUksQ0FBQyxLQUFLLEVBQUUsQ0FBQztZQUMzQixPQUFPLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQyxLQUFLLEtBQUssSUFBSSxDQUFDLENBQUMsQ0FBQyxHQUFHLENBQUMsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUMsQ0FBQyxJQUFJLENBQUM7UUFDckQsQ0FBQyxDQUFDLENBQUM7UUFFZ0IsbUJBQWMsR0FBRyxRQUFRLENBQzFDLEdBQUcsRUFBRSxDQUFDLElBQUksQ0FBQyxjQUFjLEVBQUUsSUFBSSxJQUFJLENBQUMsS0FBSyxFQUFFLElBQUksSUFBSSxDQUNwRCxDQUFDO0tBQ0g7K0dBcEJZLG9CQUFvQjttR0FBcEIsb0JBQW9CLG1sQ0FuQnJCOzs7Ozs7Ozs7Ozs7R0FZVCxnR0FkUyxvQkFBb0IsK0VBQUUsbUJBQW1COzs0RkFxQnhDLG9CQUFvQjtrQkF4QmhDLFNBQVM7K0JBQ0UsZUFBZSxjQUNiLElBQUksV0FDUCxDQUFDLG9CQUFvQixFQUFFLG1CQUFtQixDQUFDLG1CQUNuQyx1QkFBdUIsQ0FBQyxNQUFNLFlBQ3JDOzs7Ozs7Ozs7Ozs7R0FZVCIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IENoYW5nZURldGVjdGlvblN0cmF0ZWd5LCBDb21wb25lbnQsIGNvbXB1dGVkLCBpbnB1dCB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgQXRoS3BpU3RyaXBDb21wb25lbnQsIEF0aEtwaVRpbGVDb21wb25lbnQsIHR5cGUgS3BpRGVsdGFEaXJlY3Rpb24gfSBmcm9tICcuLi9rcGktdGlsZSc7XG5cbi8qKlxuICogQSBzaW5nbGUgbGFiZWwvdmFsdWUgY2FyZC5cbiAqXG4gKiBAZGVwcmVjYXRlZCBPbmUgS1BJIEFQSTogdXNlIGBhdGgta3BpLXRpbGVgIGluc2lkZSBgYXRoLWtwaS1zdHJpcGAuIFRoaXNcbiAqIHJlbmRlcnMgZXhhY3RseSB0aGF0IChhIHN0cmlwIG9mIG9uZSB0aWxlKSBhbmQgbWFwcyB0aGUgb2xkIGlucHV0czpcbiAqIGBzdWJWYWx1ZWAg4oaSIGBub3RlYCwgYHNwYXJrRGF0YWAg4oaSIGBzcGFya2AsIGB0cmVuZGAg4oaSIGEgXCLihpFcIi9cIuKGk1wiIGRlbHRhLlxuICogUmVtb3ZlZCBpbiBxdWFsaXR5IHN0ZXAgMi43LlxuICpcbiAqIEBleGFtcGxlXG4gKiA8YXRoLXN0YXQtY2FyZCBsYWJlbD1cIk9wZW5cIiB2YWx1ZT1cIjQyXCIgZGVsdGE9XCIrNVwiIGRlbHRhRGlyZWN0aW9uPVwidXBcIiAvPlxuICovXG5AQ29tcG9uZW50KHtcbiAgc2VsZWN0b3I6ICdhdGgtc3RhdC1jYXJkJyxcbiAgc3RhbmRhbG9uZTogdHJ1ZSxcbiAgaW1wb3J0czogW0F0aEtwaVN0cmlwQ29tcG9uZW50LCBBdGhLcGlUaWxlQ29tcG9uZW50XSxcbiAgY2hhbmdlRGV0ZWN0aW9uOiBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneS5PblB1c2gsXG4gIHRlbXBsYXRlOiBgXG4gICAgPGF0aC1rcGktc3RyaXAgW2NvbHVtbnNdPVwiMVwiPlxuICAgICAgPGF0aC1rcGktdGlsZVxuICAgICAgICBbbGFiZWxdPVwibGFiZWwoKVwiXG4gICAgICAgIFt2YWx1ZV09XCJ2YWx1ZSgpXCJcbiAgICAgICAgW2RlbHRhXT1cInNob3duRGVsdGEoKVwiXG4gICAgICAgIFtkZWx0YURpcmVjdGlvbl09XCJzaG93bkRpcmVjdGlvbigpXCJcbiAgICAgICAgW25vdGVdPVwic3ViVmFsdWUoKSB8fCBudWxsXCJcbiAgICAgICAgW3NwYXJrXT1cInNwYXJrRGF0YSgpXCJcbiAgICAgICAgW3NwYXJrQ29sb3JdPVwic3BhcmtDb2xvcigpXCJcbiAgICAgIC8+XG4gICAgPC9hdGgta3BpLXN0cmlwPlxuICBgLFxuICBzdHlsZXM6IGBcbiAgICA6aG9zdCB7XG4gICAgICBkaXNwbGF5OiBibG9jaztcbiAgICB9XG4gIGAsXG59KVxuZXhwb3J0IGNsYXNzIEF0aFN0YXRDYXJkQ29tcG9uZW50IHtcbiAgcmVhZG9ubHkgbGFiZWwgPSBpbnB1dC5yZXF1aXJlZDxzdHJpbmc+KCk7XG4gIHJlYWRvbmx5IHZhbHVlID0gaW5wdXQ8c3RyaW5nIHwgbnVtYmVyPignJyk7XG4gIHJlYWRvbmx5IHN1YlZhbHVlID0gaW5wdXQoJycpO1xuICByZWFkb25seSB0cmVuZCA9IGlucHV0PCd1cCcgfCAnZG93bicgfCBudWxsPihudWxsKTtcbiAgcmVhZG9ubHkgZGVsdGEgPSBpbnB1dDxzdHJpbmcgfCBudWxsPihudWxsKTtcbiAgcmVhZG9ubHkgZGVsdGFEaXJlY3Rpb24gPSBpbnB1dDxLcGlEZWx0YURpcmVjdGlvbiB8IG51bGw+KG51bGwpO1xuICByZWFkb25seSBzcGFya0RhdGEgPSBpbnB1dDxyZWFkb25seSBudW1iZXJbXSB8IG51bGw+KG51bGwpO1xuICByZWFkb25seSBzcGFya0NvbG9yID0gaW5wdXQ8c3RyaW5nIHwgbnVsbD4obnVsbCk7XG5cbiAgcHJvdGVjdGVkIHJlYWRvbmx5IHNob3duRGVsdGEgPSBjb21wdXRlZCgoKSA9PiB7XG4gICAgY29uc3QgZGVsdGEgPSB0aGlzLmRlbHRhKCk7XG4gICAgaWYgKGRlbHRhICE9IG51bGwpIHJldHVybiBkZWx0YTtcbiAgICBjb25zdCB0cmVuZCA9IHRoaXMudHJlbmQoKTtcbiAgICByZXR1cm4gdHJlbmQgPyAodHJlbmQgPT09ICd1cCcgPyAn4oaRJyA6ICfihpMnKSA6IG51bGw7XG4gIH0pO1xuXG4gIHByb3RlY3RlZCByZWFkb25seSBzaG93bkRpcmVjdGlvbiA9IGNvbXB1dGVkPEtwaURlbHRhRGlyZWN0aW9uIHwgbnVsbD4oXG4gICAgKCkgPT4gdGhpcy5kZWx0YURpcmVjdGlvbigpID8/IHRoaXMudHJlbmQoKSA/PyBudWxsXG4gICk7XG59XG4iXX0=
