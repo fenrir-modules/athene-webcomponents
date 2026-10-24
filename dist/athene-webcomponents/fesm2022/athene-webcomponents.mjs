@@ -2528,6 +2528,12 @@ function runAthAction(action) {
 class AthButtonComponent {
     constructor() {
         this.errorHandler = inject(ErrorHandler);
+        /**
+         * The action may remove the button before it settles (it navigates
+         * away, or hides the button it was started from): then nothing is left
+         * to update or to emit from (NG0953). Failures still reach the handler.
+         */
+        this.destroyed = false;
         this.variant = input('primary');
         this.size = input('md');
         /** Button type attribute. */
@@ -2574,6 +2580,7 @@ class AthButtonComponent {
         ]
             .filter(Boolean)
             .join(' '));
+        inject(DestroyRef).onDestroy(() => (this.destroyed = true));
     }
     handleClick(event) {
         if (this.disabled() || this.busy()) {
@@ -2587,11 +2594,15 @@ class AthButtonComponent {
             return;
         this.running.set(true);
         runAthAction(action).then((value) => {
+            if (this.destroyed)
+                return;
             this.running.set(false);
             this.done.emit(value);
         }, (err) => {
-            this.running.set(false);
-            this.failed.emit(err);
+            if (!this.destroyed) {
+                this.running.set(false);
+                this.failed.emit(err);
+            }
             this.errorHandler.handleError(err);
         });
     }
@@ -2601,7 +2612,7 @@ class AthButtonComponent {
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthButtonComponent, decorators: [{
             type: Component,
             args: [{ selector: 'ath-button', standalone: true, imports: [LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "<button\n  [type]=\"type()\"\n  [disabled]=\"disabled() || busy()\"\n  [class]=\"buttonClasses()\"\n  [attr.aria-label]=\"ariaLabel()\"\n  [attr.aria-busy]=\"busy()\"\n  [attr.aria-pressed]=\"pressed()\"\n  [attr.aria-expanded]=\"expanded()\"\n  [attr.aria-controls]=\"controls()\"\n  (click)=\"handleClick($event)\"\n>\n  @if (busy()) {\n    <span class=\"ath-button__loader-wrap\">\n      <lucide-icon [img]=\"loaderIcon\" class=\"ath-button__loader\" [size]=\"18\" aria-hidden=\"true\" />\n    </span>\n  }\n  <span class=\"ath-button__content\" [class.ath-button__content--hidden]=\"busy()\">\n    <ng-content />\n  </span>\n</button>\n", styles: [".ath-button{display:inline-grid;place-items:center;position:relative;grid-template-columns:1fr;grid-template-rows:1fr;font-family:var(--ath-font-family);font-weight:var(--ath-font-weight-medium);border-radius:var(--ath-border-radius-md);border:1px solid transparent;cursor:pointer;white-space:nowrap;letter-spacing:0;transition:background-color .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease,opacity .15s ease}.ath-button:focus-visible{outline:none;box-shadow:0 0 0 2px var(--ath-bg-primary),0 0 0 4px var(--ath-color-primary)}.ath-button:disabled{opacity:.5;cursor:not-allowed}.ath-button--xs{height:var(--control-h-xs);padding:0 10px;font-size:var(--control-font);border-radius:var(--r-sm)}.ath-button--xs .ath-button__content{gap:5px}.ath-button--sm{height:var(--control-h-sm);padding:0 8px;font-size:var(--control-font);border-radius:var(--r-sm)}.ath-button--md{height:var(--control-h);padding:0 var(--ath-space-3);font-size:var(--control-font)}.ath-button--lg{height:var(--control-h-lg);padding:0 var(--ath-space-5);font-size:var(--ath-font-size-md)}.ath-button--primary{background:var(--action-primary-bg);color:var(--action-primary-fg);border-color:var(--action-primary-bg);font-weight:var(--ath-font-weight-medium)}.ath-button--primary:disabled:not(.ath-button--loading){background:var(--action-primary-disabled-bg);border-color:var(--action-primary-disabled-border);color:var(--action-primary-disabled-fg);opacity:var(--action-primary-disabled-opacity)}.ath-button--primary:hover:not(:disabled){background:var(--action-primary-bg-hover);border-color:var(--action-primary-bg-hover)}.ath-button--primary:active:not(:disabled){background:var(--action-primary-bg-active);border-color:var(--action-primary-bg-active)}.ath-button--primary .ath-button__loader-wrap{color:var(--action-primary-fg)}.ath-button--create{background:var(--action-create-bg);color:var(--action-create-fg);border-color:var(--action-create-border)}.ath-button--create:hover:not(:disabled){background:var(--action-create-bg-hover)}.ath-button--create:active:not(:disabled){background:var(--action-create-bg-active)}.ath-button--create .ath-button__loader-wrap{color:var(--action-create-fg)}.ath-button--secondary{background-color:var(--ath-bg-secondary);color:var(--ath-text-primary);border-color:var(--action-outline-border)}.ath-button--secondary:hover:not(:disabled){border-color:var(--ath-border-color-hover);background-color:var(--ath-bg-tertiary)}.ath-button--outline{background-color:transparent;border-color:var(--action-outline-border);color:var(--action-outline-fg)}.ath-button--outline:disabled{color:var(--fg-3);border-color:var(--border)}.ath-button--outline:hover:not(:disabled){background-color:var(--action-outline-hover-bg);border-color:var(--action-outline-hover-border)}.ath-button--ghost{background-color:transparent;color:var(--ath-text-primary)}.ath-button--ghost:hover:not(:disabled){background-color:var(--ath-hover-bg)}.ath-button--danger{background-color:var(--action-danger-bg);color:var(--action-danger-fg);border-color:var(--action-danger-bg)}.ath-button--danger:hover:not(:disabled){background-color:var(--action-danger-bg-hover);border-color:var(--action-danger-bg-hover)}.ath-button--danger-ghost{background-color:transparent;color:var(--fg-3);border-color:transparent}.ath-button--danger-ghost:hover:not(:disabled){background-color:var(--red-tint);color:var(--red-text)}.ath-button--danger-ghost:active:not(:disabled){background-color:color-mix(in srgb,var(--red) 16%,transparent)}.ath-button--danger-ghost:focus-visible{box-shadow:0 0 0 2px var(--ath-bg-primary),0 0 0 4px var(--red)}.ath-button--full-width{width:100%}.ath-button--pressed:not(.ath-button--primary):not(.ath-button--create){background-color:var(--hover-strong);border-color:var(--action-outline-hover-border)}.ath-button--loading{pointer-events:none}.ath-button__loader-wrap{display:inline-flex;align-items:center;justify-content:center;grid-area:1/1}.ath-button__loader{animation:ath-spin 1s linear infinite}.ath-button__content{display:inline-flex;grid-area:1/1;align-items:center;gap:6px}.ath-button__content--hidden{opacity:0}@keyframes ath-spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}\n"] }]
-        }] });
+        }], ctorParameters: () => [] });
 
 /**
  * Athene Empty State Component

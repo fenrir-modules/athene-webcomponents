@@ -24,6 +24,13 @@ export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';
  */
 export declare class AthButtonComponent {
     private readonly errorHandler;
+    /**
+     * The action may remove the button before it settles (it navigates
+     * away, or hides the button it was started from): then nothing is left
+     * to update or to emit from (NG0953). Failures still reach the handler.
+     */
+    private destroyed;
+    constructor();
     readonly variant: import("@angular/core").InputSignal<ButtonVariant>;
     readonly size: import("@angular/core").InputSignal<ButtonSize>;
     /** Button type attribute. */

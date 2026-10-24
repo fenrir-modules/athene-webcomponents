@@ -95,6 +95,37 @@ describe('AthButtonComponent', () => {
       expect(inner().disabled).toBeFalse();
     }));
 
+    // NG0953 (quality 2.5): an action that removes its own button (deleting
+    // a doc navigates away; "Mark all read" hides the button) used to settle
+    // after the destroy, and `done` was emitted on a destroyed component.
+    it('emits nothing once destroyed while the action is pending (NG0953)', fakeAsync(() => {
+      let resolve!: (value: number) => void;
+      const done = jasmine.createSpy('done');
+      fixture.componentInstance.done.subscribe(done);
+      fixture.componentRef.setInput('action', () => new Promise<number>((r) => (resolve = r)));
+      fixture.detectChanges();
+      inner().click();
+      fixture.destroy();
+      resolve(1);
+      expect(() => flushMicrotasks()).not.toThrow();
+      expect(done).not.toHaveBeenCalled();
+      expect(errorHandler.handleError.calls.count()).toBe(0);
+    }));
+
+    it('still reports a failure that settles after the destroy', fakeAsync(() => {
+      let reject!: (err: unknown) => void;
+      const failed = jasmine.createSpy('failed');
+      fixture.componentInstance.failed.subscribe(failed);
+      fixture.componentRef.setInput('action', () => new Promise<void>((_, r) => (reject = r)));
+      fixture.detectChanges();
+      inner().click();
+      fixture.destroy();
+      reject(new Error('late'));
+      expect(() => flushMicrotasks()).not.toThrow();
+      expect(failed).not.toHaveBeenCalled();
+      expect(errorHandler.handleError.calls.count()).toBe(1);
+    }));
+
     it('blocks a busy submit button from submitting its form', fakeAsync(() => {
       fixture.componentRef.setInput('type', 'submit');
       fixture.componentRef.setInput('loading', true);

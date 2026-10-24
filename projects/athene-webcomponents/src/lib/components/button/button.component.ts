@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ErrorHandler,
   computed,
   inject,
@@ -56,6 +57,16 @@ export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';
 })
 export class AthButtonComponent {
   private readonly errorHandler = inject(ErrorHandler);
+  /**
+   * The action may remove the button before it settles (it navigates
+   * away, or hides the button it was started from): then nothing is left
+   * to update or to emit from (NG0953). Failures still reach the handler.
+   */
+  private destroyed = false;
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => (this.destroyed = true));
+  }
 
   readonly variant = input<ButtonVariant>('primary');
   readonly size = input<ButtonSize>('md');
@@ -128,12 +139,15 @@ export class AthButtonComponent {
     this.running.set(true);
     runAthAction(action).then(
       (value) => {
+        if (this.destroyed) return;
         this.running.set(false);
         this.done.emit(value);
       },
       (err: unknown) => {
-        this.running.set(false);
-        this.failed.emit(err);
+        if (!this.destroyed) {
+          this.running.set(false);
+          this.failed.emit(err);
+        }
         this.errorHandler.handleError(err);
       }
     );
