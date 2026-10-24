@@ -27,7 +27,9 @@
   flex-shrink: 0;
   // Inner white ring on top of color = elegant donut effect
   background: var(--fg-4);
-  box-shadow: inset 0 0 0 2px var(--bg-1), 0 0 0 1px currentColor;
+  box-shadow:
+    inset 0 0 0 2px var(--bg-1),
+    0 0 0 1px currentColor;
   color: var(--fg-4);
 }
 
@@ -37,19 +39,34 @@
 
 // Status colors — match the design tokens
 :host([data-status='open']) {
-  .ath-status-pill__dot { background: var(--red);    color: var(--red);    }
+  .ath-status-pill__dot {
+    background: var(--red);
+    color: var(--red);
+  }
 }
 :host([data-status='prog']) {
-  .ath-status-pill__dot { background: var(--amber);  color: var(--amber);  }
+  .ath-status-pill__dot {
+    background: var(--amber);
+    color: var(--amber);
+  }
 }
 :host([data-status='review']) {
-  .ath-status-pill__dot { background: var(--blue);   color: var(--blue);   }
+  .ath-status-pill__dot {
+    background: var(--blue);
+    color: var(--blue);
+  }
 }
 :host([data-status='done']) {
-  .ath-status-pill__dot { background: var(--green);  color: var(--green);  }
+  .ath-status-pill__dot {
+    background: var(--green);
+    color: var(--green);
+  }
 }
 :host([data-status='blocked']) {
-  .ath-status-pill__dot { background: var(--purple); color: var(--purple); }
+  .ath-status-pill__dot {
+    background: var(--purple);
+    color: var(--purple);
+  }
 }
 :host([data-status='closed']) {
   color: var(--fg-3);

@@ -36,10 +36,9 @@ export class AthSidebarComponent {
   protected readonly expandIcon = PanelLeft;
 
   get sidebarClasses(): string {
-    return [
-      'ath-sidebar',
-      this.collapsed ? 'ath-sidebar--collapsed' : '',
-    ].filter(Boolean).join(' ');
+    return ['ath-sidebar', this.collapsed ? 'ath-sidebar--collapsed' : '']
+      .filter(Boolean)
+      .join(' ');
   }
 
   toggleCollapse(): void {

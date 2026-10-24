@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input, computed, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostBinding,
+  Input,
+  computed,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export type SlaStatus = 'met' | 'pending' | 'breached';
@@ -66,10 +73,13 @@ export class AthSlaBarComponent {
 
   protected statusColor(s: SlaStatus): string {
     switch (s) {
-      case 'met': return 'var(--green)';
-      case 'breached': return 'var(--red)';
+      case 'met':
+        return 'var(--green)';
+      case 'breached':
+        return 'var(--red)';
       case 'pending':
-      default: return 'var(--amber)';
+      default:
+        return 'var(--amber)';
     }
   }
 }

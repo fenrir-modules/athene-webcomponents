@@ -31,10 +31,8 @@ export class AthBadgeComponent {
   @Input() dot = false;
 
   get badgeClasses(): string {
-    return [
-      'ath-badge',
-      `ath-badge--${this.variant}`,
-      this.dot ? 'ath-badge--dot' : '',
-    ].filter(Boolean).join(' ');
+    return ['ath-badge', `ath-badge--${this.variant}`, this.dot ? 'ath-badge--dot' : '']
+      .filter(Boolean)
+      .join(' ');
   }
 }

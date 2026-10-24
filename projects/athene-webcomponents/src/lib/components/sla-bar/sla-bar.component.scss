@@ -38,10 +38,18 @@
   height: 100%;
   border-radius: 999px;
   background: var(--green);
-  transition: width var(--t-slow), background-color var(--t-base);
+  transition:
+    width var(--t-slow),
+    background-color var(--t-base);
 }
 
 // Bar color follows severity
-:host([data-severity='met']) .ath-sla__fill { background: var(--green); }
-:host([data-severity='pending']) .ath-sla__fill { background: var(--amber); }
-:host([data-severity='breached']) .ath-sla__fill { background: var(--red); }
+:host([data-severity='met']) .ath-sla__fill {
+  background: var(--green);
+}
+:host([data-severity='pending']) .ath-sla__fill {
+  background: var(--amber);
+}
+:host([data-severity='breached']) .ath-sla__fill {
+  background: var(--red);
+}

@@ -18,12 +18,12 @@ npm run test:storybook   # axe + screenshots over storybook-static/ (see "Compon
 
 All design tokens live in **DTCG JSON** under `projects/athene-webcomponents/tokens/`:
 
-| File | Contents |
-|---|---|
-| `base.json` | Every token with its light/default value: colour, focus, radius, shadow, type, density, size, space, motion, z-index, plus the deprecated `--ath-*` aliases |
-| `themes/dark.json` | Values for `[data-theme="dark"]`. It may only re-value tokens from `base.json`. |
-| `accents/<name>.light.json`, `accents/<name>.dark.json` | Accent presets for `[data-accent]` and `[data-theme="dark"][data-accent]` |
-| `tokens.config.json` | Output paths, block order (which is the cascade order), the theme × accent contexts and the **contrast gate** |
+| File                                                    | Contents                                                                                                                                                    |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `base.json`                                             | Every token with its light/default value: colour, focus, radius, shadow, type, density, size, space, motion, z-index, plus the deprecated `--ath-*` aliases |
+| `themes/dark.json`                                      | Values for `[data-theme="dark"]`. It may only re-value tokens from `base.json`.                                                                             |
+| `accents/<name>.light.json`, `accents/<name>.dark.json` | Accent presets for `[data-accent]` and `[data-theme="dark"][data-accent]`                                                                                   |
+| `tokens.config.json`                                    | Output paths, block order (which is the cascade order), the theme × accent contexts and the **contrast gate**                                               |
 
 `scripts/tokens/build.mjs` (`npm run tokens:build`) generates these files:
 

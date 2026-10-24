@@ -65,12 +65,14 @@ if (violations.length > 0) {
 console.log(`a11y lint passed (${templateFiles.length} templates checked)`);
 
 function hasAccessibleName(value) {
-  return /\baria-label=/.test(value)
-    || /\baria-labelledby=/.test(value)
-    || /\[attr\.aria-label\]=/.test(value)
-    || /\[attr\.aria-labelledby\]=/.test(value)
-    || /\[aria-label\]=/.test(value)
-    || /\[aria-labelledby\]=/.test(value);
+  return (
+    /\baria-label=/.test(value) ||
+    /\baria-labelledby=/.test(value) ||
+    /\[attr\.aria-label\]=/.test(value) ||
+    /\[attr\.aria-labelledby\]=/.test(value) ||
+    /\[aria-label\]=/.test(value) ||
+    /\[aria-labelledby\]=/.test(value)
+  );
 }
 
 function collectFiles(dir) {

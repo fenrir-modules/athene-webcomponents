@@ -6,7 +6,10 @@
   background-color: var(--ath-bg-panel);
   border-radius: var(--panel-radius);
   box-shadow: var(--ath-shadow-sm);
-  transition: box-shadow var(--ath-transition-fast), transform var(--ath-transition-fast), border-color var(--ath-transition-fast);
+  transition:
+    box-shadow var(--ath-transition-fast),
+    transform var(--ath-transition-fast),
+    border-color var(--ath-transition-fast);
 }
 
 /* Padding Variants */

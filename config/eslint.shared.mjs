@@ -55,7 +55,9 @@ export const RESTRICTED_SYNTAX = {
  * this.translate.instant(key) }` wrappers the pages use).
  */
 const isComputedCall = (node) =>
-  node.type === 'CallExpression' && node.callee.type === 'Identifier' && node.callee.name === 'computed';
+  node.type === 'CallExpression' &&
+  node.callee.type === 'Identifier' &&
+  node.callee.name === 'computed';
 
 const isInstantCall = (node) =>
   node.type === 'CallExpression' &&
@@ -69,7 +71,14 @@ function callsInstant(node) {
   if (!node || typeof node.type !== 'string') return false;
   if (isInstantCall(node)) return true;
   for (const key of Object.keys(node)) {
-    if (key === 'parent' || key === 'loc' || key === 'range' || key === 'tokens' || key === 'comments') continue;
+    if (
+      key === 'parent' ||
+      key === 'loc' ||
+      key === 'range' ||
+      key === 'tokens' ||
+      key === 'comments'
+    )
+      continue;
     const child = node[key];
     if (Array.isArray(child)) {
       if (child.some((c) => c && typeof c === 'object' && callsInstant(c))) return true;
@@ -109,7 +118,8 @@ const noInstantInComputed = {
               ? member.value
               : member.type === 'PropertyDefinition' &&
                   member.value &&
-                  (member.value.type === 'ArrowFunctionExpression' || member.value.type === 'FunctionExpression')
+                  (member.value.type === 'ArrowFunctionExpression' ||
+                    member.value.type === 'FunctionExpression')
                 ? member.value
                 : null;
           if (fn && callsInstant(fn.body)) names.add(name);
@@ -139,7 +149,11 @@ const noInstantInComputed = {
           callee.property.type === 'Identifier' &&
           names.has(callee.property.name)
         ) {
-          context.report({ node: callee.property, messageId: 'wrapper', data: { name: callee.property.name } });
+          context.report({
+            node: callee.property,
+            messageId: 'wrapper',
+            data: { name: callee.property.name },
+          });
         }
       },
       'CallExpression:exit'(node) {

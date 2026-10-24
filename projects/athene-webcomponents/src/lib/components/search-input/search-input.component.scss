@@ -25,7 +25,10 @@
     background-color: var(--ath-bg-secondary);
     border: 1px solid var(--ath-border-color);
     border-radius: var(--ath-border-radius-lg);
-    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease,
+      background-color 0.15s ease;
 
     &::placeholder {
       color: var(--ath-text-tertiary);
@@ -68,7 +71,9 @@
     border: none;
     border-radius: var(--ath-border-radius-sm);
     cursor: pointer;
-    transition: color 0.15s ease, background-color 0.15s ease;
+    transition:
+      color 0.15s ease,
+      background-color 0.15s ease;
 
     &:hover {
       color: var(--ath-text-secondary);

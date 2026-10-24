@@ -71,7 +71,9 @@
     border: none;
     border-radius: var(--ath-border-radius-sm);
     cursor: pointer;
-    transition: color var(--ath-transition-fast), background-color var(--ath-transition-fast);
+    transition:
+      color var(--ath-transition-fast),
+      background-color var(--ath-transition-fast);
 
     &:hover {
       color: var(--ath-text-secondary);

@@ -49,6 +49,8 @@ export class AthTabsComponent {
       'ath-tabs__tab',
       tab.id === this.activeTab ? 'ath-tabs__tab--active' : '',
       tab.disabled ? 'ath-tabs__tab--disabled' : '',
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
   }
 }

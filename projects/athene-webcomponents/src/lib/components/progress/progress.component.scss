@@ -17,7 +17,9 @@
   height: 100%;
   border-radius: 999px;
   background: var(--progress-fill);
-  transition: width var(--t-slow), background-color var(--t-base);
+  transition:
+    width var(--t-slow),
+    background-color var(--t-base);
 }
 
 .ath-progress__label {
@@ -30,13 +32,29 @@
 }
 
 // Sizes
-:host([data-size='xs']) .ath-progress__track { height: 3px; }
-:host([data-size='sm']) .ath-progress__track { height: 4px; }
-:host([data-size='md']) .ath-progress__track { height: 6px; }
+:host([data-size='xs']) .ath-progress__track {
+  height: 3px;
+}
+:host([data-size='sm']) .ath-progress__track {
+  height: 4px;
+}
+:host([data-size='md']) .ath-progress__track {
+  height: 6px;
+}
 
 // Tones
-:host([data-tone='accent'])  .ath-progress__fill { background: var(--accent); }
-:host([data-tone='success']) .ath-progress__fill { background: var(--green); }
-:host([data-tone='warning']) .ath-progress__fill { background: var(--amber); }
-:host([data-tone='danger'])  .ath-progress__fill { background: var(--red); }
-:host([data-tone='neutral']) .ath-progress__fill { background: var(--fg-3); }
+:host([data-tone='accent']) .ath-progress__fill {
+  background: var(--accent);
+}
+:host([data-tone='success']) .ath-progress__fill {
+  background: var(--green);
+}
+:host([data-tone='warning']) .ath-progress__fill {
+  background: var(--amber);
+}
+:host([data-tone='danger']) .ath-progress__fill {
+  background: var(--red);
+}
+:host([data-tone='neutral']) .ath-progress__fill {
+  background: var(--fg-3);
+}

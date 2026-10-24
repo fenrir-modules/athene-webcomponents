@@ -1,4 +1,11 @@
-import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  forwardRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 import { ATH_DEFAULT_LABELS, ATH_LABELS } from '../../i18n/labels';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
@@ -43,11 +50,15 @@ export class AthInputComponent implements ControlValueAccessor {
   @Input() hidePasswordLabel: string | null = null;
 
   protected get showPasswordText(): string {
-    return this.showPasswordLabel ?? (this.labels?.showPassword ?? ATH_DEFAULT_LABELS.showPassword)();
+    return (
+      this.showPasswordLabel ?? (this.labels?.showPassword ?? ATH_DEFAULT_LABELS.showPassword)()
+    );
   }
 
   protected get hidePasswordText(): string {
-    return this.hidePasswordLabel ?? (this.labels?.hidePassword ?? ATH_DEFAULT_LABELS.hidePassword)();
+    return (
+      this.hidePasswordLabel ?? (this.labels?.hidePassword ?? ATH_DEFAULT_LABELS.hidePassword)()
+    );
   }
 
   @Input() label = '';

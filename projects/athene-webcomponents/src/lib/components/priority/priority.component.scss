@@ -20,9 +20,15 @@
     background: var(--fg-disabled);
     border-radius: 1px;
 
-    &:nth-child(1) { height: 4px;  }
-    &:nth-child(2) { height: 7px;  }
-    &:nth-child(3) { height: 11px; }
+    &:nth-child(1) {
+      height: 4px;
+    }
+    &:nth-child(2) {
+      height: 7px;
+    }
+    &:nth-child(3) {
+      height: 11px;
+    }
   }
 }
 
@@ -33,16 +39,24 @@
 
 // Color-coding per priority level
 :host([data-priority='low']) {
-  .ath-priority__bars i:nth-child(1) { background: var(--fg-3); }
+  .ath-priority__bars i:nth-child(1) {
+    background: var(--fg-3);
+  }
 }
 :host([data-priority='medium']) {
-  .ath-priority__bars i:nth-child(-n+2) { background: var(--fg-2); }
+  .ath-priority__bars i:nth-child(-n + 2) {
+    background: var(--fg-2);
+  }
 }
 :host([data-priority='high']) {
-  .ath-priority__bars i { background: var(--amber); }
+  .ath-priority__bars i {
+    background: var(--amber);
+  }
 }
 :host([data-priority='crit']) {
-  .ath-priority__bars i { background: var(--red); }
+  .ath-priority__bars i {
+    background: var(--red);
+  }
 
   .ath-priority__label {
     color: var(--red);

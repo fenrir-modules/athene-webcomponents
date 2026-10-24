@@ -10,7 +10,13 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  loadConfig, buildBlocks, renderScss, renderCustomProperties, renderInventory, checkContrast, TokenError,
+  loadConfig,
+  buildBlocks,
+  renderScss,
+  renderCustomProperties,
+  renderInventory,
+  checkContrast,
+  TokenError,
 } from './lib.mjs';
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../../..');
@@ -44,7 +50,7 @@ function main() {
   const failures = result.contrast.filter((r) => !r.ok);
   for (const f of failures) {
     console.error(
-      `tokens: contrast ${f.ratio.toFixed(2)}:1 < ${f.min}:1 — --${f.fg} on --${f.bg} (theme=${f.theme}, accent=${f.accent ?? 'default'})${f.why ? ' — ' + f.why : ''}`,
+      `tokens: contrast ${f.ratio.toFixed(2)}:1 < ${f.min}:1 — --${f.fg} on --${f.bg} (theme=${f.theme}, accent=${f.accent ?? 'default'})${f.why ? ' — ' + f.why : ''}`
     );
   }
   let stale = 0;
@@ -52,7 +58,9 @@ function main() {
     const current = existsSync(file) ? readFileSync(file, 'utf8') : null;
     if (current === content) continue;
     if (check) {
-      console.error(`tokens: ${relative(ROOT, file)} is out of date — run \`npm run tokens:build\``);
+      console.error(
+        `tokens: ${relative(ROOT, file)} is out of date — run \`npm run tokens:build\``
+      );
       stale++;
     } else {
       writeFileSync(file, content);
@@ -61,7 +69,9 @@ function main() {
   }
   if (failures.length || stale) process.exit(1);
   const n = result.built.baseTokens.length;
-  console.log(`tokens: ${n} tokens, ${result.built.blocks.length} blocks, ${result.contrast.length} contrast checks ok${check ? ', outputs up to date' : ''}`);
+  console.log(
+    `tokens: ${n} tokens, ${result.built.blocks.length} blocks, ${result.contrast.length} contrast checks ok${check ? ', outputs up to date' : ''}`
+  );
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

@@ -15,7 +15,9 @@
   color: var(--ath-text-primary);
   text-align: left;
   cursor: pointer;
-  transition: border-color var(--ath-transition-fast), background-color var(--ath-transition-fast);
+  transition:
+    border-color var(--ath-transition-fast),
+    background-color var(--ath-transition-fast);
 
   &:focus-visible {
     outline: none;
@@ -50,7 +52,9 @@
     border-radius: var(--ath-border-radius-full);
     background: var(--ath-bg-tertiary);
     border: 1px solid var(--ath-border-color);
-    transition: background-color var(--ath-transition-fast), border-color var(--ath-transition-fast);
+    transition:
+      background-color var(--ath-transition-fast),
+      border-color var(--ath-transition-fast);
   }
 
   &__thumb {
@@ -61,7 +65,9 @@
     height: 14px;
     border-radius: var(--ath-border-radius-full);
     background: var(--ath-text-tertiary);
-    transition: transform var(--ath-transition-fast), background-color var(--ath-transition-fast);
+    transition:
+      transform var(--ath-transition-fast),
+      background-color var(--ath-transition-fast);
   }
 
   &__content {

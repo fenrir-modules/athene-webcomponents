@@ -1,4 +1,9 @@
-<div class="ath-input" [class.ath-input--sm]="size === 'sm'" [class.ath-input--error]="error" [class.ath-input--disabled]="disabled">
+<div
+  class="ath-input"
+  [class.ath-input--sm]="size === 'sm'"
+  [class.ath-input--error]="error"
+  [class.ath-input--disabled]="disabled"
+>
   @if (label) {
     <label class="ath-input__label" [for]="inputId">
       {{ label }}

@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, Output, computed, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  HostBinding,
+  Input,
+  Output,
+  computed,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -49,9 +58,7 @@ export class AthTimerPillComponent {
 
   @HostBinding('attr.data-warning') get hostWarning(): string | null {
     // After 8h surfaces a warn color; after 24h, an alert color
-    return this._seconds() >= 24 * 3600 ? 'alert'
-         : this._seconds() >= 8 * 3600 ? 'warn'
-         : null;
+    return this._seconds() >= 24 * 3600 ? 'alert' : this._seconds() >= 8 * 3600 ? 'warn' : null;
   }
 
   protected readonly time = computed<string>(() => {

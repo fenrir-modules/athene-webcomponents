@@ -69,7 +69,9 @@
     color: var(--fg-3);
     background: var(--bg-2);
     border-radius: 999px;
-    transition: color var(--t-fast), background var(--t-fast);
+    transition:
+      color var(--t-fast),
+      background var(--t-fast);
   }
 
   &__tab--active &__count {

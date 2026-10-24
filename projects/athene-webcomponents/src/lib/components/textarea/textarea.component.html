@@ -1,4 +1,8 @@
-<div class="ath-textarea" [class.ath-textarea--error]="error" [class.ath-textarea--disabled]="disabled">
+<div
+  class="ath-textarea"
+  [class.ath-textarea--error]="error"
+  [class.ath-textarea--disabled]="disabled"
+>
   @if (label) {
     <label class="ath-textarea__label" [for]="textareaId">
       {{ label }}
@@ -34,7 +38,10 @@
     }
 
     @if (maxLength) {
-      <div class="ath-textarea__count" [class.ath-textarea__count--near-limit]="characterCount > maxLength * 0.9">
+      <div
+        class="ath-textarea__count"
+        [class.ath-textarea__count--near-limit]="characterCount > maxLength * 0.9"
+      >
         {{ characterCount }}/{{ maxLength }}
       </div>
     }

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  computed,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AthAvatarComponent } from '../avatar';
 import { AthComboboxComponent, ComboboxOption } from '../combobox';
@@ -59,11 +67,11 @@ export class AthUserPickerComponent {
       value: u.id,
       label: u.name,
       sublabel: this.showEmail ? u.email : undefined,
-    })),
+    }))
   );
 
-  protected readonly selectedUser = computed<UserOption | null>(() =>
-    this._users().find((u) => u.id === this.value) ?? null,
+  protected readonly selectedUser = computed<UserOption | null>(
+    () => this._users().find((u) => u.id === this.value) ?? null
   );
 
   onValueChange(v: string | null): void {

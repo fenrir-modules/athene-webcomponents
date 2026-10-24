@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  HostBinding,
-  Input,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ATH_STATUS_LABELS, type TicketStatus } from '@athene/webcomponents/core';
 

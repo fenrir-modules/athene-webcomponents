@@ -36,7 +36,9 @@
     border-radius: var(--ath-border-radius-md);
     appearance: none;
     cursor: pointer;
-    transition: border-color var(--ath-transition-fast), box-shadow var(--ath-transition-fast);
+    transition:
+      border-color var(--ath-transition-fast),
+      box-shadow var(--ath-transition-fast);
 
     &:hover:not(:disabled):not(:focus) {
       border-color: var(--ath-border-color-hover);

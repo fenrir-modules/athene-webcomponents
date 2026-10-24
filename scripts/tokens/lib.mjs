@@ -63,7 +63,8 @@ export function groupDocs(tree) {
     for (const [k, v] of Object.entries(node)) {
       if (k.startsWith('$') || isToken(v)) continue;
       const p = [...path, k].join('.');
-      if (v.$description || v.$deprecated) docs[p] = { description: v.$description, deprecated: v.$deprecated };
+      if (v.$description || v.$deprecated)
+        docs[p] = { description: v.$description, deprecated: v.$deprecated };
       walk(v, [...path, k]);
     }
   };
@@ -77,10 +78,14 @@ export function indexBase(tokens) {
   const byName = new Map();
   for (const t of tokens) {
     if (!/^[a-z0-9][a-z0-9-]*$/.test(t.name)) {
-      throw new TokenError(`${t.file}: token name "${t.name}" (${t.path}) is not a valid kebab-case custom-property name`);
+      throw new TokenError(
+        `${t.file}: token name "${t.name}" (${t.path}) is not a valid kebab-case custom-property name`
+      );
     }
     if (byName.has(t.name)) {
-      throw new TokenError(`${t.file}: duplicate token name --${t.name} (${byName.get(t.name).path} and ${t.path})`);
+      throw new TokenError(
+        `${t.file}: duplicate token name --${t.name} (${byName.get(t.name).path} and ${t.path})`
+      );
     }
     byPath.set(t.path, t);
     byName.set(t.name, t);
@@ -92,7 +97,9 @@ export function indexBase(tokens) {
 export function toCss(value, base, where) {
   if (typeof value === 'number') return String(value);
   if (typeof value !== 'string') {
-    throw new TokenError(`${where}: $value must be a string or number (object forms are not used here)`);
+    throw new TokenError(
+      `${where}: $value must be a string or number (object forms are not used here)`
+    );
   }
   if (/var\(\s*--/.test(value)) {
     throw new TokenError(`${where}: write aliases as {group.token}, not var(--…) — "${value}"`);
@@ -121,13 +128,20 @@ export function buildBlocks(config, loadJson) {
   for (const b of config.blocks) {
     let decls;
     if (b.set === config.base) {
-      decls = baseTokens.map((t) => ({ name: t.name, css: toCss(t.value, base, `${t.file}: ${t.path}`), token: t }));
+      decls = baseTokens.map((t) => ({
+        name: t.name,
+        css: toCss(t.value, base, `${t.file}: ${t.path}`),
+        token: t,
+      }));
     } else {
       const overrides = flatten(loadJson(b.set), { file: b.set });
       const seen = new Set();
       for (const o of overrides) {
         const t = base.byPath.get(o.path);
-        if (!t) throw new TokenError(`${b.set}: ${o.path} overrides a token that is not defined in ${config.base}`);
+        if (!t)
+          throw new TokenError(
+            `${b.set}: ${o.path} overrides a token that is not defined in ${config.base}`
+          );
         if (seen.has(o.path)) throw new TokenError(`${b.set}: ${o.path} is overridden twice`);
         seen.add(o.path);
       }
@@ -137,10 +151,22 @@ export function buildBlocks(config, loadJson) {
         .filter((t) => byPath.has(t.path))
         .map((t) => {
           const o = byPath.get(t.path);
-          return { name: t.name, css: toCss(o.value, base, `${o.file}: ${o.path}`), token: t, description: o.description };
+          return {
+            name: t.name,
+            css: toCss(o.value, base, `${o.file}: ${o.path}`),
+            token: t,
+            description: o.description,
+          };
         });
     }
-    blocks.push({ selector: b.selector, when: b.when ?? {}, set: b.set, title: b.title, declarations: decls, extra: b.declarations ?? {} });
+    blocks.push({
+      selector: b.selector,
+      when: b.when ?? {},
+      set: b.set,
+      title: b.title,
+      declarations: decls,
+      extra: b.declarations ?? {},
+    });
   }
 
   const contexts = themeContexts(config);
@@ -180,7 +206,9 @@ function assertNoCycles(map, ctx) {
   const visit = (name, stack) => {
     if (state.get(name) === 2) return;
     if (state.get(name) === 1) {
-      throw new TokenError(`alias cycle in ${JSON.stringify(ctx)}: ${[...stack, name].map((n) => '--' + n).join(' → ')}`);
+      throw new TokenError(
+        `alias cycle in ${JSON.stringify(ctx)}: ${[...stack, name].map((n) => '--' + n).join(' → ')}`
+      );
     }
     state.set(name, 1);
     const css = map.get(name);
@@ -195,7 +223,9 @@ export function resolveValue(map, name, seen = new Set()) {
   if (!map.has(name)) throw new TokenError(`--${name} is not defined in this context`);
   if (seen.has(name)) throw new TokenError(`cycle at --${name}`);
   const next = new Set(seen).add(name);
-  return map.get(name).replace(/var\(\s*--([a-z0-9-]+)\s*\)/g, (_, n) => resolveValue(map, n, next));
+  return map
+    .get(name)
+    .replace(/var\(\s*--([a-z0-9-]+)\s*\)/g, (_, n) => resolveValue(map, n, next));
 }
 
 // ---------------------------------------------------------------------------
@@ -260,7 +290,9 @@ function colorMix([a, b]) {
   p2 /= sum;
   // CSS Color 5: interpolate premultiplied components.
   const alpha = x.c[3] * p1 + y.c[3] * p2;
-  const rgb = [0, 1, 2].map((i) => (alpha === 0 ? 0 : (x.c[i] * x.c[3] * p1 + y.c[i] * y.c[3] * p2) / alpha));
+  const rgb = [0, 1, 2].map((i) =>
+    alpha === 0 ? 0 : (x.c[i] * x.c[3] * p1 + y.c[i] * y.c[3] * p2) / alpha
+  );
   return [...rgb, alpha * scale];
 }
 
@@ -274,7 +306,8 @@ const channel = (c) => {
   const v = c / 255;
   return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
 };
-export const luminance = ([r, g, b]) => 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+export const luminance = ([r, g, b]) =>
+  0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
 
 /** WCAG 2.x contrast ratio; translucent colours are composited (fg over bg, bg over white/canvas). */
 export function contrast(fgCss, bgCss, canvasCss = '#ffffff') {
@@ -295,7 +328,15 @@ export function checkContrast(config, blocks) {
       if (rule.when && !matches(rule.when, ctx)) continue;
       for (const bgName of rule.bg) {
         const ratio = contrast(resolveValue(map, rule.fg), resolveValue(map, bgName), canvas);
-        rows.push({ ...ctx, fg: rule.fg, bg: bgName, ratio, min: rule.min, ok: ratio + 1e-9 >= rule.min, why: rule.why });
+        rows.push({
+          ...ctx,
+          fg: rule.fg,
+          bg: bgName,
+          ratio,
+          min: rule.min,
+          ok: ratio + 1e-9 >= rule.min,
+          why: rule.why,
+        });
       }
     }
   }
@@ -306,7 +347,9 @@ export function checkContrast(config, blocks) {
 // Renderers
 // ---------------------------------------------------------------------------
 
-const HEADER = (sources) => `// =====================================================================
+const HEADER = (
+  sources
+) => `// =====================================================================
 // GENERATED FILE — DO NOT EDIT BY HAND.
 // Source of truth: ${sources} (DTCG JSON).
 // Regenerate with \`npm run tokens:build\` (runs before \`npm run build:lib\`).

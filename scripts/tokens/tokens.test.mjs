@@ -3,8 +3,17 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  flatten, indexBase, toCss, buildBlocks, effectiveMap, resolveValue, parseColor, contrast, checkContrast,
-  renderScss, TokenError,
+  flatten,
+  indexBase,
+  toCss,
+  buildBlocks,
+  effectiveMap,
+  resolveValue,
+  parseColor,
+  contrast,
+  checkContrast,
+  renderScss,
+  TokenError,
 } from './lib.mjs';
 import { generate } from './build.mjs';
 import { extract, diff } from './parity.mjs';
@@ -16,7 +25,11 @@ const tiny = {
     { selector: ':root', set: 'base' },
     { selector: '[data-theme="dark"]', when: { theme: 'dark' }, set: 'dark' },
     { selector: '[data-accent="blue"]', when: { accent: 'blue' }, set: 'blue' },
-    { selector: '[data-theme="dark"][data-accent="blue"]', when: { theme: 'dark', accent: 'blue' }, set: 'blue-dark' },
+    {
+      selector: '[data-theme="dark"][data-accent="blue"]',
+      when: { theme: 'dark', accent: 'blue' },
+      set: 'blue-dark',
+    },
   ],
 };
 const tinySets = {
@@ -46,14 +59,23 @@ test('flatten inherits $type and $deprecated from groups', () => {
 });
 
 test('leaf names must be unique and kebab-case', () => {
-  assert.throws(() => indexBase(flatten({ a: { x: { $value: '1' } }, b: { x: { $value: '2' } } })), /duplicate token name --x/);
-  assert.throws(() => indexBase(flatten({ a: { Bad_Name: { $value: '1' } } })), /not a valid kebab-case/);
+  assert.throws(
+    () => indexBase(flatten({ a: { x: { $value: '1' } }, b: { x: { $value: '2' } } })),
+    /duplicate token name --x/
+  );
+  assert.throws(
+    () => indexBase(flatten({ a: { Bad_Name: { $value: '1' } } })),
+    /not a valid kebab-case/
+  );
 });
 
 test('aliases become var(); unknown aliases and raw var() are errors', () => {
   const base = indexBase(flatten(tinySets.base));
   assert.equal(toCss('{color.accent}', base, 'x'), 'var(--accent)');
-  assert.equal(toCss('0 0 0 2px {color.bg}, 0 0 0 4px {color.ring}', base, 'x'), '0 0 0 2px var(--bg), 0 0 0 4px var(--ring)');
+  assert.equal(
+    toCss('0 0 0 2px {color.bg}, 0 0 0 4px {color.ring}', base, 'x'),
+    '0 0 0 2px var(--bg), 0 0 0 4px var(--ring)'
+  );
   assert.equal(toCss(1000, base, 'x'), '1000');
   assert.throws(() => toCss('{color.nope}', base, 'x'), /unknown alias \{color.nope\}/);
   assert.throws(() => toCss('var(--accent)', base, 'x'), /write aliases as/);
@@ -118,19 +140,30 @@ const real = generate();
 
 test('generated outputs on disk are up to date', () => {
   for (const [file, content] of Object.entries(real.files)) {
-    assert.equal(readFileSync(file, 'utf8'), content, `${file} is stale — run npm run tokens:build`);
+    assert.equal(
+      readFileSync(file, 'utf8'),
+      content,
+      `${file} is stale — run npm run tokens:build`
+    );
   }
 });
 
 test('every contrast rule passes in every theme × accent', () => {
-  const failures = real.contrast.filter((r) => !r.ok).map((r) => `${r.fg}/${r.bg} ${r.theme}/${r.accent} ${r.ratio.toFixed(2)}`);
+  const failures = real.contrast
+    .filter((r) => !r.ok)
+    .map((r) => `${r.fg}/${r.bg} ${r.theme}/${r.accent} ${r.ratio.toFixed(2)}`);
   assert.deepEqual(failures, []);
   assert.ok(real.contrast.length > 400);
 });
 
 test('the WCAG fixes stay gated (DS-12, DS-16)', () => {
   const rule = (fg, min) => real.contrast.filter((r) => r.fg === fg && r.min === min);
-  for (const [fg, min] of [['focus-ring-color', 3], ['fg-label', 4.5], ['amber-text', 4.5], ['action-create-fg', 4.5]]) {
+  for (const [fg, min] of [
+    ['focus-ring-color', 3],
+    ['fg-label', 4.5],
+    ['amber-text', 4.5],
+    ['action-create-fg', 4.5],
+  ]) {
     const rows = rule(fg, min);
     assert.ok(rows.length >= 12, `contrast rule for --${fg} ≥ ${min} is missing`);
     assert.ok(rows.every((r) => r.ok));
@@ -141,16 +174,26 @@ test('one z-index scale: unique, strictly increasing, all numbers', () => {
   const z = real.built.baseTokens.filter((t) => t.group === 'z-index');
   assert.ok(z.length >= 10);
   const values = z.map((t) => t.value);
-  assert.ok(values.every((v) => Number.isInteger(v)), 'z-index tokens are integers');
-  for (let i = 1; i < values.length; i++) assert.ok(values[i] > values[i - 1], `--${z[i].name} must be above --${z[i - 1].name}`);
+  assert.ok(
+    values.every((v) => Number.isInteger(v)),
+    'z-index tokens are integers'
+  );
+  for (let i = 1; i < values.length; i++)
+    assert.ok(values[i] > values[i - 1], `--${z[i].name} must be above --${z[i - 1].name}`);
   const legacy = real.built.baseTokens.filter((t) => t.name.startsWith('ath-z-'));
-  assert.ok(legacy.every((t) => /^\{z-index\.z-[a-z]+\}$/.test(t.value)), 'legacy z aliases point into the scale');
+  assert.ok(
+    legacy.every((t) => /^\{z-index\.z-[a-z]+\}$/.test(t.value)),
+    'legacy z aliases point into the scale'
+  );
 });
 
 test('every --ath-* alias is marked deprecated', () => {
   const ath = real.built.baseTokens.filter((t) => t.name.startsWith('ath-') || t.name === 'gold');
   assert.ok(ath.length >= 70);
-  assert.deepEqual(ath.filter((t) => !t.deprecated).map((t) => t.name), []);
+  assert.deepEqual(
+    ath.filter((t) => !t.deprecated).map((t) => t.name),
+    []
+  );
 });
 
 test('light tokens also answer to [data-theme="light"] (DS-15)', () => {
@@ -159,12 +202,22 @@ test('light tokens also answer to [data-theme="light"] (DS-15)', () => {
 });
 
 test('custom-properties export lists every token', () => {
-  const json = JSON.parse(Object.entries(real.files).find(([f]) => f.endsWith('tokens.custom-properties.json'))[1]);
+  const json = JSON.parse(
+    Object.entries(real.files).find(([f]) => f.endsWith('tokens.custom-properties.json'))[1]
+  );
   assert.equal(Object.keys(json.customProperties).length, real.built.baseTokens.length);
-  for (const n of ['--focus-ring-shadow', '--focus-ring-color', '--amber-text', '--z-raised', '--bg-0']) assert.ok(n in json.customProperties, n);
+  for (const n of [
+    '--focus-ring-shadow',
+    '--focus-ring-color',
+    '--amber-text',
+    '--z-raised',
+    '--bg-0',
+  ])
+    assert.ok(n in json.customProperties, n);
   // DS-14's undefined app tokens; --scrim has been a real token since step 1.6 (ath-dialog backdrop).
   assert.ok('--scrim' in json.customProperties, '--scrim');
-  for (const n of ['--bg', '--r-md', '--focus-ring']) assert.ok(!(n in json.customProperties), `${n} must stay undefined`);
+  for (const n of ['--bg', '--r-md', '--focus-ring'])
+    assert.ok(!(n in json.customProperties), `${n} must stay undefined`);
 });
 
 test('parity extract/diff', () => {
@@ -172,13 +225,19 @@ test('parity extract/diff', () => {
   const b = extract(':root, [y] { --a: 1; --b: 9; color: red } [x] { --a: 3 }');
   const d = diff(a, b);
   assert.deepEqual(d.changes.map((c) => `${c.selector} ${c.prop} ${c.before}→${c.after}`).sort(), [
-    ':root --b 2→9', '[y] --a null→1', '[y] --b null→9',
+    ':root --b 2→9',
+    '[y] --a null→1',
+    '[y] --b null→9',
   ]);
   assert.deepEqual(d.ruleChanges, [{ rule: '[y] { color: red }', change: 'added' }]);
 });
 
 test('checkContrast honours rule.when', () => {
-  const cfg = { ...tiny, canvas: 'bg', contrast: [{ fg: 'fg', bg: ['bg'], min: 4.5, when: { theme: 'dark' } }] };
+  const cfg = {
+    ...tiny,
+    canvas: 'bg',
+    contrast: [{ fg: 'fg', bg: ['bg'], min: 4.5, when: { theme: 'dark' } }],
+  };
   const { blocks } = buildBlocks(cfg, load(tinySets));
   const rows = checkContrast(cfg, blocks);
   assert.ok(rows.length === 2 && rows.every((r) => r.theme === 'dark' && r.ok));

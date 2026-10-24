@@ -23,7 +23,8 @@ function loadNames(files = []) {
     const names = new Set();
     for (const f of files) {
       const json = JSON.parse(readFileSync(f, 'utf8'));
-      for (const n of Object.keys(json.customProperties ?? json['custom-properties'] ?? {})) names.add(n);
+      for (const n of Object.keys(json.customProperties ?? json['custom-properties'] ?? {}))
+        names.add(n);
     }
     cache.set(key, names);
   }
@@ -51,22 +52,30 @@ export function varsWithFallback(value) {
 
 function makeRule(ruleName, check) {
   const messages = utils.ruleMessages(ruleName, { rejected: (msg) => msg });
-  const rule = (primary, options = {}) => (root, result) => {
-    if (!utils.validateOptions(result, ruleName, { actual: primary })) return;
-    if (!primary) return;
-    const tokens = loadNames(options.importFrom);
-    const local = new Set();
-    root.walkDecls((d) => d.prop.startsWith('--') && local.add(d.prop));
-    root.walkDecls((decl) => {
-      for (const v of varsWithFallback(decl.value)) {
-        if (/[#$]\{?$/.test(v.name)) continue;
-        const msg = check(v, { tokens, local });
-        if (msg) {
-          utils.report({ ruleName, result, node: decl, message: messages.rejected(msg), word: v.name });
+  const rule =
+    (primary, options = {}) =>
+    (root, result) => {
+      if (!utils.validateOptions(result, ruleName, { actual: primary })) return;
+      if (!primary) return;
+      const tokens = loadNames(options.importFrom);
+      const local = new Set();
+      root.walkDecls((d) => d.prop.startsWith('--') && local.add(d.prop));
+      root.walkDecls((decl) => {
+        for (const v of varsWithFallback(decl.value)) {
+          if (/[#$]\{?$/.test(v.name)) continue;
+          const msg = check(v, { tokens, local });
+          if (msg) {
+            utils.report({
+              ruleName,
+              result,
+              node: decl,
+              message: messages.rejected(msg),
+              word: v.name,
+            });
+          }
         }
-      }
-    });
-  };
+      });
+    };
   rule.ruleName = ruleName;
   rule.messages = messages;
   return createPlugin(ruleName, rule);
@@ -76,9 +85,11 @@ export default [
   makeRule('athene/no-unknown-custom-property-with-fallback', (v, { tokens, local }) =>
     tokens.has(v.name) || local.has(v.name)
       ? null
-      : `${v.name} is not a token — the fallback "${v.fallback}" hides it (DS-14)`),
+      : `${v.name} is not a token — the fallback "${v.fallback}" hides it (DS-14)`
+  ),
   makeRule('athene/no-fallback-on-token', (v, { tokens, local }) =>
     tokens.has(v.name) && !local.has(v.name)
       ? `${v.name} is a token and always defined — drop the fallback "${v.fallback}"`
-      : null),
+      : null
+  ),
 ];

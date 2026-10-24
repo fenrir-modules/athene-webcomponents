@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input, computed, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostBinding,
+  Input,
+  computed,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export type ProgressTone = 'accent' | 'success' | 'warning' | 'danger' | 'neutral';

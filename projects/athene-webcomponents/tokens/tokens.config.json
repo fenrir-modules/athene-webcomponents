@@ -7,18 +7,8 @@
     "inventory": "../src/lib/styles/tokens.inventory.json"
   },
   "contexts": {
-    "theme": [
-      "light",
-      "dark"
-    ],
-    "accent": [
-      null,
-      "violet",
-      "blue",
-      "green",
-      "orange",
-      "neutral"
-    ]
+    "theme": ["light", "dark"],
+    "accent": [null, "violet", "blue", "green", "orange", "neutral"]
   },
   "canvas": "bg-0",
   "blocks": [
@@ -130,168 +120,103 @@
   "contrast": [
     {
       "fg": "focus-ring-color",
-      "bg": [
-        "surface",
-        "bg-0",
-        "bg-1",
-        "bg-2",
-        "surface-2"
-      ],
+      "bg": ["surface", "bg-0", "bg-1", "bg-2", "surface-2"],
       "min": 3,
       "why": "WCAG 1.4.11 — focus indicator vs adjacent colours"
     },
     {
       "fg": "fg",
-      "bg": [
-        "surface",
-        "bg-0",
-        "bg-1",
-        "surface-2",
-        "bg-2",
-        "surface-3"
-      ],
+      "bg": ["surface", "bg-0", "bg-1", "surface-2", "bg-2", "surface-3"],
       "min": 4.5,
       "why": "WCAG 1.4.3 body text"
     },
     {
       "fg": "fg-2",
-      "bg": [
-        "surface",
-        "bg-0",
-        "bg-1",
-        "surface-2",
-        "bg-2",
-        "surface-3"
-      ],
+      "bg": ["surface", "bg-0", "bg-1", "surface-2", "bg-2", "surface-3"],
       "min": 4.5,
       "why": "WCAG 1.4.3"
     },
     {
       "fg": "fg-3",
-      "bg": [
-        "surface",
-        "bg-0",
-        "bg-1",
-        "surface-2",
-        "bg-2"
-      ],
+      "bg": ["surface", "bg-0", "bg-1", "surface-2", "bg-2"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — meta, keys, hints"
     },
     {
       "fg": "fg-4",
-      "bg": [
-        "surface",
-        "bg-0",
-        "bg-1",
-        "surface-2",
-        "bg-2"
-      ],
+      "bg": ["surface", "bg-0", "bg-1", "surface-2", "bg-2"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — quietest text step"
     },
     {
       "fg": "fg-label",
-      "bg": [
-        "surface",
-        "bg-0",
-        "bg-1",
-        "surface-2"
-      ],
+      "bg": ["surface", "bg-0", "bg-1", "surface-2"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — labels are the only carrier of e.g. calendar weekday text"
     },
     {
       "fg": "amber-text",
-      "bg": [
-        "surface",
-        "bg-0",
-        "bg-1",
-        "surface-2"
-      ],
+      "bg": ["surface", "bg-0", "bg-1", "surface-2"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — due \"soon\""
     },
     {
       "fg": "action-create-fg",
-      "bg": [
-        "action-create-bg",
-        "action-create-bg-hover",
-        "action-create-bg-active"
-      ],
+      "bg": ["action-create-bg", "action-create-bg-hover", "action-create-bg-active"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — \"+ New\" label"
     },
     {
       "fg": "action-primary-fg",
-      "bg": [
-        "action-primary-bg",
-        "action-primary-bg-hover"
-      ],
+      "bg": ["action-primary-bg", "action-primary-bg-hover"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — primary button label. Pressed (-active) is not gated yet: dark accents reach 3.5–4.4:1 there (follow-up)."
     },
     {
       "fg": "avatar-1-fg",
-      "bg": [
-        "avatar-1-bg"
-      ],
+      "bg": ["avatar-1-bg"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — avatar initials"
     },
     {
       "fg": "avatar-2-fg",
-      "bg": [
-        "avatar-2-bg"
-      ],
+      "bg": ["avatar-2-bg"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — avatar initials"
     },
     {
       "fg": "avatar-3-fg",
-      "bg": [
-        "avatar-3-bg"
-      ],
+      "bg": ["avatar-3-bg"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — avatar initials"
     },
     {
       "fg": "avatar-4-fg",
-      "bg": [
-        "avatar-4-bg"
-      ],
+      "bg": ["avatar-4-bg"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — avatar initials"
     },
     {
       "fg": "avatar-5-fg",
-      "bg": [
-        "avatar-5-bg"
-      ],
+      "bg": ["avatar-5-bg"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — avatar initials"
     },
     {
       "fg": "avatar-6-fg",
-      "bg": [
-        "avatar-6-bg"
-      ],
+      "bg": ["avatar-6-bg"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — avatar initials"
     },
     {
       "fg": "avatar-7-fg",
-      "bg": [
-        "avatar-7-bg"
-      ],
+      "bg": ["avatar-7-bg"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — avatar initials"
     },
     {
       "fg": "avatar-8-fg",
-      "bg": [
-        "avatar-8-bg"
-      ],
+      "bg": ["avatar-8-bg"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — avatar initials"
     }

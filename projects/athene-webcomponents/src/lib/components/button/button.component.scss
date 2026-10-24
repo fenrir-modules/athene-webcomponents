@@ -24,7 +24,9 @@
 
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--ath-bg-primary), 0 0 0 4px var(--ath-color-primary);
+    box-shadow:
+      0 0 0 2px var(--ath-bg-primary),
+      0 0 0 4px var(--ath-color-primary);
   }
 
   &:disabled {
@@ -197,7 +199,9 @@
     }
 
     &:focus-visible {
-      box-shadow: 0 0 0 2px var(--ath-bg-primary), 0 0 0 4px var(--red);
+      box-shadow:
+        0 0 0 2px var(--ath-bg-primary),
+        0 0 0 4px var(--red);
     }
   }
 
@@ -247,6 +251,10 @@
 }
 
 @keyframes ath-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

@@ -1,4 +1,11 @@
-import { Directive, Input, ElementRef, OnDestroy, ChangeDetectorRef, Renderer2 } from '@angular/core';
+import {
+  Directive,
+  Input,
+  ElementRef,
+  OnDestroy,
+  ChangeDetectorRef,
+  Renderer2,
+} from '@angular/core';
 
 /**
  * Tooltip position variants
@@ -33,10 +40,14 @@ export class AthTooltipDirective implements OnDestroy {
 
   constructor(
     private el: ElementRef,
-    private renderer: Renderer2,
+    private renderer: Renderer2
   ) {
-    this.mouseEnterListener = this.renderer.listen(this.el.nativeElement, 'mouseenter', () => this.show());
-    this.mouseLeaveListener = this.renderer.listen(this.el.nativeElement, 'mouseleave', () => this.hide());
+    this.mouseEnterListener = this.renderer.listen(this.el.nativeElement, 'mouseenter', () =>
+      this.show()
+    );
+    this.mouseLeaveListener = this.renderer.listen(this.el.nativeElement, 'mouseleave', () =>
+      this.hide()
+    );
   }
 
   ngOnDestroy(): void {
@@ -47,7 +58,10 @@ export class AthTooltipDirective implements OnDestroy {
 
   private show(): void {
     if (!this.text) return;
-    if (this.hideTimeout) { clearTimeout(this.hideTimeout); this.hideTimeout = null; }
+    if (this.hideTimeout) {
+      clearTimeout(this.hideTimeout);
+      this.hideTimeout = null;
+    }
 
     this.showTimeout = setTimeout(() => {
       this.createTooltip();
@@ -55,7 +69,10 @@ export class AthTooltipDirective implements OnDestroy {
   }
 
   private hide(): void {
-    if (this.showTimeout) { clearTimeout(this.showTimeout); this.showTimeout = null; }
+    if (this.showTimeout) {
+      clearTimeout(this.showTimeout);
+      this.showTimeout = null;
+    }
 
     this.hideTimeout = setTimeout(() => {
       this.removeTooltip();

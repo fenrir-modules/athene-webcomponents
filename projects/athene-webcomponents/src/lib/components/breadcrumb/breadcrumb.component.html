@@ -5,7 +5,9 @@
         @if (item.link && !last) {
           <a [routerLink]="item.link" class="ath-breadcrumb__link">{{ item.label }}</a>
         } @else {
-          <span class="ath-breadcrumb__current" [attr.aria-current]="last ? 'page' : null">{{ item.label }}</span>
+          <span class="ath-breadcrumb__current" [attr.aria-current]="last ? 'page' : null">{{
+            item.label
+          }}</span>
         }
         @if (!last) {
           <lucide-icon [img]="separatorIcon" [size]="14" class="ath-breadcrumb__separator" />

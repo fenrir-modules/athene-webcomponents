@@ -49,6 +49,8 @@ export class AthCardComponent {
       `ath-card--padding-${this.padding}`,
       this.bordered ? 'ath-card--bordered' : '',
       this.hoverable ? 'ath-card--hoverable' : '',
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
   }
 }

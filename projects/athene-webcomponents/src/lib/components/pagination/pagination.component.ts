@@ -1,6 +1,21 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  computed,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, MoreHorizontal } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  MoreHorizontal,
+} from 'lucide-angular';
 import { formatAthLabel, injectAthLabels } from '../../i18n/labels';
 
 export type PaginationMode = 'numbered' | 'cursor';

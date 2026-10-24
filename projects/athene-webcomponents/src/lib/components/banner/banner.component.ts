@@ -1,6 +1,20 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  HostBinding,
+  Input,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, Info, AlertTriangle, AlertOctagon, CheckCircle2, X } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Info,
+  AlertTriangle,
+  AlertOctagon,
+  CheckCircle2,
+  X,
+} from 'lucide-angular';
 import { injectAthLabels } from '../../i18n/labels';
 
 export type BannerTone = 'info' | 'warning' | 'danger' | 'success';
@@ -50,11 +64,15 @@ export class AthBannerComponent {
 
   protected get icon() {
     switch (this.tone) {
-      case 'warning': return AlertTriangle;
-      case 'danger': return AlertOctagon;
-      case 'success': return CheckCircle2;
+      case 'warning':
+        return AlertTriangle;
+      case 'danger':
+        return AlertOctagon;
+      case 'success':
+        return CheckCircle2;
       case 'info':
-      default: return Info;
+      default:
+        return Info;
     }
   }
 

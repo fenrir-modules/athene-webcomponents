@@ -1,4 +1,12 @@
-import { Component, Input, Output, EventEmitter, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnDestroy,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Search, X } from 'lucide-angular';
@@ -41,13 +49,11 @@ export class AthSearchInputComponent implements OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(private cdr: ChangeDetectorRef) {
-    this.searchSubject.pipe(
-      debounceTime(this.debounce),
-      distinctUntilChanged(),
-      takeUntil(this.destroy$),
-    ).subscribe(value => {
-      this.searched.emit(value);
-    });
+    this.searchSubject
+      .pipe(debounceTime(this.debounce), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe((value) => {
+        this.searched.emit(value);
+      });
   }
 
   ngOnDestroy(): void {

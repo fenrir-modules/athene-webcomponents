@@ -9,10 +9,14 @@ import { AthTableComponent } from './table.component';
   template: `
     <ath-table>
       <thead>
-        <tr><th>Name</th></tr>
+        <tr>
+          <th>Name</th>
+        </tr>
       </thead>
       <tbody>
-        <tr><td>Item</td></tr>
+        <tr>
+          <td>Item</td>
+        </tr>
       </tbody>
     </ath-table>
   `,

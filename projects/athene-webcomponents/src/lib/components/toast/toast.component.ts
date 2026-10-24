@@ -1,6 +1,13 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  X,
+  CheckCircle,
+  AlertCircle,
+  Info,
+  AlertTriangle,
+} from 'lucide-angular';
 import { AthToastService, type ToastVariant } from '@athene/webcomponents/core';
 
 // The service and its types live in the light `@athene/webcomponents/core`
@@ -47,10 +54,14 @@ export class AthToastContainerComponent {
 
   getIcon(variant: ToastVariant) {
     switch (variant) {
-      case 'success': return this.successIcon;
-      case 'error': return this.errorIcon;
-      case 'warning': return this.warningIcon;
-      case 'info': return this.infoIcon;
+      case 'success':
+        return this.successIcon;
+      case 'error':
+        return this.errorIcon;
+      case 'warning':
+        return this.warningIcon;
+      case 'info':
+        return this.infoIcon;
     }
   }
 

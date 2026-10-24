@@ -73,7 +73,7 @@ export class AthToastService {
   }
 
   remove(id: string): void {
-    this.toastsSignal.update(toasts => toasts.filter(t => t.id !== id));
+    this.toastsSignal.update((toasts) => toasts.filter((t) => t.id !== id));
   }
 
   private add(
@@ -84,8 +84,7 @@ export class AthToastService {
   ): void {
     const opts: ToastOptions = typeof options === 'number' ? { duration: options } : options;
     const action = opts.action;
-    const duration =
-      opts.duration ?? (action ? Math.max(fallback, ACTION_MIN_DURATION) : fallback);
+    const duration = opts.duration ?? (action ? Math.max(fallback, ACTION_MIN_DURATION) : fallback);
     const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     const toast: ToastMessage = { id, variant, message, duration, action };
 
