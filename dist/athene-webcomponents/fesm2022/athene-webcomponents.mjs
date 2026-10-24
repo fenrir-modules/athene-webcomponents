@@ -1,12 +1,12 @@
 import * as i0 from '@angular/core';
-import { Component, ChangeDetectionStrategy, Input, inject, EventEmitter, Output, input, signal, computed, HostBinding, ViewEncapsulation, Directive, output, ErrorHandler, booleanAttribute, SecurityContext, ChangeDetectorRef, forwardRef, ElementRef, NgZone, Injectable, TemplateRef, model, contentChild, viewChild, InjectionToken, contentChildren, effect, ViewChild, HostListener, LOCALE_ID } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, inject, EventEmitter, Output, input, computed, signal, ElementRef, booleanAttribute, NgZone, Directive, Injectable, TemplateRef, model, output, contentChild, viewChild, InjectionToken, contentChildren, forwardRef, effect, DestroyRef, HostBinding, ViewEncapsulation, ErrorHandler, SecurityContext, ChangeDetectorRef, ViewChild, HostListener, LOCALE_ID } from '@angular/core';
 import { CommonModule, DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import * as i1 from 'lucide-angular';
-import { PanelLeftClose, PanelLeft, LucideAngularModule, ChevronRight, User, X, Zap, Loader2, Copy, Check, Eye, EyeOff, AlertCircle, ChevronDown, Search, Plus, Upload, Info, CheckCircle2, AlertOctagon, AlertTriangle, CheckCircle, ChevronLeft, ChevronsLeft, ChevronsRight, MoreHorizontal } from 'lucide-angular';
+import { PanelLeftClose, PanelLeft, LucideAngularModule, Check, ChevronRight, User, X, Zap, Loader2, Copy, Eye, EyeOff, AlertCircle, ChevronDown, Search, Plus, Upload, Info, CheckCircle2, AlertOctagon, AlertTriangle, CheckCircle, ChevronLeft, ChevronsLeft, ChevronsRight, MoreHorizontal } from 'lucide-angular';
 import * as i1$2 from '@athene/webcomponents/core';
 import { ATH_LABELS, ATH_DEFAULT_LABELS, ATH_STATUS_LABELS, ATH_PRIORITY_LABELS, ATH_MARKDOWN_PARSER, ATH_DATE_CONTEXT } from '@athene/webcomponents/core';
 export { ATH_DATE_CONTEXT, ATH_DEFAULT_LABELS, ATH_LABELS, ATH_MARKDOWN_PARSER, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, AthToastService } from '@athene/webcomponents/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { isObservable, firstValueFrom, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as i1$1 from '@angular/forms';
@@ -155,7 +155,7 @@ function formatAthLabel(template, params) {
  * @example
  * <ath-sidebar [collapsed]="isCollapsed" (collapsedChange)="isCollapsed = $event">
  *   <div slot="header">Logo</div>
- *   <ath-nav-item icon="home" label="Home" />
+ *   <ath-nav-item [icon]="Home" label="Home" route="/home" [compact]="isCollapsed" />
  *   <div slot="footer">User info</div>
  * </ath-sidebar>
  */
@@ -191,76 +191,1421 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImpo
             }] } });
 
 /**
- * Athene Nav Item Component
+ * Athene Nav Item: one row of a navigation list (the app sidebar, the
+ * settings rail, the admin console).
  *
- * Navigation item for sidebar with icon, label and active state.
+ * - The single source for hit zone, hover, active, focus and tooltip; no
+ *   layout reimplements them.
+ * - An `icon` or a `chip` (a project key in the project's colour).
+ * - `compact` (a collapsed rail): the label folds away and a CSS tooltip
+ *   shows it to the right; an unread `badge` becomes a dot on the icon.
+ * - Active: a tinted pill, the accent on the icon, and (with `indicator`)
+ *   a 2-px bar at the left edge.
+ *
+ * Layout contract: the row stretches to its parent's width in both modes;
+ * the icon sits in a fixed 40-px cell so it keeps its x position while a
+ * rail opens, and only the tail (label, badge, dot) collapses.
  *
  * @example
- * <ath-nav-item [icon]="homeIcon" label="Overview" link="/admin/overview" />
- * <ath-nav-item [icon]="flagIcon" label="Feature Flags" link="/admin/feature-flags" />
+ * <ath-nav-item [icon]="Inbox" label="Inbox" route="/app/inbox" [badge]="3" />
+ * <ath-nav-item [chip]="{ text: 'ATL', color: 'var(--blue)' }" label="Atlas" [route]="['/p', id]" />
  */
 class AthNavItemComponent {
     constructor() {
-        /** Lucide icon */
-        this.icon = null;
-        /** Nav item label */
-        this.label = '';
-        /** Router link */
-        this.link = '';
-        /** Whether the sidebar is collapsed */
-        this.collapsed = false;
-        /** Badge count (optional) */
-        this.badgeCount = null;
+        /** Visible label; also the tooltip and accessible name when compact. */
+        this.label = input.required();
+        /** Router target: a path, or link parameters for a parameterised route. */
+        this.route = input(null);
+        /** @deprecated Use `route`. */
+        this.link = input(null);
+        /** Exact match for the active state (default: prefix match, like Angular). */
+        this.exact = input(false);
+        /** Either an icon or a chip. */
+        this.icon = input(null);
+        this.chip = input(null);
+        /** A count (unread items); nothing below 1. */
+        this.badge = input(null);
+        /** @deprecated Use `badge`. */
+        this.badgeCount = input(null);
+        this.dot = input(null);
+        /** A secondary row in a quieter tone ("… All projects"). */
+        this.muted = input(false);
+        /** Rail mode: the label folds away, a tooltip shows it. */
+        this.compact = input(false);
+        /** @deprecated Use `compact`. */
+        this.collapsed = input(false);
+        /** The 2-px bar at the left edge of the active row. */
+        this.indicator = input(true);
+        /** Tooltip text in compact mode; defaults to the label. */
+        this.tooltip = input(null);
+        /** Link parameters for `routerLink` (a copy: it takes a mutable array). */
+        this.target = computed(() => {
+            const route = this.route() ?? this.link() ?? '';
+            return typeof route === 'string' ? [route] : [...route];
+        });
+        this.isCompact = computed(() => this.compact() || this.collapsed());
+        this.count = computed(() => {
+            const n = this.badge() ?? this.badgeCount();
+            return n !== null && n > 0 ? n : null;
+        });
+        this.tooltipText = computed(() => {
+            if (!this.isCompact())
+                return null;
+            const text = this.tooltip() ?? this.label();
+            const n = this.count();
+            return n !== null ? `${text} · ${n}` : text;
+        });
+        /** Pointer over the row or keyboard focus on it: shows the tooltip. */
+        this.active = signal(false);
     }
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthNavItemComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthNavItemComponent, isStandalone: true, selector: "ath-nav-item", inputs: { icon: "icon", label: "label", link: "link", collapsed: "collapsed", badgeCount: "badgeCount" }, ngImport: i0, template: "<a\n  class=\"ath-nav-item\"\n  [routerLink]=\"link\"\n  routerLinkActive=\"ath-nav-item--active\"\n  [routerLinkActiveOptions]=\"{ exact: false }\"\n  [class.ath-nav-item--collapsed]=\"collapsed\"\n  [attr.title]=\"collapsed ? label : null\"\n>\n  @if (icon) {\n    <lucide-icon [img]=\"icon\" [size]=\"20\" class=\"ath-nav-item__icon\" />\n  }\n  @if (!collapsed) {\n    <span class=\"ath-nav-item__label\">{{ label }}</span>\n    @if (badgeCount !== null) {\n      <span class=\"ath-nav-item__badge\">{{ badgeCount }}</span>\n    }\n  }\n</a>\n", styles: [".ath-nav-item{display:flex;align-items:center;gap:var(--ath-space-3);padding:10px var(--ath-space-3);border-radius:var(--ath-border-radius-md);color:var(--ath-text-tertiary);text-decoration:none;font-size:var(--ath-font-size-sm);font-weight:var(--ath-font-weight-medium);transition:all .15s ease;cursor:pointer;white-space:nowrap;overflow:hidden;position:relative}.ath-nav-item:hover{color:var(--ath-text-primary);background-color:var(--hover)}.ath-nav-item--active{color:var(--nav-active-fg);background-color:var(--nav-active-bg)}.ath-nav-item--active:before{content:\"\";position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 2px 2px 0;background:var(--nav-active-indicator)}.ath-nav-item--active:hover{color:var(--nav-active-fg);background-color:var(--nav-active-bg-hover)}.ath-nav-item--active .ath-nav-item__icon{color:var(--nav-active-icon)}.ath-nav-item--collapsed{justify-content:center;padding:var(--ath-space-2)}.ath-nav-item__icon{flex-shrink:0;color:inherit}.ath-nav-item__label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}.ath-nav-item__badge{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 var(--ath-space-1);font-size:var(--ath-font-size-xs);font-weight:var(--ath-font-weight-semibold);color:var(--nav-badge-fg);background-color:var(--nav-badge-bg);border-radius:var(--ath-border-radius-full)}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "directive", type: RouterLink, selector: "[routerLink]", inputs: ["target", "queryParams", "fragment", "queryParamsHandling", "state", "info", "relativeTo", "preserveFragment", "skipLocationChange", "replaceUrl", "routerLink"] }, { kind: "directive", type: RouterLinkActive, selector: "[routerLinkActive]", inputs: ["routerLinkActiveOptions", "ariaCurrentWhenActive", "routerLinkActive"], outputs: ["isActiveChange"], exportAs: ["routerLinkActive"] }, { kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthNavItemComponent, isStandalone: true, selector: "ath-nav-item", inputs: { label: { classPropertyName: "label", publicName: "label", isSignal: true, isRequired: true, transformFunction: null }, route: { classPropertyName: "route", publicName: "route", isSignal: true, isRequired: false, transformFunction: null }, link: { classPropertyName: "link", publicName: "link", isSignal: true, isRequired: false, transformFunction: null }, exact: { classPropertyName: "exact", publicName: "exact", isSignal: true, isRequired: false, transformFunction: null }, icon: { classPropertyName: "icon", publicName: "icon", isSignal: true, isRequired: false, transformFunction: null }, chip: { classPropertyName: "chip", publicName: "chip", isSignal: true, isRequired: false, transformFunction: null }, badge: { classPropertyName: "badge", publicName: "badge", isSignal: true, isRequired: false, transformFunction: null }, badgeCount: { classPropertyName: "badgeCount", publicName: "badgeCount", isSignal: true, isRequired: false, transformFunction: null }, dot: { classPropertyName: "dot", publicName: "dot", isSignal: true, isRequired: false, transformFunction: null }, muted: { classPropertyName: "muted", publicName: "muted", isSignal: true, isRequired: false, transformFunction: null }, compact: { classPropertyName: "compact", publicName: "compact", isSignal: true, isRequired: false, transformFunction: null }, collapsed: { classPropertyName: "collapsed", publicName: "collapsed", isSignal: true, isRequired: false, transformFunction: null }, indicator: { classPropertyName: "indicator", publicName: "indicator", isSignal: true, isRequired: false, transformFunction: null }, tooltip: { classPropertyName: "tooltip", publicName: "tooltip", isSignal: true, isRequired: false, transformFunction: null } }, ngImport: i0, template: "<a\n  class=\"ath-nav-item\"\n  [class.ath-nav-item--compact]=\"isCompact()\"\n  [class.ath-nav-item--muted]=\"muted()\"\n  [routerLink]=\"target()\"\n  routerLinkActive=\"ath-nav-item--active\"\n  [routerLinkActiveOptions]=\"{ exact: exact() }\"\n  [attr.aria-label]=\"isCompact() ? label() : null\"\n  (mouseenter)=\"active.set(true)\"\n  (mouseleave)=\"active.set(false)\"\n  (focus)=\"active.set(true)\"\n  (blur)=\"active.set(false)\"\n>\n  @if (indicator()) {\n    <span class=\"ath-nav-item__indicator\" aria-hidden=\"true\"></span>\n  }\n\n  <span class=\"ath-nav-item__icon-cell\">\n    @if (icon(); as img) {\n      <lucide-icon [img]=\"img\" [size]=\"14\" />\n    }\n    <!-- Decorative: the label beside it names the row. -->\n    @if (chip(); as c) {\n      <span class=\"ath-nav-item__chip\" [style.--chip-color]=\"c.color\" aria-hidden=\"true\">{{\n        c.text\n      }}</span>\n    }\n    <!-- The rail has no room for a count: an unread item gets a dot on its\n         icon instead. The count returns with the label. -->\n    @if (isCompact() && count() !== null) {\n      <span class=\"ath-nav-item__icon-dot\" aria-hidden=\"true\"></span>\n    }\n  </span>\n\n  <span class=\"ath-nav-item__tail\">\n    <span class=\"ath-nav-item__label\">{{ label() }}</span>\n    @if (count(); as n) {\n      <span class=\"ath-nav-item__badge\">{{ n }}</span>\n    }\n    @if (dot(); as tone) {\n      <span class=\"ath-nav-item__dot\" [attr.data-tone]=\"tone\" aria-hidden=\"true\"></span>\n    }\n  </span>\n\n  @if (tooltipText(); as text) {\n    <span\n      class=\"ath-nav-item__tooltip\"\n      role=\"tooltip\"\n      [class.ath-nav-item__tooltip--visible]=\"active()\"\n    >\n      {{ text }}\n    </span>\n  }\n</a>\n", styles: [".ath-nav-item{position:relative;display:flex;align-items:center;width:auto;height:30px;margin:0 2px;padding:0;border-radius:var(--r-sm);color:var(--fg-2);text-decoration:none;font-family:var(--font-sans);font-size:13px;font-weight:500;white-space:nowrap;cursor:pointer;outline:none;overflow:hidden;transition:background .12s ease,color .12s ease}.ath-nav-item:hover{background:var(--hover);color:var(--fg)}.ath-nav-item:focus-visible{box-shadow:0 0 0 2px var(--focus-ring-color)}.ath-nav-item__indicator{position:absolute;left:0;top:50%;width:2px;height:16px;border-radius:0 2px 2px 0;background:transparent;transform:translateY(-50%);transition:background .12s ease}.ath-nav-item--active{background:var(--rail-active-bg);color:var(--nav-active-fg)}.ath-nav-item--active .ath-nav-item__indicator{background:var(--nav-active-indicator)}.ath-nav-item--active .ath-nav-item__icon-cell{color:var(--nav-active-icon)}.ath-nav-item__icon-cell{position:relative;flex:0 0 40px;display:flex;align-items:center;justify-content:center;color:var(--fg-4);transition:color .12s ease}.ath-nav-item:hover .ath-nav-item__icon-cell{color:var(--fg)}.ath-nav-item__chip{--chip-color: var(--fg-3);display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:18px;padding:0 4px;border:1px solid color-mix(in srgb,var(--chip-color) 22%,transparent);border-radius:var(--r-xs);background:transparent;color:color-mix(in srgb,var(--chip-color) var(--deco-mix),var(--bg-1));font-family:var(--font-mono);font-weight:500;font-size:9.5px;letter-spacing:.02em}.ath-nav-item__icon-dot{position:absolute;top:6px;left:calc(50% + 4px);width:6px;height:6px;border-radius:var(--r-full);background:var(--notify-dot);box-shadow:0 0 0 1.5px var(--bg-1)}.ath-nav-item--active .ath-nav-item__icon-dot{display:none}.ath-nav-item--muted:not(.ath-nav-item--active){color:var(--fg-3)}.ath-nav-item__tail{flex:1 1 auto;min-width:0;max-width:220px;display:flex;align-items:center;gap:6px;margin-left:2px;padding-right:10px;overflow:hidden;transition:max-width .18s cubic-bezier(.2,.9,.3,1),margin .18s cubic-bezier(.2,.9,.3,1),padding .18s cubic-bezier(.2,.9,.3,1),opacity .12s ease 40ms}.ath-nav-item__label{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}.ath-nav-item__badge{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 5px;font-family:var(--font-mono);font-feature-settings:\"tnum\";font-size:11px;font-weight:500;color:var(--nav-badge-fg);background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r-xs)}.ath-nav-item__dot{flex-shrink:0;width:6px;height:6px;border-radius:var(--r-full);background:var(--fg-4)}.ath-nav-item__dot[data-tone=ok]{background:var(--green)}.ath-nav-item__dot[data-tone=warn]{background:var(--amber)}.ath-nav-item__dot[data-tone=error]{background:var(--red)}.ath-nav-item--compact .ath-nav-item__tail{max-width:0;margin-left:0;padding-right:0;opacity:0;pointer-events:none}.ath-nav-item--compact .ath-nav-item__indicator{display:none}.ath-nav-item--compact.ath-nav-item--active{background:var(--rail-active-bg)}.ath-nav-item__tooltip{position:absolute;left:100%;top:50%;margin-left:10px;transform:translateY(-50%) translate(-4px);padding:5px 10px;background:var(--fg);color:var(--bg-1);font-size:11.5px;font-weight:500;letter-spacing:.005em;border-radius:var(--r-sm);white-space:nowrap;opacity:0;pointer-events:none;box-shadow:var(--shadow-2);transition:opacity .1s ease 60ms,transform .12s cubic-bezier(.2,.9,.3,1) 60ms;z-index:var(--z-tooltip)}.ath-nav-item__tooltip:before{content:\"\";position:absolute;left:-3px;top:50%;transform:translateY(-50%) rotate(45deg);width:6px;height:6px;background:inherit;border-radius:1px}.ath-nav-item__tooltip--visible{opacity:1;transform:translateY(-50%) translate(0)}@media (prefers-reduced-motion: reduce){.ath-nav-item,.ath-nav-item__icon-cell,.ath-nav-item__indicator,.ath-nav-item__tail,.ath-nav-item__tooltip{transition:none}}\n"], dependencies: [{ kind: "directive", type: RouterLink, selector: "[routerLink]", inputs: ["target", "queryParams", "fragment", "queryParamsHandling", "state", "info", "relativeTo", "preserveFragment", "skipLocationChange", "replaceUrl", "routerLink"] }, { kind: "directive", type: RouterLinkActive, selector: "[routerLinkActive]", inputs: ["routerLinkActiveOptions", "ariaCurrentWhenActive", "routerLinkActive"], outputs: ["isActiveChange"], exportAs: ["routerLinkActive"] }, { kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
 }
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthNavItemComponent, decorators: [{
             type: Component,
-            args: [{ selector: 'ath-nav-item', standalone: true, imports: [CommonModule, RouterLink, RouterLinkActive, LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "<a\n  class=\"ath-nav-item\"\n  [routerLink]=\"link\"\n  routerLinkActive=\"ath-nav-item--active\"\n  [routerLinkActiveOptions]=\"{ exact: false }\"\n  [class.ath-nav-item--collapsed]=\"collapsed\"\n  [attr.title]=\"collapsed ? label : null\"\n>\n  @if (icon) {\n    <lucide-icon [img]=\"icon\" [size]=\"20\" class=\"ath-nav-item__icon\" />\n  }\n  @if (!collapsed) {\n    <span class=\"ath-nav-item__label\">{{ label }}</span>\n    @if (badgeCount !== null) {\n      <span class=\"ath-nav-item__badge\">{{ badgeCount }}</span>\n    }\n  }\n</a>\n", styles: [".ath-nav-item{display:flex;align-items:center;gap:var(--ath-space-3);padding:10px var(--ath-space-3);border-radius:var(--ath-border-radius-md);color:var(--ath-text-tertiary);text-decoration:none;font-size:var(--ath-font-size-sm);font-weight:var(--ath-font-weight-medium);transition:all .15s ease;cursor:pointer;white-space:nowrap;overflow:hidden;position:relative}.ath-nav-item:hover{color:var(--ath-text-primary);background-color:var(--hover)}.ath-nav-item--active{color:var(--nav-active-fg);background-color:var(--nav-active-bg)}.ath-nav-item--active:before{content:\"\";position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 2px 2px 0;background:var(--nav-active-indicator)}.ath-nav-item--active:hover{color:var(--nav-active-fg);background-color:var(--nav-active-bg-hover)}.ath-nav-item--active .ath-nav-item__icon{color:var(--nav-active-icon)}.ath-nav-item--collapsed{justify-content:center;padding:var(--ath-space-2)}.ath-nav-item__icon{flex-shrink:0;color:inherit}.ath-nav-item__label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}.ath-nav-item__badge{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 var(--ath-space-1);font-size:var(--ath-font-size-xs);font-weight:var(--ath-font-weight-semibold);color:var(--nav-badge-fg);background-color:var(--nav-badge-bg);border-radius:var(--ath-border-radius-full)}\n"] }]
-        }], propDecorators: { icon: [{
-                type: Input
-            }], label: [{
-                type: Input
-            }], link: [{
-                type: Input
-            }], collapsed: [{
-                type: Input
-            }], badgeCount: [{
-                type: Input
-            }] } });
+            args: [{ selector: 'ath-nav-item', standalone: true, imports: [RouterLink, RouterLinkActive, LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "<a\n  class=\"ath-nav-item\"\n  [class.ath-nav-item--compact]=\"isCompact()\"\n  [class.ath-nav-item--muted]=\"muted()\"\n  [routerLink]=\"target()\"\n  routerLinkActive=\"ath-nav-item--active\"\n  [routerLinkActiveOptions]=\"{ exact: exact() }\"\n  [attr.aria-label]=\"isCompact() ? label() : null\"\n  (mouseenter)=\"active.set(true)\"\n  (mouseleave)=\"active.set(false)\"\n  (focus)=\"active.set(true)\"\n  (blur)=\"active.set(false)\"\n>\n  @if (indicator()) {\n    <span class=\"ath-nav-item__indicator\" aria-hidden=\"true\"></span>\n  }\n\n  <span class=\"ath-nav-item__icon-cell\">\n    @if (icon(); as img) {\n      <lucide-icon [img]=\"img\" [size]=\"14\" />\n    }\n    <!-- Decorative: the label beside it names the row. -->\n    @if (chip(); as c) {\n      <span class=\"ath-nav-item__chip\" [style.--chip-color]=\"c.color\" aria-hidden=\"true\">{{\n        c.text\n      }}</span>\n    }\n    <!-- The rail has no room for a count: an unread item gets a dot on its\n         icon instead. The count returns with the label. -->\n    @if (isCompact() && count() !== null) {\n      <span class=\"ath-nav-item__icon-dot\" aria-hidden=\"true\"></span>\n    }\n  </span>\n\n  <span class=\"ath-nav-item__tail\">\n    <span class=\"ath-nav-item__label\">{{ label() }}</span>\n    @if (count(); as n) {\n      <span class=\"ath-nav-item__badge\">{{ n }}</span>\n    }\n    @if (dot(); as tone) {\n      <span class=\"ath-nav-item__dot\" [attr.data-tone]=\"tone\" aria-hidden=\"true\"></span>\n    }\n  </span>\n\n  @if (tooltipText(); as text) {\n    <span\n      class=\"ath-nav-item__tooltip\"\n      role=\"tooltip\"\n      [class.ath-nav-item__tooltip--visible]=\"active()\"\n    >\n      {{ text }}\n    </span>\n  }\n</a>\n", styles: [".ath-nav-item{position:relative;display:flex;align-items:center;width:auto;height:30px;margin:0 2px;padding:0;border-radius:var(--r-sm);color:var(--fg-2);text-decoration:none;font-family:var(--font-sans);font-size:13px;font-weight:500;white-space:nowrap;cursor:pointer;outline:none;overflow:hidden;transition:background .12s ease,color .12s ease}.ath-nav-item:hover{background:var(--hover);color:var(--fg)}.ath-nav-item:focus-visible{box-shadow:0 0 0 2px var(--focus-ring-color)}.ath-nav-item__indicator{position:absolute;left:0;top:50%;width:2px;height:16px;border-radius:0 2px 2px 0;background:transparent;transform:translateY(-50%);transition:background .12s ease}.ath-nav-item--active{background:var(--rail-active-bg);color:var(--nav-active-fg)}.ath-nav-item--active .ath-nav-item__indicator{background:var(--nav-active-indicator)}.ath-nav-item--active .ath-nav-item__icon-cell{color:var(--nav-active-icon)}.ath-nav-item__icon-cell{position:relative;flex:0 0 40px;display:flex;align-items:center;justify-content:center;color:var(--fg-4);transition:color .12s ease}.ath-nav-item:hover .ath-nav-item__icon-cell{color:var(--fg)}.ath-nav-item__chip{--chip-color: var(--fg-3);display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:18px;padding:0 4px;border:1px solid color-mix(in srgb,var(--chip-color) 22%,transparent);border-radius:var(--r-xs);background:transparent;color:color-mix(in srgb,var(--chip-color) var(--deco-mix),var(--bg-1));font-family:var(--font-mono);font-weight:500;font-size:9.5px;letter-spacing:.02em}.ath-nav-item__icon-dot{position:absolute;top:6px;left:calc(50% + 4px);width:6px;height:6px;border-radius:var(--r-full);background:var(--notify-dot);box-shadow:0 0 0 1.5px var(--bg-1)}.ath-nav-item--active .ath-nav-item__icon-dot{display:none}.ath-nav-item--muted:not(.ath-nav-item--active){color:var(--fg-3)}.ath-nav-item__tail{flex:1 1 auto;min-width:0;max-width:220px;display:flex;align-items:center;gap:6px;margin-left:2px;padding-right:10px;overflow:hidden;transition:max-width .18s cubic-bezier(.2,.9,.3,1),margin .18s cubic-bezier(.2,.9,.3,1),padding .18s cubic-bezier(.2,.9,.3,1),opacity .12s ease 40ms}.ath-nav-item__label{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}.ath-nav-item__badge{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 5px;font-family:var(--font-mono);font-feature-settings:\"tnum\";font-size:11px;font-weight:500;color:var(--nav-badge-fg);background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r-xs)}.ath-nav-item__dot{flex-shrink:0;width:6px;height:6px;border-radius:var(--r-full);background:var(--fg-4)}.ath-nav-item__dot[data-tone=ok]{background:var(--green)}.ath-nav-item__dot[data-tone=warn]{background:var(--amber)}.ath-nav-item__dot[data-tone=error]{background:var(--red)}.ath-nav-item--compact .ath-nav-item__tail{max-width:0;margin-left:0;padding-right:0;opacity:0;pointer-events:none}.ath-nav-item--compact .ath-nav-item__indicator{display:none}.ath-nav-item--compact.ath-nav-item--active{background:var(--rail-active-bg)}.ath-nav-item__tooltip{position:absolute;left:100%;top:50%;margin-left:10px;transform:translateY(-50%) translate(-4px);padding:5px 10px;background:var(--fg);color:var(--bg-1);font-size:11.5px;font-weight:500;letter-spacing:.005em;border-radius:var(--r-sm);white-space:nowrap;opacity:0;pointer-events:none;box-shadow:var(--shadow-2);transition:opacity .1s ease 60ms,transform .12s cubic-bezier(.2,.9,.3,1) 60ms;z-index:var(--z-tooltip)}.ath-nav-item__tooltip:before{content:\"\";position:absolute;left:-3px;top:50%;transform:translateY(-50%) rotate(45deg);width:6px;height:6px;background:inherit;border-radius:1px}.ath-nav-item__tooltip--visible{opacity:1;transform:translateY(-50%) translate(0)}@media (prefers-reduced-motion: reduce){.ath-nav-item,.ath-nav-item__icon-cell,.ath-nav-item__indicator,.ath-nav-item__tail,.ath-nav-item__tooltip{transition:none}}\n"] }]
+        }] });
 
+/** Whether `target` is a virtual anchor rather than an element. */
+function isVirtualAnchor(target) {
+    return (!!target &&
+        typeof target === 'object' &&
+        !(typeof Element !== 'undefined' && target instanceof Element) &&
+        typeof target.getBoundingClientRect === 'function');
+}
+/** Space kept between a floating panel and the viewport's edges. */
+const MARGIN = 8;
+/** Below this much room a side is not worth capping to; the panel flips or overlaps. */
+const MIN_ROOM = 120;
+/** An arrow stays this far from the panel's corners. */
+const ARROW_INSET = 12;
+/**
+ * The one positioning engine of the library (menus, listboxes, popovers,
+ * pickers; the `athFloating` directive wraps it).
+ *
+ * Pins `panel` to `anchor` (an element, or a `FloatingVirtualAnchor` such as
+ * a caret rectangle) and keeps it inside the viewport: on the preferred
+ * side when it fits, on the other side when that has more room, shifted
+ * sideways to stay on screen, height-capped (scrolling inside) when neither
+ * side has room for all of it. Follows scrolls in any container, viewport
+ * resizes, and size changes of the panel and the anchor.
+ *
+ * The panel stays where the template rendered it (focus order, event
+ * bubbling and "click outside" checks keep working). It is promoted into the
+ * top layer, or, without Popover API support, made `position: fixed` with a
+ * correction for transformed ancestors that would otherwise move a fixed box.
+ *
+ * Writes `data-placement="bottom|top"` on the panel for side-dependent styles.
+ */
+function floatPanel(panel, anchor, options = {}) {
+    // The element that stands for the anchor: itself, or a virtual anchor's context.
+    const anchorEl = isVirtualAnchor(anchor)
+        ? (anchor.contextElement ?? null)
+        : anchor;
+    const style = panel.style;
+    style.position = 'fixed';
+    style.top = '0';
+    style.left = '0';
+    style.right = 'auto';
+    style.bottom = 'auto';
+    style.margin = '0';
+    style.zIndex = 'var(--z-popover)';
+    // Measured before it is shown, so it never flashes at the wrong place.
+    style.visibility = 'hidden';
+    panel.setAttribute('data-ath-floating', '');
+    const inTopLayer = (options.topLayer ?? true) && promote(panel);
+    let frame = 0;
+    const place = () => {
+        if ((anchorEl && !anchorEl.isConnected) || !panel.isConnected)
+            return;
+        const a = anchor.getBoundingClientRect();
+        const vw = document.documentElement.clientWidth;
+        const vh = window.innerHeight;
+        const gap = options.offset ?? 4;
+        if (options.matchWidth)
+            style.minWidth = `${Math.round(a.width)}px`;
+        // Its natural height, without an earlier cap.
+        style.maxHeight = '';
+        style.overflowY = '';
+        const width = Math.min(panel.offsetWidth, vw - MARGIN * 2);
+        const natural = panel.offsetHeight;
+        const below = vh - a.bottom - gap - MARGIN;
+        const above = a.top - gap - MARGIN;
+        const down = options.side === 'top'
+            ? !(natural <= above || above >= below)
+            : natural <= below || below >= above;
+        let room = Math.max(down ? below : above, MIN_ROOM);
+        if (options.maxHeight)
+            room = Math.min(room, options.maxHeight);
+        const height = Math.min(natural, room);
+        if (natural > room) {
+            style.maxHeight = `${Math.floor(room)}px`;
+            style.overflowY = 'auto';
+        }
+        const rtl = getComputedStyle(anchorEl ?? panel).direction === 'rtl';
+        const leftEdge = a.left;
+        const rightEdge = a.right - width;
+        const fromStart = rtl ? rightEdge : leftEdge;
+        const fromEnd = rtl ? leftEdge : rightEdge;
+        const fits = (x) => x >= MARGIN && x + width <= vw - MARGIN;
+        const align = options.align ?? 'start';
+        let left = align === 'center'
+            ? a.left + a.width / 2 - width / 2
+            : align === 'end'
+                ? fromEnd
+                : align === 'auto' && !fits(fromStart)
+                    ? fromEnd
+                    : fromStart;
+        left = Math.max(MARGIN, Math.min(left, vw - width - MARGIN));
+        const top = Math.max(MARGIN, down ? a.bottom + gap : a.top - gap - height);
+        const origin = inTopLayer ? { x: 0, y: 0 } : fixedOrigin(panel);
+        style.left = `${Math.round(left - origin.x)}px`;
+        style.top = `${Math.round(top - origin.y)}px`;
+        style.maxWidth = `${vw - MARGIN * 2}px`;
+        style.visibility = '';
+        panel.dataset['placement'] = down ? 'bottom' : 'top';
+        if (options.arrow) {
+            const x = a.left + a.width / 2 - left;
+            const clamped = Math.max(ARROW_INSET, Math.min(x, width - ARROW_INSET));
+            options.arrow.style.left = `${Math.round(clamped)}px`;
+        }
+    };
+    const schedule = (event) => {
+        // Scrolling inside the panel itself does not move it.
+        if (event?.type === 'scroll' && event.target instanceof Node && panel.contains(event.target)) {
+            return;
+        }
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(place);
+    };
+    window.addEventListener('resize', schedule);
+    // Capture: a scroll in any container moves the anchor.
+    document.addEventListener('scroll', schedule, true);
+    const resize = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => schedule());
+    resize?.observe(panel);
+    if (anchorEl)
+        resize?.observe(anchorEl);
+    place();
+    const stop = () => {
+        cancelAnimationFrame(frame);
+        window.removeEventListener('resize', schedule);
+        document.removeEventListener('scroll', schedule, true);
+        resize?.disconnect();
+        if (inTopLayer)
+            demote(panel);
+    };
+    return Object.assign(stop, { update: place });
+}
+/** Whether this browser has the Popover API (top layer for non-modal panels). */
+function supportsTopLayer() {
+    return typeof HTMLElement !== 'undefined' && 'showPopover' in HTMLElement.prototype;
+}
+function promote(panel) {
+    if (!supportsTopLayer() || !panel.isConnected)
+        return false;
+    installTopLayerStyles();
+    if (!panel.hasAttribute('popover'))
+        panel.setAttribute('popover', 'manual');
+    try {
+        if (!panel.matches(':popover-open'))
+            panel.showPopover();
+        return true;
+    }
+    catch {
+        panel.removeAttribute('popover');
+        return false;
+    }
+}
+function demote(panel) {
+    try {
+        if (panel.matches(':popover-open'))
+            panel.hidePopover();
+    }
+    catch {
+        // Already gone from the document.
+    }
+}
+/**
+ * `[popover]` brings UA styles (border, padding, canvas colours, centring).
+ * This resets them at zero specificity, so any component style still wins.
+ */
+let baseStylesInstalled = false;
+const BASE_STYLES = ':where([data-ath-floating][popover],[data-ath-top-layer][popover]){inset:auto;margin:0;' +
+    'border:0;padding:0;' +
+    'background:none;color:inherit;overflow:visible}';
+/** @internal Installs the reset once; used by `floatPanel` and `AthOverlayStack`. */
+function installTopLayerStyles() {
+    if (baseStylesInstalled)
+        return;
+    baseStylesInstalled = true;
+    try {
+        const sheet = new CSSStyleSheet();
+        sheet.replaceSync(BASE_STYLES);
+        document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+    }
+    catch {
+        const el = document.createElement('style');
+        el.textContent = BASE_STYLES;
+        document.head.appendChild(el);
+    }
+}
+/**
+ * Where `position: fixed; left: 0; top: 0` lands for this element. Normally
+ * the viewport's corner; inside a transformed ancestor (a centred dialog)
+ * `fixed` is relative to that ancestor instead. Measured with a bare probe,
+ * so the panel's own entry animation does not skew it.
+ */
+function fixedOrigin(el) {
+    const parent = el.parentElement;
+    if (!parent)
+        return { x: 0, y: 0 };
+    const probe = document.createElement('div');
+    probe.style.cssText =
+        'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none';
+    parent.appendChild(probe);
+    const box = probe.getBoundingClientRect();
+    probe.remove();
+    return { x: box.left, y: box.top };
+}
+
+/**
+ * The element behind an anchor: itself, or a virtual anchor's
+ * `contextElement` (focus return, outside clicks, `aria-*`).
+ */
+function resolveAnchor(anchor) {
+    if (!anchor)
+        return null;
+    if (anchor instanceof ElementRef)
+        return anchor.nativeElement;
+    if (isVirtualAnchor(anchor)) {
+        const ctx = anchor.contextElement;
+        return ctx instanceof HTMLElement ? ctx : null;
+    }
+    return anchor;
+}
+/** What a panel is placed against: the element, or the virtual anchor itself. */
+function resolveFloatingTarget(anchor) {
+    if (!anchor)
+        return null;
+    return anchor instanceof ElementRef ? anchor.nativeElement : anchor;
+}
+/**
+ * Hangs the host element from an anchor with `floatPanel`: top layer (so no
+ * `overflow`, `transform` or `z-index` of a container can clip or cover it),
+ * kept inside the viewport (flip, shift, height cap), following scrolls,
+ * resizes and size changes. The host stays where the template puts it.
+ *
+ * The only positioning logic of the library; `ath-popover`, `ath-menu` and
+ * `ath-option-picker` use it, and app code that needs a bare floating panel
+ * uses it instead of measuring rectangles itself.
+ *
+ * @example
+ * @if (open()) {
+ *   <div class="menu" [athFloating]="trigger" align="end">…</div>
+ * }
+ */
+class AthFloatingDirective {
+    constructor() {
+        /** The element (or virtual anchor) the panel hangs from. */
+        this.anchor = input.required({ alias: 'athFloating' });
+        /**
+         * `start`: start edges line up; `end`: end edges; `auto`: start unless it
+         * overflows; `center`: centred on the anchor.
+         */
+        this.align = input('start');
+        /** Preferred side; flips when the other side has more room. */
+        this.side = input('bottom');
+        /** Gap between anchor and panel, in px. */
+        this.offset = input(4);
+        /** At least as wide as the anchor (selects, comboboxes). */
+        this.matchWidth = input(false, { transform: booleanAttribute });
+        /** Upper bound for the height in px (the viewport caps it anyway). */
+        this.maxHeight = input(null);
+        /** Promote into the top layer (default). `false` keeps `position: fixed` + `--z-popover`. */
+        this.topLayer = input(true, { transform: booleanAttribute });
+        /** An arrow element inside the panel, kept pointing at the anchor's centre. */
+        this.arrow = input(null);
+        this.el = inject(ElementRef).nativeElement;
+        this.zone = inject(NgZone);
+        this.cleanup = null;
+        this.viewReady = false;
+    }
+    ngAfterViewInit() {
+        this.viewReady = true;
+        this.attach();
+    }
+    ngOnChanges() {
+        if (this.viewReady)
+            this.attach();
+    }
+    ngOnDestroy() {
+        this.cleanup?.();
+        this.cleanup = null;
+    }
+    /** Re-measures now (after a content change the ResizeObserver cannot see). */
+    update() {
+        this.cleanup?.update();
+    }
+    attach() {
+        this.cleanup?.();
+        this.cleanup = null;
+        const anchor = resolveFloatingTarget(this.anchor());
+        if (!anchor)
+            return;
+        this.cleanup = this.zone.runOutsideAngular(() => floatPanel(this.el, anchor, {
+            align: this.align(),
+            side: this.side(),
+            offset: this.offset(),
+            matchWidth: this.matchWidth(),
+            maxHeight: this.maxHeight(),
+            topLayer: this.topLayer(),
+            arrow: this.arrow(),
+        }));
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthFloatingDirective, deps: [], target: i0.ɵɵFactoryTarget.Directive }); }
+    static { this.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "17.1.0", version: "18.2.14", type: AthFloatingDirective, isStandalone: true, selector: "[athFloating]", inputs: { anchor: { classPropertyName: "anchor", publicName: "athFloating", isSignal: true, isRequired: true, transformFunction: null }, align: { classPropertyName: "align", publicName: "align", isSignal: true, isRequired: false, transformFunction: null }, side: { classPropertyName: "side", publicName: "side", isSignal: true, isRequired: false, transformFunction: null }, offset: { classPropertyName: "offset", publicName: "offset", isSignal: true, isRequired: false, transformFunction: null }, matchWidth: { classPropertyName: "matchWidth", publicName: "matchWidth", isSignal: true, isRequired: false, transformFunction: null }, maxHeight: { classPropertyName: "maxHeight", publicName: "maxHeight", isSignal: true, isRequired: false, transformFunction: null }, topLayer: { classPropertyName: "topLayer", publicName: "topLayer", isSignal: true, isRequired: false, transformFunction: null }, arrow: { classPropertyName: "arrow", publicName: "arrow", isSignal: true, isRequired: false, transformFunction: null } }, exportAs: ["athFloating"], usesOnChanges: true, ngImport: i0 }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthFloatingDirective, decorators: [{
+            type: Directive,
+            args: [{
+                    selector: '[athFloating]',
+                    standalone: true,
+                    exportAs: 'athFloating',
+                }]
+        }] });
+
+/**
+ * The open overlays (popovers, menus, pickers, dialogs) in opening order.
+ * One document listener each for Escape and outside pointer-downs, so only
+ * the topmost overlay reacts to Escape and a click inside a nested overlay
+ * does not close its parent. Also owns the page scroll lock of modal dialogs.
+ */
+class AthOverlayStack {
+    constructor() {
+        this.doc = inject(DOCUMENT);
+        this.zone = inject(NgZone);
+        this.entries = [];
+        this.listening = false;
+        this.escapeTask = 0;
+        this.locks = 0;
+        this.savedScroll = null;
+        this.onKeydown = (event) => {
+            if (event.key !== 'Escape' || event.defaultPrevented)
+                return;
+            const top = this.entries[this.entries.length - 1];
+            // A modal dialog handles Escape through its native `cancel` event.
+            if (!top || top.modal)
+                return;
+            event.preventDefault();
+            this.markEscape();
+            if (top.closeOnEscape())
+                this.zone.run(() => top.dismiss('escape'));
+        };
+        this.onPointerDown = (event) => {
+            const path = event.composedPath();
+            for (let i = this.entries.length - 1; i >= 0; i--) {
+                const entry = this.entries[i];
+                if (entry.modal)
+                    return;
+                const panel = entry.panel();
+                const anchor = entry.anchor();
+                if ((panel && path.includes(panel)) || (anchor && path.includes(anchor)))
+                    return;
+                if (!entry.closeOnOutsideClick())
+                    return;
+                this.zone.run(() => entry.dismiss('outside'));
+            }
+        };
+    }
+    /** Registers an overlay as the new topmost one. */
+    open(entry) {
+        this.remove(entry);
+        this.entries.push(entry);
+        this.listen();
+    }
+    /** Unregisters an overlay (idempotent). */
+    close(entry) {
+        this.remove(entry);
+        if (this.entries.length === 0)
+            this.unlisten();
+    }
+    isTop(entry) {
+        return this.entries[this.entries.length - 1] === entry;
+    }
+    /** How many overlays are open. */
+    get size() {
+        return this.entries.length;
+    }
+    /**
+     * True while the current Escape key press has already closed an overlay.
+     * A native modal `<dialog>` checks this in its `cancel` event, which the
+     * browser fires after the keydown, so one press closes one layer.
+     */
+    escapeConsumed() {
+        return this.escapeTask !== 0;
+    }
+    /**
+     * A modal dialog that opens goes on top of the top layer. Elements marked
+     * `data-ath-top-layer` (the toast container) are moved back above it, so a
+     * toast raised while a dialog is open is still seen.
+     */
+    raiseTopLayer() {
+        if (!supportsTopLayer())
+            return;
+        installTopLayerStyles();
+        for (const el of Array.from(this.doc.querySelectorAll('[data-ath-top-layer]'))) {
+            try {
+                if (!el.hasAttribute('popover'))
+                    el.setAttribute('popover', 'manual');
+                if (el.matches(':popover-open'))
+                    el.hidePopover();
+                el.showPopover();
+            }
+            catch {
+                // Not connected; nothing to raise.
+            }
+        }
+    }
+    /** Locks page scrolling while at least one lock is held (modal dialogs). */
+    lockScroll() {
+        if (this.locks++ > 0)
+            return;
+        const root = this.doc.documentElement;
+        const body = this.doc.body;
+        const view = this.doc.defaultView;
+        const scrollbar = view ? view.innerWidth - root.clientWidth : 0;
+        this.savedScroll = { overflow: root.style.overflow, paddingRight: body.style.paddingRight };
+        root.style.overflow = 'hidden';
+        if (scrollbar > 0)
+            body.style.paddingRight = `${scrollbar}px`;
+    }
+    unlockScroll() {
+        if (this.locks === 0 || --this.locks > 0)
+            return;
+        if (this.savedScroll) {
+            this.doc.documentElement.style.overflow = this.savedScroll.overflow;
+            this.doc.body.style.paddingRight = this.savedScroll.paddingRight;
+        }
+        this.savedScroll = null;
+    }
+    remove(entry) {
+        const i = this.entries.indexOf(entry);
+        if (i >= 0)
+            this.entries.splice(i, 1);
+    }
+    markEscape() {
+        const view = this.doc.defaultView;
+        if (!view)
+            return;
+        view.clearTimeout(this.escapeTask);
+        this.escapeTask = view.setTimeout(() => (this.escapeTask = 0));
+    }
+    listen() {
+        if (this.listening)
+            return;
+        this.listening = true;
+        this.zone.runOutsideAngular(() => {
+            this.doc.addEventListener('keydown', this.onKeydown);
+            this.doc.addEventListener('pointerdown', this.onPointerDown, true);
+        });
+    }
+    unlisten() {
+        if (!this.listening)
+            return;
+        this.listening = false;
+        this.doc.removeEventListener('keydown', this.onKeydown);
+        this.doc.removeEventListener('pointerdown', this.onPointerDown, true);
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthOverlayStack, deps: [], target: i0.ɵɵFactoryTarget.Injectable }); }
+    static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthOverlayStack, providedIn: 'root' }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthOverlayStack, decorators: [{
+            type: Injectable,
+            args: [{ providedIn: 'root' }]
+        }] });
+
+// Focus helpers shared by the overlay primitives (popover, menu, listbox, dialog).
+const FOCUSABLE = [
+    'a[href]',
+    'area[href]',
+    'button:not([disabled])',
+    'input:not([disabled]):not([type="hidden"])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    'iframe',
+    '[contenteditable]:not([contenteditable="false"])',
+    '[tabindex]',
+].join(',');
+/** Elements inside `root` reachable with Tab, in document order. */
+function tabbables(root) {
+    return Array.from(root.querySelectorAll(FOCUSABLE)).filter((el) => el.tabIndex >= 0 && !el.closest('[inert]') && el.getClientRects().length > 0);
+}
+/** The first focusable element of `root` (any tabindex), or `null`. */
+function firstFocusable(root) {
+    return root.querySelector(FOCUSABLE);
+}
+/**
+ * Keeps Tab inside `root`: from the last tabbable to the first and back.
+ * Returns true when it moved focus.
+ */
+function trapTab(event, root) {
+    if (event.key !== 'Tab')
+        return false;
+    const items = tabbables(root);
+    if (items.length === 0) {
+        event.preventDefault();
+        root.focus();
+        return true;
+    }
+    const first = items[0];
+    const last = items[items.length - 1];
+    const active = root.ownerDocument.activeElement;
+    if (event.shiftKey && (active === first || active === root)) {
+        event.preventDefault();
+        last.focus();
+        return true;
+    }
+    if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+        return true;
+    }
+    return false;
+}
+/** Focuses `el` if it is still in the document; never scrolls the page. */
+function focusSafely(el) {
+    if (!el || !el.isConnected)
+        return false;
+    el.focus({ preventScroll: true });
+    return el.ownerDocument.activeElement === el;
+}
+/** A natively focusable control, or the first one inside a wrapper (e.g. `<ath-button>`). */
+function focusTarget(host) {
+    if (host.matches('button, a[href], input, select, textarea, [tabindex]'))
+        return host;
+    return host.querySelector('button, a[href], [tabindex]') ?? host;
+}
+
+let nextPopoverId = 0;
+/**
+ * Lazy panel content: rendered only while the popover is open.
+ *
+ * @example
+ * <ath-popover>
+ *   <ng-template athPopoverContent>…</ng-template>
+ * </ath-popover>
+ */
+class AthPopoverContentDirective {
+    constructor() {
+        this.template = inject(TemplateRef);
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthPopoverContentDirective, deps: [], target: i0.ɵɵFactoryTarget.Directive }); }
+    static { this.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "14.0.0", version: "18.2.14", type: AthPopoverContentDirective, isStandalone: true, selector: "ng-template[athPopoverContent]", ngImport: i0 }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthPopoverContentDirective, decorators: [{
+            type: Directive,
+            args: [{
+                    selector: 'ng-template[athPopoverContent]',
+                    standalone: true,
+                }]
+        }] });
+/**
+ * Athene Popover
+ *
+ * An anchored panel in the top layer: no container's overflow or z-index
+ * clips it. Opens from `athPopoverTrigger`, `show()` or `[(open)]`; closes on
+ * Escape (topmost overlay only), outside click and Tab-out, and returns focus
+ * to the trigger. `role="dialog"` by default; `trapFocus` keeps Tab inside.
+ *
+ * @example
+ * <ath-button [athPopoverTrigger]="info">Details</ath-button>
+ * <ath-popover #info ariaLabel="Details" arrow>
+ *   <p>Content</p>
+ * </ath-popover>
+ */
+class AthPopoverComponent {
+    constructor() {
+        this.stack = inject(AthOverlayStack);
+        /** Whether the panel is shown. Two-way: `[(open)]`. */
+        this.open = model(false);
+        /**
+         * The element the panel hangs from (a trigger directive sets it on its
+         * own), or a `FloatingVirtualAnchor` such as the spot the pointer rests on;
+         * its `contextElement` then counts as the trigger.
+         */
+        this.anchor = input(null);
+        this.size = input('md');
+        this.padding = input('md');
+        this.align = input('start');
+        this.side = input('bottom');
+        /** Gap to the anchor in px. */
+        this.offset = input(6);
+        this.matchWidth = input(false, { transform: booleanAttribute });
+        /** Upper bound for the height in px (the viewport caps it anyway). */
+        this.maxHeight = input(null);
+        /** Show an arrow pointing at the anchor. */
+        this.arrow = input(false, { transform: booleanAttribute });
+        /** Keep Tab inside the panel (modal-like content); otherwise Tab out closes it. */
+        this.trapFocus = input(false, { transform: booleanAttribute });
+        this.autoFocus = input('first');
+        /** Return focus to the trigger on Escape / selection / programmatic close. */
+        this.restoreFocus = input(true, { transform: booleanAttribute });
+        this.closeOnEscape = input(true, { transform: booleanAttribute });
+        this.closeOnOutsideClick = input(true, { transform: booleanAttribute });
+        this.panelRole = input('dialog');
+        this.ariaLabel = input(null);
+        this.ariaLabelledby = input(null);
+        /** Extra classes on the panel (it lives in this component's view). */
+        this.panelClass = input('');
+        this.opened = output();
+        this.closed = output();
+        /** Id of the panel, for `aria-controls`. */
+        this.panelId = input(`ath-popover-${++nextPopoverId}`);
+        this.lazyContent = contentChild(AthPopoverContentDirective, {
+            descendants: false,
+        });
+        this.panelRef = viewChild('panel');
+        this.triggerAnchor = signal(null);
+        /** The element the panel currently hangs from. */
+        this.anchorElement = computed(() => resolveAnchor(this.anchor()) ?? this.triggerAnchor());
+        /** What the panel is placed against: the anchor input (element or virtual) or the trigger. */
+        this.floatTarget = computed(() => resolveFloatingTarget(this.anchor()) ?? this.triggerAnchor());
+        this.panelClasses = computed(() => [
+            `ath-popover__panel--${this.size()}`,
+            `ath-popover__panel--pad-${this.padding()}`,
+            this.panelClass(),
+        ]
+            .filter(Boolean)
+            .join(' '));
+        this.registered = false;
+        this.returnFocus = null;
+        this.entry = {
+            panel: () => this.panel,
+            anchor: () => this.anchorElement(),
+            closeOnEscape: () => this.closeOnEscape(),
+            closeOnOutsideClick: () => this.closeOnOutsideClick(),
+            dismiss: (reason) => this.hide(reason),
+        };
+    }
+    /** The panel element while open. */
+    get panel() {
+        return this.panelRef()?.nativeElement ?? null;
+    }
+    ngOnChanges(changes) {
+        if (!changes['open'])
+            return;
+        if (this.open() && !this.registered)
+            this.afterOpen();
+        else if (!this.open() && this.registered)
+            this.afterClose('programmatic');
+    }
+    ngOnDestroy() {
+        clearTimeout(this.focusTimer);
+        if (this.registered)
+            this.stack.close(this.entry);
+    }
+    /** Opens the panel, optionally hanging it from `anchor`. */
+    show(anchor) {
+        if (anchor)
+            this.triggerAnchor.set(anchor);
+        if (this.open())
+            return;
+        this.open.set(true);
+        this.afterOpen();
+    }
+    /**
+     * Closes the panel. `restore` overrides whether focus goes back to the
+     * trigger (default: yes when focus was inside or the user pressed Escape).
+     */
+    hide(reason = 'programmatic', restore) {
+        if (!this.open())
+            return;
+        this.open.set(false);
+        this.afterClose(reason, restore);
+    }
+    toggle(anchor) {
+        if (this.open())
+            this.hide();
+        else
+            this.show(anchor);
+    }
+    /** Moves focus into the panel according to `autoFocus` (or `mode`). */
+    focusPanel(mode = this.autoFocus()) {
+        const panel = this.panel;
+        if (!panel || mode === 'none')
+            return;
+        const active = panel.ownerDocument.activeElement;
+        if (active && panel.contains(active) && active !== panel)
+            return;
+        const target = mode === 'first' ? (tabbables(panel)[0] ?? panel) : panel;
+        focusSafely(target);
+    }
+    onKeydown(event) {
+        const panel = this.panel;
+        if (panel && this.trapFocus())
+            trapTab(event, panel);
+    }
+    onFocusOut(event) {
+        if (this.trapFocus() || !this.open())
+            return;
+        const next = event.relatedTarget;
+        const panel = this.panel;
+        const anchor = this.anchorElement();
+        if (!(next instanceof Node) || !panel)
+            return;
+        if (panel.contains(next) || anchor?.contains(next))
+            return;
+        this.hide('tab', false);
+    }
+    afterOpen() {
+        this.registered = true;
+        const doc = this.anchorElement()?.ownerDocument ?? document;
+        const active = doc.activeElement;
+        const anchor = this.anchorElement();
+        this.returnFocus = anchor
+            ? focusTarget(anchor)
+            : active instanceof HTMLElement && active !== doc.body
+                ? active
+                : null;
+        this.stack.open(this.entry);
+        this.opened.emit();
+        // After the panel has rendered and been positioned.
+        clearTimeout(this.focusTimer);
+        this.focusTimer = setTimeout(() => this.focusPanel());
+    }
+    afterClose(reason, restore) {
+        this.registered = false;
+        clearTimeout(this.focusTimer);
+        this.stack.close(this.entry);
+        const panel = this.panel;
+        const doc = panel?.ownerDocument ?? document;
+        const focusInside = !!panel && panel.contains(doc.activeElement);
+        const back = this.returnFocus;
+        this.returnFocus = null;
+        const wanted = restore ??
+            (this.restoreFocus() &&
+                (reason === 'escape' || reason === 'select' || (reason !== 'tab' && focusInside)));
+        if (wanted && reason !== 'outside') {
+            focusSafely(back);
+        }
+        else if (reason === 'outside' && focusInside && this.restoreFocus()) {
+            // The panel takes focus with it; if the click landed on nothing
+            // focusable, put focus back on the trigger instead of the page.
+            setTimeout(() => {
+                if (doc.activeElement === doc.body || !doc.activeElement)
+                    focusSafely(back);
+            });
+        }
+        this.closed.emit(reason);
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthPopoverComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthPopoverComponent, isStandalone: true, selector: "ath-popover", inputs: { open: { classPropertyName: "open", publicName: "open", isSignal: true, isRequired: false, transformFunction: null }, anchor: { classPropertyName: "anchor", publicName: "anchor", isSignal: true, isRequired: false, transformFunction: null }, size: { classPropertyName: "size", publicName: "size", isSignal: true, isRequired: false, transformFunction: null }, padding: { classPropertyName: "padding", publicName: "padding", isSignal: true, isRequired: false, transformFunction: null }, align: { classPropertyName: "align", publicName: "align", isSignal: true, isRequired: false, transformFunction: null }, side: { classPropertyName: "side", publicName: "side", isSignal: true, isRequired: false, transformFunction: null }, offset: { classPropertyName: "offset", publicName: "offset", isSignal: true, isRequired: false, transformFunction: null }, matchWidth: { classPropertyName: "matchWidth", publicName: "matchWidth", isSignal: true, isRequired: false, transformFunction: null }, maxHeight: { classPropertyName: "maxHeight", publicName: "maxHeight", isSignal: true, isRequired: false, transformFunction: null }, arrow: { classPropertyName: "arrow", publicName: "arrow", isSignal: true, isRequired: false, transformFunction: null }, trapFocus: { classPropertyName: "trapFocus", publicName: "trapFocus", isSignal: true, isRequired: false, transformFunction: null }, autoFocus: { classPropertyName: "autoFocus", publicName: "autoFocus", isSignal: true, isRequired: false, transformFunction: null }, restoreFocus: { classPropertyName: "restoreFocus", publicName: "restoreFocus", isSignal: true, isRequired: false, transformFunction: null }, closeOnEscape: { classPropertyName: "closeOnEscape", publicName: "closeOnEscape", isSignal: true, isRequired: false, transformFunction: null }, closeOnOutsideClick: { classPropertyName: "closeOnOutsideClick", publicName: "closeOnOutsideClick", isSignal: true, isRequired: false, transformFunction: null }, panelRole: { classPropertyName: "panelRole", publicName: "panelRole", isSignal: true, isRequired: false, transformFunction: null }, ariaLabel: { classPropertyName: "ariaLabel", publicName: "ariaLabel", isSignal: true, isRequired: false, transformFunction: null }, ariaLabelledby: { classPropertyName: "ariaLabelledby", publicName: "ariaLabelledby", isSignal: true, isRequired: false, transformFunction: null }, panelClass: { classPropertyName: "panelClass", publicName: "panelClass", isSignal: true, isRequired: false, transformFunction: null }, panelId: { classPropertyName: "panelId", publicName: "panelId", isSignal: true, isRequired: false, transformFunction: null } }, outputs: { open: "openChange", opened: "opened", closed: "closed" }, queries: [{ propertyName: "lazyContent", first: true, predicate: AthPopoverContentDirective, isSignal: true }], viewQueries: [{ propertyName: "panelRef", first: true, predicate: ["panel"], descendants: true, isSignal: true }], exportAs: ["athPopover"], usesOnChanges: true, ngImport: i0, template: "@if (open()) {\n  <div\n    #panel\n    class=\"ath-popover__panel\"\n    [class]=\"panelClasses()\"\n    [id]=\"panelId()\"\n    [attr.role]=\"panelRole()\"\n    [attr.aria-label]=\"ariaLabel()\"\n    [attr.aria-labelledby]=\"ariaLabelledby()\"\n    [attr.aria-modal]=\"trapFocus() && panelRole() === 'dialog' ? 'true' : null\"\n    tabindex=\"-1\"\n    [athFloating]=\"floatTarget()\"\n    [align]=\"align()\"\n    [side]=\"side()\"\n    [offset]=\"offset()\"\n    [matchWidth]=\"matchWidth()\"\n    [maxHeight]=\"maxHeight()\"\n    [arrow]=\"arrow() ? arrowEl : null\"\n    (keydown)=\"onKeydown($event)\"\n    (focusout)=\"onFocusOut($event)\"\n  >\n    <span #arrowEl class=\"ath-popover__arrow\" [hidden]=\"!arrow()\" aria-hidden=\"true\"></span>\n    @if (lazyContent(); as lazy) {\n      <ng-container [ngTemplateOutlet]=\"lazy.template\" />\n    } @else {\n      <ng-content />\n    }\n  </div>\n}\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:contents}.ath-popover__panel{box-sizing:border-box;max-width:calc(100vw - var(--space-4));font-family:var(--font-sans);font-size:var(--text-base);font-style:normal;font-weight:var(--weight-normal);text-align:start;text-transform:none;white-space:normal;color:var(--fg);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-3);animation:ath-popover-in var(--t-base)}.ath-popover__panel:focus{outline:none}.ath-popover__panel:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-popover__panel--sm{width:220px}.ath-popover__panel--md{width:280px}.ath-popover__panel--lg{width:360px}.ath-popover__panel--auto{width:max-content;min-width:180px}.ath-popover__panel--pad-md{padding:var(--space-3)}.ath-popover__panel--pad-sm{padding:var(--space-1)}.ath-popover__panel--pad-none{padding:0}.ath-popover__panel[data-placement=top]{animation-name:ath-popover-in-up}.ath-popover__arrow{position:absolute;top:-6px;width:10px;height:10px;background:var(--surface);border-top:1px solid var(--border);border-left:1px solid var(--border);transform:translate(-50%) rotate(45deg);pointer-events:none}[data-placement=top]>.ath-popover__arrow{top:auto;bottom:-6px;transform:translate(-50%) rotate(225deg)}@keyframes ath-popover-in{0%{opacity:0;transform:translateY(-4px)}}@keyframes ath-popover-in-up{0%{opacity:0;transform:translateY(4px)}}\n"], dependencies: [{ kind: "directive", type: AthFloatingDirective, selector: "[athFloating]", inputs: ["athFloating", "align", "side", "offset", "matchWidth", "maxHeight", "topLayer", "arrow"], exportAs: ["athFloating"] }, { kind: "directive", type: NgTemplateOutlet, selector: "[ngTemplateOutlet]", inputs: ["ngTemplateOutletContext", "ngTemplateOutlet", "ngTemplateOutletInjector"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthPopoverComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-popover', standalone: true, imports: [AthFloatingDirective, NgTemplateOutlet], changeDetection: ChangeDetectionStrategy.OnPush, exportAs: 'athPopover', template: "@if (open()) {\n  <div\n    #panel\n    class=\"ath-popover__panel\"\n    [class]=\"panelClasses()\"\n    [id]=\"panelId()\"\n    [attr.role]=\"panelRole()\"\n    [attr.aria-label]=\"ariaLabel()\"\n    [attr.aria-labelledby]=\"ariaLabelledby()\"\n    [attr.aria-modal]=\"trapFocus() && panelRole() === 'dialog' ? 'true' : null\"\n    tabindex=\"-1\"\n    [athFloating]=\"floatTarget()\"\n    [align]=\"align()\"\n    [side]=\"side()\"\n    [offset]=\"offset()\"\n    [matchWidth]=\"matchWidth()\"\n    [maxHeight]=\"maxHeight()\"\n    [arrow]=\"arrow() ? arrowEl : null\"\n    (keydown)=\"onKeydown($event)\"\n    (focusout)=\"onFocusOut($event)\"\n  >\n    <span #arrowEl class=\"ath-popover__arrow\" [hidden]=\"!arrow()\" aria-hidden=\"true\"></span>\n    @if (lazyContent(); as lazy) {\n      <ng-container [ngTemplateOutlet]=\"lazy.template\" />\n    } @else {\n      <ng-content />\n    }\n  </div>\n}\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:contents}.ath-popover__panel{box-sizing:border-box;max-width:calc(100vw - var(--space-4));font-family:var(--font-sans);font-size:var(--text-base);font-style:normal;font-weight:var(--weight-normal);text-align:start;text-transform:none;white-space:normal;color:var(--fg);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-3);animation:ath-popover-in var(--t-base)}.ath-popover__panel:focus{outline:none}.ath-popover__panel:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-popover__panel--sm{width:220px}.ath-popover__panel--md{width:280px}.ath-popover__panel--lg{width:360px}.ath-popover__panel--auto{width:max-content;min-width:180px}.ath-popover__panel--pad-md{padding:var(--space-3)}.ath-popover__panel--pad-sm{padding:var(--space-1)}.ath-popover__panel--pad-none{padding:0}.ath-popover__panel[data-placement=top]{animation-name:ath-popover-in-up}.ath-popover__arrow{position:absolute;top:-6px;width:10px;height:10px;background:var(--surface);border-top:1px solid var(--border);border-left:1px solid var(--border);transform:translate(-50%) rotate(45deg);pointer-events:none}[data-placement=top]>.ath-popover__arrow{top:auto;bottom:-6px;transform:translate(-50%) rotate(225deg)}@keyframes ath-popover-in{0%{opacity:0;transform:translateY(-4px)}}@keyframes ath-popover-in-up{0%{opacity:0;transform:translateY(4px)}}\n"] }]
+        }] });
+
+// Keyboard helpers shared by `ath-menu` and `ath-listbox`.
+/** A printable character without Ctrl/Meta/Alt, i.e. typeahead input. */
+function isTypeaheadKey(event) {
+    return event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey;
+}
+/**
+ * Typeahead as in the WAI-ARIA menu and listbox patterns: characters typed
+ * within `delay` ms form a prefix; repeating one character cycles through
+ * the items that start with it.
+ */
+class Typeahead {
+    constructor(delay = 500) {
+        this.delay = delay;
+        this.buffer = '';
+        this.last = 0;
+    }
+    /**
+     * The index of the next label (after `from`, wrapping) that starts with the
+     * typed prefix, or -1.
+     */
+    next(char, labels, from) {
+        const now = Date.now();
+        if (now - this.last > this.delay)
+            this.buffer = '';
+        this.last = now;
+        const c = char.toLocaleLowerCase();
+        // "aaa" cycles through items starting with "a".
+        const cycling = this.buffer.length > 0 && [...this.buffer].every((x) => x === c);
+        this.buffer += c;
+        const prefix = cycling ? c : this.buffer;
+        const n = labels.length;
+        const start = cycling || this.buffer.length === 1 ? from + 1 : from;
+        for (let k = 0; k < n; k++) {
+            const i = (((start + k) % n) + n) % n;
+            if (labels[i].trim().toLocaleLowerCase().startsWith(prefix))
+                return i;
+        }
+        return -1;
+    }
+    reset() {
+        this.buffer = '';
+    }
+}
+/**
+ * The next index from `from` in direction `step` (±1) that `usable` accepts,
+ * wrapping when `wrap` is set; `from` itself when there is none.
+ */
+function stepIndex(count, from, step, usable, wrap) {
+    for (let k = 1; k <= count; k++) {
+        let i = from + step * k;
+        if (wrap)
+            i = ((i % count) + count) % count;
+        else if (i < 0 || i >= count)
+            break;
+        if (usable(i))
+            return i;
+    }
+    return from;
+}
+/** The first (or last) index `usable` accepts, or -1. */
+function edgeIndex(count, usable, last = false) {
+    for (let k = 0; k < count; k++) {
+        const i = last ? count - 1 - k : k;
+        if (usable(i))
+            return i;
+    }
+    return -1;
+}
+
+const ATH_MENU_PARENT = new InjectionToken('ATH_MENU_PARENT');
+
+let nextReasonId = 0;
+/**
+ * One entry of an `ath-menu`: `<button athMenuItem>`, `<a athMenuItem>` or
+ * `<ath-menu-item>`.
+ *
+ * Disabled items stay focusable (`aria-disabled`), so keyboard and screen
+ * reader users can find them and hear `disabledReason`, which is also the
+ * hover tooltip. Use `(triggered)` rather than `(click)`: it does not fire for
+ * disabled items and closes the menu afterwards (unless `keepOpen`).
+ *
+ * @example
+ * <button athMenuItem [icon]="Pencil" shortcut="E" (triggered)="edit()">Edit</button>
+ * <button athMenuItem variant="danger" [disabled]="!canDelete" [disabledReason]="why"
+ *         (triggered)="delete()">Delete</button>
+ */
+class AthMenuItemComponent {
+    constructor() {
+        this.menu = inject(ATH_MENU_PARENT, { optional: true });
+        /** The item element (the `<button>` or `<a>`). */
+        this.element = inject(ElementRef).nativeElement;
+        this.isButton = this.element.tagName === 'BUTTON';
+        this.checkIcon = Check;
+        this.reasonId = `ath-menu-item-reason-${++nextReasonId}`;
+        /** A Lucide icon before the label. */
+        this.icon = input(null);
+        /** Shortcut hint shown at the end, e.g. `⌘E`. */
+        this.shortcut = input(null);
+        /** `aria-keyshortcuts` value, e.g. `Meta+E` (the hint itself is hidden from AT). */
+        this.keyshortcuts = input(null);
+        this.variant = input('default');
+        this.disabled = input(false, { transform: booleanAttribute });
+        /** Why the item is disabled: tooltip and accessible description. */
+        this.disabledReason = input(null);
+        /** Hover tooltip (for a disabled item `disabledReason` takes its place). */
+        this.tooltip = input(null);
+        /** `true`/`false` makes it a `menuitemcheckbox` with a check mark. */
+        this.checked = input(null);
+        /** Leave the menu open after activation. */
+        this.keepOpen = input(false, { transform: booleanAttribute });
+        /** The item was chosen (click, Enter or Space) and is not disabled. */
+        this.triggered = output();
+    }
+    /** The visible label, for typeahead. */
+    label() {
+        const el = this.element.querySelector('.ath-menu-item__label');
+        return (el?.textContent ?? '').trim();
+    }
+    focus() {
+        focusSafely(this.element);
+    }
+    onClick(event) {
+        if (this.disabled()) {
+            event.preventDefault();
+            return;
+        }
+        this.triggered.emit();
+        this.menu?.itemActivated(this);
+    }
+    onKeydown(event) {
+        // Buttons click on Enter and Space natively, links only on Enter, and
+        // an <ath-menu-item> element on neither.
+        const isLink = this.element.tagName === 'A';
+        if ((event.key === ' ' && !this.isButton) ||
+            (event.key === 'Enter' && !this.isButton && !isLink)) {
+            event.preventDefault();
+            this.element.click();
+        }
+    }
+    onHover() {
+        if (this.menu?.isOpen())
+            this.focus();
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthMenuItemComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthMenuItemComponent, isStandalone: true, selector: "ath-menu-item, button[athMenuItem], a[athMenuItem]", inputs: { icon: { classPropertyName: "icon", publicName: "icon", isSignal: true, isRequired: false, transformFunction: null }, shortcut: { classPropertyName: "shortcut", publicName: "shortcut", isSignal: true, isRequired: false, transformFunction: null }, keyshortcuts: { classPropertyName: "keyshortcuts", publicName: "keyshortcuts", isSignal: true, isRequired: false, transformFunction: null }, variant: { classPropertyName: "variant", publicName: "variant", isSignal: true, isRequired: false, transformFunction: null }, disabled: { classPropertyName: "disabled", publicName: "disabled", isSignal: true, isRequired: false, transformFunction: null }, disabledReason: { classPropertyName: "disabledReason", publicName: "disabledReason", isSignal: true, isRequired: false, transformFunction: null }, tooltip: { classPropertyName: "tooltip", publicName: "tooltip", isSignal: true, isRequired: false, transformFunction: null }, checked: { classPropertyName: "checked", publicName: "checked", isSignal: true, isRequired: false, transformFunction: null }, keepOpen: { classPropertyName: "keepOpen", publicName: "keepOpen", isSignal: true, isRequired: false, transformFunction: null } }, outputs: { triggered: "triggered" }, host: { attributes: { "tabindex": "-1" }, listeners: { "click": "onClick($event)", "keydown": "onKeydown($event)", "mouseenter": "onHover()" }, properties: { "attr.disabled": "null", "attr.type": "isButton ? 'button' : null", "attr.role": "checked() === null ? 'menuitem' : 'menuitemcheckbox'", "attr.aria-checked": "checked() === null ? null : checked()", "attr.aria-disabled": "disabled() || null", "attr.aria-describedby": "disabled() && disabledReason() ? reasonId : null", "attr.aria-keyshortcuts": "keyshortcuts()", "attr.title": "(disabled() && disabledReason()) || tooltip() || null", "class.ath-menu-item--danger": "variant() === 'danger'", "class.ath-menu-item--disabled": "disabled()" }, classAttribute: "ath-menu-item" }, exportAs: ["athMenuItem"], ngImport: i0, template: `
+    @if (icon(); as img) {
+      <lucide-icon class="ath-menu-item__icon" [img]="img" [size]="16" aria-hidden="true" />
+    } @else if (checked() !== null) {
+      <span class="ath-menu-item__icon" aria-hidden="true">
+        @if (checked()) {
+          <lucide-icon [img]="checkIcon" [size]="16" />
+        }
+      </span>
+    }
+    <span class="ath-menu-item__label"><ng-content /></span>
+    @if (shortcut()) {
+      <kbd class="ath-menu-item__shortcut" aria-hidden="true">{{ shortcut() }}</kbd>
+    }
+    @if (disabled() && disabledReason()) {
+      <span class="ath-menu-item__reason" [id]="reasonId" aria-hidden="true">{{
+        disabledReason()
+      }}</span>
+    }
+  `, isInline: true, styles: [":host(.ath-menu-item){box-sizing:border-box;display:flex;align-items:center;gap:var(--space-2);width:100%;min-height:var(--space-8);margin:0;padding:var(--space-1) var(--space-2);font:inherit;font-size:var(--text-base);color:var(--fg-2);text-align:start;text-decoration:none;background:none;border:0;border-radius:var(--r-sm);cursor:pointer;-webkit-user-select:none;user-select:none;transition:background-color var(--t-fast)}:host(.ath-menu-item:hover),:host(.ath-menu-item:focus){color:var(--fg);background:var(--hover-strong);outline:none}:host(.ath-menu-item:focus-visible){outline:none;box-shadow:inset 0 0 0 2px var(--focus-ring-color)}:host(.ath-menu-item--danger){color:var(--red-text)}:host(.ath-menu-item--danger:hover),:host(.ath-menu-item--danger:focus){color:var(--red-text);background:var(--red-tint)}:host(.ath-menu-item--disabled){color:var(--fg-4);cursor:not-allowed}:host(.ath-menu-item--disabled:hover),:host(.ath-menu-item--disabled:focus){color:var(--fg-4);background:var(--hover)}.ath-menu-item__icon{display:inline-flex;flex-shrink:0;width:16px;color:inherit}.ath-menu-item__label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ath-menu-item__shortcut{flex-shrink:0;margin-inline-start:var(--space-4);font-family:var(--font-sans);font-size:var(--text-xs);color:var(--fg-4)}.ath-menu-item__reason{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}:host(.ath-menu-separator){display:block;height:1px;margin:var(--space-1) calc(var(--space-1) * -1);background:var(--border-faint)}\n"], dependencies: [{ kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthMenuItemComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-menu-item, button[athMenuItem], a[athMenuItem]', standalone: true, imports: [LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, exportAs: 'athMenuItem', template: `
+    @if (icon(); as img) {
+      <lucide-icon class="ath-menu-item__icon" [img]="img" [size]="16" aria-hidden="true" />
+    } @else if (checked() !== null) {
+      <span class="ath-menu-item__icon" aria-hidden="true">
+        @if (checked()) {
+          <lucide-icon [img]="checkIcon" [size]="16" />
+        }
+      </span>
+    }
+    <span class="ath-menu-item__label"><ng-content /></span>
+    @if (shortcut()) {
+      <kbd class="ath-menu-item__shortcut" aria-hidden="true">{{ shortcut() }}</kbd>
+    }
+    @if (disabled() && disabledReason()) {
+      <span class="ath-menu-item__reason" [id]="reasonId" aria-hidden="true">{{
+        disabledReason()
+      }}</span>
+    }
+  `, host: {
+                        class: 'ath-menu-item',
+                        tabindex: '-1',
+                        // A static `disabled` attribute would make the native button unfocusable;
+                        // disabled items stay focusable (aria-disabled).
+                        '[attr.disabled]': 'null',
+                        '[attr.type]': "isButton ? 'button' : null",
+                        '[attr.role]': "checked() === null ? 'menuitem' : 'menuitemcheckbox'",
+                        '[attr.aria-checked]': 'checked() === null ? null : checked()',
+                        '[attr.aria-disabled]': 'disabled() || null',
+                        '[attr.aria-describedby]': 'disabled() && disabledReason() ? reasonId : null',
+                        '[attr.aria-keyshortcuts]': 'keyshortcuts()',
+                        '[attr.title]': '(disabled() && disabledReason()) || tooltip() || null',
+                        '[class.ath-menu-item--danger]': "variant() === 'danger'",
+                        '[class.ath-menu-item--disabled]': 'disabled()',
+                        '(click)': 'onClick($event)',
+                        '(keydown)': 'onKeydown($event)',
+                        '(mouseenter)': 'onHover()',
+                    }, styles: [":host(.ath-menu-item){box-sizing:border-box;display:flex;align-items:center;gap:var(--space-2);width:100%;min-height:var(--space-8);margin:0;padding:var(--space-1) var(--space-2);font:inherit;font-size:var(--text-base);color:var(--fg-2);text-align:start;text-decoration:none;background:none;border:0;border-radius:var(--r-sm);cursor:pointer;-webkit-user-select:none;user-select:none;transition:background-color var(--t-fast)}:host(.ath-menu-item:hover),:host(.ath-menu-item:focus){color:var(--fg);background:var(--hover-strong);outline:none}:host(.ath-menu-item:focus-visible){outline:none;box-shadow:inset 0 0 0 2px var(--focus-ring-color)}:host(.ath-menu-item--danger){color:var(--red-text)}:host(.ath-menu-item--danger:hover),:host(.ath-menu-item--danger:focus){color:var(--red-text);background:var(--red-tint)}:host(.ath-menu-item--disabled){color:var(--fg-4);cursor:not-allowed}:host(.ath-menu-item--disabled:hover),:host(.ath-menu-item--disabled:focus){color:var(--fg-4);background:var(--hover)}.ath-menu-item__icon{display:inline-flex;flex-shrink:0;width:16px;color:inherit}.ath-menu-item__label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ath-menu-item__shortcut{flex-shrink:0;margin-inline-start:var(--space-4);font-family:var(--font-sans);font-size:var(--text-xs);color:var(--fg-4)}.ath-menu-item__reason{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}:host(.ath-menu-separator){display:block;height:1px;margin:var(--space-1) calc(var(--space-1) * -1);background:var(--border-faint)}\n"] }]
+        }] });
+/** A divider between groups of menu items. */
+class AthMenuSeparatorComponent {
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthMenuSeparatorComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "14.0.0", version: "18.2.14", type: AthMenuSeparatorComponent, isStandalone: true, selector: "ath-menu-separator", host: { attributes: { "role": "separator" }, classAttribute: "ath-menu-separator" }, ngImport: i0, template: '', isInline: true, styles: [":host(.ath-menu-item){box-sizing:border-box;display:flex;align-items:center;gap:var(--space-2);width:100%;min-height:var(--space-8);margin:0;padding:var(--space-1) var(--space-2);font:inherit;font-size:var(--text-base);color:var(--fg-2);text-align:start;text-decoration:none;background:none;border:0;border-radius:var(--r-sm);cursor:pointer;-webkit-user-select:none;user-select:none;transition:background-color var(--t-fast)}:host(.ath-menu-item:hover),:host(.ath-menu-item:focus){color:var(--fg);background:var(--hover-strong);outline:none}:host(.ath-menu-item:focus-visible){outline:none;box-shadow:inset 0 0 0 2px var(--focus-ring-color)}:host(.ath-menu-item--danger){color:var(--red-text)}:host(.ath-menu-item--danger:hover),:host(.ath-menu-item--danger:focus){color:var(--red-text);background:var(--red-tint)}:host(.ath-menu-item--disabled){color:var(--fg-4);cursor:not-allowed}:host(.ath-menu-item--disabled:hover),:host(.ath-menu-item--disabled:focus){color:var(--fg-4);background:var(--hover)}.ath-menu-item__icon{display:inline-flex;flex-shrink:0;width:16px;color:inherit}.ath-menu-item__label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ath-menu-item__shortcut{flex-shrink:0;margin-inline-start:var(--space-4);font-family:var(--font-sans);font-size:var(--text-xs);color:var(--fg-4)}.ath-menu-item__reason{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}:host(.ath-menu-separator){display:block;height:1px;margin:var(--space-1) calc(var(--space-1) * -1);background:var(--border-faint)}\n"], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthMenuSeparatorComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-menu-separator', standalone: true, changeDetection: ChangeDetectionStrategy.OnPush, template: '', host: { class: 'ath-menu-separator', role: 'separator' }, styles: [":host(.ath-menu-item){box-sizing:border-box;display:flex;align-items:center;gap:var(--space-2);width:100%;min-height:var(--space-8);margin:0;padding:var(--space-1) var(--space-2);font:inherit;font-size:var(--text-base);color:var(--fg-2);text-align:start;text-decoration:none;background:none;border:0;border-radius:var(--r-sm);cursor:pointer;-webkit-user-select:none;user-select:none;transition:background-color var(--t-fast)}:host(.ath-menu-item:hover),:host(.ath-menu-item:focus){color:var(--fg);background:var(--hover-strong);outline:none}:host(.ath-menu-item:focus-visible){outline:none;box-shadow:inset 0 0 0 2px var(--focus-ring-color)}:host(.ath-menu-item--danger){color:var(--red-text)}:host(.ath-menu-item--danger:hover),:host(.ath-menu-item--danger:focus){color:var(--red-text);background:var(--red-tint)}:host(.ath-menu-item--disabled){color:var(--fg-4);cursor:not-allowed}:host(.ath-menu-item--disabled:hover),:host(.ath-menu-item--disabled:focus){color:var(--fg-4);background:var(--hover)}.ath-menu-item__icon{display:inline-flex;flex-shrink:0;width:16px;color:inherit}.ath-menu-item__label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ath-menu-item__shortcut{flex-shrink:0;margin-inline-start:var(--space-4);font-family:var(--font-sans);font-size:var(--text-xs);color:var(--fg-4)}.ath-menu-item__reason{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}:host(.ath-menu-separator){display:block;height:1px;margin:var(--space-1) calc(var(--space-1) * -1);background:var(--border-faint)}\n"] }]
+        }] });
+
+let nextMenuId = 0;
+/**
+ * Athene Menu: the WAI-ARIA menu button pattern for row actions, `⋯` menus
+ * and toolbars.
+ *
+ * Keyboard: on the trigger Enter, Space and ArrowDown open on the first
+ * item, ArrowUp on the last. In the menu: ArrowDown/ArrowUp (wrapping),
+ * Home/End, typeahead, Enter/Space activate, Escape closes and returns
+ * focus to the trigger, Tab closes and moves on.
+ *
+ * @example
+ * <ath-button variant="ghost" [athMenuTrigger]="rowMenu" ariaLabel="Actions">⋯</ath-button>
+ * <ath-menu #rowMenu>
+ *   <button athMenuItem [icon]="Pencil" shortcut="E" (triggered)="edit()">Edit</button>
+ *   <ath-menu-separator />
+ *   <button athMenuItem variant="danger" (triggered)="remove()">Delete</button>
+ * </ath-menu>
+ */
+class AthMenuComponent {
+    constructor() {
+        /** Whether the menu is shown. Two-way: `[(open)]`. */
+        this.open = model(false);
+        /** Anchor for programmatic use; `athMenuTrigger` sets it on its own. */
+        this.anchor = input(null);
+        this.align = input('start');
+        this.side = input('bottom');
+        this.maxHeight = input(null);
+        /** Accessible name; by default the menu is labelled by its trigger. */
+        this.ariaLabel = input(null);
+        this.panelClass = input('');
+        this.opened = output();
+        this.closed = output();
+        this.panelId = `ath-menu-${++nextMenuId}`;
+        this.labelledBy = signal(null);
+        this.popover = viewChild.required(AthPopoverComponent);
+        this.items = contentChildren(AthMenuItemComponent, { descendants: true });
+        this.typeahead = new Typeahead();
+        this.pendingFocus = 'first';
+    }
+    isOpen() {
+        return this.open();
+    }
+    /** Opens the menu from `anchor`, focusing the first or last item. */
+    show(anchor, focus = 'first') {
+        this.pendingFocus = focus;
+        if (this.open()) {
+            this.focusEdge(focus);
+            return;
+        }
+        this.popover().show(resolveAnchor(anchor));
+    }
+    /** Closes the menu; focus returns to the trigger unless `restoreFocus` is false. */
+    hide(restoreFocus = true) {
+        this.popover().hide('programmatic', restoreFocus);
+    }
+    toggle(anchor, focus = 'first') {
+        if (this.open())
+            this.hide();
+        else
+            this.show(anchor, focus);
+    }
+    /** Called by `athMenuTrigger`: the trigger names the menu. */
+    labelFrom(triggerId) {
+        this.labelledBy.set(triggerId);
+    }
+    itemActivated(item) {
+        if (!item.keepOpen())
+            this.popover().hide('select', true);
+    }
+    onOpened() {
+        this.typeahead.reset();
+        this.opened.emit();
+        const focus = this.pendingFocus;
+        this.pendingFocus = 'first';
+        // After the projected items are in the open panel.
+        setTimeout(() => this.focusEdge(focus));
+    }
+    onKeydown(event) {
+        if (!this.open())
+            return;
+        const items = this.items();
+        const count = items.length;
+        if (count === 0)
+            return;
+        const active = items.findIndex((i) => i.element === document.activeElement);
+        const any = () => true;
+        let next = -1;
+        switch (event.key) {
+            case 'ArrowDown':
+                next = active < 0 ? 0 : stepIndex(count, active, 1, any, true);
+                break;
+            case 'ArrowUp':
+                next = active < 0 ? count - 1 : stepIndex(count, active, -1, any, true);
+                break;
+            case 'Home':
+            case 'PageUp':
+                next = 0;
+                break;
+            case 'End':
+            case 'PageDown':
+                next = count - 1;
+                break;
+            case 'Tab':
+                // Focus goes back to the trigger; the Tab itself then moves on from there.
+                this.popover().hide('tab', true);
+                return;
+            default:
+                if (isTypeaheadKey(event) && event.key !== ' ') {
+                    next = this.typeahead.next(event.key, items.map((i) => i.label()), Math.max(active, 0));
+                    if (next < 0)
+                        return;
+                }
+                else {
+                    return;
+                }
+        }
+        event.preventDefault();
+        items[next]?.focus();
+    }
+    focusEdge(focus) {
+        if (focus === 'none' || !this.open())
+            return;
+        const items = this.items();
+        const enabled = (i) => !items[i].disabled();
+        let index = edgeIndex(items.length, enabled, focus === 'last');
+        if (index < 0)
+            index = focus === 'last' ? items.length - 1 : 0;
+        if (items[index])
+            items[index].focus();
+        else
+            this.popover().focusPanel('panel');
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthMenuComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.2.0", version: "18.2.14", type: AthMenuComponent, isStandalone: true, selector: "ath-menu", inputs: { open: { classPropertyName: "open", publicName: "open", isSignal: true, isRequired: false, transformFunction: null }, anchor: { classPropertyName: "anchor", publicName: "anchor", isSignal: true, isRequired: false, transformFunction: null }, align: { classPropertyName: "align", publicName: "align", isSignal: true, isRequired: false, transformFunction: null }, side: { classPropertyName: "side", publicName: "side", isSignal: true, isRequired: false, transformFunction: null }, maxHeight: { classPropertyName: "maxHeight", publicName: "maxHeight", isSignal: true, isRequired: false, transformFunction: null }, ariaLabel: { classPropertyName: "ariaLabel", publicName: "ariaLabel", isSignal: true, isRequired: false, transformFunction: null }, panelClass: { classPropertyName: "panelClass", publicName: "panelClass", isSignal: true, isRequired: false, transformFunction: null } }, outputs: { open: "openChange", opened: "opened", closed: "closed" }, host: { listeners: { "keydown": "onKeydown($event)" } }, providers: [{ provide: ATH_MENU_PARENT, useExisting: forwardRef(() => AthMenuComponent) }], queries: [{ propertyName: "items", predicate: AthMenuItemComponent, descendants: true, isSignal: true }], viewQueries: [{ propertyName: "popover", first: true, predicate: AthPopoverComponent, descendants: true, isSignal: true }], exportAs: ["athMenu"], ngImport: i0, template: `
+    <ath-popover
+      [open]="open()"
+      (openChange)="open.set($event)"
+      [anchor]="anchor()"
+      [panelId]="panelId"
+      size="auto"
+      padding="sm"
+      panelRole="menu"
+      autoFocus="none"
+      [align]="align()"
+      [side]="side()"
+      [maxHeight]="maxHeight()"
+      [ariaLabel]="ariaLabel()"
+      [ariaLabelledby]="ariaLabel() ? null : labelledBy()"
+      [panelClass]="panelClass()"
+      (opened)="onOpened()"
+      (closed)="closed.emit($event)"
+    >
+      <ng-content />
+    </ath-popover>
+  `, isInline: true, styles: [":host{display:contents}\n"], dependencies: [{ kind: "component", type: AthPopoverComponent, selector: "ath-popover", inputs: ["open", "anchor", "size", "padding", "align", "side", "offset", "matchWidth", "maxHeight", "arrow", "trapFocus", "autoFocus", "restoreFocus", "closeOnEscape", "closeOnOutsideClick", "panelRole", "ariaLabel", "ariaLabelledby", "panelClass", "panelId"], outputs: ["openChange", "opened", "closed"], exportAs: ["athPopover"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthMenuComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-menu', standalone: true, imports: [AthPopoverComponent], changeDetection: ChangeDetectionStrategy.OnPush, exportAs: 'athMenu', providers: [{ provide: ATH_MENU_PARENT, useExisting: forwardRef(() => AthMenuComponent) }], template: `
+    <ath-popover
+      [open]="open()"
+      (openChange)="open.set($event)"
+      [anchor]="anchor()"
+      [panelId]="panelId"
+      size="auto"
+      padding="sm"
+      panelRole="menu"
+      autoFocus="none"
+      [align]="align()"
+      [side]="side()"
+      [maxHeight]="maxHeight()"
+      [ariaLabel]="ariaLabel()"
+      [ariaLabelledby]="ariaLabel() ? null : labelledBy()"
+      [panelClass]="panelClass()"
+      (opened)="onOpened()"
+      (closed)="closed.emit($event)"
+    >
+      <ng-content />
+    </ath-popover>
+  `, host: {
+                        '(keydown)': 'onKeydown($event)',
+                    }, styles: [":host{display:contents}\n"] }]
+        }] });
+
+const ALIGN = { left: 'start', right: 'end', auto: 'auto' };
+/** The controls a projected trigger may be (or contain). */
+const CONTROL = 'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+/**
+ * Athene Dropdown: an action menu from a flat `items` list. A preset on
+ * `ath-menu` (keyboard, focus and ARIA come from there); for custom rows use
+ * `ath-menu` + `athMenuItem` directly.
+ *
+ * The projected content is the trigger. When it is (or contains) a button,
+ * that button is the menu button: one tab stop, with `aria-haspopup`,
+ * `aria-expanded` and `aria-controls` on it. Plain content (text, an icon)
+ * gets a `role="button"` wrapper instead.
+ *
+ * @example
+ * <ath-dropdown [items]="menuItems" (itemClicked)="onAction($event)">
+ *   <ath-button variant="ghost">Actions</ath-button>
+ * </ath-dropdown>
+ */
+class AthDropdownComponent {
+    constructor() {
+        /** Menu items */
+        this.items = input([]);
+        /**
+         * Horizontal alignment hint.
+         * - `'left'`  – menu anchored to the left edge of trigger
+         * - `'right'` – menu anchored to the right edge of trigger
+         * - `'auto'`  – pick best side based on viewport space
+         *
+         * Vertical direction is always auto-detected.
+         */
+        this.align = input('auto');
+        /** Item click event */
+        this.itemClicked = output();
+        /** Emits `true` when the menu opens, `false` when it closes. */
+        this.openChange = output();
+        this.menuAlign = () => ALIGN[this.align()];
+        this.menu = viewChild.required(AthMenuComponent);
+        this.triggerRef = viewChild.required('trigger');
+        this.menuQuery = viewChild(AthMenuComponent);
+        this.viewReady = false;
+        effect(() => {
+            const open = this.menuQuery()?.open() ?? false;
+            if (this.viewReady)
+                this.syncAria(open);
+        });
+    }
+    ngAfterViewInit() {
+        this.viewReady = true;
+        this.syncAria(this.menu().open());
+    }
+    /** Opens or closes the menu (focus goes to the first item when opening). */
+    toggle() {
+        this.menu().toggle(this.triggerRef().nativeElement, 'first');
+    }
+    /** Emits the item's id, as a click on it does. */
+    selectItem(item) {
+        if (item.disabled || item.divider)
+            return;
+        this.itemClicked.emit(item.id);
+        this.menu().hide();
+    }
+    onOpenChange(open) {
+        this.openChange.emit(open);
+    }
+    onHostClick(event) {
+        if (this.inTrigger(event))
+            this.toggle();
+    }
+    onHostKeydown(event) {
+        if (!this.inTrigger(event))
+            return;
+        const wrapperIsControl = this.control() === this.triggerRef().nativeElement;
+        const key = event.key;
+        if (key === 'ArrowDown' || key === 'ArrowUp') {
+            event.preventDefault();
+            this.menu().show(this.triggerRef().nativeElement, key === 'ArrowUp' ? 'last' : 'first');
+        }
+        else if (wrapperIsControl && (key === 'Enter' || key === ' ')) {
+            // A real button clicks on its own; the role="button" wrapper does not.
+            event.preventDefault();
+            this.toggle();
+        }
+    }
+    /** The trigger's real control, or the wrapper when there is none. */
+    control() {
+        const wrapper = this.triggerRef().nativeElement;
+        return wrapper.querySelector(CONTROL) ?? wrapper;
+    }
+    inTrigger(event) {
+        return event.target instanceof Node && this.triggerRef().nativeElement.contains(event.target);
+    }
+    syncAria(open) {
+        const wrapper = this.triggerRef().nativeElement;
+        const control = this.control();
+        if (control === wrapper) {
+            wrapper.setAttribute('role', 'button');
+            wrapper.tabIndex = 0;
+        }
+        else {
+            wrapper.removeAttribute('role');
+            wrapper.removeAttribute('tabindex');
+        }
+        control.setAttribute('aria-haspopup', 'menu');
+        control.setAttribute('aria-expanded', String(open));
+        if (open)
+            control.setAttribute('aria-controls', this.menu().panelId);
+        else
+            control.removeAttribute('aria-controls');
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthDropdownComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthDropdownComponent, isStandalone: true, selector: "ath-dropdown", inputs: { items: { classPropertyName: "items", publicName: "items", isSignal: true, isRequired: false, transformFunction: null }, align: { classPropertyName: "align", publicName: "align", isSignal: true, isRequired: false, transformFunction: null } }, outputs: { itemClicked: "itemClicked", openChange: "openChange" }, host: { listeners: { "click": "onHostClick($event)", "keydown": "onHostKeydown($event)" } }, viewQueries: [{ propertyName: "menu", first: true, predicate: AthMenuComponent, descendants: true, isSignal: true }, { propertyName: "triggerRef", first: true, predicate: ["trigger"], descendants: true, isSignal: true }, { propertyName: "menuQuery", first: true, predicate: AthMenuComponent, descendants: true, isSignal: true }], ngImport: i0, template: "<span #trigger class=\"ath-dropdown__trigger\">\n  <ng-content />\n</span>\n\n<!-- ath-dropdown__menu: app code checks for an open dropdown by this class. -->\n<ath-menu\n  panelClass=\"ath-dropdown__menu\"\n  [anchor]=\"trigger\"\n  [align]=\"menuAlign()\"\n  (openChange)=\"onOpenChange($event)\"\n>\n  @for (item of items(); track item.id) {\n    @if (item.divider) {\n      <ath-menu-separator />\n    } @else {\n      <button\n        athMenuItem\n        role=\"menuitem\"\n        class=\"ath-dropdown__item\"\n        [class.ath-dropdown__item--danger]=\"item.variant === 'danger'\"\n        [icon]=\"item.icon\"\n        [variant]=\"item.variant ?? 'default'\"\n        [disabled]=\"!!item.disabled\"\n        [disabledReason]=\"item.title\"\n        [tooltip]=\"item.title\"\n        [shortcut]=\"item.shortcut ?? null\"\n        (triggered)=\"itemClicked.emit(item.id)\"\n      >\n        {{ item.label }}\n      </button>\n    }\n  }\n</ath-menu>\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:inline-flex}.ath-dropdown__trigger{display:inline-flex;cursor:pointer}.ath-dropdown__trigger[role=button]:focus-visible{border-radius:var(--r-sm);outline:none;box-shadow:var(--focus-ring-shadow)}\n"], dependencies: [{ kind: "component", type: AthMenuComponent, selector: "ath-menu", inputs: ["open", "anchor", "align", "side", "maxHeight", "ariaLabel", "panelClass"], outputs: ["openChange", "opened", "closed"], exportAs: ["athMenu"] }, { kind: "component", type: AthMenuItemComponent, selector: "ath-menu-item, button[athMenuItem], a[athMenuItem]", inputs: ["icon", "shortcut", "keyshortcuts", "variant", "disabled", "disabledReason", "tooltip", "checked", "keepOpen"], outputs: ["triggered"], exportAs: ["athMenuItem"] }, { kind: "component", type: AthMenuSeparatorComponent, selector: "ath-menu-separator" }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthDropdownComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-dropdown', standalone: true, imports: [AthMenuComponent, AthMenuItemComponent, AthMenuSeparatorComponent], changeDetection: ChangeDetectionStrategy.OnPush, host: {
+                        '(click)': 'onHostClick($event)',
+                        '(keydown)': 'onHostKeydown($event)',
+                    }, template: "<span #trigger class=\"ath-dropdown__trigger\">\n  <ng-content />\n</span>\n\n<!-- ath-dropdown__menu: app code checks for an open dropdown by this class. -->\n<ath-menu\n  panelClass=\"ath-dropdown__menu\"\n  [anchor]=\"trigger\"\n  [align]=\"menuAlign()\"\n  (openChange)=\"onOpenChange($event)\"\n>\n  @for (item of items(); track item.id) {\n    @if (item.divider) {\n      <ath-menu-separator />\n    } @else {\n      <button\n        athMenuItem\n        role=\"menuitem\"\n        class=\"ath-dropdown__item\"\n        [class.ath-dropdown__item--danger]=\"item.variant === 'danger'\"\n        [icon]=\"item.icon\"\n        [variant]=\"item.variant ?? 'default'\"\n        [disabled]=\"!!item.disabled\"\n        [disabledReason]=\"item.title\"\n        [tooltip]=\"item.title\"\n        [shortcut]=\"item.shortcut ?? null\"\n        (triggered)=\"itemClicked.emit(item.id)\"\n      >\n        {{ item.label }}\n      </button>\n    }\n  }\n</ath-menu>\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:inline-flex}.ath-dropdown__trigger{display:inline-flex;cursor:pointer}.ath-dropdown__trigger[role=button]:focus-visible{border-radius:var(--r-sm);outline:none;box-shadow:var(--focus-ring-shadow)}\n"] }]
+        }], ctorParameters: () => [] });
+
+/** Below this width only the parent and the current page show. */
+const NARROW_QUERY = '(max-width: 640px)';
 /**
  * Athene Breadcrumb Component
  *
- * Page navigation breadcrumbs.
+ * Ancestors are links (to `route` with `queryParams`), the last item is the
+ * page (`aria-current`). A trail longer than `maxVisible` keeps its first
+ * step and its last two and folds the rest into "…", a menu of the hidden
+ * steps; on a phone only parent › current show. Long labels end in an
+ * ellipsis with the full text as tooltip.
  *
  * @example
- * <ath-breadcrumb [items]="[{ label: 'Admin', link: '/admin' }, { label: 'Settings' }]" />
+ * <ath-breadcrumb [items]="[{ label: 'Projects', route: '/projects' }, { label: 'Atlas', key: 'ATL' }]" />
  */
 class AthBreadcrumbComponent {
     constructor() {
-        this.labels = inject(ATH_LABELS, { optional: true });
-        /** Breadcrumb items */
-        this.items = [];
-        /** Accessible name of the landmark; defaults to `ATH_LABELS`. */
-        this.ariaLabel = null;
+        this.labels = injectAthLabels();
+        this.router = inject(Router);
+        this.items = input([]);
+        /** Accessible name of the landmark; defaults to `ATH_LABELS.breadcrumb`. */
+        this.ariaLabel = input(null);
+        /** More steps than this fold their middle into "…". */
+        this.maxVisible = input(4);
+        this.navLabel = computed(() => this.ariaLabel() ?? this.labels.breadcrumb());
+        this.moreLabel = computed(() => this.labels.breadcrumbMore());
         this.separatorIcon = ChevronRight;
+        this.narrow = signal(false);
+        this.shown = computed(() => {
+            const all = this.items();
+            const lastIndex = all.length - 1;
+            const asCrumb = (crumb, i) => ({
+                kind: 'crumb',
+                crumb,
+                last: i === lastIndex,
+            });
+            if (this.narrow()) {
+                return all.slice(-2).map((c, i, arr) => asCrumb(c, i === arr.length - 1 ? lastIndex : -1));
+            }
+            if (all.length <= this.maxVisible())
+                return all.map(asCrumb);
+            const hidden = all.slice(1, -2);
+            return [
+                asCrumb(all[0], 0),
+                {
+                    kind: 'more',
+                    hidden,
+                    items: hidden.map((c, i) => ({
+                        id: String(i),
+                        label: c.key ? `${c.key} · ${c.label}` : c.label,
+                    })),
+                },
+                asCrumb(all[lastIndex - 1], lastIndex - 1),
+                asCrumb(all[lastIndex], lastIndex),
+            ];
+        });
+        if (typeof window === 'undefined' || !window.matchMedia)
+            return;
+        const query = window.matchMedia(NARROW_QUERY);
+        this.narrow.set(query.matches);
+        const onChange = (e) => this.narrow.set(e.matches);
+        query.addEventListener('change', onChange);
+        inject(DestroyRef).onDestroy(() => query.removeEventListener('change', onChange));
     }
-    get navLabel() {
-        return this.ariaLabel ?? (this.labels?.breadcrumb ?? ATH_DEFAULT_LABELS.breadcrumb)();
+    /** Where a step links to, if anywhere. */
+    target(crumb) {
+        return crumb.route ?? crumb.link ?? null;
+    }
+    openHidden(hidden, id) {
+        const crumb = hidden[Number(id)];
+        const route = crumb ? this.target(crumb) : null;
+        if (route)
+            void this.router.navigate([route], { queryParams: crumb?.queryParams ?? {} });
     }
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthBreadcrumbComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthBreadcrumbComponent, isStandalone: true, selector: "ath-breadcrumb", inputs: { items: "items", ariaLabel: "ariaLabel" }, ngImport: i0, template: "<nav class=\"ath-breadcrumb\" [attr.aria-label]=\"navLabel\">\n  <ol class=\"ath-breadcrumb__list\">\n    @for (item of items; track item.label; let last = $last) {\n      <li class=\"ath-breadcrumb__item\">\n        @if (item.link && !last) {\n          <a [routerLink]=\"item.link\" class=\"ath-breadcrumb__link\">{{ item.label }}</a>\n        } @else {\n          <span class=\"ath-breadcrumb__current\" [attr.aria-current]=\"last ? 'page' : null\">{{\n            item.label\n          }}</span>\n        }\n        @if (!last) {\n          <lucide-icon [img]=\"separatorIcon\" [size]=\"14\" class=\"ath-breadcrumb__separator\" />\n        }\n      </li>\n    }\n  </ol>\n</nav>\n", styles: [".ath-breadcrumb__list{display:flex;align-items:center;gap:var(--ath-space-1);list-style:none;margin:0;padding:0}.ath-breadcrumb__item{display:flex;align-items:center;gap:var(--ath-space-1)}.ath-breadcrumb__link{font-size:var(--ath-font-size-sm);color:var(--ath-text-tertiary);text-decoration:none;transition:color var(--ath-transition-fast)}.ath-breadcrumb__link:hover{color:var(--ath-text-link)}.ath-breadcrumb__current{font-size:var(--ath-font-size-sm);font-weight:var(--ath-font-weight-medium);color:var(--ath-text-primary)}.ath-breadcrumb__separator{color:var(--ath-text-tertiary);flex-shrink:0}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "directive", type: RouterLink, selector: "[routerLink]", inputs: ["target", "queryParams", "fragment", "queryParamsHandling", "state", "info", "relativeTo", "preserveFragment", "skipLocationChange", "replaceUrl", "routerLink"] }, { kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthBreadcrumbComponent, isStandalone: true, selector: "ath-breadcrumb", inputs: { items: { classPropertyName: "items", publicName: "items", isSignal: true, isRequired: false, transformFunction: null }, ariaLabel: { classPropertyName: "ariaLabel", publicName: "ariaLabel", isSignal: true, isRequired: false, transformFunction: null }, maxVisible: { classPropertyName: "maxVisible", publicName: "maxVisible", isSignal: true, isRequired: false, transformFunction: null } }, ngImport: i0, template: "@if (items().length > 0) {\n  <nav class=\"ath-breadcrumb\" [attr.aria-label]=\"navLabel()\">\n    <ol class=\"ath-breadcrumb__list\">\n      @for (s of shown(); track $index; let lastItem = $last) {\n        <li class=\"ath-breadcrumb__item\">\n          @if (s.kind === 'more') {\n            <ath-dropdown\n              [items]=\"s.items\"\n              align=\"left\"\n              (itemClicked)=\"openHidden(s.hidden, $event)\"\n            >\n              <span class=\"ath-breadcrumb__more\" [attr.title]=\"moreLabel()\">\u2026</span>\n            </ath-dropdown>\n          } @else if (s.last || !target(s.crumb)) {\n            <span\n              class=\"ath-breadcrumb__current\"\n              [class.ath-breadcrumb__current--quiet]=\"!s.last\"\n              [attr.aria-current]=\"s.last ? 'page' : null\"\n              [attr.title]=\"s.crumb.title ?? s.crumb.label\"\n            >\n              @if (s.crumb.key) {\n                <span class=\"ath-breadcrumb__key\">{{ s.crumb.key }}</span>\n              }\n              <span class=\"ath-breadcrumb__text\">{{ s.crumb.label }}</span>\n            </span>\n          } @else {\n            <a\n              class=\"ath-breadcrumb__link\"\n              [routerLink]=\"target(s.crumb)\"\n              [queryParams]=\"s.crumb.queryParams ?? null\"\n              [attr.title]=\"s.crumb.title ?? s.crumb.label\"\n            >\n              @if (s.crumb.key) {\n                <span class=\"ath-breadcrumb__key\">{{ s.crumb.key }}</span>\n              }\n              <span class=\"ath-breadcrumb__text\">{{ s.crumb.label }}</span>\n            </a>\n          }\n          @if (!lastItem) {\n            <lucide-icon\n              class=\"ath-breadcrumb__separator\"\n              [img]=\"separatorIcon\"\n              [size]=\"10\"\n              aria-hidden=\"true\"\n            />\n          }\n        </li>\n      }\n    </ol>\n  </nav>\n}\n", styles: [".ath-breadcrumb{display:inline-flex;align-items:center;min-width:0;font-family:var(--font-sans)}.ath-breadcrumb__list{display:flex;align-items:center;gap:4px;min-width:0;margin:0;padding:0;list-style:none}.ath-breadcrumb__item{display:inline-flex;align-items:center;gap:4px;min-width:0;flex:0 1 auto}.ath-breadcrumb__item:last-child{flex-shrink:.3}.ath-breadcrumb__text{min-width:0;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ath-breadcrumb__item:last-child .ath-breadcrumb__text{max-width:360px}.ath-breadcrumb__more{display:inline-grid;place-items:center;min-width:24px;height:22px;padding:0 4px;border-radius:var(--r-xs);color:var(--fg-3);font-size:13px;cursor:pointer}.ath-breadcrumb__more:hover{color:var(--fg);background:var(--bg-2)}.ath-breadcrumb__current--quiet{font-weight:500;color:var(--fg-3)}.ath-breadcrumb__link{display:inline-flex;align-items:center;gap:6px;min-width:0;font-size:13px;font-weight:500;color:var(--fg-3);padding:4px 6px;margin:0 -2px;border-radius:var(--r-xs);text-decoration:none;white-space:nowrap;transition:background .1s ease,color .1s ease}.ath-breadcrumb__link:hover{color:var(--fg);background:var(--bg-2)}.ath-breadcrumb__link:focus-visible{outline:none;box-shadow:0 0 0 2px var(--focus-ring-color)}.ath-breadcrumb__separator{color:var(--fg-4);flex-shrink:0}.ath-breadcrumb__current{display:inline-flex;align-items:center;gap:8px;min-width:0;font-size:13px;font-weight:600;letter-spacing:-.01em;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 4px}.ath-breadcrumb__key{flex-shrink:0;padding:1px 6px;border-radius:var(--r-xs);background:var(--bg-2);color:var(--fg-2);font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.02em}\n"], dependencies: [{ kind: "directive", type: RouterLink, selector: "[routerLink]", inputs: ["target", "queryParams", "fragment", "queryParamsHandling", "state", "info", "relativeTo", "preserveFragment", "skipLocationChange", "replaceUrl", "routerLink"] }, { kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }, { kind: "component", type: AthDropdownComponent, selector: "ath-dropdown", inputs: ["items", "align"], outputs: ["itemClicked", "openChange"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
 }
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthBreadcrumbComponent, decorators: [{
             type: Component,
-            args: [{ selector: 'ath-breadcrumb', standalone: true, imports: [CommonModule, RouterLink, LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "<nav class=\"ath-breadcrumb\" [attr.aria-label]=\"navLabel\">\n  <ol class=\"ath-breadcrumb__list\">\n    @for (item of items; track item.label; let last = $last) {\n      <li class=\"ath-breadcrumb__item\">\n        @if (item.link && !last) {\n          <a [routerLink]=\"item.link\" class=\"ath-breadcrumb__link\">{{ item.label }}</a>\n        } @else {\n          <span class=\"ath-breadcrumb__current\" [attr.aria-current]=\"last ? 'page' : null\">{{\n            item.label\n          }}</span>\n        }\n        @if (!last) {\n          <lucide-icon [img]=\"separatorIcon\" [size]=\"14\" class=\"ath-breadcrumb__separator\" />\n        }\n      </li>\n    }\n  </ol>\n</nav>\n", styles: [".ath-breadcrumb__list{display:flex;align-items:center;gap:var(--ath-space-1);list-style:none;margin:0;padding:0}.ath-breadcrumb__item{display:flex;align-items:center;gap:var(--ath-space-1)}.ath-breadcrumb__link{font-size:var(--ath-font-size-sm);color:var(--ath-text-tertiary);text-decoration:none;transition:color var(--ath-transition-fast)}.ath-breadcrumb__link:hover{color:var(--ath-text-link)}.ath-breadcrumb__current{font-size:var(--ath-font-size-sm);font-weight:var(--ath-font-weight-medium);color:var(--ath-text-primary)}.ath-breadcrumb__separator{color:var(--ath-text-tertiary);flex-shrink:0}\n"] }]
-        }], propDecorators: { items: [{
-                type: Input
-            }], ariaLabel: [{
-                type: Input
-            }] } });
+            args: [{ selector: 'ath-breadcrumb', standalone: true, imports: [RouterLink, LucideAngularModule, AthDropdownComponent], changeDetection: ChangeDetectionStrategy.OnPush, template: "@if (items().length > 0) {\n  <nav class=\"ath-breadcrumb\" [attr.aria-label]=\"navLabel()\">\n    <ol class=\"ath-breadcrumb__list\">\n      @for (s of shown(); track $index; let lastItem = $last) {\n        <li class=\"ath-breadcrumb__item\">\n          @if (s.kind === 'more') {\n            <ath-dropdown\n              [items]=\"s.items\"\n              align=\"left\"\n              (itemClicked)=\"openHidden(s.hidden, $event)\"\n            >\n              <span class=\"ath-breadcrumb__more\" [attr.title]=\"moreLabel()\">\u2026</span>\n            </ath-dropdown>\n          } @else if (s.last || !target(s.crumb)) {\n            <span\n              class=\"ath-breadcrumb__current\"\n              [class.ath-breadcrumb__current--quiet]=\"!s.last\"\n              [attr.aria-current]=\"s.last ? 'page' : null\"\n              [attr.title]=\"s.crumb.title ?? s.crumb.label\"\n            >\n              @if (s.crumb.key) {\n                <span class=\"ath-breadcrumb__key\">{{ s.crumb.key }}</span>\n              }\n              <span class=\"ath-breadcrumb__text\">{{ s.crumb.label }}</span>\n            </span>\n          } @else {\n            <a\n              class=\"ath-breadcrumb__link\"\n              [routerLink]=\"target(s.crumb)\"\n              [queryParams]=\"s.crumb.queryParams ?? null\"\n              [attr.title]=\"s.crumb.title ?? s.crumb.label\"\n            >\n              @if (s.crumb.key) {\n                <span class=\"ath-breadcrumb__key\">{{ s.crumb.key }}</span>\n              }\n              <span class=\"ath-breadcrumb__text\">{{ s.crumb.label }}</span>\n            </a>\n          }\n          @if (!lastItem) {\n            <lucide-icon\n              class=\"ath-breadcrumb__separator\"\n              [img]=\"separatorIcon\"\n              [size]=\"10\"\n              aria-hidden=\"true\"\n            />\n          }\n        </li>\n      }\n    </ol>\n  </nav>\n}\n", styles: [".ath-breadcrumb{display:inline-flex;align-items:center;min-width:0;font-family:var(--font-sans)}.ath-breadcrumb__list{display:flex;align-items:center;gap:4px;min-width:0;margin:0;padding:0;list-style:none}.ath-breadcrumb__item{display:inline-flex;align-items:center;gap:4px;min-width:0;flex:0 1 auto}.ath-breadcrumb__item:last-child{flex-shrink:.3}.ath-breadcrumb__text{min-width:0;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ath-breadcrumb__item:last-child .ath-breadcrumb__text{max-width:360px}.ath-breadcrumb__more{display:inline-grid;place-items:center;min-width:24px;height:22px;padding:0 4px;border-radius:var(--r-xs);color:var(--fg-3);font-size:13px;cursor:pointer}.ath-breadcrumb__more:hover{color:var(--fg);background:var(--bg-2)}.ath-breadcrumb__current--quiet{font-weight:500;color:var(--fg-3)}.ath-breadcrumb__link{display:inline-flex;align-items:center;gap:6px;min-width:0;font-size:13px;font-weight:500;color:var(--fg-3);padding:4px 6px;margin:0 -2px;border-radius:var(--r-xs);text-decoration:none;white-space:nowrap;transition:background .1s ease,color .1s ease}.ath-breadcrumb__link:hover{color:var(--fg);background:var(--bg-2)}.ath-breadcrumb__link:focus-visible{outline:none;box-shadow:0 0 0 2px var(--focus-ring-color)}.ath-breadcrumb__separator{color:var(--fg-4);flex-shrink:0}.ath-breadcrumb__current{display:inline-flex;align-items:center;gap:8px;min-width:0;font-size:13px;font-weight:600;letter-spacing:-.01em;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 4px}.ath-breadcrumb__key{flex-shrink:0;padding:1px 6px;border-radius:var(--r-xs);background:var(--bg-2);color:var(--fg-2);font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.02em}\n"] }]
+        }], ctorParameters: () => [] });
 
 /**
  * Athene Divider Component
@@ -2202,1266 +3547,6 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImpo
             }], searched: [{
                 type: Output
             }] } });
-
-/** Whether `target` is a virtual anchor rather than an element. */
-function isVirtualAnchor(target) {
-    return (!!target &&
-        typeof target === 'object' &&
-        !(typeof Element !== 'undefined' && target instanceof Element) &&
-        typeof target.getBoundingClientRect === 'function');
-}
-/** Space kept between a floating panel and the viewport's edges. */
-const MARGIN = 8;
-/** Below this much room a side is not worth capping to; the panel flips or overlaps. */
-const MIN_ROOM = 120;
-/** An arrow stays this far from the panel's corners. */
-const ARROW_INSET = 12;
-/**
- * The one positioning engine of the library (menus, listboxes, popovers,
- * pickers; the `athFloating` directive wraps it).
- *
- * Pins `panel` to `anchor` (an element, or a `FloatingVirtualAnchor` such as
- * a caret rectangle) and keeps it inside the viewport: on the preferred
- * side when it fits, on the other side when that has more room, shifted
- * sideways to stay on screen, height-capped (scrolling inside) when neither
- * side has room for all of it. Follows scrolls in any container, viewport
- * resizes, and size changes of the panel and the anchor.
- *
- * The panel stays where the template rendered it (focus order, event
- * bubbling and "click outside" checks keep working). It is promoted into the
- * top layer, or, without Popover API support, made `position: fixed` with a
- * correction for transformed ancestors that would otherwise move a fixed box.
- *
- * Writes `data-placement="bottom|top"` on the panel for side-dependent styles.
- */
-function floatPanel(panel, anchor, options = {}) {
-    // The element that stands for the anchor: itself, or a virtual anchor's context.
-    const anchorEl = isVirtualAnchor(anchor)
-        ? (anchor.contextElement ?? null)
-        : anchor;
-    const style = panel.style;
-    style.position = 'fixed';
-    style.top = '0';
-    style.left = '0';
-    style.right = 'auto';
-    style.bottom = 'auto';
-    style.margin = '0';
-    style.zIndex = 'var(--z-popover)';
-    // Measured before it is shown, so it never flashes at the wrong place.
-    style.visibility = 'hidden';
-    panel.setAttribute('data-ath-floating', '');
-    const inTopLayer = (options.topLayer ?? true) && promote(panel);
-    let frame = 0;
-    const place = () => {
-        if ((anchorEl && !anchorEl.isConnected) || !panel.isConnected)
-            return;
-        const a = anchor.getBoundingClientRect();
-        const vw = document.documentElement.clientWidth;
-        const vh = window.innerHeight;
-        const gap = options.offset ?? 4;
-        if (options.matchWidth)
-            style.minWidth = `${Math.round(a.width)}px`;
-        // Its natural height, without an earlier cap.
-        style.maxHeight = '';
-        style.overflowY = '';
-        const width = Math.min(panel.offsetWidth, vw - MARGIN * 2);
-        const natural = panel.offsetHeight;
-        const below = vh - a.bottom - gap - MARGIN;
-        const above = a.top - gap - MARGIN;
-        const down = options.side === 'top'
-            ? !(natural <= above || above >= below)
-            : natural <= below || below >= above;
-        let room = Math.max(down ? below : above, MIN_ROOM);
-        if (options.maxHeight)
-            room = Math.min(room, options.maxHeight);
-        const height = Math.min(natural, room);
-        if (natural > room) {
-            style.maxHeight = `${Math.floor(room)}px`;
-            style.overflowY = 'auto';
-        }
-        const rtl = getComputedStyle(anchorEl ?? panel).direction === 'rtl';
-        const leftEdge = a.left;
-        const rightEdge = a.right - width;
-        const fromStart = rtl ? rightEdge : leftEdge;
-        const fromEnd = rtl ? leftEdge : rightEdge;
-        const fits = (x) => x >= MARGIN && x + width <= vw - MARGIN;
-        const align = options.align ?? 'start';
-        let left = align === 'center'
-            ? a.left + a.width / 2 - width / 2
-            : align === 'end'
-                ? fromEnd
-                : align === 'auto' && !fits(fromStart)
-                    ? fromEnd
-                    : fromStart;
-        left = Math.max(MARGIN, Math.min(left, vw - width - MARGIN));
-        const top = Math.max(MARGIN, down ? a.bottom + gap : a.top - gap - height);
-        const origin = inTopLayer ? { x: 0, y: 0 } : fixedOrigin(panel);
-        style.left = `${Math.round(left - origin.x)}px`;
-        style.top = `${Math.round(top - origin.y)}px`;
-        style.maxWidth = `${vw - MARGIN * 2}px`;
-        style.visibility = '';
-        panel.dataset['placement'] = down ? 'bottom' : 'top';
-        if (options.arrow) {
-            const x = a.left + a.width / 2 - left;
-            const clamped = Math.max(ARROW_INSET, Math.min(x, width - ARROW_INSET));
-            options.arrow.style.left = `${Math.round(clamped)}px`;
-        }
-    };
-    const schedule = (event) => {
-        // Scrolling inside the panel itself does not move it.
-        if (event?.type === 'scroll' && event.target instanceof Node && panel.contains(event.target)) {
-            return;
-        }
-        cancelAnimationFrame(frame);
-        frame = requestAnimationFrame(place);
-    };
-    window.addEventListener('resize', schedule);
-    // Capture: a scroll in any container moves the anchor.
-    document.addEventListener('scroll', schedule, true);
-    const resize = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => schedule());
-    resize?.observe(panel);
-    if (anchorEl)
-        resize?.observe(anchorEl);
-    place();
-    const stop = () => {
-        cancelAnimationFrame(frame);
-        window.removeEventListener('resize', schedule);
-        document.removeEventListener('scroll', schedule, true);
-        resize?.disconnect();
-        if (inTopLayer)
-            demote(panel);
-    };
-    return Object.assign(stop, { update: place });
-}
-/** Whether this browser has the Popover API (top layer for non-modal panels). */
-function supportsTopLayer() {
-    return typeof HTMLElement !== 'undefined' && 'showPopover' in HTMLElement.prototype;
-}
-function promote(panel) {
-    if (!supportsTopLayer() || !panel.isConnected)
-        return false;
-    installTopLayerStyles();
-    if (!panel.hasAttribute('popover'))
-        panel.setAttribute('popover', 'manual');
-    try {
-        if (!panel.matches(':popover-open'))
-            panel.showPopover();
-        return true;
-    }
-    catch {
-        panel.removeAttribute('popover');
-        return false;
-    }
-}
-function demote(panel) {
-    try {
-        if (panel.matches(':popover-open'))
-            panel.hidePopover();
-    }
-    catch {
-        // Already gone from the document.
-    }
-}
-/**
- * `[popover]` brings UA styles (border, padding, canvas colours, centring).
- * This resets them at zero specificity, so any component style still wins.
- */
-let baseStylesInstalled = false;
-const BASE_STYLES = ':where([data-ath-floating][popover],[data-ath-top-layer][popover]){inset:auto;margin:0;' +
-    'border:0;padding:0;' +
-    'background:none;color:inherit;overflow:visible}';
-/** @internal Installs the reset once; used by `floatPanel` and `AthOverlayStack`. */
-function installTopLayerStyles() {
-    if (baseStylesInstalled)
-        return;
-    baseStylesInstalled = true;
-    try {
-        const sheet = new CSSStyleSheet();
-        sheet.replaceSync(BASE_STYLES);
-        document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
-    }
-    catch {
-        const el = document.createElement('style');
-        el.textContent = BASE_STYLES;
-        document.head.appendChild(el);
-    }
-}
-/**
- * Where `position: fixed; left: 0; top: 0` lands for this element. Normally
- * the viewport's corner; inside a transformed ancestor (a centred dialog)
- * `fixed` is relative to that ancestor instead. Measured with a bare probe,
- * so the panel's own entry animation does not skew it.
- */
-function fixedOrigin(el) {
-    const parent = el.parentElement;
-    if (!parent)
-        return { x: 0, y: 0 };
-    const probe = document.createElement('div');
-    probe.style.cssText =
-        'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none';
-    parent.appendChild(probe);
-    const box = probe.getBoundingClientRect();
-    probe.remove();
-    return { x: box.left, y: box.top };
-}
-
-/**
- * The element behind an anchor: itself, or a virtual anchor's
- * `contextElement` (focus return, outside clicks, `aria-*`).
- */
-function resolveAnchor(anchor) {
-    if (!anchor)
-        return null;
-    if (anchor instanceof ElementRef)
-        return anchor.nativeElement;
-    if (isVirtualAnchor(anchor)) {
-        const ctx = anchor.contextElement;
-        return ctx instanceof HTMLElement ? ctx : null;
-    }
-    return anchor;
-}
-/** What a panel is placed against: the element, or the virtual anchor itself. */
-function resolveFloatingTarget(anchor) {
-    if (!anchor)
-        return null;
-    return anchor instanceof ElementRef ? anchor.nativeElement : anchor;
-}
-/**
- * Hangs the host element from an anchor with `floatPanel`: top layer (so no
- * `overflow`, `transform` or `z-index` of a container can clip or cover it),
- * kept inside the viewport (flip, shift, height cap), following scrolls,
- * resizes and size changes. The host stays where the template puts it.
- *
- * The only positioning logic of the library; `ath-popover`, `ath-menu` and
- * `ath-option-picker` use it, and app code that needs a bare floating panel
- * uses it instead of measuring rectangles itself.
- *
- * @example
- * @if (open()) {
- *   <div class="menu" [athFloating]="trigger" align="end">…</div>
- * }
- */
-class AthFloatingDirective {
-    constructor() {
-        /** The element (or virtual anchor) the panel hangs from. */
-        this.anchor = input.required({ alias: 'athFloating' });
-        /**
-         * `start`: start edges line up; `end`: end edges; `auto`: start unless it
-         * overflows; `center`: centred on the anchor.
-         */
-        this.align = input('start');
-        /** Preferred side; flips when the other side has more room. */
-        this.side = input('bottom');
-        /** Gap between anchor and panel, in px. */
-        this.offset = input(4);
-        /** At least as wide as the anchor (selects, comboboxes). */
-        this.matchWidth = input(false, { transform: booleanAttribute });
-        /** Upper bound for the height in px (the viewport caps it anyway). */
-        this.maxHeight = input(null);
-        /** Promote into the top layer (default). `false` keeps `position: fixed` + `--z-popover`. */
-        this.topLayer = input(true, { transform: booleanAttribute });
-        /** An arrow element inside the panel, kept pointing at the anchor's centre. */
-        this.arrow = input(null);
-        this.el = inject(ElementRef).nativeElement;
-        this.zone = inject(NgZone);
-        this.cleanup = null;
-        this.viewReady = false;
-    }
-    ngAfterViewInit() {
-        this.viewReady = true;
-        this.attach();
-    }
-    ngOnChanges() {
-        if (this.viewReady)
-            this.attach();
-    }
-    ngOnDestroy() {
-        this.cleanup?.();
-        this.cleanup = null;
-    }
-    /** Re-measures now (after a content change the ResizeObserver cannot see). */
-    update() {
-        this.cleanup?.update();
-    }
-    attach() {
-        this.cleanup?.();
-        this.cleanup = null;
-        const anchor = resolveFloatingTarget(this.anchor());
-        if (!anchor)
-            return;
-        this.cleanup = this.zone.runOutsideAngular(() => floatPanel(this.el, anchor, {
-            align: this.align(),
-            side: this.side(),
-            offset: this.offset(),
-            matchWidth: this.matchWidth(),
-            maxHeight: this.maxHeight(),
-            topLayer: this.topLayer(),
-            arrow: this.arrow(),
-        }));
-    }
-    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthFloatingDirective, deps: [], target: i0.ɵɵFactoryTarget.Directive }); }
-    static { this.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "17.1.0", version: "18.2.14", type: AthFloatingDirective, isStandalone: true, selector: "[athFloating]", inputs: { anchor: { classPropertyName: "anchor", publicName: "athFloating", isSignal: true, isRequired: true, transformFunction: null }, align: { classPropertyName: "align", publicName: "align", isSignal: true, isRequired: false, transformFunction: null }, side: { classPropertyName: "side", publicName: "side", isSignal: true, isRequired: false, transformFunction: null }, offset: { classPropertyName: "offset", publicName: "offset", isSignal: true, isRequired: false, transformFunction: null }, matchWidth: { classPropertyName: "matchWidth", publicName: "matchWidth", isSignal: true, isRequired: false, transformFunction: null }, maxHeight: { classPropertyName: "maxHeight", publicName: "maxHeight", isSignal: true, isRequired: false, transformFunction: null }, topLayer: { classPropertyName: "topLayer", publicName: "topLayer", isSignal: true, isRequired: false, transformFunction: null }, arrow: { classPropertyName: "arrow", publicName: "arrow", isSignal: true, isRequired: false, transformFunction: null } }, exportAs: ["athFloating"], usesOnChanges: true, ngImport: i0 }); }
-}
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthFloatingDirective, decorators: [{
-            type: Directive,
-            args: [{
-                    selector: '[athFloating]',
-                    standalone: true,
-                    exportAs: 'athFloating',
-                }]
-        }] });
-
-/**
- * The open overlays (popovers, menus, pickers, dialogs) in opening order.
- * One document listener each for Escape and outside pointer-downs, so only
- * the topmost overlay reacts to Escape and a click inside a nested overlay
- * does not close its parent. Also owns the page scroll lock of modal dialogs.
- */
-class AthOverlayStack {
-    constructor() {
-        this.doc = inject(DOCUMENT);
-        this.zone = inject(NgZone);
-        this.entries = [];
-        this.listening = false;
-        this.escapeTask = 0;
-        this.locks = 0;
-        this.savedScroll = null;
-        this.onKeydown = (event) => {
-            if (event.key !== 'Escape' || event.defaultPrevented)
-                return;
-            const top = this.entries[this.entries.length - 1];
-            // A modal dialog handles Escape through its native `cancel` event.
-            if (!top || top.modal)
-                return;
-            event.preventDefault();
-            this.markEscape();
-            if (top.closeOnEscape())
-                this.zone.run(() => top.dismiss('escape'));
-        };
-        this.onPointerDown = (event) => {
-            const path = event.composedPath();
-            for (let i = this.entries.length - 1; i >= 0; i--) {
-                const entry = this.entries[i];
-                if (entry.modal)
-                    return;
-                const panel = entry.panel();
-                const anchor = entry.anchor();
-                if ((panel && path.includes(panel)) || (anchor && path.includes(anchor)))
-                    return;
-                if (!entry.closeOnOutsideClick())
-                    return;
-                this.zone.run(() => entry.dismiss('outside'));
-            }
-        };
-    }
-    /** Registers an overlay as the new topmost one. */
-    open(entry) {
-        this.remove(entry);
-        this.entries.push(entry);
-        this.listen();
-    }
-    /** Unregisters an overlay (idempotent). */
-    close(entry) {
-        this.remove(entry);
-        if (this.entries.length === 0)
-            this.unlisten();
-    }
-    isTop(entry) {
-        return this.entries[this.entries.length - 1] === entry;
-    }
-    /** How many overlays are open. */
-    get size() {
-        return this.entries.length;
-    }
-    /**
-     * True while the current Escape key press has already closed an overlay.
-     * A native modal `<dialog>` checks this in its `cancel` event, which the
-     * browser fires after the keydown, so one press closes one layer.
-     */
-    escapeConsumed() {
-        return this.escapeTask !== 0;
-    }
-    /**
-     * A modal dialog that opens goes on top of the top layer. Elements marked
-     * `data-ath-top-layer` (the toast container) are moved back above it, so a
-     * toast raised while a dialog is open is still seen.
-     */
-    raiseTopLayer() {
-        if (!supportsTopLayer())
-            return;
-        installTopLayerStyles();
-        for (const el of Array.from(this.doc.querySelectorAll('[data-ath-top-layer]'))) {
-            try {
-                if (!el.hasAttribute('popover'))
-                    el.setAttribute('popover', 'manual');
-                if (el.matches(':popover-open'))
-                    el.hidePopover();
-                el.showPopover();
-            }
-            catch {
-                // Not connected; nothing to raise.
-            }
-        }
-    }
-    /** Locks page scrolling while at least one lock is held (modal dialogs). */
-    lockScroll() {
-        if (this.locks++ > 0)
-            return;
-        const root = this.doc.documentElement;
-        const body = this.doc.body;
-        const view = this.doc.defaultView;
-        const scrollbar = view ? view.innerWidth - root.clientWidth : 0;
-        this.savedScroll = { overflow: root.style.overflow, paddingRight: body.style.paddingRight };
-        root.style.overflow = 'hidden';
-        if (scrollbar > 0)
-            body.style.paddingRight = `${scrollbar}px`;
-    }
-    unlockScroll() {
-        if (this.locks === 0 || --this.locks > 0)
-            return;
-        if (this.savedScroll) {
-            this.doc.documentElement.style.overflow = this.savedScroll.overflow;
-            this.doc.body.style.paddingRight = this.savedScroll.paddingRight;
-        }
-        this.savedScroll = null;
-    }
-    remove(entry) {
-        const i = this.entries.indexOf(entry);
-        if (i >= 0)
-            this.entries.splice(i, 1);
-    }
-    markEscape() {
-        const view = this.doc.defaultView;
-        if (!view)
-            return;
-        view.clearTimeout(this.escapeTask);
-        this.escapeTask = view.setTimeout(() => (this.escapeTask = 0));
-    }
-    listen() {
-        if (this.listening)
-            return;
-        this.listening = true;
-        this.zone.runOutsideAngular(() => {
-            this.doc.addEventListener('keydown', this.onKeydown);
-            this.doc.addEventListener('pointerdown', this.onPointerDown, true);
-        });
-    }
-    unlisten() {
-        if (!this.listening)
-            return;
-        this.listening = false;
-        this.doc.removeEventListener('keydown', this.onKeydown);
-        this.doc.removeEventListener('pointerdown', this.onPointerDown, true);
-    }
-    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthOverlayStack, deps: [], target: i0.ɵɵFactoryTarget.Injectable }); }
-    static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthOverlayStack, providedIn: 'root' }); }
-}
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthOverlayStack, decorators: [{
-            type: Injectable,
-            args: [{ providedIn: 'root' }]
-        }] });
-
-// Focus helpers shared by the overlay primitives (popover, menu, listbox, dialog).
-const FOCUSABLE = [
-    'a[href]',
-    'area[href]',
-    'button:not([disabled])',
-    'input:not([disabled]):not([type="hidden"])',
-    'select:not([disabled])',
-    'textarea:not([disabled])',
-    'iframe',
-    '[contenteditable]:not([contenteditable="false"])',
-    '[tabindex]',
-].join(',');
-/** Elements inside `root` reachable with Tab, in document order. */
-function tabbables(root) {
-    return Array.from(root.querySelectorAll(FOCUSABLE)).filter((el) => el.tabIndex >= 0 && !el.closest('[inert]') && el.getClientRects().length > 0);
-}
-/** The first focusable element of `root` (any tabindex), or `null`. */
-function firstFocusable(root) {
-    return root.querySelector(FOCUSABLE);
-}
-/**
- * Keeps Tab inside `root`: from the last tabbable to the first and back.
- * Returns true when it moved focus.
- */
-function trapTab(event, root) {
-    if (event.key !== 'Tab')
-        return false;
-    const items = tabbables(root);
-    if (items.length === 0) {
-        event.preventDefault();
-        root.focus();
-        return true;
-    }
-    const first = items[0];
-    const last = items[items.length - 1];
-    const active = root.ownerDocument.activeElement;
-    if (event.shiftKey && (active === first || active === root)) {
-        event.preventDefault();
-        last.focus();
-        return true;
-    }
-    if (!event.shiftKey && active === last) {
-        event.preventDefault();
-        first.focus();
-        return true;
-    }
-    return false;
-}
-/** Focuses `el` if it is still in the document; never scrolls the page. */
-function focusSafely(el) {
-    if (!el || !el.isConnected)
-        return false;
-    el.focus({ preventScroll: true });
-    return el.ownerDocument.activeElement === el;
-}
-/** A natively focusable control, or the first one inside a wrapper (e.g. `<ath-button>`). */
-function focusTarget(host) {
-    if (host.matches('button, a[href], input, select, textarea, [tabindex]'))
-        return host;
-    return host.querySelector('button, a[href], [tabindex]') ?? host;
-}
-
-let nextPopoverId = 0;
-/**
- * Lazy panel content: rendered only while the popover is open.
- *
- * @example
- * <ath-popover>
- *   <ng-template athPopoverContent>…</ng-template>
- * </ath-popover>
- */
-class AthPopoverContentDirective {
-    constructor() {
-        this.template = inject(TemplateRef);
-    }
-    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthPopoverContentDirective, deps: [], target: i0.ɵɵFactoryTarget.Directive }); }
-    static { this.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "14.0.0", version: "18.2.14", type: AthPopoverContentDirective, isStandalone: true, selector: "ng-template[athPopoverContent]", ngImport: i0 }); }
-}
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthPopoverContentDirective, decorators: [{
-            type: Directive,
-            args: [{
-                    selector: 'ng-template[athPopoverContent]',
-                    standalone: true,
-                }]
-        }] });
-/**
- * Athene Popover
- *
- * An anchored panel in the top layer: no container's overflow or z-index
- * clips it. Opens from `athPopoverTrigger`, `show()` or `[(open)]`; closes on
- * Escape (topmost overlay only), outside click and Tab-out, and returns focus
- * to the trigger. `role="dialog"` by default; `trapFocus` keeps Tab inside.
- *
- * @example
- * <ath-button [athPopoverTrigger]="info">Details</ath-button>
- * <ath-popover #info ariaLabel="Details" arrow>
- *   <p>Content</p>
- * </ath-popover>
- */
-class AthPopoverComponent {
-    constructor() {
-        this.stack = inject(AthOverlayStack);
-        /** Whether the panel is shown. Two-way: `[(open)]`. */
-        this.open = model(false);
-        /**
-         * The element the panel hangs from (a trigger directive sets it on its
-         * own), or a `FloatingVirtualAnchor` such as the spot the pointer rests on;
-         * its `contextElement` then counts as the trigger.
-         */
-        this.anchor = input(null);
-        this.size = input('md');
-        this.padding = input('md');
-        this.align = input('start');
-        this.side = input('bottom');
-        /** Gap to the anchor in px. */
-        this.offset = input(6);
-        this.matchWidth = input(false, { transform: booleanAttribute });
-        /** Upper bound for the height in px (the viewport caps it anyway). */
-        this.maxHeight = input(null);
-        /** Show an arrow pointing at the anchor. */
-        this.arrow = input(false, { transform: booleanAttribute });
-        /** Keep Tab inside the panel (modal-like content); otherwise Tab out closes it. */
-        this.trapFocus = input(false, { transform: booleanAttribute });
-        this.autoFocus = input('first');
-        /** Return focus to the trigger on Escape / selection / programmatic close. */
-        this.restoreFocus = input(true, { transform: booleanAttribute });
-        this.closeOnEscape = input(true, { transform: booleanAttribute });
-        this.closeOnOutsideClick = input(true, { transform: booleanAttribute });
-        this.panelRole = input('dialog');
-        this.ariaLabel = input(null);
-        this.ariaLabelledby = input(null);
-        /** Extra classes on the panel (it lives in this component's view). */
-        this.panelClass = input('');
-        this.opened = output();
-        this.closed = output();
-        /** Id of the panel, for `aria-controls`. */
-        this.panelId = input(`ath-popover-${++nextPopoverId}`);
-        this.lazyContent = contentChild(AthPopoverContentDirective, {
-            descendants: false,
-        });
-        this.panelRef = viewChild('panel');
-        this.triggerAnchor = signal(null);
-        /** The element the panel currently hangs from. */
-        this.anchorElement = computed(() => resolveAnchor(this.anchor()) ?? this.triggerAnchor());
-        /** What the panel is placed against: the anchor input (element or virtual) or the trigger. */
-        this.floatTarget = computed(() => resolveFloatingTarget(this.anchor()) ?? this.triggerAnchor());
-        this.panelClasses = computed(() => [
-            `ath-popover__panel--${this.size()}`,
-            `ath-popover__panel--pad-${this.padding()}`,
-            this.panelClass(),
-        ]
-            .filter(Boolean)
-            .join(' '));
-        this.registered = false;
-        this.returnFocus = null;
-        this.entry = {
-            panel: () => this.panel,
-            anchor: () => this.anchorElement(),
-            closeOnEscape: () => this.closeOnEscape(),
-            closeOnOutsideClick: () => this.closeOnOutsideClick(),
-            dismiss: (reason) => this.hide(reason),
-        };
-    }
-    /** The panel element while open. */
-    get panel() {
-        return this.panelRef()?.nativeElement ?? null;
-    }
-    ngOnChanges(changes) {
-        if (!changes['open'])
-            return;
-        if (this.open() && !this.registered)
-            this.afterOpen();
-        else if (!this.open() && this.registered)
-            this.afterClose('programmatic');
-    }
-    ngOnDestroy() {
-        clearTimeout(this.focusTimer);
-        if (this.registered)
-            this.stack.close(this.entry);
-    }
-    /** Opens the panel, optionally hanging it from `anchor`. */
-    show(anchor) {
-        if (anchor)
-            this.triggerAnchor.set(anchor);
-        if (this.open())
-            return;
-        this.open.set(true);
-        this.afterOpen();
-    }
-    /**
-     * Closes the panel. `restore` overrides whether focus goes back to the
-     * trigger (default: yes when focus was inside or the user pressed Escape).
-     */
-    hide(reason = 'programmatic', restore) {
-        if (!this.open())
-            return;
-        this.open.set(false);
-        this.afterClose(reason, restore);
-    }
-    toggle(anchor) {
-        if (this.open())
-            this.hide();
-        else
-            this.show(anchor);
-    }
-    /** Moves focus into the panel according to `autoFocus` (or `mode`). */
-    focusPanel(mode = this.autoFocus()) {
-        const panel = this.panel;
-        if (!panel || mode === 'none')
-            return;
-        const active = panel.ownerDocument.activeElement;
-        if (active && panel.contains(active) && active !== panel)
-            return;
-        const target = mode === 'first' ? (tabbables(panel)[0] ?? panel) : panel;
-        focusSafely(target);
-    }
-    onKeydown(event) {
-        const panel = this.panel;
-        if (panel && this.trapFocus())
-            trapTab(event, panel);
-    }
-    onFocusOut(event) {
-        if (this.trapFocus() || !this.open())
-            return;
-        const next = event.relatedTarget;
-        const panel = this.panel;
-        const anchor = this.anchorElement();
-        if (!(next instanceof Node) || !panel)
-            return;
-        if (panel.contains(next) || anchor?.contains(next))
-            return;
-        this.hide('tab', false);
-    }
-    afterOpen() {
-        this.registered = true;
-        const doc = this.anchorElement()?.ownerDocument ?? document;
-        const active = doc.activeElement;
-        const anchor = this.anchorElement();
-        this.returnFocus = anchor
-            ? focusTarget(anchor)
-            : active instanceof HTMLElement && active !== doc.body
-                ? active
-                : null;
-        this.stack.open(this.entry);
-        this.opened.emit();
-        // After the panel has rendered and been positioned.
-        clearTimeout(this.focusTimer);
-        this.focusTimer = setTimeout(() => this.focusPanel());
-    }
-    afterClose(reason, restore) {
-        this.registered = false;
-        clearTimeout(this.focusTimer);
-        this.stack.close(this.entry);
-        const panel = this.panel;
-        const doc = panel?.ownerDocument ?? document;
-        const focusInside = !!panel && panel.contains(doc.activeElement);
-        const back = this.returnFocus;
-        this.returnFocus = null;
-        const wanted = restore ??
-            (this.restoreFocus() &&
-                (reason === 'escape' || reason === 'select' || (reason !== 'tab' && focusInside)));
-        if (wanted && reason !== 'outside') {
-            focusSafely(back);
-        }
-        else if (reason === 'outside' && focusInside && this.restoreFocus()) {
-            // The panel takes focus with it; if the click landed on nothing
-            // focusable, put focus back on the trigger instead of the page.
-            setTimeout(() => {
-                if (doc.activeElement === doc.body || !doc.activeElement)
-                    focusSafely(back);
-            });
-        }
-        this.closed.emit(reason);
-    }
-    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthPopoverComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthPopoverComponent, isStandalone: true, selector: "ath-popover", inputs: { open: { classPropertyName: "open", publicName: "open", isSignal: true, isRequired: false, transformFunction: null }, anchor: { classPropertyName: "anchor", publicName: "anchor", isSignal: true, isRequired: false, transformFunction: null }, size: { classPropertyName: "size", publicName: "size", isSignal: true, isRequired: false, transformFunction: null }, padding: { classPropertyName: "padding", publicName: "padding", isSignal: true, isRequired: false, transformFunction: null }, align: { classPropertyName: "align", publicName: "align", isSignal: true, isRequired: false, transformFunction: null }, side: { classPropertyName: "side", publicName: "side", isSignal: true, isRequired: false, transformFunction: null }, offset: { classPropertyName: "offset", publicName: "offset", isSignal: true, isRequired: false, transformFunction: null }, matchWidth: { classPropertyName: "matchWidth", publicName: "matchWidth", isSignal: true, isRequired: false, transformFunction: null }, maxHeight: { classPropertyName: "maxHeight", publicName: "maxHeight", isSignal: true, isRequired: false, transformFunction: null }, arrow: { classPropertyName: "arrow", publicName: "arrow", isSignal: true, isRequired: false, transformFunction: null }, trapFocus: { classPropertyName: "trapFocus", publicName: "trapFocus", isSignal: true, isRequired: false, transformFunction: null }, autoFocus: { classPropertyName: "autoFocus", publicName: "autoFocus", isSignal: true, isRequired: false, transformFunction: null }, restoreFocus: { classPropertyName: "restoreFocus", publicName: "restoreFocus", isSignal: true, isRequired: false, transformFunction: null }, closeOnEscape: { classPropertyName: "closeOnEscape", publicName: "closeOnEscape", isSignal: true, isRequired: false, transformFunction: null }, closeOnOutsideClick: { classPropertyName: "closeOnOutsideClick", publicName: "closeOnOutsideClick", isSignal: true, isRequired: false, transformFunction: null }, panelRole: { classPropertyName: "panelRole", publicName: "panelRole", isSignal: true, isRequired: false, transformFunction: null }, ariaLabel: { classPropertyName: "ariaLabel", publicName: "ariaLabel", isSignal: true, isRequired: false, transformFunction: null }, ariaLabelledby: { classPropertyName: "ariaLabelledby", publicName: "ariaLabelledby", isSignal: true, isRequired: false, transformFunction: null }, panelClass: { classPropertyName: "panelClass", publicName: "panelClass", isSignal: true, isRequired: false, transformFunction: null }, panelId: { classPropertyName: "panelId", publicName: "panelId", isSignal: true, isRequired: false, transformFunction: null } }, outputs: { open: "openChange", opened: "opened", closed: "closed" }, queries: [{ propertyName: "lazyContent", first: true, predicate: AthPopoverContentDirective, isSignal: true }], viewQueries: [{ propertyName: "panelRef", first: true, predicate: ["panel"], descendants: true, isSignal: true }], exportAs: ["athPopover"], usesOnChanges: true, ngImport: i0, template: "@if (open()) {\n  <div\n    #panel\n    class=\"ath-popover__panel\"\n    [class]=\"panelClasses()\"\n    [id]=\"panelId()\"\n    [attr.role]=\"panelRole()\"\n    [attr.aria-label]=\"ariaLabel()\"\n    [attr.aria-labelledby]=\"ariaLabelledby()\"\n    [attr.aria-modal]=\"trapFocus() && panelRole() === 'dialog' ? 'true' : null\"\n    tabindex=\"-1\"\n    [athFloating]=\"floatTarget()\"\n    [align]=\"align()\"\n    [side]=\"side()\"\n    [offset]=\"offset()\"\n    [matchWidth]=\"matchWidth()\"\n    [maxHeight]=\"maxHeight()\"\n    [arrow]=\"arrow() ? arrowEl : null\"\n    (keydown)=\"onKeydown($event)\"\n    (focusout)=\"onFocusOut($event)\"\n  >\n    <span #arrowEl class=\"ath-popover__arrow\" [hidden]=\"!arrow()\" aria-hidden=\"true\"></span>\n    @if (lazyContent(); as lazy) {\n      <ng-container [ngTemplateOutlet]=\"lazy.template\" />\n    } @else {\n      <ng-content />\n    }\n  </div>\n}\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:contents}.ath-popover__panel{box-sizing:border-box;max-width:calc(100vw - var(--space-4));font-family:var(--font-sans);font-size:var(--text-base);font-style:normal;font-weight:var(--weight-normal);text-align:start;text-transform:none;white-space:normal;color:var(--fg);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-3);animation:ath-popover-in var(--t-base)}.ath-popover__panel:focus{outline:none}.ath-popover__panel:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-popover__panel--sm{width:220px}.ath-popover__panel--md{width:280px}.ath-popover__panel--lg{width:360px}.ath-popover__panel--auto{width:max-content;min-width:180px}.ath-popover__panel--pad-md{padding:var(--space-3)}.ath-popover__panel--pad-sm{padding:var(--space-1)}.ath-popover__panel--pad-none{padding:0}.ath-popover__panel[data-placement=top]{animation-name:ath-popover-in-up}.ath-popover__arrow{position:absolute;top:-6px;width:10px;height:10px;background:var(--surface);border-top:1px solid var(--border);border-left:1px solid var(--border);transform:translate(-50%) rotate(45deg);pointer-events:none}[data-placement=top]>.ath-popover__arrow{top:auto;bottom:-6px;transform:translate(-50%) rotate(225deg)}@keyframes ath-popover-in{0%{opacity:0;transform:translateY(-4px)}}@keyframes ath-popover-in-up{0%{opacity:0;transform:translateY(4px)}}\n"], dependencies: [{ kind: "directive", type: AthFloatingDirective, selector: "[athFloating]", inputs: ["athFloating", "align", "side", "offset", "matchWidth", "maxHeight", "topLayer", "arrow"], exportAs: ["athFloating"] }, { kind: "directive", type: NgTemplateOutlet, selector: "[ngTemplateOutlet]", inputs: ["ngTemplateOutletContext", "ngTemplateOutlet", "ngTemplateOutletInjector"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
-}
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthPopoverComponent, decorators: [{
-            type: Component,
-            args: [{ selector: 'ath-popover', standalone: true, imports: [AthFloatingDirective, NgTemplateOutlet], changeDetection: ChangeDetectionStrategy.OnPush, exportAs: 'athPopover', template: "@if (open()) {\n  <div\n    #panel\n    class=\"ath-popover__panel\"\n    [class]=\"panelClasses()\"\n    [id]=\"panelId()\"\n    [attr.role]=\"panelRole()\"\n    [attr.aria-label]=\"ariaLabel()\"\n    [attr.aria-labelledby]=\"ariaLabelledby()\"\n    [attr.aria-modal]=\"trapFocus() && panelRole() === 'dialog' ? 'true' : null\"\n    tabindex=\"-1\"\n    [athFloating]=\"floatTarget()\"\n    [align]=\"align()\"\n    [side]=\"side()\"\n    [offset]=\"offset()\"\n    [matchWidth]=\"matchWidth()\"\n    [maxHeight]=\"maxHeight()\"\n    [arrow]=\"arrow() ? arrowEl : null\"\n    (keydown)=\"onKeydown($event)\"\n    (focusout)=\"onFocusOut($event)\"\n  >\n    <span #arrowEl class=\"ath-popover__arrow\" [hidden]=\"!arrow()\" aria-hidden=\"true\"></span>\n    @if (lazyContent(); as lazy) {\n      <ng-container [ngTemplateOutlet]=\"lazy.template\" />\n    } @else {\n      <ng-content />\n    }\n  </div>\n}\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:contents}.ath-popover__panel{box-sizing:border-box;max-width:calc(100vw - var(--space-4));font-family:var(--font-sans);font-size:var(--text-base);font-style:normal;font-weight:var(--weight-normal);text-align:start;text-transform:none;white-space:normal;color:var(--fg);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-3);animation:ath-popover-in var(--t-base)}.ath-popover__panel:focus{outline:none}.ath-popover__panel:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-popover__panel--sm{width:220px}.ath-popover__panel--md{width:280px}.ath-popover__panel--lg{width:360px}.ath-popover__panel--auto{width:max-content;min-width:180px}.ath-popover__panel--pad-md{padding:var(--space-3)}.ath-popover__panel--pad-sm{padding:var(--space-1)}.ath-popover__panel--pad-none{padding:0}.ath-popover__panel[data-placement=top]{animation-name:ath-popover-in-up}.ath-popover__arrow{position:absolute;top:-6px;width:10px;height:10px;background:var(--surface);border-top:1px solid var(--border);border-left:1px solid var(--border);transform:translate(-50%) rotate(45deg);pointer-events:none}[data-placement=top]>.ath-popover__arrow{top:auto;bottom:-6px;transform:translate(-50%) rotate(225deg)}@keyframes ath-popover-in{0%{opacity:0;transform:translateY(-4px)}}@keyframes ath-popover-in-up{0%{opacity:0;transform:translateY(4px)}}\n"] }]
-        }] });
-
-// Keyboard helpers shared by `ath-menu` and `ath-listbox`.
-/** A printable character without Ctrl/Meta/Alt, i.e. typeahead input. */
-function isTypeaheadKey(event) {
-    return event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey;
-}
-/**
- * Typeahead as in the WAI-ARIA menu and listbox patterns: characters typed
- * within `delay` ms form a prefix; repeating one character cycles through
- * the items that start with it.
- */
-class Typeahead {
-    constructor(delay = 500) {
-        this.delay = delay;
-        this.buffer = '';
-        this.last = 0;
-    }
-    /**
-     * The index of the next label (after `from`, wrapping) that starts with the
-     * typed prefix, or -1.
-     */
-    next(char, labels, from) {
-        const now = Date.now();
-        if (now - this.last > this.delay)
-            this.buffer = '';
-        this.last = now;
-        const c = char.toLocaleLowerCase();
-        // "aaa" cycles through items starting with "a".
-        const cycling = this.buffer.length > 0 && [...this.buffer].every((x) => x === c);
-        this.buffer += c;
-        const prefix = cycling ? c : this.buffer;
-        const n = labels.length;
-        const start = cycling || this.buffer.length === 1 ? from + 1 : from;
-        for (let k = 0; k < n; k++) {
-            const i = (((start + k) % n) + n) % n;
-            if (labels[i].trim().toLocaleLowerCase().startsWith(prefix))
-                return i;
-        }
-        return -1;
-    }
-    reset() {
-        this.buffer = '';
-    }
-}
-/**
- * The next index from `from` in direction `step` (±1) that `usable` accepts,
- * wrapping when `wrap` is set; `from` itself when there is none.
- */
-function stepIndex(count, from, step, usable, wrap) {
-    for (let k = 1; k <= count; k++) {
-        let i = from + step * k;
-        if (wrap)
-            i = ((i % count) + count) % count;
-        else if (i < 0 || i >= count)
-            break;
-        if (usable(i))
-            return i;
-    }
-    return from;
-}
-/** The first (or last) index `usable` accepts, or -1. */
-function edgeIndex(count, usable, last = false) {
-    for (let k = 0; k < count; k++) {
-        const i = last ? count - 1 - k : k;
-        if (usable(i))
-            return i;
-    }
-    return -1;
-}
-
-const ATH_MENU_PARENT = new InjectionToken('ATH_MENU_PARENT');
-
-let nextReasonId = 0;
-/**
- * One entry of an `ath-menu`: `<button athMenuItem>`, `<a athMenuItem>` or
- * `<ath-menu-item>`.
- *
- * Disabled items stay focusable (`aria-disabled`), so keyboard and screen
- * reader users can find them and hear `disabledReason`, which is also the
- * hover tooltip. Use `(triggered)` rather than `(click)`: it does not fire for
- * disabled items and closes the menu afterwards (unless `keepOpen`).
- *
- * @example
- * <button athMenuItem [icon]="Pencil" shortcut="E" (triggered)="edit()">Edit</button>
- * <button athMenuItem variant="danger" [disabled]="!canDelete" [disabledReason]="why"
- *         (triggered)="delete()">Delete</button>
- */
-class AthMenuItemComponent {
-    constructor() {
-        this.menu = inject(ATH_MENU_PARENT, { optional: true });
-        /** The item element (the `<button>` or `<a>`). */
-        this.element = inject(ElementRef).nativeElement;
-        this.isButton = this.element.tagName === 'BUTTON';
-        this.checkIcon = Check;
-        this.reasonId = `ath-menu-item-reason-${++nextReasonId}`;
-        /** A Lucide icon before the label. */
-        this.icon = input(null);
-        /** Shortcut hint shown at the end, e.g. `⌘E`. */
-        this.shortcut = input(null);
-        /** `aria-keyshortcuts` value, e.g. `Meta+E` (the hint itself is hidden from AT). */
-        this.keyshortcuts = input(null);
-        this.variant = input('default');
-        this.disabled = input(false, { transform: booleanAttribute });
-        /** Why the item is disabled: tooltip and accessible description. */
-        this.disabledReason = input(null);
-        /** Hover tooltip (for a disabled item `disabledReason` takes its place). */
-        this.tooltip = input(null);
-        /** `true`/`false` makes it a `menuitemcheckbox` with a check mark. */
-        this.checked = input(null);
-        /** Leave the menu open after activation. */
-        this.keepOpen = input(false, { transform: booleanAttribute });
-        /** The item was chosen (click, Enter or Space) and is not disabled. */
-        this.triggered = output();
-    }
-    /** The visible label, for typeahead. */
-    label() {
-        const el = this.element.querySelector('.ath-menu-item__label');
-        return (el?.textContent ?? '').trim();
-    }
-    focus() {
-        focusSafely(this.element);
-    }
-    onClick(event) {
-        if (this.disabled()) {
-            event.preventDefault();
-            return;
-        }
-        this.triggered.emit();
-        this.menu?.itemActivated(this);
-    }
-    onKeydown(event) {
-        // Buttons click on Enter and Space natively, links only on Enter, and
-        // an <ath-menu-item> element on neither.
-        const isLink = this.element.tagName === 'A';
-        if ((event.key === ' ' && !this.isButton) ||
-            (event.key === 'Enter' && !this.isButton && !isLink)) {
-            event.preventDefault();
-            this.element.click();
-        }
-    }
-    onHover() {
-        if (this.menu?.isOpen())
-            this.focus();
-    }
-    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthMenuItemComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthMenuItemComponent, isStandalone: true, selector: "ath-menu-item, button[athMenuItem], a[athMenuItem]", inputs: { icon: { classPropertyName: "icon", publicName: "icon", isSignal: true, isRequired: false, transformFunction: null }, shortcut: { classPropertyName: "shortcut", publicName: "shortcut", isSignal: true, isRequired: false, transformFunction: null }, keyshortcuts: { classPropertyName: "keyshortcuts", publicName: "keyshortcuts", isSignal: true, isRequired: false, transformFunction: null }, variant: { classPropertyName: "variant", publicName: "variant", isSignal: true, isRequired: false, transformFunction: null }, disabled: { classPropertyName: "disabled", publicName: "disabled", isSignal: true, isRequired: false, transformFunction: null }, disabledReason: { classPropertyName: "disabledReason", publicName: "disabledReason", isSignal: true, isRequired: false, transformFunction: null }, tooltip: { classPropertyName: "tooltip", publicName: "tooltip", isSignal: true, isRequired: false, transformFunction: null }, checked: { classPropertyName: "checked", publicName: "checked", isSignal: true, isRequired: false, transformFunction: null }, keepOpen: { classPropertyName: "keepOpen", publicName: "keepOpen", isSignal: true, isRequired: false, transformFunction: null } }, outputs: { triggered: "triggered" }, host: { attributes: { "tabindex": "-1" }, listeners: { "click": "onClick($event)", "keydown": "onKeydown($event)", "mouseenter": "onHover()" }, properties: { "attr.disabled": "null", "attr.type": "isButton ? 'button' : null", "attr.role": "checked() === null ? 'menuitem' : 'menuitemcheckbox'", "attr.aria-checked": "checked() === null ? null : checked()", "attr.aria-disabled": "disabled() || null", "attr.aria-describedby": "disabled() && disabledReason() ? reasonId : null", "attr.aria-keyshortcuts": "keyshortcuts()", "attr.title": "(disabled() && disabledReason()) || tooltip() || null", "class.ath-menu-item--danger": "variant() === 'danger'", "class.ath-menu-item--disabled": "disabled()" }, classAttribute: "ath-menu-item" }, exportAs: ["athMenuItem"], ngImport: i0, template: `
-    @if (icon(); as img) {
-      <lucide-icon class="ath-menu-item__icon" [img]="img" [size]="16" aria-hidden="true" />
-    } @else if (checked() !== null) {
-      <span class="ath-menu-item__icon" aria-hidden="true">
-        @if (checked()) {
-          <lucide-icon [img]="checkIcon" [size]="16" />
-        }
-      </span>
-    }
-    <span class="ath-menu-item__label"><ng-content /></span>
-    @if (shortcut()) {
-      <kbd class="ath-menu-item__shortcut" aria-hidden="true">{{ shortcut() }}</kbd>
-    }
-    @if (disabled() && disabledReason()) {
-      <span class="ath-menu-item__reason" [id]="reasonId" aria-hidden="true">{{
-        disabledReason()
-      }}</span>
-    }
-  `, isInline: true, styles: [":host(.ath-menu-item){box-sizing:border-box;display:flex;align-items:center;gap:var(--space-2);width:100%;min-height:var(--space-8);margin:0;padding:var(--space-1) var(--space-2);font:inherit;font-size:var(--text-base);color:var(--fg-2);text-align:start;text-decoration:none;background:none;border:0;border-radius:var(--r-sm);cursor:pointer;-webkit-user-select:none;user-select:none;transition:background-color var(--t-fast)}:host(.ath-menu-item:hover),:host(.ath-menu-item:focus){color:var(--fg);background:var(--hover-strong);outline:none}:host(.ath-menu-item:focus-visible){outline:none;box-shadow:inset 0 0 0 2px var(--focus-ring-color)}:host(.ath-menu-item--danger){color:var(--red-text)}:host(.ath-menu-item--danger:hover),:host(.ath-menu-item--danger:focus){color:var(--red-text);background:var(--red-tint)}:host(.ath-menu-item--disabled){color:var(--fg-4);cursor:not-allowed}:host(.ath-menu-item--disabled:hover),:host(.ath-menu-item--disabled:focus){color:var(--fg-4);background:var(--hover)}.ath-menu-item__icon{display:inline-flex;flex-shrink:0;width:16px;color:inherit}.ath-menu-item__label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ath-menu-item__shortcut{flex-shrink:0;margin-inline-start:var(--space-4);font-family:var(--font-sans);font-size:var(--text-xs);color:var(--fg-4)}.ath-menu-item__reason{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}:host(.ath-menu-separator){display:block;height:1px;margin:var(--space-1) calc(var(--space-1) * -1);background:var(--border-faint)}\n"], dependencies: [{ kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
-}
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthMenuItemComponent, decorators: [{
-            type: Component,
-            args: [{ selector: 'ath-menu-item, button[athMenuItem], a[athMenuItem]', standalone: true, imports: [LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, exportAs: 'athMenuItem', template: `
-    @if (icon(); as img) {
-      <lucide-icon class="ath-menu-item__icon" [img]="img" [size]="16" aria-hidden="true" />
-    } @else if (checked() !== null) {
-      <span class="ath-menu-item__icon" aria-hidden="true">
-        @if (checked()) {
-          <lucide-icon [img]="checkIcon" [size]="16" />
-        }
-      </span>
-    }
-    <span class="ath-menu-item__label"><ng-content /></span>
-    @if (shortcut()) {
-      <kbd class="ath-menu-item__shortcut" aria-hidden="true">{{ shortcut() }}</kbd>
-    }
-    @if (disabled() && disabledReason()) {
-      <span class="ath-menu-item__reason" [id]="reasonId" aria-hidden="true">{{
-        disabledReason()
-      }}</span>
-    }
-  `, host: {
-                        class: 'ath-menu-item',
-                        tabindex: '-1',
-                        // A static `disabled` attribute would make the native button unfocusable;
-                        // disabled items stay focusable (aria-disabled).
-                        '[attr.disabled]': 'null',
-                        '[attr.type]': "isButton ? 'button' : null",
-                        '[attr.role]': "checked() === null ? 'menuitem' : 'menuitemcheckbox'",
-                        '[attr.aria-checked]': 'checked() === null ? null : checked()',
-                        '[attr.aria-disabled]': 'disabled() || null',
-                        '[attr.aria-describedby]': 'disabled() && disabledReason() ? reasonId : null',
-                        '[attr.aria-keyshortcuts]': 'keyshortcuts()',
-                        '[attr.title]': '(disabled() && disabledReason()) || tooltip() || null',
-                        '[class.ath-menu-item--danger]': "variant() === 'danger'",
-                        '[class.ath-menu-item--disabled]': 'disabled()',
-                        '(click)': 'onClick($event)',
-                        '(keydown)': 'onKeydown($event)',
-                        '(mouseenter)': 'onHover()',
-                    }, styles: [":host(.ath-menu-item){box-sizing:border-box;display:flex;align-items:center;gap:var(--space-2);width:100%;min-height:var(--space-8);margin:0;padding:var(--space-1) var(--space-2);font:inherit;font-size:var(--text-base);color:var(--fg-2);text-align:start;text-decoration:none;background:none;border:0;border-radius:var(--r-sm);cursor:pointer;-webkit-user-select:none;user-select:none;transition:background-color var(--t-fast)}:host(.ath-menu-item:hover),:host(.ath-menu-item:focus){color:var(--fg);background:var(--hover-strong);outline:none}:host(.ath-menu-item:focus-visible){outline:none;box-shadow:inset 0 0 0 2px var(--focus-ring-color)}:host(.ath-menu-item--danger){color:var(--red-text)}:host(.ath-menu-item--danger:hover),:host(.ath-menu-item--danger:focus){color:var(--red-text);background:var(--red-tint)}:host(.ath-menu-item--disabled){color:var(--fg-4);cursor:not-allowed}:host(.ath-menu-item--disabled:hover),:host(.ath-menu-item--disabled:focus){color:var(--fg-4);background:var(--hover)}.ath-menu-item__icon{display:inline-flex;flex-shrink:0;width:16px;color:inherit}.ath-menu-item__label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ath-menu-item__shortcut{flex-shrink:0;margin-inline-start:var(--space-4);font-family:var(--font-sans);font-size:var(--text-xs);color:var(--fg-4)}.ath-menu-item__reason{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}:host(.ath-menu-separator){display:block;height:1px;margin:var(--space-1) calc(var(--space-1) * -1);background:var(--border-faint)}\n"] }]
-        }] });
-/** A divider between groups of menu items. */
-class AthMenuSeparatorComponent {
-    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthMenuSeparatorComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "14.0.0", version: "18.2.14", type: AthMenuSeparatorComponent, isStandalone: true, selector: "ath-menu-separator", host: { attributes: { "role": "separator" }, classAttribute: "ath-menu-separator" }, ngImport: i0, template: '', isInline: true, styles: [":host(.ath-menu-item){box-sizing:border-box;display:flex;align-items:center;gap:var(--space-2);width:100%;min-height:var(--space-8);margin:0;padding:var(--space-1) var(--space-2);font:inherit;font-size:var(--text-base);color:var(--fg-2);text-align:start;text-decoration:none;background:none;border:0;border-radius:var(--r-sm);cursor:pointer;-webkit-user-select:none;user-select:none;transition:background-color var(--t-fast)}:host(.ath-menu-item:hover),:host(.ath-menu-item:focus){color:var(--fg);background:var(--hover-strong);outline:none}:host(.ath-menu-item:focus-visible){outline:none;box-shadow:inset 0 0 0 2px var(--focus-ring-color)}:host(.ath-menu-item--danger){color:var(--red-text)}:host(.ath-menu-item--danger:hover),:host(.ath-menu-item--danger:focus){color:var(--red-text);background:var(--red-tint)}:host(.ath-menu-item--disabled){color:var(--fg-4);cursor:not-allowed}:host(.ath-menu-item--disabled:hover),:host(.ath-menu-item--disabled:focus){color:var(--fg-4);background:var(--hover)}.ath-menu-item__icon{display:inline-flex;flex-shrink:0;width:16px;color:inherit}.ath-menu-item__label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ath-menu-item__shortcut{flex-shrink:0;margin-inline-start:var(--space-4);font-family:var(--font-sans);font-size:var(--text-xs);color:var(--fg-4)}.ath-menu-item__reason{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}:host(.ath-menu-separator){display:block;height:1px;margin:var(--space-1) calc(var(--space-1) * -1);background:var(--border-faint)}\n"], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
-}
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthMenuSeparatorComponent, decorators: [{
-            type: Component,
-            args: [{ selector: 'ath-menu-separator', standalone: true, changeDetection: ChangeDetectionStrategy.OnPush, template: '', host: { class: 'ath-menu-separator', role: 'separator' }, styles: [":host(.ath-menu-item){box-sizing:border-box;display:flex;align-items:center;gap:var(--space-2);width:100%;min-height:var(--space-8);margin:0;padding:var(--space-1) var(--space-2);font:inherit;font-size:var(--text-base);color:var(--fg-2);text-align:start;text-decoration:none;background:none;border:0;border-radius:var(--r-sm);cursor:pointer;-webkit-user-select:none;user-select:none;transition:background-color var(--t-fast)}:host(.ath-menu-item:hover),:host(.ath-menu-item:focus){color:var(--fg);background:var(--hover-strong);outline:none}:host(.ath-menu-item:focus-visible){outline:none;box-shadow:inset 0 0 0 2px var(--focus-ring-color)}:host(.ath-menu-item--danger){color:var(--red-text)}:host(.ath-menu-item--danger:hover),:host(.ath-menu-item--danger:focus){color:var(--red-text);background:var(--red-tint)}:host(.ath-menu-item--disabled){color:var(--fg-4);cursor:not-allowed}:host(.ath-menu-item--disabled:hover),:host(.ath-menu-item--disabled:focus){color:var(--fg-4);background:var(--hover)}.ath-menu-item__icon{display:inline-flex;flex-shrink:0;width:16px;color:inherit}.ath-menu-item__label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ath-menu-item__shortcut{flex-shrink:0;margin-inline-start:var(--space-4);font-family:var(--font-sans);font-size:var(--text-xs);color:var(--fg-4)}.ath-menu-item__reason{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}:host(.ath-menu-separator){display:block;height:1px;margin:var(--space-1) calc(var(--space-1) * -1);background:var(--border-faint)}\n"] }]
-        }] });
-
-let nextMenuId = 0;
-/**
- * Athene Menu: the WAI-ARIA menu button pattern for row actions, `⋯` menus
- * and toolbars.
- *
- * Keyboard: on the trigger Enter, Space and ArrowDown open on the first
- * item, ArrowUp on the last. In the menu: ArrowDown/ArrowUp (wrapping),
- * Home/End, typeahead, Enter/Space activate, Escape closes and returns
- * focus to the trigger, Tab closes and moves on.
- *
- * @example
- * <ath-button variant="ghost" [athMenuTrigger]="rowMenu" ariaLabel="Actions">⋯</ath-button>
- * <ath-menu #rowMenu>
- *   <button athMenuItem [icon]="Pencil" shortcut="E" (triggered)="edit()">Edit</button>
- *   <ath-menu-separator />
- *   <button athMenuItem variant="danger" (triggered)="remove()">Delete</button>
- * </ath-menu>
- */
-class AthMenuComponent {
-    constructor() {
-        /** Whether the menu is shown. Two-way: `[(open)]`. */
-        this.open = model(false);
-        /** Anchor for programmatic use; `athMenuTrigger` sets it on its own. */
-        this.anchor = input(null);
-        this.align = input('start');
-        this.side = input('bottom');
-        this.maxHeight = input(null);
-        /** Accessible name; by default the menu is labelled by its trigger. */
-        this.ariaLabel = input(null);
-        this.panelClass = input('');
-        this.opened = output();
-        this.closed = output();
-        this.panelId = `ath-menu-${++nextMenuId}`;
-        this.labelledBy = signal(null);
-        this.popover = viewChild.required(AthPopoverComponent);
-        this.items = contentChildren(AthMenuItemComponent, { descendants: true });
-        this.typeahead = new Typeahead();
-        this.pendingFocus = 'first';
-    }
-    isOpen() {
-        return this.open();
-    }
-    /** Opens the menu from `anchor`, focusing the first or last item. */
-    show(anchor, focus = 'first') {
-        this.pendingFocus = focus;
-        if (this.open()) {
-            this.focusEdge(focus);
-            return;
-        }
-        this.popover().show(resolveAnchor(anchor));
-    }
-    /** Closes the menu; focus returns to the trigger unless `restoreFocus` is false. */
-    hide(restoreFocus = true) {
-        this.popover().hide('programmatic', restoreFocus);
-    }
-    toggle(anchor, focus = 'first') {
-        if (this.open())
-            this.hide();
-        else
-            this.show(anchor, focus);
-    }
-    /** Called by `athMenuTrigger`: the trigger names the menu. */
-    labelFrom(triggerId) {
-        this.labelledBy.set(triggerId);
-    }
-    itemActivated(item) {
-        if (!item.keepOpen())
-            this.popover().hide('select', true);
-    }
-    onOpened() {
-        this.typeahead.reset();
-        this.opened.emit();
-        const focus = this.pendingFocus;
-        this.pendingFocus = 'first';
-        // After the projected items are in the open panel.
-        setTimeout(() => this.focusEdge(focus));
-    }
-    onKeydown(event) {
-        if (!this.open())
-            return;
-        const items = this.items();
-        const count = items.length;
-        if (count === 0)
-            return;
-        const active = items.findIndex((i) => i.element === document.activeElement);
-        const any = () => true;
-        let next = -1;
-        switch (event.key) {
-            case 'ArrowDown':
-                next = active < 0 ? 0 : stepIndex(count, active, 1, any, true);
-                break;
-            case 'ArrowUp':
-                next = active < 0 ? count - 1 : stepIndex(count, active, -1, any, true);
-                break;
-            case 'Home':
-            case 'PageUp':
-                next = 0;
-                break;
-            case 'End':
-            case 'PageDown':
-                next = count - 1;
-                break;
-            case 'Tab':
-                // Focus goes back to the trigger; the Tab itself then moves on from there.
-                this.popover().hide('tab', true);
-                return;
-            default:
-                if (isTypeaheadKey(event) && event.key !== ' ') {
-                    next = this.typeahead.next(event.key, items.map((i) => i.label()), Math.max(active, 0));
-                    if (next < 0)
-                        return;
-                }
-                else {
-                    return;
-                }
-        }
-        event.preventDefault();
-        items[next]?.focus();
-    }
-    focusEdge(focus) {
-        if (focus === 'none' || !this.open())
-            return;
-        const items = this.items();
-        const enabled = (i) => !items[i].disabled();
-        let index = edgeIndex(items.length, enabled, focus === 'last');
-        if (index < 0)
-            index = focus === 'last' ? items.length - 1 : 0;
-        if (items[index])
-            items[index].focus();
-        else
-            this.popover().focusPanel('panel');
-    }
-    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthMenuComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.2.0", version: "18.2.14", type: AthMenuComponent, isStandalone: true, selector: "ath-menu", inputs: { open: { classPropertyName: "open", publicName: "open", isSignal: true, isRequired: false, transformFunction: null }, anchor: { classPropertyName: "anchor", publicName: "anchor", isSignal: true, isRequired: false, transformFunction: null }, align: { classPropertyName: "align", publicName: "align", isSignal: true, isRequired: false, transformFunction: null }, side: { classPropertyName: "side", publicName: "side", isSignal: true, isRequired: false, transformFunction: null }, maxHeight: { classPropertyName: "maxHeight", publicName: "maxHeight", isSignal: true, isRequired: false, transformFunction: null }, ariaLabel: { classPropertyName: "ariaLabel", publicName: "ariaLabel", isSignal: true, isRequired: false, transformFunction: null }, panelClass: { classPropertyName: "panelClass", publicName: "panelClass", isSignal: true, isRequired: false, transformFunction: null } }, outputs: { open: "openChange", opened: "opened", closed: "closed" }, host: { listeners: { "keydown": "onKeydown($event)" } }, providers: [{ provide: ATH_MENU_PARENT, useExisting: forwardRef(() => AthMenuComponent) }], queries: [{ propertyName: "items", predicate: AthMenuItemComponent, descendants: true, isSignal: true }], viewQueries: [{ propertyName: "popover", first: true, predicate: AthPopoverComponent, descendants: true, isSignal: true }], exportAs: ["athMenu"], ngImport: i0, template: `
-    <ath-popover
-      [open]="open()"
-      (openChange)="open.set($event)"
-      [anchor]="anchor()"
-      [panelId]="panelId"
-      size="auto"
-      padding="sm"
-      panelRole="menu"
-      autoFocus="none"
-      [align]="align()"
-      [side]="side()"
-      [maxHeight]="maxHeight()"
-      [ariaLabel]="ariaLabel()"
-      [ariaLabelledby]="ariaLabel() ? null : labelledBy()"
-      [panelClass]="panelClass()"
-      (opened)="onOpened()"
-      (closed)="closed.emit($event)"
-    >
-      <ng-content />
-    </ath-popover>
-  `, isInline: true, styles: [":host{display:contents}\n"], dependencies: [{ kind: "component", type: AthPopoverComponent, selector: "ath-popover", inputs: ["open", "anchor", "size", "padding", "align", "side", "offset", "matchWidth", "maxHeight", "arrow", "trapFocus", "autoFocus", "restoreFocus", "closeOnEscape", "closeOnOutsideClick", "panelRole", "ariaLabel", "ariaLabelledby", "panelClass", "panelId"], outputs: ["openChange", "opened", "closed"], exportAs: ["athPopover"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
-}
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthMenuComponent, decorators: [{
-            type: Component,
-            args: [{ selector: 'ath-menu', standalone: true, imports: [AthPopoverComponent], changeDetection: ChangeDetectionStrategy.OnPush, exportAs: 'athMenu', providers: [{ provide: ATH_MENU_PARENT, useExisting: forwardRef(() => AthMenuComponent) }], template: `
-    <ath-popover
-      [open]="open()"
-      (openChange)="open.set($event)"
-      [anchor]="anchor()"
-      [panelId]="panelId"
-      size="auto"
-      padding="sm"
-      panelRole="menu"
-      autoFocus="none"
-      [align]="align()"
-      [side]="side()"
-      [maxHeight]="maxHeight()"
-      [ariaLabel]="ariaLabel()"
-      [ariaLabelledby]="ariaLabel() ? null : labelledBy()"
-      [panelClass]="panelClass()"
-      (opened)="onOpened()"
-      (closed)="closed.emit($event)"
-    >
-      <ng-content />
-    </ath-popover>
-  `, host: {
-                        '(keydown)': 'onKeydown($event)',
-                    }, styles: [":host{display:contents}\n"] }]
-        }] });
-
-const ALIGN = { left: 'start', right: 'end', auto: 'auto' };
-/** The controls a projected trigger may be (or contain). */
-const CONTROL = 'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-/**
- * Athene Dropdown: an action menu from a flat `items` list. A preset on
- * `ath-menu` (keyboard, focus and ARIA come from there); for custom rows use
- * `ath-menu` + `athMenuItem` directly.
- *
- * The projected content is the trigger. When it is (or contains) a button,
- * that button is the menu button: one tab stop, with `aria-haspopup`,
- * `aria-expanded` and `aria-controls` on it. Plain content (text, an icon)
- * gets a `role="button"` wrapper instead.
- *
- * @example
- * <ath-dropdown [items]="menuItems" (itemClicked)="onAction($event)">
- *   <ath-button variant="ghost">Actions</ath-button>
- * </ath-dropdown>
- */
-class AthDropdownComponent {
-    constructor() {
-        /** Menu items */
-        this.items = input([]);
-        /**
-         * Horizontal alignment hint.
-         * - `'left'`  – menu anchored to the left edge of trigger
-         * - `'right'` – menu anchored to the right edge of trigger
-         * - `'auto'`  – pick best side based on viewport space
-         *
-         * Vertical direction is always auto-detected.
-         */
-        this.align = input('auto');
-        /** Item click event */
-        this.itemClicked = output();
-        /** Emits `true` when the menu opens, `false` when it closes. */
-        this.openChange = output();
-        this.menuAlign = () => ALIGN[this.align()];
-        this.menu = viewChild.required(AthMenuComponent);
-        this.triggerRef = viewChild.required('trigger');
-        this.menuQuery = viewChild(AthMenuComponent);
-        this.viewReady = false;
-        effect(() => {
-            const open = this.menuQuery()?.open() ?? false;
-            if (this.viewReady)
-                this.syncAria(open);
-        });
-    }
-    ngAfterViewInit() {
-        this.viewReady = true;
-        this.syncAria(this.menu().open());
-    }
-    /** Opens or closes the menu (focus goes to the first item when opening). */
-    toggle() {
-        this.menu().toggle(this.triggerRef().nativeElement, 'first');
-    }
-    /** Emits the item's id, as a click on it does. */
-    selectItem(item) {
-        if (item.disabled || item.divider)
-            return;
-        this.itemClicked.emit(item.id);
-        this.menu().hide();
-    }
-    onOpenChange(open) {
-        this.openChange.emit(open);
-    }
-    onHostClick(event) {
-        if (this.inTrigger(event))
-            this.toggle();
-    }
-    onHostKeydown(event) {
-        if (!this.inTrigger(event))
-            return;
-        const wrapperIsControl = this.control() === this.triggerRef().nativeElement;
-        const key = event.key;
-        if (key === 'ArrowDown' || key === 'ArrowUp') {
-            event.preventDefault();
-            this.menu().show(this.triggerRef().nativeElement, key === 'ArrowUp' ? 'last' : 'first');
-        }
-        else if (wrapperIsControl && (key === 'Enter' || key === ' ')) {
-            // A real button clicks on its own; the role="button" wrapper does not.
-            event.preventDefault();
-            this.toggle();
-        }
-    }
-    /** The trigger's real control, or the wrapper when there is none. */
-    control() {
-        const wrapper = this.triggerRef().nativeElement;
-        return wrapper.querySelector(CONTROL) ?? wrapper;
-    }
-    inTrigger(event) {
-        return event.target instanceof Node && this.triggerRef().nativeElement.contains(event.target);
-    }
-    syncAria(open) {
-        const wrapper = this.triggerRef().nativeElement;
-        const control = this.control();
-        if (control === wrapper) {
-            wrapper.setAttribute('role', 'button');
-            wrapper.tabIndex = 0;
-        }
-        else {
-            wrapper.removeAttribute('role');
-            wrapper.removeAttribute('tabindex');
-        }
-        control.setAttribute('aria-haspopup', 'menu');
-        control.setAttribute('aria-expanded', String(open));
-        if (open)
-            control.setAttribute('aria-controls', this.menu().panelId);
-        else
-            control.removeAttribute('aria-controls');
-    }
-    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthDropdownComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "18.2.14", type: AthDropdownComponent, isStandalone: true, selector: "ath-dropdown", inputs: { items: { classPropertyName: "items", publicName: "items", isSignal: true, isRequired: false, transformFunction: null }, align: { classPropertyName: "align", publicName: "align", isSignal: true, isRequired: false, transformFunction: null } }, outputs: { itemClicked: "itemClicked", openChange: "openChange" }, host: { listeners: { "click": "onHostClick($event)", "keydown": "onHostKeydown($event)" } }, viewQueries: [{ propertyName: "menu", first: true, predicate: AthMenuComponent, descendants: true, isSignal: true }, { propertyName: "triggerRef", first: true, predicate: ["trigger"], descendants: true, isSignal: true }, { propertyName: "menuQuery", first: true, predicate: AthMenuComponent, descendants: true, isSignal: true }], ngImport: i0, template: "<span #trigger class=\"ath-dropdown__trigger\">\n  <ng-content />\n</span>\n\n<!-- ath-dropdown__menu: app code checks for an open dropdown by this class. -->\n<ath-menu\n  panelClass=\"ath-dropdown__menu\"\n  [anchor]=\"trigger\"\n  [align]=\"menuAlign()\"\n  (openChange)=\"onOpenChange($event)\"\n>\n  @for (item of items(); track item.id) {\n    @if (item.divider) {\n      <ath-menu-separator />\n    } @else {\n      <button\n        athMenuItem\n        role=\"menuitem\"\n        class=\"ath-dropdown__item\"\n        [class.ath-dropdown__item--danger]=\"item.variant === 'danger'\"\n        [icon]=\"item.icon\"\n        [variant]=\"item.variant ?? 'default'\"\n        [disabled]=\"!!item.disabled\"\n        [disabledReason]=\"item.title\"\n        [tooltip]=\"item.title\"\n        [shortcut]=\"item.shortcut ?? null\"\n        (triggered)=\"itemClicked.emit(item.id)\"\n      >\n        {{ item.label }}\n      </button>\n    }\n  }\n</ath-menu>\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:inline-flex}.ath-dropdown__trigger{display:inline-flex;cursor:pointer}.ath-dropdown__trigger[role=button]:focus-visible{border-radius:var(--r-sm);outline:none;box-shadow:var(--focus-ring-shadow)}\n"], dependencies: [{ kind: "component", type: AthMenuComponent, selector: "ath-menu", inputs: ["open", "anchor", "align", "side", "maxHeight", "ariaLabel", "panelClass"], outputs: ["openChange", "opened", "closed"], exportAs: ["athMenu"] }, { kind: "component", type: AthMenuItemComponent, selector: "ath-menu-item, button[athMenuItem], a[athMenuItem]", inputs: ["icon", "shortcut", "keyshortcuts", "variant", "disabled", "disabledReason", "tooltip", "checked", "keepOpen"], outputs: ["triggered"], exportAs: ["athMenuItem"] }, { kind: "component", type: AthMenuSeparatorComponent, selector: "ath-menu-separator" }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
-}
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: AthDropdownComponent, decorators: [{
-            type: Component,
-            args: [{ selector: 'ath-dropdown', standalone: true, imports: [AthMenuComponent, AthMenuItemComponent, AthMenuSeparatorComponent], changeDetection: ChangeDetectionStrategy.OnPush, host: {
-                        '(click)': 'onHostClick($event)',
-                        '(keydown)': 'onHostKeydown($event)',
-                    }, template: "<span #trigger class=\"ath-dropdown__trigger\">\n  <ng-content />\n</span>\n\n<!-- ath-dropdown__menu: app code checks for an open dropdown by this class. -->\n<ath-menu\n  panelClass=\"ath-dropdown__menu\"\n  [anchor]=\"trigger\"\n  [align]=\"menuAlign()\"\n  (openChange)=\"onOpenChange($event)\"\n>\n  @for (item of items(); track item.id) {\n    @if (item.divider) {\n      <ath-menu-separator />\n    } @else {\n      <button\n        athMenuItem\n        role=\"menuitem\"\n        class=\"ath-dropdown__item\"\n        [class.ath-dropdown__item--danger]=\"item.variant === 'danger'\"\n        [icon]=\"item.icon\"\n        [variant]=\"item.variant ?? 'default'\"\n        [disabled]=\"!!item.disabled\"\n        [disabledReason]=\"item.title\"\n        [tooltip]=\"item.title\"\n        [shortcut]=\"item.shortcut ?? null\"\n        (triggered)=\"itemClicked.emit(item.id)\"\n      >\n        {{ item.label }}\n      </button>\n    }\n  }\n</ath-menu>\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:inline-flex}.ath-dropdown__trigger{display:inline-flex;cursor:pointer}.ath-dropdown__trigger[role=button]:focus-visible{border-radius:var(--r-sm);outline:none;box-shadow:var(--focus-ring-shadow)}\n"] }]
-        }], ctorParameters: () => [] });
 
 /**
  * iOS-style segmented control. Multiple options, exactly one active.

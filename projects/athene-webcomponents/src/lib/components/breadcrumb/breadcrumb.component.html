@@ -1,18 +1,51 @@
-<nav class="ath-breadcrumb" [attr.aria-label]="navLabel">
-  <ol class="ath-breadcrumb__list">
-    @for (item of items; track item.label; let last = $last) {
-      <li class="ath-breadcrumb__item">
-        @if (item.link && !last) {
-          <a [routerLink]="item.link" class="ath-breadcrumb__link">{{ item.label }}</a>
-        } @else {
-          <span class="ath-breadcrumb__current" [attr.aria-current]="last ? 'page' : null">{{
-            item.label
-          }}</span>
-        }
-        @if (!last) {
-          <lucide-icon [img]="separatorIcon" [size]="14" class="ath-breadcrumb__separator" />
-        }
-      </li>
-    }
-  </ol>
-</nav>
+@if (items().length > 0) {
+  <nav class="ath-breadcrumb" [attr.aria-label]="navLabel()">
+    <ol class="ath-breadcrumb__list">
+      @for (s of shown(); track $index; let lastItem = $last) {
+        <li class="ath-breadcrumb__item">
+          @if (s.kind === 'more') {
+            <ath-dropdown
+              [items]="s.items"
+              align="left"
+              (itemClicked)="openHidden(s.hidden, $event)"
+            >
+              <span class="ath-breadcrumb__more" [attr.title]="moreLabel()">…</span>
+            </ath-dropdown>
+          } @else if (s.last || !target(s.crumb)) {
+            <span
+              class="ath-breadcrumb__current"
+              [class.ath-breadcrumb__current--quiet]="!s.last"
+              [attr.aria-current]="s.last ? 'page' : null"
+              [attr.title]="s.crumb.title ?? s.crumb.label"
+            >
+              @if (s.crumb.key) {
+                <span class="ath-breadcrumb__key">{{ s.crumb.key }}</span>
+              }
+              <span class="ath-breadcrumb__text">{{ s.crumb.label }}</span>
+            </span>
+          } @else {
+            <a
+              class="ath-breadcrumb__link"
+              [routerLink]="target(s.crumb)"
+              [queryParams]="s.crumb.queryParams ?? null"
+              [attr.title]="s.crumb.title ?? s.crumb.label"
+            >
+              @if (s.crumb.key) {
+                <span class="ath-breadcrumb__key">{{ s.crumb.key }}</span>
+              }
+              <span class="ath-breadcrumb__text">{{ s.crumb.label }}</span>
+            </a>
+          }
+          @if (!lastItem) {
+            <lucide-icon
+              class="ath-breadcrumb__separator"
+              [img]="separatorIcon"
+              [size]="10"
+              aria-hidden="true"
+            />
+          }
+        </li>
+      }
+    </ol>
+  </nav>
+}

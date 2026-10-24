@@ -16,10 +16,10 @@ const meta: Meta<AthSidebarComponent> = {
       <div style="height:480px;display:flex">
         <ath-sidebar [collapsed]="collapsed" (collapsedChange)="collapsed = $event">
           <div slot="header" style="padding:12px;font-weight:600">Athene</div>
-          <ath-nav-item [icon]="Home" label="Home" link="/home" [collapsed]="collapsed" />
-          <ath-nav-item [icon]="Inbox" label="Inbox" link="/inbox" [badgeCount]="3" [collapsed]="collapsed" />
-          <ath-nav-item [icon]="Calendar" label="Calendar" link="/calendar" [collapsed]="collapsed" />
-          <div slot="footer"><ath-nav-item [icon]="Settings" label="Settings" link="/settings" [collapsed]="collapsed" /></div>
+          <ath-nav-item [icon]="Home" label="Home" route="/home" [compact]="collapsed" />
+          <ath-nav-item [icon]="Inbox" label="Inbox" route="/inbox" [badge]="3" [compact]="collapsed" />
+          <ath-nav-item [icon]="Calendar" label="Calendar" route="/calendar" [compact]="collapsed" />
+          <div slot="footer"><ath-nav-item [icon]="Settings" label="Settings" route="/settings" [compact]="collapsed" /></div>
         </ath-sidebar>
       </div>
     `,

@@ -11,6 +11,8 @@ export interface AthLabels {
     showPassword: () => string;
     hidePassword: () => string;
     breadcrumb: () => string;
+    /** `ath-breadcrumb`: the "…" that folds the middle of a long trail. */
+    breadcrumbMore: () => string;
     /** The empty seat of `ath-avatar`: nobody is assigned. */
     unassigned: () => string;
     dismiss: () => string;

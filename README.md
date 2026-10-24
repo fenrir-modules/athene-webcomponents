@@ -201,7 +201,7 @@ One KPI API (the app's `metric-card` features): `label`, `value`, `delta`, `delt
 
 **Contract the app shell must provide** (`styles/_layout.scss`):
 
-1. The scroll container of routed pages has the class `ath-stage` and a definite height: a flex item with `flex: 1; min-height: 0` in a full-height flex column (shell `height: 100dvh; overflow: hidden`). The lib makes it a flex column, `overflow-y: auto`, and a size container named `ath-stage`.
+1. The scroll container of routed pages has the class `ath-stage` and a definite height: a flex item with `flex: 1; min-height: 0` in a full-height flex column (shell `height: 100dvh; overflow: hidden`). The lib makes it `overflow-y: auto` and a size container named `ath-stage`, and a flex column while it hosts an `ath-page` (until then the route host keeps plain block flow, so an unmigrated page's `height: 100%` still reaches the stage).
 2. Its padding is `var(--content-pad-top) var(--content-pad-x) var(--content-pad-bottom)`. Phone padding is changed by redefining those properties on the stage, not with a literal, because `ath-page` trims the bottom gutter to `--content-pad-top` with a token `calc()` (16px under the last panel).
 3. `ath-page` is the root element of the routed component's template: stage › route host › `ath-page`. The lib lets that route host grow (`.ath-stage > :has(> ath-page)`); hosts without an `ath-page` keep plain block flow, so pages migrate one at a time. The per-page `:host:has(...) { height: 100% }` rules go away with the migration.
 

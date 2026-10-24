@@ -1,42 +1,133 @@
 // ===========================================
 // ATH-BREADCRUMB STYLES
 // ===========================================
+// Ancestors are quiet links, the last step is the page's title. A step's
+// name never takes the whole bar: ellipsis, full name on hover.
 
 .ath-breadcrumb {
-  &__list {
-    display: flex;
-    align-items: center;
-    gap: var(--ath-space-1);
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  font-family: var(--font-sans);
+}
+
+.ath-breadcrumb__list {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ath-breadcrumb__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  // Ancestors give way first; the page's own name keeps its room longest.
+  flex: 0 1 auto;
+
+  &:last-child {
+    flex-shrink: 0.3;
+  }
+}
+
+.ath-breadcrumb__text {
+  min-width: 0;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ath-breadcrumb__item:last-child .ath-breadcrumb__text {
+  max-width: 360px;
+}
+
+.ath-breadcrumb__more {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 22px;
+  padding: 0 4px;
+  border-radius: var(--r-xs);
+  color: var(--fg-3);
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--fg);
+    background: var(--bg-2);
+  }
+}
+
+// The "…" is plain text: ath-dropdown's wrapper is the menu button and
+// draws the focus ring (--focus-ring-*) around it; no ring of our own here.
+
+.ath-breadcrumb__current--quiet {
+  font-weight: 500;
+  color: var(--fg-3);
+}
+
+.ath-breadcrumb__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg-3);
+  padding: 4px 6px;
+  margin: 0 -2px;
+  border-radius: var(--r-xs);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background 100ms ease,
+    color 100ms ease;
+
+  &:hover {
+    color: var(--fg);
+    background: var(--bg-2);
   }
 
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: var(--ath-space-1);
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--focus-ring-color);
   }
+}
 
-  &__link {
-    font-size: var(--ath-font-size-sm);
-    color: var(--ath-text-tertiary);
-    text-decoration: none;
-    transition: color var(--ath-transition-fast);
+.ath-breadcrumb__separator {
+  color: var(--fg-4);
+  flex-shrink: 0;
+}
 
-    &:hover {
-      color: var(--ath-text-link);
-    }
-  }
+.ath-breadcrumb__current {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 4px;
+}
 
-  &__current {
-    font-size: var(--ath-font-size-sm);
-    font-weight: var(--ath-font-weight-medium);
-    color: var(--ath-text-primary);
-  }
-
-  &__separator {
-    color: var(--ath-text-tertiary);
-    flex-shrink: 0;
-  }
+// A project or ticket key as a quiet mono chip, as in list rows.
+.ath-breadcrumb__key {
+  flex-shrink: 0;
+  padding: 1px 6px;
+  border-radius: var(--r-xs);
+  background: var(--bg-2);
+  color: var(--fg-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }

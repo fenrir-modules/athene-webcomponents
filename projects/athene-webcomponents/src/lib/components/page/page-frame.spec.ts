@@ -282,8 +282,27 @@ describe('Page frame (ath-page + ath-panel-grid + ath-panel)', () => {
     const host = document.createElement('div');
     stage.appendChild(host);
     document.body.appendChild(stage);
+    expect(getComputedStyle(stage).display).toBe('block');
     expect(getComputedStyle(host).display).toBe('block');
     expect(getComputedStyle(host).flexGrow).toBe('0');
+    stage.remove();
+  });
+
+  it("lets an unmigrated page's height: 100% reach the stage through its inline host", () => {
+    // A routed component host is a custom element (inline). Pages not yet on
+    // ath-page fill the stage with `height: 100%` on their root element.
+    const stage = document.createElement('main');
+    stage.className = 'ath-stage';
+    stage.style.height = '400px';
+    const host = document.createElement('app-legacy-page');
+    const root = document.createElement('section');
+    root.style.height = '100%';
+    root.appendChild(Object.assign(document.createElement('div'), { style: 'height: 2000px' }));
+    host.appendChild(root);
+    stage.appendChild(host);
+    document.body.appendChild(stage);
+    expect(getComputedStyle(host).display).toBe('inline');
+    expect(root.getBoundingClientRect().height).toBe(400);
     stage.remove();
   });
 

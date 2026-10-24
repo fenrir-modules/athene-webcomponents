@@ -82,7 +82,7 @@ export declare class AthPopoverComponent implements OnChanges, OnDestroy {
     /** The element the panel currently hangs from. */
     readonly anchorElement: import("@angular/core").Signal<HTMLElement | null>;
     /** What the panel is placed against: the anchor input (element or virtual) or the trigger. */
-    protected readonly floatTarget: import("@angular/core").Signal<HTMLElement | import("../floating/floating").FloatingVirtualAnchor | null>;
+    protected readonly floatTarget: import("@angular/core").Signal<import("../floating/floating").FloatingVirtualAnchor | HTMLElement | null>;
     protected readonly panelClasses: import("@angular/core").Signal<string>;
     private registered;
     private returnFocus;

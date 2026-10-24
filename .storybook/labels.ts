@@ -12,6 +12,7 @@ const DE: AthLabels = {
   showPassword: () => 'Passwort anzeigen',
   hidePassword: () => 'Passwort verbergen',
   breadcrumb: () => 'Brotkrumen',
+  breadcrumbMore: () => 'Ausgeblendete Schritte',
   unassigned: () => 'Nicht zugewiesen',
   dismiss: () => 'Schließen',
   retry: () => 'Erneut versuchen',

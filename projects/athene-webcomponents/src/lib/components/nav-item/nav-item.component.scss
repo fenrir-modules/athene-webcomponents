@@ -1,83 +1,278 @@
-// ===========================================
-// ATH-NAV-ITEM STYLES
-// ===========================================
+// ───────────────────────────────────────────────────────────────────
+// ath-nav-item: one row of a navigation list.
+//
+// Layout contract:
+//   - The row stretches to its parent's width in both rail and open modes;
+//     the parent is what changes width. What makes a row look collapsed is
+//     only that its tail (label, badge, dot) has `max-width: 0`.
+//   - The icon sits in a fixed 40-px cell on the left, so its centre keeps
+//     its x position while a rail opens. Shells align their own rail marks
+//     (brand, search) to the same 40-px anchor.
+//   - The tail collapses (`max-width`, `opacity`, `padding`) with a 180-ms
+//     ease, the timing of a rail's own width transition, so pill, label and
+//     rail move as one.
+// ───────────────────────────────────────────────────────────────────
+
+$row-h: 30px;
+$icon-cell-w: 40px;
+$margin-x: 2px;
+$indicator-w: 2px;
+$tail-pad-r: 10px;
+$tail-max: 220px;
+$ease: cubic-bezier(0.2, 0.9, 0.3, 1);
+$dur: 180ms;
+$dur-fast: 120ms;
 
 .ath-nav-item {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: var(--ath-space-3);
-  padding: 10px var(--ath-space-3);
-  border-radius: var(--ath-border-radius-md);
-  color: var(--ath-text-tertiary);
+  width: auto; // stretches to parent (column flex)
+  height: $row-h;
+  margin: 0 $margin-x;
+  padding: 0;
+  border-radius: var(--r-sm);
+  color: var(--fg-2);
   text-decoration: none;
-  font-size: var(--ath-font-size-sm);
-  font-weight: var(--ath-font-weight-medium);
-  transition: all 0.15s ease;
-  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
   white-space: nowrap;
+  cursor: pointer;
+  outline: none;
   overflow: hidden;
-  position: relative;
+  transition:
+    background $dur-fast ease,
+    color $dur-fast ease;
 
   &:hover {
-    color: var(--ath-text-primary);
-    background-color: var(--hover);
+    background: var(--hover);
+    color: var(--fg);
+  }
+  &:focus-visible {
+    box-shadow: 0 0 0 2px var(--focus-ring-color);
+  }
+}
+
+// 2-px indicator bar pinned to the left edge of the active route. Hidden in
+// compact mode — the tinted background alone carries the selected signal
+// when the label isn't there to anchor it.
+.ath-nav-item__indicator {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: $indicator-w;
+  height: 16px;
+  border-radius: 0 2px 2px 0;
+  background: transparent;
+  transform: translateY(-50%);
+  transition: background $dur-fast ease;
+}
+
+.ath-nav-item--active {
+  background: var(--rail-active-bg);
+  color: var(--nav-active-fg);
+
+  .ath-nav-item__indicator {
+    background: var(--nav-active-indicator);
+  }
+  .ath-nav-item__icon-cell {
+    color: var(--nav-active-icon);
+  }
+}
+
+// ── Icon cell — fixed-width anchor ──
+.ath-nav-item__icon-cell {
+  position: relative;
+  flex: 0 0 $icon-cell-w;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-4);
+  transition: color $dur-fast ease;
+}
+.ath-nav-item:hover .ath-nav-item__icon-cell {
+  color: var(--fg);
+}
+
+// Project shortcut: an outlined mono key in the project's colour (ref 2).
+// It used to be a grey key with a coloured corner dot, which read as an
+// unexplained notification badge.
+.ath-nav-item__chip {
+  // The project's colour, set per row from the template.
+  --chip-color: var(--fg-3);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 18px;
+  padding: 0 4px;
+  // Decorative: the project hue at --deco-mix strength (ref 02 pastel keys).
+  border: 1px solid color-mix(in srgb, var(--chip-color) 22%, transparent);
+  border-radius: var(--r-xs);
+  background: transparent;
+  color: color-mix(in srgb, var(--chip-color) var(--deco-mix), var(--bg-1));
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 9.5px;
+  letter-spacing: 0.02em;
+}
+
+// Unread marker on the rail icon (compact only).
+.ath-nav-item__icon-dot {
+  position: absolute;
+  top: 6px;
+  left: calc(50% + 4px);
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--notify-dot);
+  box-shadow: 0 0 0 1.5px var(--bg-1);
+}
+
+// On the inbox itself the dot has nothing left to point at (ref 03).
+.ath-nav-item--active .ath-nav-item__icon-dot {
+  display: none;
+}
+
+// "… All projects": a quieter row under the project list (ref 02).
+.ath-nav-item--muted:not(.ath-nav-item--active) {
+  color: var(--fg-3);
+}
+
+// ── Tail — label + badge + dot collapse as one unit ──
+// `.ath-nav-item__tail` is the *single* place where the rail/open transition lives.
+// Driving collapse via one box (max-width + opacity + padding) keeps the
+// motion coherent: the row's right edge slides in/out cleanly instead of
+// each child fading at a slightly different rate.
+.ath-nav-item__tail {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: $tail-max;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 2px;
+  padding-right: $tail-pad-r;
+  overflow: hidden;
+  transition:
+    max-width $dur $ease,
+    margin $dur $ease,
+    padding $dur $ease,
+    opacity ($dur-fast) ease 40ms;
+}
+
+.ath-nav-item__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ath-nav-item__badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum';
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--nav-badge-fg);
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xs);
+}
+
+.ath-nav-item__dot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--fg-4);
+
+  &[data-tone='ok'] {
+    background: var(--green);
+  }
+  &[data-tone='warn'] {
+    background: var(--amber);
+  }
+  &[data-tone='error'] {
+    background: var(--red);
+  }
+}
+
+// ── Compact (rail) mode ──
+// Single collapse on `.ath-nav-item__tail`. The `.ath-nav-item` itself doesn't change width —
+// its parent does — so the hover pill follows the sidebar smoothly.
+.ath-nav-item--compact {
+  .ath-nav-item__tail {
+    max-width: 0;
+    margin-left: 0;
+    padding-right: 0;
+    opacity: 0;
+    pointer-events: none;
   }
 
-  // Active state with left indicator bar
-  &--active {
-    color: var(--nav-active-fg);
-    background-color: var(--nav-active-bg);
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 6px;
-      bottom: 6px;
-      width: 3px;
-      border-radius: 0 2px 2px 0;
-      background: var(--nav-active-indicator);
-    }
-
-    &:hover {
-      color: var(--nav-active-fg);
-      background-color: var(--nav-active-bg-hover);
-    }
-
-    .ath-nav-item__icon {
-      color: var(--nav-active-icon);
-    }
+  .ath-nav-item__indicator {
+    display: none;
   }
 
-  &--collapsed {
-    justify-content: center;
-    padding: var(--ath-space-2);
+  &.ath-nav-item--active {
+    background: var(--rail-active-bg);
   }
+}
 
-  &__icon {
-    flex-shrink: 0;
-    color: inherit;
+// ── Tooltip (compact only) ──
+.ath-nav-item__tooltip {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  margin-left: 10px;
+  transform: translateY(-50%) translateX(-4px);
+  padding: 5px 10px;
+  background: var(--fg);
+  color: var(--bg-1);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  border-radius: var(--r-sm);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: var(--shadow-2);
+  transition:
+    opacity 100ms ease 60ms,
+    transform 120ms $ease 60ms;
+  z-index: var(--z-tooltip);
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 6px;
+    height: 6px;
+    background: inherit;
+    border-radius: 1px;
   }
+}
+.ath-nav-item__tooltip--visible {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
 
-  &__label {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  &__badge {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 20px;
-    height: 20px;
-    padding: 0 var(--ath-space-1);
-    font-size: var(--ath-font-size-xs);
-    font-weight: var(--ath-font-weight-semibold);
-    color: var(--nav-badge-fg);
-    background-color: var(--nav-badge-bg);
-    border-radius: var(--ath-border-radius-full);
+@media (prefers-reduced-motion: reduce) {
+  .ath-nav-item,
+  .ath-nav-item__icon-cell,
+  .ath-nav-item__indicator,
+  .ath-nav-item__tail,
+  .ath-nav-item__tooltip {
+    transition: none;
   }
 }

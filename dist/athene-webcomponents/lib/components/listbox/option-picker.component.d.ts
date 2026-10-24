@@ -35,7 +35,7 @@ export declare class AthOptionPickerComponent<T = string> {
     readonly compareWith: import("@angular/core").InputSignal<((a: T, b: T) => boolean) | null>;
     readonly maxHeight: import("@angular/core").InputSignal<number | null>;
     /** `button`: built-in select-style trigger; `none`: you provide `anchor` and open it. */
-    readonly trigger: import("@angular/core").InputSignal<"none" | "button">;
+    readonly trigger: import("@angular/core").InputSignal<"button" | "none">;
     /** Trigger text without a selection; defaults to `ATH_LABELS.pickerPlaceholder`. */
     readonly placeholder: import("@angular/core").InputSignal<string | null>;
     readonly disabled: import("@angular/core").InputSignalWithTransform<boolean, unknown>;

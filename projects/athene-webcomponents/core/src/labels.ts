@@ -12,6 +12,8 @@ export interface AthLabels {
   showPassword: () => string;
   hidePassword: () => string;
   breadcrumb: () => string;
+  /** `ath-breadcrumb`: the "…" that folds the middle of a long trail. */
+  breadcrumbMore: () => string;
   // Display primitives (quality step 1.7). Placeholders in braces
   // (`{count}`, `{name}`, `{sprint}`) are filled in by the component; a
   // translation keeps them, e.g. `() => t('due.overdue', { count: '{count}' })`.
@@ -83,6 +85,7 @@ export const ATH_DEFAULT_LABELS: AthLabels = {
   showPassword: () => 'Show password',
   hidePassword: () => 'Hide password',
   breadcrumb: () => 'Breadcrumb',
+  breadcrumbMore: () => 'Hidden steps',
   unassigned: () => 'Unassigned',
   dismiss: () => 'Dismiss',
   retry: () => 'Retry',

@@ -20,13 +20,20 @@
 // (block flow as before), so pages migrate one by one.
 
 .ath-stage {
-  display: flex;
-  flex-direction: column;
   min-height: 0;
   overflow-y: auto;
   // ath-page and ath-panel-grid fall back from fill to scroll when the
   // stage is narrow: a container query on the stage, not the viewport.
   container: ath-stage / inline-size;
+
+  // A flex column only while it hosts an ath-page. Any other route host
+  // keeps plain block flow: a custom element host is inline, its page's
+  // `height: 100%` resolves against the stage; as a flex item it would be
+  // blockified and that height would fall back to auto.
+  &:has(> * > ath-page) {
+    display: flex;
+    flex-direction: column;
+  }
 
   > :has(> ath-page) {
     display: flex;

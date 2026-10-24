@@ -8,7 +8,7 @@ import * as i0 from "@angular/core";
  * @example
  * <ath-sidebar [collapsed]="isCollapsed" (collapsedChange)="isCollapsed = $event">
  *   <div slot="header">Logo</div>
- *   <ath-nav-item icon="home" label="Home" />
+ *   <ath-nav-item [icon]="Home" label="Home" route="/home" [compact]="isCollapsed" />
  *   <div slot="footer">User info</div>
  * </ath-sidebar>
  */

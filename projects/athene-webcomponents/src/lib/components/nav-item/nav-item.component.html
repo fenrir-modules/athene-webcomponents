@@ -1,18 +1,54 @@
 <a
   class="ath-nav-item"
-  [routerLink]="link"
+  [class.ath-nav-item--compact]="isCompact()"
+  [class.ath-nav-item--muted]="muted()"
+  [routerLink]="target()"
   routerLinkActive="ath-nav-item--active"
-  [routerLinkActiveOptions]="{ exact: false }"
-  [class.ath-nav-item--collapsed]="collapsed"
-  [attr.title]="collapsed ? label : null"
+  [routerLinkActiveOptions]="{ exact: exact() }"
+  [attr.aria-label]="isCompact() ? label() : null"
+  (mouseenter)="active.set(true)"
+  (mouseleave)="active.set(false)"
+  (focus)="active.set(true)"
+  (blur)="active.set(false)"
 >
-  @if (icon) {
-    <lucide-icon [img]="icon" [size]="20" class="ath-nav-item__icon" />
+  @if (indicator()) {
+    <span class="ath-nav-item__indicator" aria-hidden="true"></span>
   }
-  @if (!collapsed) {
-    <span class="ath-nav-item__label">{{ label }}</span>
-    @if (badgeCount !== null) {
-      <span class="ath-nav-item__badge">{{ badgeCount }}</span>
+
+  <span class="ath-nav-item__icon-cell">
+    @if (icon(); as img) {
+      <lucide-icon [img]="img" [size]="14" />
     }
+    <!-- Decorative: the label beside it names the row. -->
+    @if (chip(); as c) {
+      <span class="ath-nav-item__chip" [style.--chip-color]="c.color" aria-hidden="true">{{
+        c.text
+      }}</span>
+    }
+    <!-- The rail has no room for a count: an unread item gets a dot on its
+         icon instead. The count returns with the label. -->
+    @if (isCompact() && count() !== null) {
+      <span class="ath-nav-item__icon-dot" aria-hidden="true"></span>
+    }
+  </span>
+
+  <span class="ath-nav-item__tail">
+    <span class="ath-nav-item__label">{{ label() }}</span>
+    @if (count(); as n) {
+      <span class="ath-nav-item__badge">{{ n }}</span>
+    }
+    @if (dot(); as tone) {
+      <span class="ath-nav-item__dot" [attr.data-tone]="tone" aria-hidden="true"></span>
+    }
+  </span>
+
+  @if (tooltipText(); as text) {
+    <span
+      class="ath-nav-item__tooltip"
+      role="tooltip"
+      [class.ath-nav-item__tooltip--visible]="active()"
+    >
+      {{ text }}
+    </span>
   }
 </a>

@@ -15,11 +15,6 @@
       "count": 1
     }
   },
-  "projects/athene-webcomponents/src/lib/components/nav-item/nav-item.component.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    }
-  },
   "projects/athene-webcomponents/src/lib/components/page-header/page-header.component.spec.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
       "count": 1

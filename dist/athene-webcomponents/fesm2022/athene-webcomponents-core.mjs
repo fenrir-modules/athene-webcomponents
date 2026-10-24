@@ -6,6 +6,7 @@ const ATH_DEFAULT_LABELS = {
     showPassword: () => 'Show password',
     hidePassword: () => 'Hide password',
     breadcrumb: () => 'Breadcrumb',
+    breadcrumbMore: () => 'Hidden steps',
     unassigned: () => 'Unassigned',
     dismiss: () => 'Dismiss',
     retry: () => 'Retry',

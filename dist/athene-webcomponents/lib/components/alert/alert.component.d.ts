@@ -43,7 +43,7 @@ export declare class AthAlertComponent {
     readonly dismissLabel: import("@angular/core").InputSignal<string | null>;
     readonly dismissed: import("@angular/core").OutputEmitterRef<void>;
     protected readonly closeIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly tone: import("@angular/core").Signal<"success" | "error" | "info" | "warn">;
+    protected readonly tone: import("@angular/core").Signal<"warn" | "error" | "success" | "info">;
     /** Errors and warnings interrupt; info and success wait their turn. */
     protected readonly role: import("@angular/core").Signal<"status" | "alert">;
     protected readonly showIcon: import("@angular/core").Signal<boolean>;

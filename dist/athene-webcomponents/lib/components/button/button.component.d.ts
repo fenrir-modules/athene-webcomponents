@@ -27,7 +27,7 @@ export declare class AthButtonComponent {
     readonly variant: import("@angular/core").InputSignal<ButtonVariant>;
     readonly size: import("@angular/core").InputSignal<ButtonSize>;
     /** Button type attribute. */
-    readonly type: import("@angular/core").InputSignal<"button" | "submit" | "reset">;
+    readonly type: import("@angular/core").InputSignal<"reset" | "submit" | "button">;
     readonly disabled: import("@angular/core").InputSignal<boolean>;
     /** Busy from outside (an action started elsewhere). `[action]` sets its own. */
     readonly loading: import("@angular/core").InputSignal<boolean>;
