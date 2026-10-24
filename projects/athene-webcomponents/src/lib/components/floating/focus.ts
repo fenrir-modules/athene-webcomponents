@@ -19,11 +19,6 @@ export function tabbables(root: HTMLElement): HTMLElement[] {
   );
 }
 
-/** The first focusable element of `root` (any tabindex), or `null`. */
-export function firstFocusable(root: HTMLElement): HTMLElement | null {
-  return root.querySelector<HTMLElement>(FOCUSABLE);
-}
-
 /**
  * Keeps Tab inside `root`: from the last tabbable to the first and back.
  * Returns true when it moved focus.

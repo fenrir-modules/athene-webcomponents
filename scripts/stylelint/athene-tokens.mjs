@@ -11,6 +11,11 @@
 //     fallback is dead code that drifts (var(--z-popover, 1200) vs 1060, DS-13).
 //
 // Options for both: { importFrom: ['…/tokens.custom-properties.json', …] }
+//
+//   athene/no-retired-alias
+//     any --ath-* or --gold custom property, declared or read: the legacy
+//     aliases are gone (quality step 2.7), and a component's own variable
+//     takes a plain name (--panel-grid-columns), not the lib prefix.
 import { readFileSync } from 'node:fs';
 import stylelint from 'stylelint';
 
@@ -81,7 +86,41 @@ function makeRule(ruleName, check) {
   return createPlugin(ruleName, rule);
 }
 
+/** `--ath-*` / `--gold`: the legacy alias names, retired in quality step 2.7. */
+export const RETIRED_ALIAS = /--(?:ath-[A-Za-z0-9_-]+|gold(?![A-Za-z0-9_-]))/g;
+
+const retiredRule = (() => {
+  const ruleName = 'athene/no-retired-alias';
+  const messages = utils.ruleMessages(ruleName, {
+    rejected: (name) =>
+      `${name} is a retired alias name (removed in quality step 2.7): read the token it stood for (--fg, --accent, --space-3 …; lib README "Design tokens"), and give a component's own variable a plain name`,
+  });
+  const rule = (primary) => (root, result) => {
+    if (!utils.validateOptions(result, ruleName, { actual: primary })) return;
+    if (!primary) return;
+    root.walkDecls((decl) => {
+      const names = [
+        ...(decl.prop.match(RETIRED_ALIAS) ?? []),
+        ...(decl.value.match(RETIRED_ALIAS) ?? []),
+      ];
+      for (const name of new Set(names)) {
+        utils.report({
+          ruleName,
+          result,
+          node: decl,
+          message: messages.rejected(name),
+          word: name,
+        });
+      }
+    });
+  };
+  rule.ruleName = ruleName;
+  rule.messages = messages;
+  return createPlugin(ruleName, rule);
+})();
+
 export default [
+  retiredRule,
   makeRule('athene/no-unknown-custom-property-with-fallback', (v, { tokens, local }) =>
     tokens.has(v.name) || local.has(v.name)
       ? null

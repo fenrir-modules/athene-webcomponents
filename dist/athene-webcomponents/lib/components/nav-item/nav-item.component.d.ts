@@ -32,8 +32,6 @@ export declare class AthNavItemComponent {
     readonly label: import("@angular/core").InputSignal<string>;
     /** Router target: a path, or link parameters for a parameterised route. */
     readonly route: import("@angular/core").InputSignal<string | readonly unknown[] | null>;
-    /** @deprecated Use `route`. */
-    readonly link: import("@angular/core").InputSignal<string | null>;
     /** Exact match for the active state (default: prefix match, like Angular). */
     readonly exact: import("@angular/core").InputSignal<boolean>;
     /** Either an icon or a chip. */
@@ -41,26 +39,21 @@ export declare class AthNavItemComponent {
     readonly chip: import("@angular/core").InputSignal<AthNavChip | null>;
     /** A count (unread items); nothing below 1. */
     readonly badge: import("@angular/core").InputSignal<number | null>;
-    /** @deprecated Use `badge`. */
-    readonly badgeCount: import("@angular/core").InputSignal<number | null>;
     readonly dot: import("@angular/core").InputSignal<AthNavDot | null>;
     /** A secondary row in a quieter tone ("… All projects"). */
     readonly muted: import("@angular/core").InputSignal<boolean>;
     /** Rail mode: the label folds away, a tooltip shows it. */
     readonly compact: import("@angular/core").InputSignal<boolean>;
-    /** @deprecated Use `compact`. */
-    readonly collapsed: import("@angular/core").InputSignal<boolean>;
     /** The 2-px bar at the left edge of the active row. */
     readonly indicator: import("@angular/core").InputSignal<boolean>;
     /** Tooltip text in compact mode; defaults to the label. */
     readonly tooltip: import("@angular/core").InputSignal<string | null>;
     /** Link parameters for `routerLink` (a copy: it takes a mutable array). */
     protected readonly target: import("@angular/core").Signal<unknown[]>;
-    protected readonly isCompact: import("@angular/core").Signal<boolean>;
     protected readonly count: import("@angular/core").Signal<number | null>;
     protected readonly tooltipText: import("@angular/core").Signal<string | null>;
     /** Pointer over the row or keyboard focus on it: shows the tooltip. */
     protected readonly active: import("@angular/core").WritableSignal<boolean>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthNavItemComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthNavItemComponent, "ath-nav-item", never, { "label": { "alias": "label"; "required": true; "isSignal": true; }; "route": { "alias": "route"; "required": false; "isSignal": true; }; "link": { "alias": "link"; "required": false; "isSignal": true; }; "exact": { "alias": "exact"; "required": false; "isSignal": true; }; "icon": { "alias": "icon"; "required": false; "isSignal": true; }; "chip": { "alias": "chip"; "required": false; "isSignal": true; }; "badge": { "alias": "badge"; "required": false; "isSignal": true; }; "badgeCount": { "alias": "badgeCount"; "required": false; "isSignal": true; }; "dot": { "alias": "dot"; "required": false; "isSignal": true; }; "muted": { "alias": "muted"; "required": false; "isSignal": true; }; "compact": { "alias": "compact"; "required": false; "isSignal": true; }; "collapsed": { "alias": "collapsed"; "required": false; "isSignal": true; }; "indicator": { "alias": "indicator"; "required": false; "isSignal": true; }; "tooltip": { "alias": "tooltip"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthNavItemComponent, "ath-nav-item", never, { "label": { "alias": "label"; "required": true; "isSignal": true; }; "route": { "alias": "route"; "required": false; "isSignal": true; }; "exact": { "alias": "exact"; "required": false; "isSignal": true; }; "icon": { "alias": "icon"; "required": false; "isSignal": true; }; "chip": { "alias": "chip"; "required": false; "isSignal": true; }; "badge": { "alias": "badge"; "required": false; "isSignal": true; }; "dot": { "alias": "dot"; "required": false; "isSignal": true; }; "muted": { "alias": "muted"; "required": false; "isSignal": true; }; "compact": { "alias": "compact"; "required": false; "isSignal": true; }; "indicator": { "alias": "indicator"; "required": false; "isSignal": true; }; "tooltip": { "alias": "tooltip"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

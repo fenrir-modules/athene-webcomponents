@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AthComboboxComponent, type ComboboxOption } from './combobox.component';
+import type { ListboxOption } from '../listbox/listbox.component';
+import { AthComboboxComponent } from './combobox.component';
 
 @Component({
   standalone: true,
@@ -21,7 +22,7 @@ import { AthComboboxComponent, type ComboboxOption } from './combobox.component'
   `,
 })
 class ComboboxHostComponent {
-  readonly options: ComboboxOption[] = [
+  readonly options: ListboxOption[] = [
     { value: 'blocks', label: 'Blocks' },
     { value: 'relates', label: 'Relates to' },
   ];

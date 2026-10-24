@@ -16,6 +16,7 @@
   <div class="ath-select__wrapper">
     <select
       [id]="selectId"
+      [attr.aria-label]="ariaLabel || null"
       [disabled]="disabled"
       [value]="value"
       (change)="onSelectionChange($event)"

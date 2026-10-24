@@ -6,6 +6,7 @@
   [class.ath-toggle--disabled]="disabled"
   role="switch"
   [attr.aria-checked]="checked"
+  [attr.aria-label]="ariaLabel || null"
   [disabled]="disabled"
   (click)="toggle()"
 >

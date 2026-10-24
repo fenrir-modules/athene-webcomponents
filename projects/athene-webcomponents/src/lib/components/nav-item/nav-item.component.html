@@ -1,11 +1,11 @@
 <a
   class="ath-nav-item"
-  [class.ath-nav-item--compact]="isCompact()"
+  [class.ath-nav-item--compact]="compact()"
   [class.ath-nav-item--muted]="muted()"
   [routerLink]="target()"
   routerLinkActive="ath-nav-item--active"
   [routerLinkActiveOptions]="{ exact: exact() }"
-  [attr.aria-label]="isCompact() ? label() : null"
+  [attr.aria-label]="compact() ? label() : null"
   (mouseenter)="active.set(true)"
   (mouseleave)="active.set(false)"
   (focus)="active.set(true)"
@@ -27,7 +27,7 @@
     }
     <!-- The rail has no room for a count: an unread item gets a dot on its
          icon instead. The count returns with the label. -->
-    @if (isCompact() && count() !== null) {
+    @if (compact() && count() !== null) {
       <span class="ath-nav-item__icon-dot" aria-hidden="true"></span>
     }
   </span>

@@ -6,47 +6,47 @@
 // Typography Mixins
 // -------------------------------------------
 @mixin text-xs {
-  font-size: var(--ath-font-size-xs);
-  line-height: var(--ath-line-height-normal);
+  font-size: var(--text-xs);
+  line-height: var(--line-normal);
 }
 
 @mixin text-sm {
-  font-size: var(--ath-font-size-sm);
-  line-height: var(--ath-line-height-normal);
+  font-size: var(--text-sm);
+  line-height: var(--line-normal);
 }
 
 @mixin text-md {
-  font-size: var(--ath-font-size-md);
-  line-height: var(--ath-line-height-normal);
+  font-size: var(--text-md);
+  line-height: var(--line-normal);
 }
 
 @mixin text-lg {
-  font-size: var(--ath-font-size-lg);
-  line-height: var(--ath-line-height-normal);
+  font-size: var(--text-lg);
+  line-height: var(--line-normal);
 }
 
 @mixin heading-1 {
-  font-size: var(--ath-font-size-4xl);
-  font-weight: var(--ath-font-weight-bold);
-  line-height: var(--ath-line-height-tight);
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--line-tight);
 }
 
 @mixin heading-2 {
-  font-size: var(--ath-font-size-3xl);
-  font-weight: var(--ath-font-weight-bold);
-  line-height: var(--ath-line-height-tight);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--line-tight);
 }
 
 @mixin heading-3 {
-  font-size: var(--ath-font-size-2xl);
-  font-weight: var(--ath-font-weight-semibold);
-  line-height: var(--ath-line-height-tight);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-tight);
 }
 
 @mixin heading-4 {
-  font-size: var(--ath-font-size-xl);
-  font-weight: var(--ath-font-weight-semibold);
-  line-height: var(--ath-line-height-tight);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-tight);
 }
 
 // -------------------------------------------
@@ -101,28 +101,28 @@
 
 @mixin input-base {
   width: 100%;
-  padding: var(--ath-space-2) var(--ath-space-3);
-  font-family: var(--ath-font-family);
-  font-size: var(--ath-font-size-md);
-  color: var(--ath-text-primary);
-  background-color: var(--ath-bg-secondary);
-  border: 1px solid var(--ath-border-color);
-  border-radius: var(--ath-border-radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  color: var(--fg);
+  background-color: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
   transition:
-    border-color var(--ath-transition-fast),
-    box-shadow var(--ath-transition-fast);
+    border-color var(--t-fast),
+    box-shadow var(--t-fast);
 
   &::placeholder {
-    color: var(--ath-text-tertiary);
+    color: var(--fg-3);
   }
 
   &:hover:not(:disabled) {
-    border-color: var(--ath-border-color-hover);
+    border-color: var(--border-strong);
   }
 
   &:focus {
     @include focus-ring;
-    border-color: var(--ath-color-primary);
+    border-color: var(--accent);
   }
 
   &:disabled {
@@ -135,12 +135,7 @@
 // Animation Mixins
 // -------------------------------------------
 @mixin skeleton-animation {
-  background: linear-gradient(
-    90deg,
-    var(--ath-bg-tertiary) 25%,
-    var(--ath-bg-secondary) 50%,
-    var(--ath-bg-tertiary) 75%
-  );
+  background: linear-gradient(90deg, var(--bg-2) 25%, var(--bg-1) 50%, var(--bg-2) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
 }

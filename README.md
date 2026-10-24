@@ -7,7 +7,7 @@ npm run build:lib        # tokens:build, then ng build athene-webcomponents → 
 npm run check:dist       # build:lib, then fail if dist/ differs from the commit (CI runs it)
 npm test                 # Karma unit tests
 npm run test:tokens      # token pipeline tests (node --test)
-npm run lint             # tsc, a11y, tokens:check, Stylelint
+npm run lint             # shared config, ESLint, Stylelint, i18n, tsc, a11y, tokens:check, Prettier, knip
 npm run storybook        # component catalogue on :6006
 npm run build-storybook  # static catalogue → storybook-static/
 npm run test:storybook   # axe + screenshots over storybook-static/ (see "Component catalogue")
@@ -21,12 +21,12 @@ npm run test:storybook   # axe + screenshots over storybook-static/ (see "Compon
 
 All design tokens live in **DTCG JSON** under `projects/athene-webcomponents/tokens/`:
 
-| File                                                    | Contents                                                                                                                                                    |
-| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `base.json`                                             | Every token with its light/default value: colour, focus, radius, shadow, type, density, size, space, motion, z-index, plus the deprecated `--ath-*` aliases |
-| `themes/dark.json`                                      | Values for `[data-theme="dark"]`. It may only re-value tokens from `base.json`.                                                                             |
-| `accents/<name>.light.json`, `accents/<name>.dark.json` | Accent presets for `[data-accent]` and `[data-theme="dark"][data-accent]`                                                                                   |
-| `tokens.config.json`                                    | Output paths, block order (which is the cascade order), the theme × accent contexts and the **contrast gate**                                               |
+| File                                                    | Contents                                                                                                             |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `base.json`                                             | Every token with its light/default value: colour, focus, radius, shadow, type, density, size, space, motion, z-index |
+| `themes/dark.json`                                      | Values for `[data-theme="dark"]`. It may only re-value tokens from `base.json`.                                      |
+| `accents/<name>.light.json`, `accents/<name>.dark.json` | Accent presets for `[data-accent]` and `[data-theme="dark"][data-accent]`                                            |
+| `tokens.config.json`                                    | Output paths, block order (which is the cascade order), the theme × accent contexts and the **contrast gate**        |
 
 `scripts/tokens/build.mjs` (`npm run tokens:build`) generates these files:
 
@@ -59,17 +59,18 @@ All design tokens live in **DTCG JSON** under `projects/athene-webcomponents/tok
 - **Status text:** `--red`, `--amber`, `--green`, `--blue`, `--purple` are for icons, dots, fills and borders; text uses `--red-text`, `--amber-text`, `--green-text`, `--blue-text`, `--purple-text`, a darker (light) or lighter (dark) shade of the same hue. Accent-coloured text uses `--accent-text`; a colour the app passes in (a project colour) is mixed towards `--fg` with `--tone-text-mix`. The solid danger button reads `--action-danger-bg`, `-bg-hover` and `-fg`.
 - **z-index:** only the scale `--z-base`, `--z-raised`, `--z-dropdown`, `--z-sticky`, `--z-fixed`, `--z-overlay`, `--z-modal`, `--z-popover`, `--z-tooltip`, `--z-toast` (or a `calc()` on one of them).
 - **No fallbacks on tokens:** tokens are always defined, so a fallback is dead code that drifts.
-- `--ath-*` and `--gold` are **deprecated** aliases. They are still generated, will be removed in quality step 2.7, and must not be used in new code.
+- **No `--ath-*` and no `--gold`.** These legacy aliases were removed in quality step 2.7 (each pointed to one token: `--ath-text-primary` → `--fg`, `--ath-border-color` → `--border`, `--ath-space-3` → `--space-3`, `--ath-transition-fast` → `--t-fast`, `--gold` → `--accent`; the full map is in `artifacts/quality/phase2/p27/alias-map.json`). The token build rejects the names, and Stylelint (`athene/no-retired-alias`) rejects any `--ath-*` / `--gold` custom property, declared or read, in both repos; a component's own variable takes a plain name (`--panel-grid-columns`).
 
 ### Guardrails
 
 - `npm run lint:styles` runs Stylelint (`stylelint.config.mjs`) with these rules:
   - `csstools/value-no-unknown-custom-properties`, fed by the generated list
   - `athene/no-unknown-custom-property-with-fallback` and `athene/no-fallback-on-token` (`scripts/stylelint/athene-tokens.mjs`). The csstools rule lets `var(--unknown, x)` through; these two don't.
+  - `athene/no-retired-alias`: no `--ath-*` / `--gold` custom property (declared or read)
   - z-index only from the scale
   - in component styles: no hex, named or `rgb()`/`hsl()` colours, and no `data-theme`/`.ath-light|dark` selectors
 - Existing violations are recorded in `stylelint-suppressions.json` (Stylelint bulk suppressions), so only new ones fail. After fixing something, run `npm run lint:styles:baseline` to shrink the file. Never grow it by hand.
-- `npm run tokens:report-app [path/to/app/src]` reports on `athene-web` (default `../athene-web/src`) and never edits it. It runs the same rules over the app's SCSS and inline `styles`, plus a pass over templates and TS strings. It reports undefined tokens, fallbacks that disagree with the token value, dead theme selectors and use of deprecated aliases. With `--strict` it exits 1 when it finds undefined tokens.
+- `npm run tokens:report-app [path/to/app/src]` reports on `athene-web` (default `../athene-web/src`) and never edits it. It runs the same rules over the app's SCSS and inline `styles`, plus a pass over templates and TS strings. It reports undefined tokens, fallbacks that disagree with the token value, dead theme selectors and use of deprecated tokens (none today). With `--strict` it exits 1 when it finds undefined tokens.
 - `npm run tokens:parity [-- --ref <git-ref>]` compiles `main.scss` at a ref and in the working tree and diffs every custom property per selector, plus all other rules. Any difference that is not listed in `scripts/tokens/parity-expected.json` fails.
 
 ### Why a small generator instead of Style Dictionary
@@ -98,7 +99,7 @@ Presentational only: the app passes ids, names, colours and dates; resolving the
 <ath-avatar [unassigned]="true" size="sm" />
 ```
 
-Inputs: `person: {id, name, src} | null`, or the separate `name` / `src` / `id`; `size: xs|sm|md|lg|xl` (`--avatar-<size>` and `--avatar-font-<size>`); `unassigned`; `label` (accessible name and tooltip). The tone is keyed on the **id** (`avatarToneFor`); without an id it falls back to the initials (`avatarTone`, deprecated). `null` or `unassigned` draws the empty seat: a `--bg-2` circle with a user glyph, the size of a person, labelled `ATH_LABELS.unassigned`.
+Inputs: `person: {id, name, src} | null`, or the separate `name` / `src` / `id`; `size: xs|sm|md|lg|xl` (`--avatar-<size>` and `--avatar-font-<size>`); `unassigned`; `label` (accessible name and tooltip). The tone is keyed on the **id** (`avatarToneFor`); without an id it falls back to the initials (two people with the same initials then share a colour: pass the id). `ath-avatar-stack` takes `users: StackedUser[]` with a required `id` (plus `name`, `src`), so a stacked avatar has the person's colour too; `max` (4) and a `+N` chip. `null` or `unassigned` draws the empty seat: a `--bg-2` circle with a user glyph, the size of a person, labelled `ATH_LABELS.unassigned`.
 
 ### `ath-due-label`
 
@@ -180,7 +181,7 @@ The app provides its parser once (`{ provide: ATH_MARKDOWN_PARSER, useValue: ren
 </ath-kpi-strip>
 ```
 
-One KPI API (the app's `metric-card` features): `label`, `value`, `delta`, `deltaDirection`, `deltaTitle`, `tone` (trend colour), `spark` (≥ 2 samples, not all zero), `note`/`noteTitle`, `alert`, `muted`, `link`/`linkParams`/`linkLabel` (the whole tile is the hit area). For counts per status: `valueTone` (`amber|blue|green|red|purple`, the figure in the `--*-text` shade; `alert` and `muted` win), `dot` (a CSS colour for a small key before the label), and projected content under the figure (a progress bar). The strip draws the card and the hairlines and drops to two columns below 920px. `ath-stat-card` is a deprecated alias that renders a strip of one tile. `ath-sparkline` (`data`, `width` 70, `height` 22, `color`, `showDot`, `showArea`, `strokeWidth` 1.2) is decorative; `sparklineGeometry()` is the pure path maths.
+One KPI API (the app's `metric-card` features): `label`, `value`, `delta`, `deltaDirection`, `deltaTitle`, `tone` (trend colour), `spark` (≥ 2 samples, not all zero), `note`/`noteTitle`, `alert`, `muted`, `link`/`linkParams`/`linkLabel` (the whole tile is the hit area). For counts per status: `valueTone` (`amber|blue|green|red|purple`, the figure in the `--*-text` shade; `alert` and `muted` win), `dot` (a CSS colour for a small key before the label), and projected content under the figure (a progress bar). The strip draws the card and the hairlines and drops to two columns below 920px. `ath-sparkline` (`data`, `width` 70, `height` 22, `color`, `showDot`, `showArea`, `strokeWidth` 1.2) is decorative; `sparklineGeometry()` is the pure path maths.
 
 ## Page frame: `ath-page`, `ath-panel-grid`, `ath-panel`
 
@@ -197,7 +198,7 @@ One KPI API (the app's `metric-card` features): `label`, `value`, `delta`, `delt
 
 - `ath-page mode="scroll"` (default): at least the stage's height, grows with the content, the stage scrolls; panels in the grid stretch to the bottom when the content is short. `mode="fill"`: exactly the stage's height; the filling child (`ath-panel-grid`, `ath-panel` or `[athPageFill]`) takes the height under the head and its panels scroll inside. Toolbars, alerts and KPI strips in the body keep their height. Below 720px of stage width fill falls back to scroll.
 - `ath-panel-grid`: `columns` = `1`–`4`, `main-side`, `side-main` or any `grid-template-columns`; `rows` = `fill` (default: rows share the height, panels in a row are equally tall), `auto`, or any `grid-template-rows`. It stacks into one column below 720px of its own width (container query). Panels span with `ath-panel [colSpan] [rowSpan]`.
-- `ath-panel`: `title`, `level`, `count`, slots `[athPanelHead]`, `[athPanelActions]`, `[athPanelFoot]`, `padded`, `scroll` (default on), `loading` + `skeletonRows`. Frame and head from the `--panel-*` tokens; no head row when it would be empty.
+- `ath-panel`: `title`, `level`, `count`, slots `[athPanelHead]`, `[athPanelActions]`, `[athPanelFoot]`, `padded`, `scroll` (default on), `overflow` (`hidden` default, or `clip`: cuts at the rounded frame without being a scroll container, so sticky content inside sticks to the page's scroller; use it with `[scroll]="false"`), `loading` + `skeletonRows`. Frame and head from the `--panel-*` tokens; no head row when it would be empty.
 
 **Contract the app shell must provide** (`styles/_layout.scss`):
 
@@ -321,11 +322,41 @@ A native `<dialog>` with `showModal()`: top layer, inert background, `::backdrop
 
 ### `ath-select`
 
-A styled native `<select>` with `ControlValueAccessor` (`[(ngModel)]`, forms). A value written before its options exist (a saved setting read before the list it picks from has loaded) is shown once they arrive: each option carries `[selected]`, not only the select's `[value]`.
+A styled native `<select>` with `ControlValueAccessor` (`[(ngModel)]`, forms). A value written before its options exist (a saved setting read before the list it picks from has loaded) is shown once they arrive: each option carries `[selected]`, not only the select's `[value]`. Named by its visible `label` (`<label for>`), or, in a row or cell that already says what it is, by `ariaLabel` (on the native select; no hidden `<label class="sr-only">` needed).
+
+### `ath-toggle`
+
+A `role="switch"` button. With `label` (and `description`) it is a boxed, self-labelling row; without, the bare switch. In a settings row or a table cell that names it, pass `ariaLabel` instead of a hidden label: `<ath-toggle [ariaLabel]="'Email on mention'" [checked]="on" (toggled)="set($event)" />`.
+
+### `ath-sheet`
+
+```html
+<ath-sheet
+  [open]="!!ticket()"
+  [ariaLabel]="ticket()?.title"
+  width="560px"
+  top="48px"
+  (closed)="close()"
+>
+  …detail…
+</ath-sheet>
+```
+
+A non-modal side sheet at the inline end (the right in LTR, the left in RTL), for detail beside the page instead of over it (the ticket peek). `role="dialog"`, `aria-modal="false"`, named by `ariaLabel` / `ariaLabelledby`.
+
+- **Top layer** (`popover="manual"`): no ancestor clips or covers it; menus, pickers and dialogs opened later lie above it, the toast container is raised above it. Without the Popover API it is `position: fixed` at `--z-fixed`.
+- **Non-modal:** no scrim, no focus trap, no scroll lock; a press on the page beside it does not close it.
+- **Escape** (topmost overlay only) asks to close: `closed` and `openChange(false)`. Controlled: it closes when `open` turns false.
+- **Focus:** on open into the sheet (`autoFocus`: `panel` default, `first`, `none`), on close back to where it was, when focus was inside or would otherwise be lost (`restoreFocus`).
+- Inputs: `open`, `width` (CSS length, default 480px, capped at the viewport), `top` (CSS length, default 0: keeps a shell's top bar uncovered), `ariaLabel`, `ariaLabelledby`, `autoFocus`, `restoreFocus`, `closeOnEscape`, `panelClass`, `panelId`; outputs `closed`, `openChange`, `opened`; `close()`. Slides in from the edge in 220ms (a fade under `prefers-reduced-motion`).
 
 ### `ath-dropdown`, `ath-combobox` (presets)
 
-Same public API as before, now thin presets: `ath-dropdown` = `ath-menu` from a flat `items: DropdownItem[]` (new optional `shortcut`; `title` is the tooltip and, on disabled items, the accessible reason). The projected button is the menu button itself (one tab stop, ARIA on the button); plain text gets a `role="button"` wrapper. `ath-combobox` = single-select `ath-option-picker` (`options`, `[(value)]`, `placeholder`, `searchPlaceholder`, `disabled`, `clearable`, `loading`, `bare`, `optionTpl`, `queryChange`, `opened`, `closed`, `toggle()`, `openPanel()`, `close()`, `select()`). For anything richer use `ath-menu` or `ath-option-picker` directly.
+Thin presets: `ath-dropdown` = `ath-menu` from a flat `items: DropdownItem[]`, each a `DropdownAction` (`id`, `label`, `icon`, `variant`, `disabled`, `title` = tooltip and, on disabled items, the accessible reason, `shortcut`) or `DROPDOWN_SEPARATOR` between groups (`isDropdownSeparator()`; the old pseudo-item `{ id, label: '', divider: true }` is gone). The projected button is the menu button itself (one tab stop, ARIA on the button); plain text gets a `role="button"` wrapper. `ath-combobox` = single-select `ath-option-picker` (`options: ListboxOption[]`, `[(value)]`, `placeholder`, `searchPlaceholder`, `disabled`, `clearable`, `loading`, `bare`, `optionTpl`, `queryChange`, `opened`, `closed`, `toggle()`, `openPanel()`, `close()`, `select()`). For anything richer use `ath-menu` or `ath-option-picker` directly.
+
+### Unused components kept (quality step 2.7)
+
+The app does not use these today; they stay because they are not duplicates of a newer primitive and the roadmap has a use for them: `ath-pagination` (server-side lists, `Page<T>`, steps 3.9 and 5.4), `ath-file-drop` (attachments, the later file service), `ath-code-block` (API keys, docs snippets), `ath-divider`, `ath-spinner` (inline busy states; content loading is `ath-skeleton`), `ath-sidebar` (the app shell builds its own rail from `ath-nav-item`; candidate for removal when the shell is split in 4.6). Removed in 2.7 as duplicates: `ath-stat-card` (→ `ath-kpi-strip`), `ath-banner` (→ `ath-alert appearance="banner"`), `ath-card` and `ath-section` (→ `ath-panel`), `ath-project-key-badge` (→ `ath-chip`, `ath-nav-item [chip]`).
 
 ## Component catalogue (quality step 1.8)
 

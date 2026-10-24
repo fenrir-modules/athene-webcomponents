@@ -44,3 +44,14 @@ export const RightToLeft: Story = {
     template: `<ath-toggle [label]="text" [checked]="true" description="${RTL_TEXT}" />`,
   }),
 };
+/** In a settings row the row's text names the switch; `ariaLabel` gives it the same name. */
+export const NamedByRow: Story = {
+  render: () => ({
+    template: `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:420px">
+        <span>Email on mention</span>
+        <ath-toggle ariaLabel="Email on mention" [checked]="true" />
+      </div>
+    `,
+  }),
+};

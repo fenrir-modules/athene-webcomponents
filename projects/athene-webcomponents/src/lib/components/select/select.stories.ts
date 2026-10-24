@@ -77,3 +77,15 @@ export const OptionsAfterValue: Story = {
   decorators: [moduleMetadata({ imports: [StoryLateOptionsComponent] })],
   render: () => ({ template: `<ath-story-late-options />` }),
 };
+/** In a settings row the row's text names the select; `ariaLabel` gives it the same name. */
+export const NamedByRow: Story = {
+  render: () => ({
+    props: { options: OPTIONS, value: 'medium' },
+    template: `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:420px">
+        <span>Default priority</span>
+        <ath-select size="sm" placeholder="" ariaLabel="Default priority" [options]="options" [(ngModel)]="value" />
+      </div>
+    `,
+  }),
+};

@@ -1,0 +1,17 @@
+@if (open()) {
+  <section
+    #panel
+    class="ath-sheet"
+    [class]="panelClass()"
+    [id]="panelId()"
+    role="dialog"
+    aria-modal="false"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-labelledby]="ariaLabelledby()"
+    tabindex="-1"
+    [style.--sheet-width]="width()"
+    [style.--sheet-top]="top()"
+  >
+    <ng-content />
+  </section>
+}

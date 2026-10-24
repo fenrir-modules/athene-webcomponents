@@ -1,27 +1,16 @@
-import {
-  AVATAR_TONE_COUNT,
-  avatarInitials,
-  avatarTone,
-  avatarToneFor,
-  toneOfKey,
-} from './avatar-tone';
+import { AVATAR_TONE_COUNT, avatarInitials, avatarToneFor, toneOfKey } from './avatar-tone';
 
-describe('avatarTone', () => {
-  it('gives a person the same tone from a full name or their initials', () => {
-    expect(avatarTone('Dev User')).toBe(avatarTone('DU'));
-    expect(avatarTone('  mira   voss ')).toBe(avatarTone('MV'));
-  });
-
+describe('toneOfKey', () => {
   it('stays within the token palette', () => {
-    for (const name of ['A', 'Joel Furter', 'Mira Voss', 'x y z', '?']) {
-      const tone = avatarTone(name);
+    for (const key of ['A', 'u-1', '8ad83b3c-f215-404a-984d-fbe486477824', 'x y z', '?']) {
+      const tone = toneOfKey(key);
       expect(tone).toBeGreaterThanOrEqual(1);
       expect(tone).toBeLessThanOrEqual(AVATAR_TONE_COUNT);
     }
   });
 
-  it('spreads different people over different tones', () => {
-    const tones = new Set(['DU', 'MV', 'JF', 'LB', 'SK', 'TA', 'NH'].map(avatarTone));
+  it('spreads different keys over different tones', () => {
+    const tones = new Set(['DU', 'MV', 'JF', 'LB', 'SK', 'TA', 'NH'].map(toneOfKey));
     expect(tones.size).toBeGreaterThan(3);
   });
 });
@@ -48,7 +37,9 @@ describe('avatarToneFor', () => {
   });
 
   it('falls back to the initials without an id, and to neutral without anything', () => {
-    expect(avatarToneFor({ name: 'Mira Voss' })).toBe(avatarTone('MV'));
+    // Same tone as before 2.7's removal of avatarTone(): the initials are the key.
+    expect(avatarToneFor({ name: 'Mira Voss' })).toBe(toneOfKey('MV'));
+    expect(avatarToneFor({ name: '  mira   voss ' })).toBe(avatarToneFor({ name: 'MV' }));
     expect(avatarToneFor({ id: ' ', name: '' })).toBeNull();
   });
 });

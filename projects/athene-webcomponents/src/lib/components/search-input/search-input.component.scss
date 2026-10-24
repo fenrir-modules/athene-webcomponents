@@ -9,8 +9,8 @@
 
   &__icon {
     position: absolute;
-    left: var(--ath-space-4);
-    color: var(--ath-text-tertiary);
+    left: var(--space-4);
+    color: var(--fg-3);
     pointer-events: none;
     transition: color 0.15s ease;
   }
@@ -18,65 +18,65 @@
   &__field {
     width: 100%;
     height: 42px;
-    padding: 0 var(--ath-space-10) 0 42px;
-    font-family: var(--ath-font-family);
-    font-size: var(--ath-font-size-sm);
-    color: var(--ath-text-primary);
-    background-color: var(--ath-bg-secondary);
-    border: 1px solid var(--ath-border-color);
-    border-radius: var(--ath-border-radius-lg);
+    padding: 0 var(--space-10) 0 42px;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    color: var(--fg);
+    background-color: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
     transition:
       border-color 0.15s ease,
       box-shadow 0.15s ease,
       background-color 0.15s ease;
 
     &::placeholder {
-      color: var(--ath-text-tertiary);
+      color: var(--fg-3);
     }
 
     &:hover:not(:focus) {
-      border-color: var(--ath-border-color-hover);
+      border-color: var(--border-strong);
       background-color: rgba(255, 255, 255, 0.03);
     }
 
     &:focus {
       outline: none;
-      border-color: var(--ath-border-color-focus);
-      box-shadow: 0 0 0 1px var(--ath-border-color-focus);
-      background-color: var(--ath-bg-secondary);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+      background-color: var(--bg-1);
     }
 
     &:focus ~ .ath-search-input__icon {
-      color: var(--ath-color-primary);
+      color: var(--accent);
     }
   }
 
   // The icon color change on focus (using sibling selector won't work here
   // since icon is before field; we use the wrapper approach instead)
   &:focus-within &__icon {
-    color: var(--ath-color-primary);
+    color: var(--accent);
   }
 
   &__clear {
     position: absolute;
-    right: var(--ath-space-2);
+    right: var(--space-2);
     display: flex;
     align-items: center;
     justify-content: center;
     width: 28px;
     height: 28px;
     padding: 0;
-    color: var(--ath-text-tertiary);
+    color: var(--fg-3);
     background: none;
     border: none;
-    border-radius: var(--ath-border-radius-sm);
+    border-radius: var(--r-sm);
     cursor: pointer;
     transition:
       color 0.15s ease,
       background-color 0.15s ease;
 
     &:hover {
-      color: var(--ath-text-secondary);
+      color: var(--fg-2);
       background-color: rgba(255, 255, 255, 0.06);
     }
   }

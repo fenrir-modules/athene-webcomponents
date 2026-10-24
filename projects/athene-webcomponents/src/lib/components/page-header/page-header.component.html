@@ -3,9 +3,6 @@
     <ng-content select="[athPageLeading]" />
   </div>
   <div class="ath-page-header__text">
-    @if (eyebrow) {
-      <div class="ath-page-header__eyebrow">{{ eyebrow }}</div>
-    }
     @if (level === 2) {
       <h2 class="ath-page-header__title">{{ title }}</h2>
     } @else {

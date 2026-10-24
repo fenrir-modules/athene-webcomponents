@@ -11,13 +11,13 @@ ath-panel-grid {
 }
 
 .ath-panel-grid__track {
-  --ath-panel-grid-cols: minmax(0, 1fr);
+  --panel-grid-columns: minmax(0, 1fr);
 
   display: grid;
   flex: 1 1 auto;
   min-height: 0;
   gap: var(--section-gap);
-  grid-template-columns: var(--ath-panel-grid-cols);
+  grid-template-columns: var(--panel-grid-columns);
   // Auto rows, stretched over the free height (align-content: stretch):
   // as tall as their content, taller when the grid has room.
   grid-auto-rows: auto;

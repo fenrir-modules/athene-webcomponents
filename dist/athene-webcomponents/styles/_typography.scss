@@ -81,68 +81,68 @@ body {
 // -------------------------------------------
 
 .ath-text-xs {
-  font-size: var(--ath-font-size-xs);
-  line-height: var(--ath-line-height-normal);
+  font-size: var(--text-xs);
+  line-height: var(--line-normal);
 }
 
 .ath-text-sm {
-  font-size: var(--ath-font-size-sm);
-  line-height: var(--ath-line-height-normal);
+  font-size: var(--text-sm);
+  line-height: var(--line-normal);
 }
 
 .ath-text-md {
-  font-size: var(--ath-font-size-md);
-  line-height: var(--ath-line-height-normal);
+  font-size: var(--text-md);
+  line-height: var(--line-normal);
 }
 
 .ath-text-lg {
-  font-size: var(--ath-font-size-lg);
-  line-height: var(--ath-line-height-normal);
+  font-size: var(--text-lg);
+  line-height: var(--line-normal);
 }
 
 .ath-text-xl {
-  font-size: var(--ath-font-size-xl);
-  line-height: var(--ath-line-height-tight);
+  font-size: var(--text-xl);
+  line-height: var(--line-tight);
 }
 
 .ath-h1 {
-  font-size: var(--ath-font-size-4xl);
-  font-weight: var(--ath-font-weight-bold);
-  line-height: var(--ath-line-height-tight);
-  color: var(--ath-text-primary);
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--line-tight);
+  color: var(--fg);
 }
 
 .ath-h2 {
-  font-size: var(--ath-font-size-3xl);
-  font-weight: var(--ath-font-weight-bold);
-  line-height: var(--ath-line-height-tight);
-  color: var(--ath-text-primary);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--line-tight);
+  color: var(--fg);
 }
 
 .ath-h3 {
-  font-size: var(--ath-font-size-2xl);
-  font-weight: var(--ath-font-weight-semibold);
-  line-height: var(--ath-line-height-tight);
-  color: var(--ath-text-primary);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-tight);
+  color: var(--fg);
 }
 
 .ath-h4 {
-  font-size: var(--ath-font-size-xl);
-  font-weight: var(--ath-font-weight-semibold);
-  line-height: var(--ath-line-height-tight);
-  color: var(--ath-text-primary);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-tight);
+  color: var(--fg);
 }
 
 .ath-text-primary {
-  color: var(--ath-text-primary);
+  color: var(--fg);
 }
 
 .ath-text-secondary {
-  color: var(--ath-text-secondary);
+  color: var(--fg-2);
 }
 
 .ath-text-tertiary {
-  color: var(--ath-text-tertiary);
+  color: var(--fg-3);
 }
 
 .ath-text-success {
@@ -158,21 +158,21 @@ body {
 }
 
 .ath-font-normal {
-  font-weight: var(--ath-font-weight-normal);
+  font-weight: var(--weight-normal);
 }
 
 .ath-font-medium {
-  font-weight: var(--ath-font-weight-medium);
+  font-weight: var(--weight-medium);
 }
 
 .ath-font-semibold {
-  font-weight: var(--ath-font-weight-semibold);
+  font-weight: var(--weight-semibold);
 }
 
 .ath-font-bold {
-  font-weight: var(--ath-font-weight-bold);
+  font-weight: var(--weight-bold);
 }
 
 .ath-mono {
-  font-family: var(--ath-font-family-mono);
+  font-family: var(--font-mono);
 }

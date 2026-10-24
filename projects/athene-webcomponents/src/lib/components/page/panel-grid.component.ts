@@ -63,7 +63,7 @@ export function panelGridColumns(columns: PanelGridColumns): string {
   template: `
     <div
       class="ath-panel-grid__track"
-      [style.--ath-panel-grid-cols]="templateColumns()"
+      [style.--panel-grid-columns]="templateColumns()"
       [style.grid-template-rows]="templateRows()"
     >
       <ng-content />

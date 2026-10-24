@@ -9,30 +9,30 @@
   width: 32px;
   height: 32px;
   padding: 0;
-  color: var(--ath-text-tertiary);
+  color: var(--fg-3);
   background: none;
-  border: 1px solid var(--ath-border-color);
-  border-radius: var(--ath-border-radius-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
   cursor: pointer;
-  transition: all var(--ath-transition-fast);
+  transition: all var(--t-fast);
 
   &:hover {
-    color: var(--ath-text-primary);
-    border-color: var(--ath-border-color-hover);
-    background-color: var(--ath-bg-tertiary);
+    color: var(--fg);
+    border-color: var(--border-strong);
+    background-color: var(--bg-2);
   }
 
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--ath-border-color-focus);
+    box-shadow: 0 0 0 2px var(--accent);
   }
 
   &--copied {
-    color: var(--ath-color-success);
-    border-color: var(--ath-color-success);
+    color: var(--green);
+    border-color: var(--green);
 
     &:hover {
-      color: var(--ath-color-success);
+      color: var(--green);
     }
   }
 }

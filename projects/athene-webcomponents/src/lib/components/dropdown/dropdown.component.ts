@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  computed,
   effect,
   input,
   output,
@@ -13,22 +14,40 @@ import type { FloatingAlign } from '../floating/floating';
 import { AthMenuComponent } from '../menu/menu.component';
 import { AthMenuItemComponent, AthMenuSeparatorComponent } from '../menu/menu-item.component';
 
-/**
- * Dropdown menu item
- */
-export interface DropdownItem {
+/** An action of the menu; choosing it emits its `id`. */
+export interface DropdownAction {
   id: string;
   label: string;
   /** A Lucide icon (`import { Pencil } from 'lucide-angular'`). */
   icon?: AthIconData;
   variant?: 'default' | 'danger';
   disabled?: boolean;
-  divider?: boolean;
   /** A tooltip — e.g. why a disabled item cannot be chosen (also read by screen readers). */
   title?: string;
   /** Shortcut hint at the end of the item, e.g. `⌘E`. */
   shortcut?: string;
 }
+
+/** A hairline between two groups of actions; use `DROPDOWN_SEPARATOR`. */
+export interface DropdownSeparator {
+  readonly separator: true;
+}
+
+/** One entry of `ath-dropdown`: an action or `DROPDOWN_SEPARATOR`. */
+export type DropdownItem = DropdownAction | DropdownSeparator;
+
+/**
+ * The separator entry: `[edit, rename, DROPDOWN_SEPARATOR, remove]`. It
+ * replaces the old pseudo-item `{ id: 'divider', label: '', divider: true }`
+ * (quality step 2.7).
+ */
+export const DROPDOWN_SEPARATOR: DropdownSeparator = Object.freeze({ separator: true });
+
+export function isDropdownSeparator(item: DropdownItem): item is DropdownSeparator {
+  return 'separator' in item && item.separator === true;
+}
+
+type Entry = { key: string; action: DropdownAction | null };
 
 /**
  * Horizontal alignment hint.
@@ -69,8 +88,17 @@ const CONTROL = 'button, a[href], input, select, textarea, [tabindex]:not([tabin
   },
 })
 export class AthDropdownComponent implements AfterViewInit {
-  /** Menu items */
-  readonly items = input<DropdownItem[]>([]);
+  /** Menu entries: actions, and `DROPDOWN_SEPARATOR` between groups. */
+  readonly items = input<readonly DropdownItem[]>([]);
+
+  /** Separators are keyed by position, actions by id. */
+  protected readonly entries = computed<Entry[]>(() =>
+    this.items().map((item, i) =>
+      isDropdownSeparator(item)
+        ? { key: `separator-${i}`, action: null }
+        : { key: item.id, action: item }
+    )
+  );
 
   /**
    * Horizontal alignment hint.
@@ -113,8 +141,8 @@ export class AthDropdownComponent implements AfterViewInit {
   }
 
   /** Emits the item's id, as a click on it does. */
-  selectItem(item: DropdownItem): void {
-    if (item.disabled || item.divider) return;
+  selectItem(item: DropdownAction): void {
+    if (item.disabled) return;
     this.itemClicked.emit(item.id);
     this.menu().hide();
   }

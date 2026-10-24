@@ -16,6 +16,7 @@ import { AthPanelComponent } from './panel.component';
     <ath-panel id="loading" title="Loading" [loading]="true" [skeletonRows]="3"
       ><p>hidden</p></ath-panel
     >
+    <ath-panel id="clip" [scroll]="false" overflow="clip"><p>sticky inside</p></ath-panel>
   `,
 })
 class HostComponent {}
@@ -57,5 +58,13 @@ describe('AthPanelComponent', () => {
     const style = getComputedStyle(panel('full'));
     expect(style.borderTopLeftRadius).toBe('10px');
     expect(style.borderTopWidth).toBe('1px');
+  });
+
+  it('clips without becoming a scroll container when overflow="clip"', () => {
+    // Needs the lib's global styles only for the frame; overflow is the host rule.
+    expect(getComputedStyle(panel('full')).overflow).toBe('hidden');
+    expect(panel('clip').getAttribute('data-overflow')).toBe('clip');
+    expect(getComputedStyle(panel('clip')).overflow).toBe('clip');
+    expect(panel('full').hasAttribute('data-overflow')).toBeFalse();
   });
 });

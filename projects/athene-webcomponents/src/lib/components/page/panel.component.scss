@@ -14,6 +14,12 @@
   background: var(--surface);
 }
 
+// Cuts like `hidden` without becoming a scroll container: sticky content
+// inside sticks to the page's scroller (a doc's toolbar and outline).
+:host([data-overflow='clip']) {
+  overflow: clip;
+}
+
 .ath-panel__head {
   display: flex;
   flex: none;

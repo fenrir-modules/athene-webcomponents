@@ -16,7 +16,7 @@ export declare function hasKpiTrend(spark: readonly number[] | null | undefined)
  * With `link` the whole cell is the hit area (a stretched link on the
  * label), still drawn as part of the strip.
  *
- * Replaces the app's `metric-card`; `ath-stat-card` is a deprecated alias.
+ * Replaces the app's `metric-card` and the lib's former `ath-stat-card`.
  *
  * @example
  * <ath-kpi-strip>
@@ -44,8 +44,6 @@ export declare class AthKpiTileComponent {
     readonly tone: import("@angular/core").InputSignal<KpiTone>;
     /** Trend samples; fewer than two, or all zero, draw nothing. */
     readonly spark: import("@angular/core").InputSignal<readonly number[] | null | undefined>;
-    /** @deprecated Use `spark`. */
-    readonly sparkData: import("@angular/core").InputSignal<readonly number[] | null | undefined>;
     /** Overrides the tone's trend colour. */
     readonly sparkColor: import("@angular/core").InputSignal<string | null>;
     /** A small quiet note bottom-right ("3 done"), drawn instead of a trend. */
@@ -74,7 +72,7 @@ export declare class AthKpiTileComponent {
     /** `alert` and `muted` say more than a status colour, so they win. */
     protected readonly figureTone: import("@angular/core").Signal<KpiValueTone | null>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthKpiTileComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthKpiTileComponent, "ath-kpi-tile", never, { "label": { "alias": "label"; "required": true; "isSignal": true; }; "value": { "alias": "value"; "required": false; "isSignal": true; }; "delta": { "alias": "delta"; "required": false; "isSignal": true; }; "deltaDirection": { "alias": "deltaDirection"; "required": false; "isSignal": true; }; "deltaTitle": { "alias": "deltaTitle"; "required": false; "isSignal": true; }; "tone": { "alias": "tone"; "required": false; "isSignal": true; }; "spark": { "alias": "spark"; "required": false; "isSignal": true; }; "sparkData": { "alias": "sparkData"; "required": false; "isSignal": true; }; "sparkColor": { "alias": "sparkColor"; "required": false; "isSignal": true; }; "note": { "alias": "note"; "required": false; "isSignal": true; }; "noteTitle": { "alias": "noteTitle"; "required": false; "isSignal": true; }; "alert": { "alias": "alert"; "required": false; "isSignal": true; }; "valueTone": { "alias": "valueTone"; "required": false; "isSignal": true; }; "dot": { "alias": "dot"; "required": false; "isSignal": true; }; "muted": { "alias": "muted"; "required": false; "isSignal": true; }; "link": { "alias": "link"; "required": false; "isSignal": true; }; "linkParams": { "alias": "linkParams"; "required": false; "isSignal": true; }; "linkLabel": { "alias": "linkLabel"; "required": false; "isSignal": true; }; }, {}, never, ["*"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthKpiTileComponent, "ath-kpi-tile", never, { "label": { "alias": "label"; "required": true; "isSignal": true; }; "value": { "alias": "value"; "required": false; "isSignal": true; }; "delta": { "alias": "delta"; "required": false; "isSignal": true; }; "deltaDirection": { "alias": "deltaDirection"; "required": false; "isSignal": true; }; "deltaTitle": { "alias": "deltaTitle"; "required": false; "isSignal": true; }; "tone": { "alias": "tone"; "required": false; "isSignal": true; }; "spark": { "alias": "spark"; "required": false; "isSignal": true; }; "sparkColor": { "alias": "sparkColor"; "required": false; "isSignal": true; }; "note": { "alias": "note"; "required": false; "isSignal": true; }; "noteTitle": { "alias": "noteTitle"; "required": false; "isSignal": true; }; "alert": { "alias": "alert"; "required": false; "isSignal": true; }; "valueTone": { "alias": "valueTone"; "required": false; "isSignal": true; }; "dot": { "alias": "dot"; "required": false; "isSignal": true; }; "muted": { "alias": "muted"; "required": false; "isSignal": true; }; "link": { "alias": "link"; "required": false; "isSignal": true; }; "linkParams": { "alias": "linkParams"; "required": false; "isSignal": true; }; "linkLabel": { "alias": "linkLabel"; "required": false; "isSignal": true; }; }, {}, never, ["*"], true, never>;
 }
 /**
  * The card around a row of `ath-kpi-tile`s: one border, radius and shadow,

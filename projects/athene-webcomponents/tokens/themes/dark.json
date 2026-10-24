@@ -426,17 +426,5 @@
     "shadow-drawer": {
       "$value": "8px 0 24px -6px rgba(0, 0, 0, 0.55)"
     }
-  },
-  "legacy": {
-    "bg": {
-      "ath-bg-overlay": {
-        "$value": "rgba(0, 0, 0, 0.7)"
-      }
-    },
-    "color": {
-      "ath-color-primary-rgb": {
-        "$value": "130, 128, 232"
-      }
-    }
   }
 }

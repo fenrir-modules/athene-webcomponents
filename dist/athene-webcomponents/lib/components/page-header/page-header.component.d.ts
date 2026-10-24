@@ -20,12 +20,6 @@ import * as i0 from "@angular/core";
  * </ath-page-header>
  */
 export declare class AthPageHeaderComponent {
-    /**
-     * Small eyebrow above the title.
-     * @deprecated App pages carry their location in the topbar breadcrumb;
-     * kept only for the admin console.
-     */
-    eyebrow: string;
     /** Page title. */
     title: string;
     /** Multi-segment sub-row, rendered with bullet (•) separators. */
@@ -49,5 +43,5 @@ export declare class AthPageHeaderComponent {
      */
     protected get visibleSubItems(): string[];
     static ɵfac: i0.ɵɵFactoryDeclaration<AthPageHeaderComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthPageHeaderComponent, "ath-page-header", never, { "eyebrow": { "alias": "eyebrow"; "required": false; }; "title": { "alias": "title"; "required": true; }; "subItems": { "alias": "subItems"; "required": false; }; "description": { "alias": "description"; "required": false; }; "divider": { "alias": "divider"; "required": false; }; "level": { "alias": "level"; "required": false; }; }, {}, never, ["[athPageLeading]", "[athPageMeta]", "*"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthPageHeaderComponent, "ath-page-header", never, { "title": { "alias": "title"; "required": true; }; "subItems": { "alias": "subItems"; "required": false; }; "description": { "alias": "description"; "required": false; }; "divider": { "alias": "divider"; "required": false; }; "level": { "alias": "level"; "required": false; }; }, {}, never, ["[athPageLeading]", "[athPageMeta]", "*"], true, never>;
 }

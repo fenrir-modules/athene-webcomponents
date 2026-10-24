@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AthAvatarComponent } from '../avatar';
-import { AthComboboxComponent, ComboboxOption } from '../combobox';
+import { AthComboboxComponent } from '../combobox';
+import type { ListboxOption } from '../listbox/listbox.component';
 import { injectAthLabels } from '../../i18n/labels';
 
 export interface UserOption {
@@ -62,7 +63,7 @@ export class AthUserPickerComponent {
 
   @Output() valueChange = new EventEmitter<string | null>();
 
-  protected readonly options = computed<ComboboxOption<string>[]>(() =>
+  protected readonly options = computed<ListboxOption<string>[]>(() =>
     this._users().map((u) => ({
       value: u.id,
       label: u.name,

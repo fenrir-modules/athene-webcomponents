@@ -14,17 +14,14 @@ import { AthOptionPickerComponent } from '../listbox/option-picker.component';
 import type { ListboxOption, ListboxOptionContext } from '../listbox/listbox.component';
 
 /**
- * A combobox option. Same shape as `ListboxOption`: `icon` may be a Lucide
- * icon (rendered) or a name your `optionTpl` resolves.
- */
-export type ComboboxOption<T = string> = ListboxOption<T>;
-
-/**
  * Searchable single-select dropdown: a preset on `ath-option-picker`
  * (popover + listbox), kept for its established API. For multi-select,
  * "create" rows or a custom anchor use `ath-option-picker` directly.
  *
- * For custom rendering pass an `optionTpl` template (`let-option`).
+ * Options are `ListboxOption`s: `icon` may be a Lucide icon (rendered) or a
+ * name your `optionTpl` resolves. For custom rendering pass an `optionTpl`
+ * template (`let-option`). Clearing is built in (`clearable`); from code,
+ * `value.set(null)`.
  *
  * @example
  * <ath-combobox
@@ -44,7 +41,7 @@ export type ComboboxOption<T = string> = ListboxOption<T>;
 export class AthComboboxComponent<T = string> {
   protected readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
-  readonly options = input<ComboboxOption<T>[]>([]);
+  readonly options = input<ListboxOption<T>[]>([]);
   /** The selected value. Two-way: `[(value)]`. */
   readonly value = model<T | null>(null);
   /** Trigger text without a value; defaults to `ATH_LABELS.pickerPlaceholder`. */
@@ -81,15 +78,9 @@ export class AthComboboxComponent<T = string> {
     this.picker().hide();
   }
 
-  select(option: ComboboxOption<T>): void {
+  select(option: ListboxOption<T>): void {
     if (option.disabled) return;
     this.value.set(option.value);
     this.close();
-  }
-
-  /** @deprecated The clear button is built in (`clearable`); call `value.set(null)`. */
-  clearValue(event?: Event): void {
-    event?.stopPropagation();
-    this.value.set(null);
   }
 }

@@ -89,19 +89,19 @@
 // Animation Classes
 // -------------------------------------------
 .ath-animate-fade-in {
-  animation: ath-fade-in var(--ath-transition-normal) ease-out;
+  animation: ath-fade-in var(--t-base) ease-out;
 }
 
 .ath-animate-slide-up {
-  animation: ath-slide-up var(--ath-transition-normal) ease-out;
+  animation: ath-slide-up var(--t-base) ease-out;
 }
 
 .ath-animate-slide-down {
-  animation: ath-slide-down var(--ath-transition-normal) ease-out;
+  animation: ath-slide-down var(--t-base) ease-out;
 }
 
 .ath-animate-scale-in {
-  animation: ath-scale-in var(--ath-transition-normal) ease-out;
+  animation: ath-scale-in var(--t-base) ease-out;
 }
 
 .ath-animate-spin {

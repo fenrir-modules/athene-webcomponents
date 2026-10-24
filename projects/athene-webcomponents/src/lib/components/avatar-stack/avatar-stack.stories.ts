@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { STORY_PEOPLE } from '../../stories/story-data';
 import { AthAvatarStackComponent, type StackedUser } from './avatar-stack.component';
 
-const USERS: StackedUser[] = STORY_PEOPLE.map((p) => ({ name: p.name ?? '' }));
+const USERS: StackedUser[] = STORY_PEOPLE.map((p) => ({ id: p.id ?? '', name: p.name ?? '' }));
 
 const meta: Meta<AthAvatarStackComponent> = {
   title: 'Display/Avatar stack',

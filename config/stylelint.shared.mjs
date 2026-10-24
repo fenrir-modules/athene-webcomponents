@@ -11,6 +11,8 @@
 //  - components carry no theme selectors (under emulated encapsulation
 //    `[data-theme='dark'] .x` never matches; themes live in tokens only).
 //  - z-index comes from the one scale (--z-*).
+//  - no --ath-* / --gold custom property, declared or read (the legacy
+//    aliases were removed in quality step 2.7).
 import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -47,6 +49,7 @@ export function atheneStylelint({
       // csstools accepts var(--unknown, x) once a fallback exists; these don't.
       'athene/no-unknown-custom-property-with-fallback': [true, { importFrom: defined }],
       'athene/no-fallback-on-token': [true, { importFrom: tokens }],
+      'athene/no-retired-alias': true,
       'declaration-property-value-allowed-list': [
         { 'z-index': ['auto', '0', '/^var\\(--z-[a-z]+\\)$/', '/^calc\\(var\\(--z-[a-z]+\\)/'] },
         {

@@ -2,13 +2,13 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
 import { Copy, Pencil, Trash2 } from 'lucide-angular';
 import { AthButtonComponent } from '../button/button.component';
-import { AthDropdownComponent, type DropdownItem } from './dropdown.component';
+import { AthDropdownComponent, DROPDOWN_SEPARATOR, type DropdownItem } from './dropdown.component';
 
 const ITEMS: DropdownItem[] = [
   { id: 'edit', label: 'Edit', icon: Pencil, shortcut: 'E' },
   { id: 'copy', label: 'Copy link', icon: Copy },
   { id: 'move', label: 'Move', disabled: true, title: 'Only leads can move tickets' },
-  { id: 'd', label: '', divider: true },
+  DROPDOWN_SEPARATOR,
   { id: 'delete', label: 'Delete', icon: Trash2, variant: 'danger' },
 ];
 

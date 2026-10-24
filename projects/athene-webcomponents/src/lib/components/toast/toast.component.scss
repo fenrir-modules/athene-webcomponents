@@ -10,7 +10,7 @@
   z-index: var(--z-toast);
   display: flex;
   flex-direction: column;
-  gap: var(--ath-space-2);
+  gap: var(--space-2);
   max-width: 420px;
   width: 100%;
   pointer-events: none;
@@ -19,44 +19,44 @@
 .ath-toast {
   display: flex;
   align-items: flex-start;
-  gap: var(--ath-space-3);
-  padding: var(--ath-space-3) var(--ath-space-4);
-  background-color: var(--ath-bg-elevated);
-  border: 1px solid var(--ath-border-color);
-  border-radius: var(--ath-border-radius-md);
-  box-shadow: var(--ath-shadow-lg);
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-3);
   pointer-events: auto;
   animation: ath-toast-in 200ms ease;
 
   &--success {
-    border-left: 3px solid var(--ath-color-success);
+    border-left: 3px solid var(--green);
 
     .ath-toast__icon {
-      color: var(--ath-color-success);
+      color: var(--green);
     }
   }
 
   &--error {
-    border-left: 3px solid var(--ath-color-error);
+    border-left: 3px solid var(--red);
 
     .ath-toast__icon {
-      color: var(--ath-color-error);
+      color: var(--red);
     }
   }
 
   &--warning {
-    border-left: 3px solid var(--ath-color-warning);
+    border-left: 3px solid var(--amber);
 
     .ath-toast__icon {
-      color: var(--ath-color-warning);
+      color: var(--amber);
     }
   }
 
   &--info {
-    border-left: 3px solid var(--ath-color-info);
+    border-left: 3px solid var(--blue);
 
     .ath-toast__icon {
-      color: var(--ath-color-info);
+      color: var(--blue);
     }
   }
 
@@ -67,9 +67,9 @@
 
   &__message {
     flex: 1;
-    font-size: var(--ath-font-size-sm);
-    color: var(--ath-text-primary);
-    line-height: var(--ath-line-height-normal);
+    font-size: var(--text-sm);
+    color: var(--fg);
+    line-height: var(--line-normal);
   }
 
   // Quiet text button ("Öffnen"): ink text, underline on hover/focus.
@@ -83,8 +83,8 @@
     border-radius: var(--r-xs);
     color: var(--fg);
     font-family: inherit;
-    font-size: var(--ath-font-size-sm);
-    font-weight: var(--ath-font-weight-semibold);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
     cursor: pointer;
 
     &:hover {
@@ -106,15 +106,15 @@
     width: 24px;
     height: 24px;
     padding: 0;
-    color: var(--ath-text-tertiary);
+    color: var(--fg-3);
     background: none;
     border: none;
-    border-radius: var(--ath-border-radius-sm);
+    border-radius: var(--r-sm);
     cursor: pointer;
-    transition: color var(--ath-transition-fast);
+    transition: color var(--t-fast);
 
     &:hover {
-      color: var(--ath-text-primary);
+      color: var(--fg);
     }
   }
 }

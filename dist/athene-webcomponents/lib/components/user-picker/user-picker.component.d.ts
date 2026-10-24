@@ -1,5 +1,5 @@
 import { EventEmitter } from '@angular/core';
-import { ComboboxOption } from '../combobox';
+import type { ListboxOption } from '../listbox/listbox.component';
 import * as i0 from "@angular/core";
 export interface UserOption {
     id: string;
@@ -31,7 +31,7 @@ export declare class AthUserPickerComponent {
     /** Show email under each name. */
     showEmail: boolean;
     valueChange: EventEmitter<string | null>;
-    protected readonly options: import("@angular/core").Signal<ComboboxOption<string>[]>;
+    protected readonly options: import("@angular/core").Signal<ListboxOption<string>[]>;
     protected readonly selectedUser: import("@angular/core").Signal<UserOption | null>;
     onValueChange(v: string | null): void;
     protected get triggerLabel(): string;

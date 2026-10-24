@@ -44,10 +44,4 @@ describe('AthNavItemComponent', () => {
     expect(q('.ath-nav-item__icon-dot')).not.toBeNull();
     expect(q('.ath-nav-item__tooltip')?.textContent?.trim()).toBe('Inbox · 3');
   });
-
-  it('still reads the deprecated inputs (link, collapsed, badgeCount)', () => {
-    render({ route: null, link: '/old', collapsed: true, badgeCount: 2 });
-    expect(q('a')?.getAttribute('href')).toBe('/old');
-    expect(q('.ath-nav-item__tooltip')?.textContent?.trim()).toBe('Inbox · 2');
-  });
 });

@@ -47,8 +47,6 @@ export class AthNavItemComponent {
   readonly label = input.required<string>();
   /** Router target: a path, or link parameters for a parameterised route. */
   readonly route = input<string | readonly unknown[] | null>(null);
-  /** @deprecated Use `route`. */
-  readonly link = input<string | null>(null);
   /** Exact match for the active state (default: prefix match, like Angular). */
   readonly exact = input(false);
   /** Either an icon or a chip. */
@@ -56,15 +54,11 @@ export class AthNavItemComponent {
   readonly chip = input<AthNavChip | null>(null);
   /** A count (unread items); nothing below 1. */
   readonly badge = input<number | null>(null);
-  /** @deprecated Use `badge`. */
-  readonly badgeCount = input<number | null>(null);
   readonly dot = input<AthNavDot | null>(null);
   /** A secondary row in a quieter tone ("… All projects"). */
   readonly muted = input(false);
   /** Rail mode: the label folds away, a tooltip shows it. */
   readonly compact = input(false);
-  /** @deprecated Use `compact`. */
-  readonly collapsed = input(false);
   /** The 2-px bar at the left edge of the active row. */
   readonly indicator = input(true);
   /** Tooltip text in compact mode; defaults to the label. */
@@ -72,19 +66,17 @@ export class AthNavItemComponent {
 
   /** Link parameters for `routerLink` (a copy: it takes a mutable array). */
   protected readonly target = computed<unknown[]>(() => {
-    const route = this.route() ?? this.link() ?? '';
+    const route = this.route() ?? '';
     return typeof route === 'string' ? [route] : [...route];
   });
 
-  protected readonly isCompact = computed(() => this.compact() || this.collapsed());
-
   protected readonly count = computed(() => {
-    const n = this.badge() ?? this.badgeCount();
+    const n = this.badge();
     return n !== null && n > 0 ? n : null;
   });
 
   protected readonly tooltipText = computed(() => {
-    if (!this.isCompact()) return null;
+    if (!this.compact()) return null;
     const text = this.tooltip() ?? this.label();
     const n = this.count();
     return n !== null ? `${text} · ${n}` : text;

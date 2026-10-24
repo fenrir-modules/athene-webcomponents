@@ -38,25 +38,14 @@ export function toneOfKey(key: string): number {
 }
 
 /**
- * Colour tone keyed on the initials.
- *
- * @deprecated Two people with the same initials share a colour (DS-09).
- * Pass a stable id to `ath-avatar` (`[person]="{ id, name }"` or `[id]`)
- * so the tone comes from `avatarToneFor`. Kept as the fallback for call
- * sites that only know a name.
- */
-export function avatarTone(name: string | null | undefined): number {
-  return toneOfKey(avatarInitials(name));
-}
-
-/**
  * The tone of a person: keyed on their stable id when there is one, so two
  * people with the same initials still differ and one person keeps a colour
  * however a call site spells the name. Without an id it falls back to the
- * initials (the legacy key), and with neither it is `null` (neutral tone).
+ * initials (two people with the same initials then share a colour, DS-9:
+ * pass the id), and with neither it is `null` (neutral tone).
  */
 export function avatarToneFor(person: { id?: string | null; name?: string | null }): number | null {
   const id = person.id?.trim();
   if (id) return toneOfKey(id);
-  return person.name?.trim() ? avatarTone(person.name) : null;
+  return person.name?.trim() ? toneOfKey(avatarInitials(person.name)) : null;
 }

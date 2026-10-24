@@ -17,6 +17,7 @@ import { AthSkeletonComponent } from '../skeleton';
  *   …rows…
  * </ath-panel>
  * <ath-panel title="Activity" [loading]="loading()" [padded]="true">…</ath-panel>
+ * <ath-panel [scroll]="false" overflow="clip">…a sticky toolbar…</ath-panel>
  */
 @Component({
   selector: 'ath-panel',
@@ -27,6 +28,7 @@ import { AthSkeletonComponent } from '../skeleton';
     '[attr.data-col-span]': 'colSpan() > 1 ? colSpan() : null',
     '[attr.data-row-span]': 'rowSpan() > 1 ? rowSpan() : null',
     '[attr.aria-busy]': 'loading() || null',
+    '[attr.data-overflow]': "overflow() === 'clip' ? 'clip' : null",
   },
   templateUrl: './panel.component.html',
   styleUrl: './panel.component.scss',
@@ -41,6 +43,13 @@ export class AthPanelComponent {
   readonly padded = input(false);
   /** Let the body scroll when the panel is shorter than its content. */
   readonly scroll = input(true);
+  /**
+   * How the panel cuts its content at the rounded frame. `hidden` (default)
+   * makes the panel a scroll container; `clip` cuts the same way without
+   * one, so `position: sticky` inside (an editor toolbar, an outline) sticks
+   * to the page's scroller instead. Use `clip` with `[scroll]="false"`.
+   */
+  readonly overflow = input<'hidden' | 'clip'>('hidden');
   /** Rows placeholder instead of the content. */
   readonly loading = input(false);
   readonly skeletonRows = input(5);

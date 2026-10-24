@@ -18,6 +18,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
 const REF = /\{([^{}]+)\}/g;
+/** The legacy alias names (quality step 2.7); Stylelint rejects them in styles too. */
+export const RETIRED_NAME = /^(ath-.*|gold)$/;
 const isToken = (node) => node !== null && typeof node === 'object' && '$value' in node;
 
 export class TokenError extends Error {}
@@ -80,6 +82,11 @@ export function indexBase(tokens) {
     if (!/^[a-z0-9][a-z0-9-]*$/.test(t.name)) {
       throw new TokenError(
         `${t.file}: token name "${t.name}" (${t.path}) is not a valid kebab-case custom-property name`
+      );
+    }
+    if (RETIRED_NAME.test(t.name)) {
+      throw new TokenError(
+        `${t.file}: --${t.name} (${t.path}) uses a retired name: the --ath-* and --gold aliases were removed in quality step 2.7; name a token by its role (--accent, --fg-2, --space-3)`
       );
     }
     if (byName.has(t.name)) {

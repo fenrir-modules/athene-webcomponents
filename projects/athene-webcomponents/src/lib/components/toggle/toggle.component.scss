@@ -2,22 +2,31 @@
 // ATH-TOGGLE STYLES
 // ===========================================
 
+// The bare switch (no label: named by `ariaLabel`) is a box of its own:
+// no line box around it, so in a settings row or a table cell it is exactly
+// the switch's 36×20 and sits at the top of its line (not on a text
+// baseline that adds a descender's height under it).
+:host([data-bare]) {
+  display: inline-flex;
+  vertical-align: top;
+}
+
 // The switch itself carries no chrome. The bordered row below is a
 // separate, opt-in shape — without it, a toggle dropped beside a label
 // that the page already renders drew an empty box around a 36px pill.
 .ath-toggle {
   display: inline-flex;
   align-items: center;
-  gap: var(--ath-space-3);
+  gap: var(--space-3);
   padding: 0;
   border: 0;
   background: none;
-  color: var(--ath-text-primary);
+  color: var(--fg);
   text-align: left;
   cursor: pointer;
   transition:
-    border-color var(--ath-transition-fast),
-    background-color var(--ath-transition-fast);
+    border-color var(--t-fast),
+    background-color var(--t-fast);
 
   &:focus-visible {
     outline: none;
@@ -33,13 +42,13 @@
   &--boxed {
     display: flex;
     width: 100%;
-    padding: var(--ath-space-3) var(--ath-space-4);
-    border-radius: var(--ath-border-radius-md);
-    border: 1px solid var(--ath-border-color);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--r);
+    border: 1px solid var(--border);
     background: var(--surface);
 
     &:hover:not(.ath-toggle--disabled) {
-      border-color: var(--ath-border-color-hover);
+      border-color: var(--border-strong);
       background: var(--hover);
     }
   }
@@ -49,12 +58,12 @@
     flex-shrink: 0;
     width: 36px;
     height: 20px;
-    border-radius: var(--ath-border-radius-full);
-    background: var(--ath-bg-tertiary);
-    border: 1px solid var(--ath-border-color);
+    border-radius: var(--r-full);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
     transition:
-      background-color var(--ath-transition-fast),
-      border-color var(--ath-transition-fast);
+      background-color var(--t-fast),
+      border-color var(--t-fast);
   }
 
   &__thumb {
@@ -63,11 +72,11 @@
     left: 2px;
     width: 14px;
     height: 14px;
-    border-radius: var(--ath-border-radius-full);
-    background: var(--ath-text-tertiary);
+    border-radius: var(--r-full);
+    background: var(--fg-3);
     transition:
-      transform var(--ath-transition-fast),
-      background-color var(--ath-transition-fast);
+      transform var(--t-fast),
+      background-color var(--t-fast);
   }
 
   &__content {
@@ -77,14 +86,14 @@
   }
 
   &__label {
-    font-size: var(--ath-font-size-sm);
-    font-weight: var(--ath-font-weight-medium);
-    color: var(--ath-text-primary);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--fg);
   }
 
   &__description {
-    font-size: var(--ath-font-size-xs);
-    color: var(--ath-text-tertiary);
+    font-size: var(--text-xs);
+    color: var(--fg-3);
   }
 
   // -------------------------------------------

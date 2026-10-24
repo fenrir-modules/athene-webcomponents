@@ -1,0 +1,65 @@
+// ===========================================
+// ATH-SHEET
+// ===========================================
+// A non-modal side sheet at the inline end, in the top layer (promoted with
+// popover="manual"; these rules also replace the UA's popover box).
+
+:host {
+  display: contents;
+}
+
+.ath-sheet {
+  // Defaults; `width` / `top` set them inline.
+  --sheet-width: 480px;
+  --sheet-top: 0px;
+  // The shadow falls onto the page, i.e. towards the inline start.
+  --sheet-shadow-x: -12px;
+  --sheet-enter-x: 24px;
+
+  position: fixed;
+  inset-block: var(--sheet-top) 0;
+  inset-inline: auto 0;
+  // Only without the Popover API; the top layer needs no z-index.
+  z-index: var(--z-fixed);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: min(var(--sheet-width), 100vw);
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  color: var(--fg);
+  background: var(--surface);
+  border: 0;
+  border-inline-start: 1px solid var(--border);
+  // 22% black in light (the scrim is 40%), deeper in dark.
+  box-shadow: var(--sheet-shadow-x) 0 32px -20px color-mix(in srgb, var(--scrim) 55%, transparent);
+  outline: none;
+  // Quick out of the gate, settling gently; under 250ms.
+  animation: ath-sheet-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:dir(rtl) {
+    --sheet-shadow-x: 12px;
+    --sheet-enter-x: -24px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: ath-sheet-fade 120ms ease-out;
+  }
+}
+
+@keyframes ath-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--sheet-enter-x));
+  }
+}
+
+@keyframes ath-sheet-fade {
+  from {
+    opacity: 0;
+  }
+}

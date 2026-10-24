@@ -15,6 +15,7 @@ export interface SelectOption {
  *
  * @example
  * <ath-select label="Role" [options]="roles" [(ngModel)]="selectedRole" />
+ * <ath-select [ariaLabel]="'Role for ' + member.name" [options]="roles" [(ngModel)]="role" />
  */
 export declare class AthSelectComponent implements ControlValueAccessor {
     /** Select label */
@@ -33,6 +34,11 @@ export declare class AthSelectComponent implements ControlValueAccessor {
     disabled: boolean;
     /** Required field */
     required: boolean;
+    /**
+     * Accessible name of the native select when no visible `label` is drawn
+     * (a select in a settings row or a table cell that its row already names).
+     */
+    ariaLabel: string;
     /** Unique select ID */
     selectId: string;
     protected value: string;
@@ -47,5 +53,5 @@ export declare class AthSelectComponent implements ControlValueAccessor {
     setDisabledState(isDisabled: boolean): void;
     onSelectionChange(event: Event): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthSelectComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthSelectComponent, "ath-select", never, { "size": { "alias": "size"; "required": false; }; "label": { "alias": "label"; "required": false; }; "placeholder": { "alias": "placeholder"; "required": false; }; "options": { "alias": "options"; "required": false; }; "error": { "alias": "error"; "required": false; }; "hint": { "alias": "hint"; "required": false; }; "disabled": { "alias": "disabled"; "required": false; }; "required": { "alias": "required"; "required": false; }; "selectId": { "alias": "selectId"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthSelectComponent, "ath-select", never, { "size": { "alias": "size"; "required": false; }; "label": { "alias": "label"; "required": false; }; "placeholder": { "alias": "placeholder"; "required": false; }; "options": { "alias": "options"; "required": false; }; "error": { "alias": "error"; "required": false; }; "hint": { "alias": "hint"; "required": false; }; "disabled": { "alias": "disabled"; "required": false; }; "required": { "alias": "required"; "required": false; }; "ariaLabel": { "alias": "ariaLabel"; "required": false; }; "selectId": { "alias": "selectId"; "required": false; }; }, {}, never, never, true, never>;
 }

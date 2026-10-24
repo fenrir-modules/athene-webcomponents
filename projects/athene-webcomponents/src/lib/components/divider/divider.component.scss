@@ -4,7 +4,7 @@
 
 .ath-divider {
   flex-shrink: 0;
-  background-color: var(--ath-border-color);
+  background-color: var(--border);
 
   &--horizontal {
     width: 100%;
@@ -22,28 +22,28 @@
 
   &--spacing-sm {
     &.ath-divider--horizontal {
-      margin: var(--ath-space-2) 0;
+      margin: var(--space-2) 0;
     }
     &.ath-divider--vertical {
-      margin: 0 var(--ath-space-2);
+      margin: 0 var(--space-2);
     }
   }
 
   &--spacing-md {
     &.ath-divider--horizontal {
-      margin: var(--ath-space-4) 0;
+      margin: var(--space-4) 0;
     }
     &.ath-divider--vertical {
-      margin: 0 var(--ath-space-4);
+      margin: 0 var(--space-4);
     }
   }
 
   &--spacing-lg {
     &.ath-divider--horizontal {
-      margin: var(--ath-space-6) 0;
+      margin: var(--space-6) 0;
     }
     &.ath-divider--vertical {
-      margin: 0 var(--ath-space-6);
+      margin: 0 var(--space-6);
     }
   }
 }

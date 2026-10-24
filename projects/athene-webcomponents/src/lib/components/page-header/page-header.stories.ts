@@ -8,11 +8,11 @@ const meta: Meta<AthPageHeaderComponent> = {
   title: 'Layout/Page header',
   component: AthPageHeaderComponent,
   decorators: [moduleMetadata({ imports: [AthButtonComponent] })],
-  args: { eyebrow: 'Project · Web', title: 'Sprint 24', description: '', divider: true, level: 1 },
+  args: { title: 'Sprint 24', description: '', divider: true, level: 1 },
   render: (args) => ({
     props: { ...args, sub: ['12 tickets', 'ends Friday'] },
     template: `
-      <ath-page-header [eyebrow]="eyebrow" [title]="title" [subItems]="sub" [description]="description"
+      <ath-page-header [title]="title" [subItems]="sub" [description]="description"
         [divider]="divider" [level]="level">
         <ath-button variant="secondary" size="sm">Share</ath-button>
         <ath-button size="sm">New ticket</ath-button>
@@ -31,5 +31,5 @@ export const WithDescription: Story = {
 export const LongText: Story = { args: { title: LONG_TEXT, description: LONG_TEXT } };
 export const RightToLeft: Story = {
   globals: { dir: 'rtl' },
-  args: { title: RTL_TEXT, eyebrow: RTL_TEXT },
+  args: { title: RTL_TEXT },
 };

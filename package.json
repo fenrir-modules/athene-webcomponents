@@ -47,7 +47,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:tokens": "node --test scripts/tokens/*.test.mjs",
-    "lint": "npm run lint:shared && npm run lint:es && npm run lint:styles && npm run lint:i18n && npm run lint:ts && npm run lint:a11y && npm run tokens:check && npm run format:check",
+    "lint": "npm run lint:shared && npm run lint:es && npm run lint:styles && npm run lint:i18n && npm run lint:ts && npm run lint:a11y && npm run tokens:check && npm run format:check && npm run lint:knip",
     "lint:shared": "node scripts/shared-config.mjs",
     "lint:es": "eslint \"projects/**/*.{ts,html}\" --max-warnings=0",
     "lint:ts": "tsc -p projects/athene-webcomponents/tsconfig.lib.json --noEmit && tsc -p projects/athene-webcomponents/tsconfig.spec.json --noEmit",

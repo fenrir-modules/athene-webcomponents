@@ -35,8 +35,6 @@ export declare class AthMarkdownComponent {
     private readonly defaultParser;
     /** Markdown source. */
     readonly text: import("@angular/core").InputSignal<string | null | undefined>;
-    /** @deprecated Use `text`. Markdown source, read when `text` is empty. */
-    readonly source: import("@angular/core").InputSignal<string | null | undefined>;
     /** Parser for this instance; defaults to `ATH_MARKDOWN_PARSER`. */
     readonly parse: import("@angular/core").InputSignal<AthMarkdownParser | null>;
     /** Pre-rendered HTML (still sanitized). Wins over `text`. */
@@ -45,5 +43,5 @@ export declare class AthMarkdownComponent {
     protected readonly renderedHtml: import("@angular/core").Signal<string>;
     private clean;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthMarkdownComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthMarkdownComponent, "ath-markdown", never, { "text": { "alias": "text"; "required": false; "isSignal": true; }; "source": { "alias": "source"; "required": false; "isSignal": true; }; "parse": { "alias": "parse"; "required": false; "isSignal": true; }; "html": { "alias": "html"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthMarkdownComponent, "ath-markdown", never, { "text": { "alias": "text"; "required": false; "isSignal": true; }; "parse": { "alias": "parse"; "required": false; "isSignal": true; }; "html": { "alias": "html"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

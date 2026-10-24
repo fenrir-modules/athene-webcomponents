@@ -26,6 +26,7 @@ export interface SelectOption {
  *
  * @example
  * <ath-select label="Role" [options]="roles" [(ngModel)]="selectedRole" />
+ * <ath-select [ariaLabel]="'Role for ' + member.name" [options]="roles" [(ngModel)]="role" />
  */
 @Component({
   selector: 'ath-select',
@@ -66,6 +67,12 @@ export class AthSelectComponent implements ControlValueAccessor {
 
   /** Required field */
   @Input() required = false;
+
+  /**
+   * Accessible name of the native select when no visible `label` is drawn
+   * (a select in a settings row or a table cell that its row already names).
+   */
+  @Input() ariaLabel = '';
 
   /** Unique select ID */
   @Input() selectId = `ath-select-${Math.random().toString(36).substr(2, 9)}`;

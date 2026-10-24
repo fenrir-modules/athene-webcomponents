@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { AthStatCardComponent } from '../stat-card';
 import { AthKpiStripComponent, AthKpiTileComponent, hasKpiTrend } from './kpi-tile.component';
 
 @Component({
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AthKpiStripComponent, AthKpiTileComponent, AthStatCardComponent],
+  imports: [AthKpiStripComponent, AthKpiTileComponent],
   template: `
     <div style="width: 1000px">
       <ath-kpi-strip>
@@ -32,7 +31,6 @@ import { AthKpiStripComponent, AthKpiTileComponent, hasKpiTrend } from './kpi-ti
         />
       </ath-kpi-strip>
     </div>
-    <ath-stat-card label="Old" value="42" subValue="sub" trend="up" />
     <ath-kpi-strip class="status" [columns]="3">
       <ath-kpi-tile label="In progress" [value]="4" valueTone="amber" dot="rgb(1, 2, 3)" />
       <ath-kpi-tile label="Overdue" [value]="2" valueTone="green" [alert]="true" />
@@ -97,13 +95,6 @@ describe('AthKpiTileComponent', () => {
     expect(new Set(widths).size).toBe(1);
     expect(getComputedStyle(tiles()[0]).borderLeftWidth).toBe('0px');
     expect(getComputedStyle(tiles()[1]).borderLeftWidth).toBe('1px');
-  });
-
-  it('keeps ath-stat-card as an alias rendering a kpi tile', () => {
-    const card = (fixture.nativeElement as HTMLElement).querySelector('ath-stat-card')!;
-    expect(card.querySelector('ath-kpi-tile .ath-kpi__value')!.textContent).toBe('42');
-    expect(card.querySelector('.ath-kpi__delta')!.textContent).toBe('↑');
-    expect(card.querySelector('.ath-kpi__note')!.textContent).toBe('sub');
   });
 
   describe('status tiles', () => {

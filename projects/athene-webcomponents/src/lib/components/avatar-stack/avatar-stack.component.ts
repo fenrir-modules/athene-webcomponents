@@ -10,6 +10,11 @@ import { CommonModule } from '@angular/common';
 import { AthAvatarComponent, AvatarSize } from '../avatar';
 
 export interface StackedUser {
+  /**
+   * Stable id (the user's id): the key of the avatar's colour tone, so one
+   * person has the same colour here as in every other `ath-avatar` (DS-09).
+   */
+  id: string;
   /** Display name (also used for initials). */
   name: string;
   /** Optional avatar image URL. */
@@ -20,7 +25,7 @@ export interface StackedUser {
  * Overlapping avatars with a `+N` chip when the list exceeds `max`.
  *
  * @example
- * <ath-avatar-stack [users]="[{name:'Joel'},{name:'Mira'},{name:'Tom'},{name:'Sara'}]" />
+ * <ath-avatar-stack [users]="[{ id: 'u1', name: 'Joel' }, { id: 'u2', name: 'Mira' }]" />
  * <ath-avatar-stack [users]="watchers" [max]="5" size="md" />
  */
 @Component({
@@ -55,5 +60,5 @@ export class AthAvatarStackComponent {
     return total > this.max ? total - this.max : 0;
   });
 
-  trackByName = (_: number, user: StackedUser): string => user.name;
+  trackById = (_: number, user: StackedUser): string => user.id;
 }

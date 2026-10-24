@@ -39,7 +39,7 @@ jobs:
           cache: npm
       - name: Install
         run: npm ci
-      - name: Lint (shared config, ESLint, Stylelint, i18n, tsc, a11y, tokens:check)
+      - name: Lint (shared config, ESLint, Stylelint, i18n, tsc, a11y, tokens:check, Prettier, knip)
         run: npm run lint
       - name: Token pipeline tests
         run: npm run test:tokens

@@ -73,4 +73,17 @@ describe('AthSelectComponent', () => {
     fixture.detectChanges();
     expect(host.value()).toBe('p1');
   });
+
+  it('names the native select with ariaLabel when there is no visible label', () => {
+    const fixture = TestBed.createComponent(AthSelectComponent);
+    fixture.componentRef.setInput('options', PROJECTS);
+    fixture.componentRef.setInput('ariaLabel', 'Role for Mira');
+    fixture.detectChanges();
+    const select = (fixture.nativeElement as HTMLElement).querySelector('select')!;
+    expect(select.getAttribute('aria-label')).toBe('Role for Mira');
+    expect((fixture.nativeElement as HTMLElement).querySelector('label')).toBeNull();
+    fixture.componentRef.setInput('ariaLabel', '');
+    fixture.detectChanges();
+    expect(select.hasAttribute('aria-label')).toBeFalse();
+  });
 });

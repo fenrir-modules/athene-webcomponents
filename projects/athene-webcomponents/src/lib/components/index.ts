@@ -4,7 +4,6 @@
 
 // Layout
 export * from './page-header';
-export * from './section';
 export * from './sidebar';
 export * from './nav-item';
 export * from './breadcrumb';
@@ -13,8 +12,6 @@ export * from './tabs';
 export * from './timeline';
 
 // Data Display
-export * from './card';
-export * from './stat-card';
 export * from './table';
 export * from './badge';
 export * from './chip';
@@ -24,7 +21,6 @@ export * from './empty-state';
 export * from './sparkline';
 export * from './status-pill';
 export * from './priority';
-export * from './project-key-badge';
 export * from './kpi-tile';
 export * from './sla-bar';
 export * from './progress';
@@ -53,7 +49,6 @@ export * from './toast';
 export * from './spinner';
 export * from './skeleton';
 export * from './tooltip';
-export * from './banner';
 
 // Utilities
 export * from './kbd';
@@ -69,3 +64,4 @@ export * from './page';
 export * from './popover';
 export * from './menu';
 export * from './listbox';
+export * from './sheet';

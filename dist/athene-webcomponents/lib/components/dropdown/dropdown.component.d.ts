@@ -3,22 +3,36 @@ import type { AthIconData } from '../floating/icon';
 import type { FloatingAlign } from '../floating/floating';
 import { AthMenuComponent } from '../menu/menu.component';
 import * as i0 from "@angular/core";
-/**
- * Dropdown menu item
- */
-export interface DropdownItem {
+/** An action of the menu; choosing it emits its `id`. */
+export interface DropdownAction {
     id: string;
     label: string;
     /** A Lucide icon (`import { Pencil } from 'lucide-angular'`). */
     icon?: AthIconData;
     variant?: 'default' | 'danger';
     disabled?: boolean;
-    divider?: boolean;
     /** A tooltip — e.g. why a disabled item cannot be chosen (also read by screen readers). */
     title?: string;
     /** Shortcut hint at the end of the item, e.g. `⌘E`. */
     shortcut?: string;
 }
+/** A hairline between two groups of actions; use `DROPDOWN_SEPARATOR`. */
+export interface DropdownSeparator {
+    readonly separator: true;
+}
+/** One entry of `ath-dropdown`: an action or `DROPDOWN_SEPARATOR`. */
+export type DropdownItem = DropdownAction | DropdownSeparator;
+/**
+ * The separator entry: `[edit, rename, DROPDOWN_SEPARATOR, remove]`. It
+ * replaces the old pseudo-item `{ id: 'divider', label: '', divider: true }`
+ * (quality step 2.7).
+ */
+export declare const DROPDOWN_SEPARATOR: DropdownSeparator;
+export declare function isDropdownSeparator(item: DropdownItem): item is DropdownSeparator;
+type Entry = {
+    key: string;
+    action: DropdownAction | null;
+};
 /**
  * Horizontal alignment hint.
  * `'auto'` picks left or right based on available viewport space.
@@ -40,8 +54,10 @@ export type DropdownAlign = 'left' | 'right' | 'auto';
  * </ath-dropdown>
  */
 export declare class AthDropdownComponent implements AfterViewInit {
-    /** Menu items */
-    readonly items: import("@angular/core").InputSignal<DropdownItem[]>;
+    /** Menu entries: actions, and `DROPDOWN_SEPARATOR` between groups. */
+    readonly items: import("@angular/core").InputSignal<readonly DropdownItem[]>;
+    /** Separators are keyed by position, actions by id. */
+    protected readonly entries: import("@angular/core").Signal<Entry[]>;
     /**
      * Horizontal alignment hint.
      * - `'left'`  – menu anchored to the left edge of trigger
@@ -65,7 +81,7 @@ export declare class AthDropdownComponent implements AfterViewInit {
     /** Opens or closes the menu (focus goes to the first item when opening). */
     toggle(): void;
     /** Emits the item's id, as a click on it does. */
-    selectItem(item: DropdownItem): void;
+    selectItem(item: DropdownAction): void;
     protected onOpenChange(open: boolean): void;
     protected onHostClick(event: MouseEvent): void;
     protected onHostKeydown(event: KeyboardEvent): void;
@@ -76,3 +92,4 @@ export declare class AthDropdownComponent implements AfterViewInit {
     static ɵfac: i0.ɵɵFactoryDeclaration<AthDropdownComponent, never>;
     static ɵcmp: i0.ɵɵComponentDeclaration<AthDropdownComponent, "ath-dropdown", never, { "items": { "alias": "items"; "required": false; "isSignal": true; }; "align": { "alias": "align"; "required": false; "isSignal": true; }; }, { "itemClicked": "itemClicked"; "openChange": "openChange"; }, never, ["*"], true, never>;
 }
+export {};

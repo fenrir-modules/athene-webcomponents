@@ -22,12 +22,5 @@
         "$value": "#46a86e3a"
       }
     }
-  },
-  "legacy": {
-    "color": {
-      "ath-color-primary-rgb": {
-        "$value": "70, 168, 110"
-      }
-    }
   }
 }

@@ -22,11 +22,11 @@ html {
 }
 
 body {
-  font-family: var(--ath-font-family);
-  font-size: var(--ath-font-size-md);
-  line-height: var(--ath-line-height-normal);
-  color: var(--ath-text-primary);
-  background-color: var(--ath-bg-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: var(--line-normal);
+  color: var(--fg);
+  background-color: var(--bg-0);
 }
 
 img,
@@ -46,11 +46,11 @@ select {
 }
 
 a {
-  color: var(--ath-text-link);
+  color: var(--accent);
   text-decoration: none;
 
   &:hover {
-    color: var(--ath-text-link-hover);
+    color: var(--accent-2);
   }
 }
 

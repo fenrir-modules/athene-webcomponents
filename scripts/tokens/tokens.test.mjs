@@ -13,6 +13,7 @@ import {
   contrast,
   checkContrast,
   renderScss,
+  RETIRED_NAME,
   TokenError,
 } from './lib.mjs';
 import { generate } from './build.mjs';
@@ -41,7 +42,7 @@ const tinySets = {
       accent: { $value: '#4f46e5' },
       ring: { $value: '{color.accent}' },
     },
-    old: { $deprecated: 'use --accent', 'ath-primary': { $value: '{color.accent}' } },
+    old: { $deprecated: 'use --accent', 'primary-old': { $value: '{color.accent}' } },
     z: { $type: 'number', 'z-a': { $value: 1 } },
   },
   dark: { color: { bg: { $value: '#111113' }, fg: { $value: '#eeeeee' } } },
@@ -54,7 +55,7 @@ test('flatten inherits $type and $deprecated from groups', () => {
   const t = flatten(tinySets.base);
   assert.equal(t.find((x) => x.name === 'fg').type, 'color');
   assert.equal(t.find((x) => x.name === 'z-a').type, 'number');
-  assert.equal(t.find((x) => x.name === 'ath-primary').deprecated, 'use --accent');
+  assert.equal(t.find((x) => x.name === 'primary-old').deprecated, 'use --accent');
   assert.equal(t.find((x) => x.name === 'fg').deprecated, undefined);
 });
 
@@ -105,7 +106,7 @@ test('cascade emulation: specificity, then source order', () => {
 test('rendered SCSS marks deprecated aliases and keeps descriptions', () => {
   const built = buildBlocks(tiny, load(tinySets));
   const scss = renderScss(built, { sourceLabel: 'tiny' });
-  assert.match(scss, /--ath-primary: var\(--accent\); \/\/ deprecated → use --accent/);
+  assert.match(scss, /--primary-old: var\(--accent\); \/\/ deprecated → use --accent/);
   assert.match(scss, /--fg: #111111; \/\/ text/);
   assert.match(scss, /GENERATED FILE — DO NOT EDIT/);
 });
@@ -198,20 +199,24 @@ test('one z-index scale: unique, strictly increasing, all numbers', () => {
   );
   for (let i = 1; i < values.length; i++)
     assert.ok(values[i] > values[i - 1], `--${z[i].name} must be above --${z[i - 1].name}`);
-  const legacy = real.built.baseTokens.filter((t) => t.name.startsWith('ath-z-'));
-  assert.ok(
-    legacy.every((t) => /^\{z-index\.z-[a-z]+\}$/.test(t.value)),
-    'legacy z aliases point into the scale'
-  );
 });
 
-test('every --ath-* alias is marked deprecated', () => {
-  const ath = real.built.baseTokens.filter((t) => t.name.startsWith('ath-') || t.name === 'gold');
-  assert.ok(ath.length >= 70);
+test('no --ath-* or --gold token is generated (aliases removed in 2.7)', () => {
+  const retired = real.built.baseTokens.filter((t) => RETIRED_NAME.test(t.name));
   assert.deepEqual(
-    ath.filter((t) => !t.deprecated).map((t) => t.name),
+    retired.map((t) => t.name),
     []
   );
+  const scss = Object.entries(real.files).find(([f]) => f.endsWith('_tokens.scss'))[1];
+  assert.doesNotMatch(scss, /--(ath-[a-z0-9-]+|gold)\s*:/);
+});
+
+test('a retired --ath-* or --gold name is a build error', () => {
+  for (const name of ['ath-text-primary', 'gold']) {
+    const sets = structuredClone(tinySets);
+    sets.base.color[name] = { $value: '{color.accent}' };
+    assert.throws(() => buildBlocks(tiny, load(sets)), /retired name/);
+  }
 });
 
 test('light tokens also answer to [data-theme="light"] (DS-15)', () => {

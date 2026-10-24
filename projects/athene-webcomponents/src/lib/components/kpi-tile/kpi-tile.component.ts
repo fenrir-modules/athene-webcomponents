@@ -32,7 +32,7 @@ export function hasKpiTrend(spark: readonly number[] | null | undefined): boolea
  * With `link` the whole cell is the hit area (a stretched link on the
  * label), still drawn as part of the strip.
  *
- * Replaces the app's `metric-card`; `ath-stat-card` is a deprecated alias.
+ * Replaces the app's `metric-card` and the lib's former `ath-stat-card`.
  *
  * @example
  * <ath-kpi-strip>
@@ -74,8 +74,6 @@ export class AthKpiTileComponent {
   readonly tone = input<KpiTone>('neutral');
   /** Trend samples; fewer than two, or all zero, draw nothing. */
   readonly spark = input<readonly number[] | null | undefined>(null);
-  /** @deprecated Use `spark`. */
-  readonly sparkData = input<readonly number[] | null | undefined>(null);
   /** Overrides the tone's trend colour. */
   readonly sparkColor = input<string | null>(null);
 
@@ -101,7 +99,7 @@ export class AthKpiTileComponent {
   /** Accessible name of the link; defaults to the label. */
   readonly linkLabel = input<string | null>(null);
 
-  protected readonly samples = computed(() => this.spark() ?? this.sparkData() ?? null);
+  protected readonly samples = computed(() => this.spark() ?? null);
   protected readonly showTrend = computed(() => !this.muted() && hasKpiTrend(this.samples()));
   protected readonly trendColor = computed(() => this.sparkColor() ?? SPARK_COLOR[this.tone()]);
   protected readonly routerLink = computed(() => this.link() as string | unknown[]);

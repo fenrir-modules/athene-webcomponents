@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AthButtonComponent } from '../button/button.component';
-import { AthDropdownComponent, DropdownItem } from './dropdown.component';
+import { AthDropdownComponent, DROPDOWN_SEPARATOR, DropdownItem } from './dropdown.component';
 
 const ITEMS: DropdownItem[] = [
   { id: 'profile', label: 'Profile' },
-  { id: 'sep', label: '', divider: true },
+  DROPDOWN_SEPARATOR,
   { id: 'locked', label: 'Locked', disabled: true, title: 'Not allowed' },
   { id: 'logout', label: 'Logout', variant: 'danger' },
 ];

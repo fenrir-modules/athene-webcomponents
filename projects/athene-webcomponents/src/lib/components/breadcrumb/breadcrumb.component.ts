@@ -17,8 +17,6 @@ export interface BreadcrumbItem {
   label: string;
   /** Router path of the step; omitted on the current page. */
   route?: string;
-  /** @deprecated Use `route`. */
-  link?: string;
   /** Query of `route` (a list with its filters, say). */
   queryParams?: Record<string, string>;
   /** A key (`ATL`, `ATL-12`), drawn as a mono chip before the label. */
@@ -109,7 +107,7 @@ export class AthBreadcrumbComponent {
 
   /** Where a step links to, if anywhere. */
   protected target(crumb: BreadcrumbItem): string | null {
-    return crumb.route ?? crumb.link ?? null;
+    return crumb.route ?? null;
   }
 
   protected openHidden(hidden: readonly BreadcrumbItem[], id: string): void {

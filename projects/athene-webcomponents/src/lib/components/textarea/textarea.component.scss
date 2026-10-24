@@ -5,12 +5,12 @@
 .ath-textarea {
   display: flex;
   flex-direction: column;
-  gap: var(--ath-space-1);
+  gap: var(--space-1);
 
   &__label {
-    font-size: var(--ath-font-size-sm);
-    font-weight: var(--ath-font-weight-medium);
-    color: var(--ath-text-primary);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--fg);
   }
 
   &__required {
@@ -20,36 +20,36 @@
 
   &__field {
     width: 100%;
-    padding: var(--ath-space-3) var(--ath-space-4);
-    font-family: var(--ath-font-family);
-    font-size: var(--ath-font-size-md);
-    color: var(--ath-text-primary);
-    background-color: var(--ath-bg-input);
-    border: 1px solid var(--ath-border-color);
-    border-radius: var(--ath-border-radius-md);
-    line-height: var(--ath-line-height-normal);
+    padding: var(--space-3) var(--space-4);
+    font-family: var(--font-sans);
+    font-size: var(--text-md);
+    color: var(--fg);
+    background-color: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    line-height: var(--line-normal);
     transition:
-      border-color var(--ath-transition-fast),
-      box-shadow var(--ath-transition-fast);
+      border-color var(--t-fast),
+      box-shadow var(--t-fast);
 
     &::placeholder {
-      color: var(--ath-text-tertiary);
+      color: var(--fg-3);
     }
 
     &:hover:not(:disabled):not(:focus) {
-      border-color: var(--ath-border-color-hover);
+      border-color: var(--border-strong);
     }
 
     &:focus {
       outline: none;
-      border-color: var(--ath-border-color-focus);
+      border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-ring);
     }
 
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      background-color: var(--ath-bg-tertiary);
+      background-color: var(--bg-2);
     }
   }
 
@@ -57,25 +57,25 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--ath-space-2);
+    gap: var(--space-2);
   }
 
   &__error {
     display: flex;
     align-items: center;
-    gap: var(--ath-space-1);
-    font-size: var(--ath-font-size-sm);
+    gap: var(--space-1);
+    font-size: var(--text-sm);
     color: var(--red-text);
   }
 
   &__hint {
-    font-size: var(--ath-font-size-sm);
-    color: var(--ath-text-tertiary);
+    font-size: var(--text-sm);
+    color: var(--fg-3);
   }
 
   &__count {
-    font-size: var(--ath-font-size-xs);
-    color: var(--ath-text-tertiary);
+    font-size: var(--text-xs);
+    color: var(--fg-3);
 
     &--near-limit {
       color: var(--amber-text);
@@ -84,7 +84,7 @@
 
   &--error {
     .ath-textarea__field {
-      border-color: var(--ath-color-error);
+      border-color: var(--red);
 
       &:focus {
         box-shadow: 0 0 0 3px color-mix(in srgb, var(--red) 20%, transparent);

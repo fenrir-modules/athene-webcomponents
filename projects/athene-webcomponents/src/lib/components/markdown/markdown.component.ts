@@ -75,8 +75,6 @@ export class AthMarkdownComponent {
 
   /** Markdown source. */
   readonly text = input<string | null | undefined>('');
-  /** @deprecated Use `text`. Markdown source, read when `text` is empty. */
-  readonly source = input<string | null | undefined>('');
   /** Parser for this instance; defaults to `ATH_MARKDOWN_PARSER`. */
   readonly parse = input<AthMarkdownParser | null>(null);
   /** Pre-rendered HTML (still sanitized). Wins over `text`. */
@@ -86,7 +84,7 @@ export class AthMarkdownComponent {
   protected readonly renderedHtml = computed<string>(() => {
     const direct = this.html();
     if (direct) return this.clean(direct);
-    const src = this.text() || this.source() || '';
+    const src = this.text() || '';
     if (!src.trim()) return '';
     const parser = this.parse() ?? this.defaultParser;
     if (!parser) return this.clean(athPlainTextHtml(src));

@@ -3,8 +3,8 @@
   "files": {
     ".prettierrc": "04d8d1f54f37bef07ffa92db669771d29a78523b30a2b988cb872b4571f60ddd",
     "config/eslint.shared.mjs": "bf3aa806f305da9dd74604a55c092d8a3aad9af8cd6a2118914c3b485652c7ea",
-    "config/stylelint.shared.mjs": "98dcd6a92949b6672bf130041664424b7ddcbe68797b3c84e5ce60fdc73ec135",
-    "scripts/stylelint/athene-tokens.mjs": "1297c4ae83531e57dd195013a5709e7b49d2e94c64147b15a9f40d5302111c8d",
+    "config/stylelint.shared.mjs": "0d1792d53ed9293d19e5808a9275dd6133787a7658e6fc365c5bcca270f02424",
+    "scripts/stylelint/athene-tokens.mjs": "1606681da07d467687965acad543ed591bbe7c5eae451446069c3773c3b0ce6b",
     "scripts/stylelint/angular-inline-styles.mjs": "63b63b02a78ebf75347aadfd5e4f41b263bb07801d22365e56734ad16329a4b3",
     "scripts/knip-check.mjs": "52540a9220912dd7af77e681579ba1695f656f862c7290bedd41770b558f8c63",
     "scripts/shared-config.mjs": "1f82783303e6661fd46f7cb572b7ed6d21cbdcb8013e13bf3b5a7c3d8db62ea5"

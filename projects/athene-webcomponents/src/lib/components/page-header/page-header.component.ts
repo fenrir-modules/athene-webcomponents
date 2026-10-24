@@ -30,13 +30,6 @@ import { CommonModule } from '@angular/common';
   styleUrl: './page-header.component.scss',
 })
 export class AthPageHeaderComponent {
-  /**
-   * Small eyebrow above the title.
-   * @deprecated App pages carry their location in the topbar breadcrumb;
-   * kept only for the admin console.
-   */
-  @Input() eyebrow = '';
-
   /** Page title. */
   @Input({ required: true }) title = '';
 

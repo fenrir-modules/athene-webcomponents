@@ -5,8 +5,6 @@ export interface BreadcrumbItem {
     label: string;
     /** Router path of the step; omitted on the current page. */
     route?: string;
-    /** @deprecated Use `route`. */
-    link?: string;
     /** Query of `route` (a list with its filters, say). */
     queryParams?: Record<string, string>;
     /** A key (`ATL`, `ATL-12`), drawn as a mono chip before the label. */
