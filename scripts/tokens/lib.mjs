@@ -318,7 +318,17 @@ export function contrast(fgCss, bgCss, canvasCss = '#ffffff') {
   return (l1 + 0.05) / (l2 + 0.05);
 }
 
-/** Evaluate config.contrast rules in every context. Returns rows, failures first. */
+/** A colour as an opaque `rgb()` string: composited over the canvas when translucent. */
+function opaque(css, canvasCss) {
+  const [r, g, b] = over(parseColor(css), parseColor(canvasCss));
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+/**
+ * Evaluate config.contrast rules in every context. A translucent `bg` (a
+ * tint) is composited over the canvas, or over each token in `rule.over`
+ * (the surfaces the tint sits on): one row per bg × backdrop.
+ */
 export function checkContrast(config, blocks) {
   const rows = [];
   for (const ctx of themeContexts(config)) {
@@ -327,16 +337,20 @@ export function checkContrast(config, blocks) {
     for (const rule of config.contrast ?? []) {
       if (rule.when && !matches(rule.when, ctx)) continue;
       for (const bgName of rule.bg) {
-        const ratio = contrast(resolveValue(map, rule.fg), resolveValue(map, bgName), canvas);
-        rows.push({
-          ...ctx,
-          fg: rule.fg,
-          bg: bgName,
-          ratio,
-          min: rule.min,
-          ok: ratio + 1e-9 >= rule.min,
-          why: rule.why,
-        });
+        for (const overName of rule.over ?? [null]) {
+          const backdrop = overName ? opaque(resolveValue(map, overName), canvas) : canvas;
+          const ratio = contrast(resolveValue(map, rule.fg), resolveValue(map, bgName), backdrop);
+          rows.push({
+            ...ctx,
+            fg: rule.fg,
+            bg: bgName,
+            ...(overName ? { over: overName } : {}),
+            ratio,
+            min: rule.min,
+            ok: ratio + 1e-9 >= rule.min,
+            why: rule.why,
+          });
+        }
       }
     }
   }

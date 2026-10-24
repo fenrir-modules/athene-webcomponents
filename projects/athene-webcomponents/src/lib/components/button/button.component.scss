@@ -167,16 +167,15 @@
   }
 
   &--danger {
-    background-color: var(--ath-color-error);
-    color: #fff;
-    border-color: var(--ath-color-error);
+    background-color: var(--action-danger-bg);
+    color: var(--action-danger-fg);
+    border-color: var(--action-danger-bg);
 
+    // The hover token deepens the fill itself (86% with black) in both
+    // themes; dark starts from a darker red so the white label clears 4.5:1.
     &:hover:not(:disabled) {
-      // `--ath-color-error-hover` aliases plain `--red`, so going through
-      // it leaves the button visually inert on hover. Deepening the red
-      // itself works in both themes without a second colour token.
-      background-color: color-mix(in srgb, var(--ath-color-error) 86%, #000);
-      border-color: color-mix(in srgb, var(--ath-color-error) 86%, #000);
+      background-color: var(--action-danger-bg-hover);
+      border-color: var(--action-danger-bg-hover);
     }
   }
 
@@ -191,7 +190,7 @@
 
     &:hover:not(:disabled) {
       background-color: var(--red-tint);
-      color: var(--red);
+      color: var(--red-text);
     }
 
     &:active:not(:disabled) {

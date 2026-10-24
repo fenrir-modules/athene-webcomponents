@@ -17,7 +17,7 @@
 
 .ath-alert {
   --_tone: var(--blue);
-  --_text: var(--blue);
+  --_text: var(--blue-text);
   --_tint: var(--blue-tint);
 
   display: flex;
@@ -33,7 +33,7 @@
 
   &[data-tone='success'] {
     --_tone: var(--green);
-    --_text: var(--green);
+    --_text: var(--green-text);
     --_tint: var(--green-tint);
   }
 
@@ -45,7 +45,7 @@
 
   &[data-tone='error'] {
     --_tone: var(--red);
-    --_text: var(--red);
+    --_text: var(--red-text);
     --_tint: var(--red-tint);
   }
 

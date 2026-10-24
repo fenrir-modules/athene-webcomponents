@@ -8,7 +8,8 @@
         "$value": "#9d9bf0"
       },
       "accent-3": {
-        "$value": "#6b69d8"
+        "$value": "#7472da",
+        "$description": "Pressed primary fill under the dark label: 4.6:1. Was #6b69d8 (4.2:1)."
       },
       "accent-faint": {
         "$value": "#8280e820"

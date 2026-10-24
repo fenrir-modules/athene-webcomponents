@@ -86,10 +86,15 @@
         "$value": "#9d9bf0"
       },
       "accent-3": {
-        "$value": "#6b69d8"
+        "$value": "#7472da",
+        "$description": "Pressed primary fill under the dark label: 4.6:1. Was #6b69d8 (4.2:1)."
       },
       "accent-dim": {
         "$value": "#6366f1"
+      },
+      "accent-text": {
+        "$value": "{color.accent.accent-2}",
+        "$description": "The lighter accent step: clears 4.5:1 on the surfaces and on accent tints in every preset."
       },
       "accent-faint": {
         "$value": "#8280e820"
@@ -133,6 +138,12 @@
           "$value": 1
         }
       },
+      "action-danger": {
+        "action-danger-bg": {
+          "$value": "#c24f4f",
+          "$description": "A darker shade of the dark --red so the white label clears 4.5:1 (4.6). --red (#cc6b6b) is 3.6:1."
+        }
+      },
       "nav": {
         "nav-active-bg": {
           "$value": "color-mix(in srgb, {color.accent.accent} 12%, transparent)"
@@ -141,7 +152,7 @@
           "$value": "color-mix(in srgb, {color.accent.accent} 18%, transparent)"
         },
         "nav-active-fg": {
-          "$value": "{color.accent.accent}"
+          "$value": "{color.accent.accent-text}"
         },
         "nav-active-icon": {
           "$value": "{color.accent.accent}"
@@ -153,12 +164,12 @@
           "$value": "color-mix(in srgb, {color.accent.accent} 14%, transparent)"
         },
         "nav-badge-fg": {
-          "$value": "{color.accent.accent}"
+          "$value": "{color.accent.accent-text}"
         }
       },
       "tab": {
         "tab-active-fg": {
-          "$value": "{color.accent.accent}"
+          "$value": "{color.accent.accent-text}"
         },
         "tab-active-indicator": {
           "$value": "{color.accent.accent}"
@@ -170,7 +181,7 @@
           "$value": "{color.accent.accent-faint}"
         },
         "segment-count-active-fg": {
-          "$value": "{color.accent.accent}"
+          "$value": "{color.accent.accent-text}"
         },
         "progress-fill": {
           "$value": "{color.accent.accent}"
@@ -184,7 +195,7 @@
           "$value": "{color.accent.accent-faint}"
         },
         "chip-active-fg": {
-          "$value": "{color.accent.accent}"
+          "$value": "{color.accent.accent-text}"
         },
         "chip-active-border": {
           "$value": "{color.accent.accent}"
@@ -192,7 +203,7 @@
       },
       "action-outline": {
         "action-outline-fg": {
-          "$value": "{color.accent.accent}"
+          "$value": "{color.accent.accent-text}"
         },
         "action-outline-hover-bg": {
           "$value": "{color.accent.accent-faint}"
@@ -209,7 +220,7 @@
           "$value": "{color.accent.accent-ring}"
         },
         "chip-primary-fg": {
-          "$value": "{color.accent.accent}"
+          "$value": "{color.accent.accent-text}"
         },
         "chip-primary-border": {
           "$value": "color-mix(in srgb, {color.accent.accent} 30%, transparent)"
@@ -228,7 +239,7 @@
           "$value": "{color.accent.accent}"
         },
         "selection-bar-fg": {
-          "$value": "{color.accent.accent}"
+          "$value": "{color.accent.accent-text}"
         },
         "row-selected-bg": {
           "$value": "color-mix(in srgb, {color.accent.accent} 7%, transparent)"
@@ -327,21 +338,37 @@
       "red": {
         "$value": "#cc6b6b"
       },
+      "red-text": {
+        "$value": "#d37e7e",
+        "$description": "A lighter shade of the dark --red for text: 5.7:1 surface · 5.3 bg-2 · 5.0 on --red-tint. --red is 4.2:1 on its tint."
+      },
       "amber": {
         "$value": "#c4884e"
       },
       "amber-text": {
-        "$value": "{color.status.amber}",
-        "$description": "Dark amber already clears 4.5:1 (5.6:1 surface)."
+        "$value": "#c9925c",
+        "$description": "A lighter shade of the dark --amber for text: 6.3:1 surface · 5.4 on --amber-tint, 4.65 on a doubled tint (internal note in an internal timeline entry). Was --amber (4.2:1 there)."
       },
       "blue": {
         "$value": "#5b80d4"
       },
+      "blue-text": {
+        "$value": "#7191da",
+        "$description": "A lighter shade of the dark --blue for text: 5.5:1 surface · 5.1 bg-2 · 4.8 on --blue-tint. --blue is 3.9:1 on its tint."
+      },
       "green": {
         "$value": "#46a86e"
       },
+      "green-text": {
+        "$value": "{color.status.green}",
+        "$description": "Dark --green already clears 4.5:1 (5.7 surface · 5.0 on --green-tint)."
+      },
       "purple": {
         "$value": "#9077cc"
+      },
+      "purple-text": {
+        "$value": "#9d87d2",
+        "$description": "A lighter shade of the dark --purple for text: 5.5:1 surface · 4.9 on --purple-tint. --purple is 4.1:1 on its tint."
       },
       "pink": {
         "$value": "#c46a9a"
@@ -365,6 +392,12 @@
       },
       "pink-tint": {
         "$value": "#c46a9a1a"
+      }
+    },
+    "tone-text": {
+      "tone-text-mix": {
+        "$value": "75%",
+        "$description": "dark --fg is light, so less of it keeps the hue readable"
       }
     },
     "selection": {

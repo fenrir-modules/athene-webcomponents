@@ -163,11 +163,29 @@ test('the WCAG fixes stay gated (DS-12, DS-16)', () => {
     ['fg-label', 4.5],
     ['amber-text', 4.5],
     ['action-create-fg', 4.5],
+    ['red-text', 4.5],
+    ['green-text', 4.5],
+    ['blue-text', 4.5],
+    ['purple-text', 4.5],
+    ['accent-text', 4.5],
+    ['action-danger-fg', 4.5],
   ]) {
     const rows = rule(fg, min);
     assert.ok(rows.length >= 12, `contrast rule for --${fg} ≥ ${min} is missing`);
     assert.ok(rows.every((r) => r.ok));
   }
+});
+
+test('status text is gated on its own tint, over the canvas and over cards', () => {
+  for (const hue of ['red', 'green', 'blue', 'purple', 'amber']) {
+    const rows = real.contrast.filter((r) => r.fg === `${hue}-text` && r.bg === `${hue}-tint`);
+    assert.deepEqual([...new Set(rows.map((r) => r.over))].sort(), ['bg-0', 'surface'], hue);
+    assert.ok(rows.length === 24 && rows.every((r) => r.ok), hue);
+  }
+  const pressed = real.contrast.filter(
+    (r) => r.fg === 'action-primary-fg' && r.bg === 'action-primary-bg-active'
+  );
+  assert.ok(pressed.length === 12 && pressed.every((r) => r.ok), 'primary pressed state');
 });
 
 test('one z-index scale: unique, strictly increasing, all numbers', () => {
@@ -241,6 +259,28 @@ test('checkContrast honours rule.when', () => {
   const { blocks } = buildBlocks(cfg, load(tinySets));
   const rows = checkContrast(cfg, blocks);
   assert.ok(rows.length === 2 && rows.every((r) => r.theme === 'dark' && r.ok));
+});
+
+test('checkContrast composites a translucent bg over each rule.over backdrop', () => {
+  const sets = structuredClone(tinySets);
+  sets.base.color.card = { $value: '#000000' };
+  sets.base.color.tint = { $value: '#4f46e580' };
+  const rule = { fg: 'fg', bg: ['tint'], min: 1, when: { theme: 'light' } };
+  const cfg = { ...tiny, canvas: 'bg', contrast: [{ ...rule, over: ['bg', 'card'] }] };
+  const { blocks } = buildBlocks(cfg, load(sets));
+  const rows = checkContrast(cfg, blocks);
+  assert.deepEqual(
+    rows.map((r) => `${r.accent ?? '-'} ${r.over}`),
+    ['- bg', '- card', 'blue bg', 'blue card']
+  );
+  const [onBg, onCard] = rows;
+  assert.equal(onBg.ratio, contrast('#111111', '#4f46e580', '#ffffff'));
+  assert.equal(onCard.ratio, contrast('#111111', '#4f46e580', '#000000'));
+  assert.ok(onBg.ratio > onCard.ratio, 'the same tint is darker over a black card');
+  // without `over`: one row per bg, composited over the canvas
+  const plain = checkContrast({ ...cfg, contrast: [rule] }, blocks);
+  assert.ok(plain.length === 2 && !('over' in plain[0]));
+  assert.equal(plain[0].ratio, onBg.ratio);
 });
 
 test('TokenError is the error type for source problems', () => {

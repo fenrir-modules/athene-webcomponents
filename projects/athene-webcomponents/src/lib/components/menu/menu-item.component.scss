@@ -38,12 +38,12 @@
 }
 
 :host(.ath-menu-item--danger) {
-  color: var(--red);
+  color: var(--red-text);
 }
 
 :host(.ath-menu-item--danger:hover),
 :host(.ath-menu-item--danger:focus) {
-  color: var(--red);
+  color: var(--red-text);
   background: var(--red-tint);
 }
 

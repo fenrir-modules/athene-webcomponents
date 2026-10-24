@@ -91,7 +91,7 @@ class AthToastService {
         toast?.action?.run();
     }
     remove(id) {
-        this.toastsSignal.update(toasts => toasts.filter(t => t.id !== id));
+        this.toastsSignal.update((toasts) => toasts.filter((t) => t.id !== id));
     }
     add(variant, message, options, fallback) {
         const opts = typeof options === 'number' ? { duration: options } : options;

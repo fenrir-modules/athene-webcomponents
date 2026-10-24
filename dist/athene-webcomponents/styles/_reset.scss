@@ -110,7 +110,7 @@ input[type='radio'] {
 }
 
 // Dark-mode scrollbars — barely-there, soft
-[data-theme="dark"] {
+[data-theme='dark'] {
   ::-webkit-scrollbar-thumb {
     background: #ffffff10;
     border: 2px solid transparent;

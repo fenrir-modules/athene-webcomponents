@@ -43,6 +43,7 @@
   --accent-2: #4338ca;
   --accent-3: #6366f1;
   --accent-dim: #818cf8;
+  --accent-text: var(--accent); // Accent that carries text (links, mentions, active labels on an accent tint). Violet --accent clears 4.5:1 here; the blue, green and orange presets and dark use --accent-2, the step further from the surface (contrast gate).
   --accent-faint: #4f46e50f;
   --accent-ring: #4f46e526; // Soft accent halo. Decorative only (≈1.3:1): use it next to a border that turns --accent, never as the only focus indicator — that is --focus-ring-shadow / --focus-ring-color.
 
@@ -63,6 +64,11 @@
   --action-primary-disabled-fg: var(--action-primary-fg);
   --action-primary-disabled-border: var(--action-primary-bg);
   --action-primary-disabled-opacity: 0.38;
+
+  // color.role.action-danger
+  --action-danger-bg: var(--red); // Solid destructive button (ath-button variant="danger"). White label 4.8:1.
+  --action-danger-bg-hover: color-mix(in srgb, var(--action-danger-bg) 86%, #000); // Deepened fill on hover, in both themes.
+  --action-danger-fg: #ffffff;
 
   // color.role.nav
   --nav-active-bg: #00000017; // ~9% black — reads as a pill on white chrome
@@ -147,13 +153,17 @@
   --avatar-8-bg: #5b6474;
   --avatar-8-fg: #ffffff; // slate
 
-  // color.status — Status — muted, used as dots + subtle fills. Use the *-text variant where a status colour carries text.
-  --red: #dc2626;
+  // color.status — Status — muted, used as dots + subtle fills. Where a status colour carries text, use its *-text variant: a darker (light) or lighter (dark) shade of the same hue that clears 4.5:1 on the surfaces and on its own tint (contrast gate).
+  --red: #dc2626; // Icons, dots, fills and borders. Text uses --red-text (--red is 4.0:1 on its tint).
+  --red-text: #c31f1f; // Red that carries text (overdue, errors, danger items): 5.9:1 white · 5.4 canvas · 5.0 on --red-tint.
   --amber: #cc7c2e; // Measured on the reference's in-progress icons. Icons, dots and fills only (3.2:1 on white) — text uses --amber-text.
-  --amber-text: #9e6024; // Amber that carries text (due "soon", warnings). --amber is 3.2:1 on white — icons/dots only; this is 5.1:1 white · 4.6 canvas.
-  --blue: #2563eb;
-  --green: #16a34a;
+  --amber-text: #935921; // Amber that carries text (due "soon", warnings): 5.7:1 white · 5.2 canvas · 4.9 on --amber-tint. Was #9e6024 (4.35 on its tint).
+  --blue: #2563eb; // Icons, dots, fills and borders. Text uses --blue-text (--blue is 4.35:1 on its tint).
+  --blue-text: #1a5bea; // Blue that carries text (info): 5.6:1 white · 5.1 canvas · 4.7 on --blue-tint.
+  --green: #16a34a; // Icons, dots, fills and borders. Text uses --green-text (--green is 3.3:1 on white).
+  --green-text: #107937; // Green that carries text (success, met, trend up): 5.5:1 white · 5.0 canvas · 4.7 on --green-tint.
   --purple: #7c3aed;
+  --purple-text: var(--purple); // Purple that carries text. Light --purple already clears 4.5:1 (5.7 white · 5.2 canvas · 4.8 on --purple-tint); dark has its own shade.
   --pink: #db2777;
 
   // color.status-tint
@@ -165,14 +175,17 @@
   --pink-tint: #db27770f;
 
   // color.due — Due-date text (ath-due-label). One rule: overdue and today red, the next two days amber, later muted, finished work muted.
-  --due-overdue: var(--red);
-  --due-today: var(--red); // today is red, as in the reference screens (04-mywork, 05-tickets)
+  --due-overdue: var(--red-text);
+  --due-today: var(--red-text); // today is red, as in the reference screens (04-mywork, 05-tickets)
   --due-soon: var(--amber-text); // tomorrow and the day after
   --due-later: var(--fg-3);
   --due-none: var(--fg-4); // placeholder without a date
 
   // color.chip — ath-chip.
   --chip-type-fg: #ffffff; // glyph on a type square (the square carries the type colour), white in both themes
+
+  // color.tone-text — Text in a colour the app passes in (the project colour of ath-project-key-badge): color-mix(in srgb, <colour> var(--tone-text-mix), var(--fg)). Mixing towards --fg gives a darker shade of the same hue in light and a lighter one in dark, so the project palette (--accent in every preset, --blue, --green, --amber, --purple) clears 4.5:1 on its own 7% tint (light ≥ 4.9, dark ≥ 4.7). A very light custom colour (yellow) can still fall short.
+  --tone-text-mix: 65%; // share of the passed colour; the rest is --fg
 
   // color.deco — Decorative status marks (board column bars, ticket-group dots, sidebar project-key chips): the status hue at ~60% strength over the surface. Status icons and due text keep the full colour.
   --deco-mix: 60%;
@@ -465,8 +478,9 @@
   // color.accent
   --accent: #8280e8;
   --accent-2: #9d9bf0;
-  --accent-3: #6b69d8;
+  --accent-3: #7472da; // Pressed primary fill under the dark label: 4.6:1. Was #6b69d8 (4.2:1).
   --accent-dim: #6366f1;
+  --accent-text: var(--accent-2); // The lighter accent step: clears 4.5:1 on the surfaces and on accent tints in every preset.
   --accent-faint: #8280e820;
   --accent-ring: #8280e83a;
 
@@ -484,38 +498,41 @@
   --action-primary-disabled-border: var(--border);
   --action-primary-disabled-opacity: 1;
 
+  // color.role.action-danger
+  --action-danger-bg: #c24f4f; // A darker shade of the dark --red so the white label clears 4.5:1 (4.6). --red (#cc6b6b) is 3.6:1.
+
   // color.role.nav
   --nav-active-bg: color-mix(in srgb, var(--accent) 12%, transparent);
   --nav-active-bg-hover: color-mix(in srgb, var(--accent) 18%, transparent);
-  --nav-active-fg: var(--accent);
+  --nav-active-fg: var(--accent-text);
   --nav-active-icon: var(--accent);
   --nav-active-indicator: var(--accent);
   --nav-badge-bg: color-mix(in srgb, var(--accent) 14%, transparent);
-  --nav-badge-fg: var(--accent);
+  --nav-badge-fg: var(--accent-text);
 
   // color.role.tab
-  --tab-active-fg: var(--accent);
+  --tab-active-fg: var(--accent-text);
   --tab-active-indicator: var(--accent);
   --segment-active-bg: var(--bg-1);
   --segment-count-active-bg: var(--accent-faint);
-  --segment-count-active-fg: var(--accent);
+  --segment-count-active-fg: var(--accent-text);
   --progress-fill: var(--accent);
   --progress-track: var(--bg-2);
 
   // color.role.chip-active
   --chip-active-bg: var(--accent-faint);
-  --chip-active-fg: var(--accent);
+  --chip-active-fg: var(--accent-text);
   --chip-active-border: var(--accent);
 
   // color.role.action-outline
-  --action-outline-fg: var(--accent);
+  --action-outline-fg: var(--accent-text);
   --action-outline-hover-bg: var(--accent-faint);
   --action-outline-hover-border: var(--accent);
   --action-outline-border: var(--border-strong);
 
   // color.role.chip-primary
   --chip-primary-bg: var(--accent-ring);
-  --chip-primary-fg: var(--accent);
+  --chip-primary-fg: var(--accent-text);
   --chip-primary-border: color-mix(in srgb, var(--accent) 30%, transparent);
 
   // color.role.control
@@ -524,7 +541,7 @@
   // color.role.selection-bar
   --selection-bar-bg: var(--accent-faint);
   --selection-bar-border: var(--accent);
-  --selection-bar-fg: var(--accent);
+  --selection-bar-fg: var(--accent-text);
   --row-selected-bg: color-mix(in srgb, var(--accent) 7%, transparent);
 
   // color.role.brand-mark
@@ -565,11 +582,15 @@
 
   // color.status
   --red: #cc6b6b;
+  --red-text: #d37e7e; // A lighter shade of the dark --red for text: 5.7:1 surface · 5.3 bg-2 · 5.0 on --red-tint. --red is 4.2:1 on its tint.
   --amber: #c4884e;
-  --amber-text: var(--amber); // Dark amber already clears 4.5:1 (5.6:1 surface).
+  --amber-text: #c9925c; // A lighter shade of the dark --amber for text: 6.3:1 surface · 5.4 on --amber-tint, 4.65 on a doubled tint (internal note in an internal timeline entry). Was --amber (4.2:1 there).
   --blue: #5b80d4;
+  --blue-text: #7191da; // A lighter shade of the dark --blue for text: 5.5:1 surface · 5.1 bg-2 · 4.8 on --blue-tint. --blue is 3.9:1 on its tint.
   --green: #46a86e;
+  --green-text: var(--green); // Dark --green already clears 4.5:1 (5.7 surface · 5.0 on --green-tint).
   --purple: #9077cc;
+  --purple-text: #9d87d2; // A lighter shade of the dark --purple for text: 5.5:1 surface · 4.9 on --purple-tint. --purple is 4.1:1 on its tint.
   --pink: #c46a9a;
 
   // color.status-tint
@@ -579,6 +600,9 @@
   --green-tint: #46a86e1a;
   --purple-tint: #9077cc1a;
   --pink-tint: #c46a9a1a;
+
+  // color.tone-text
+  --tone-text-mix: 75%; // dark --fg is light, so less of it keeps the hue readable
 
   // color.selection
   --selection-bg: rgba(230, 230, 235, 0.24);
@@ -622,6 +646,7 @@
   --accent-2: #1d4ed8;
   --accent-3: #3b82f6;
   --accent-dim: #60a5fa;
+  --accent-text: var(--accent-2); // --accent-2 (6.7:1 white · 5.0 on --accent-ring); --accent is 4.1:1 on a mention tint.
   --accent-faint: #2563eb0f;
   --accent-ring: #2563eb26;
   --ath-color-primary-rgb: 37, 99, 235;
@@ -635,6 +660,7 @@
   --accent-2: #047857;
   --accent-3: #10b981;
   --accent-dim: #34d399;
+  --accent-text: #047152; // A darker shade of the green accent for text: 6.0:1 white · 5.1 on --accent-faint · 4.6 on --accent-ring. --accent is 3.8:1 on white.
   --accent-faint: #0596690f;
   --accent-ring: #05966926;
   --ath-color-primary-rgb: 5, 150, 105;
@@ -648,6 +674,7 @@
   --accent-2: #c2410c;
   --accent-3: #f97316;
   --accent-dim: #fb923c;
+  --accent-text: #b03b0b; // A darker shade of the orange accent for text: 6.0:1 white · 5.1 on --accent-faint · 4.6 on --accent-ring. --accent is 3.6:1 on white.
   --accent-faint: #ea580c0f;
   --accent-ring: #ea580c26;
   --ath-color-primary-rgb: 234, 88, 12;
@@ -672,7 +699,7 @@
 [data-theme="dark"][data-accent="violet"] {
   --accent: #8280e8;
   --accent-2: #9d9bf0;
-  --accent-3: #6b69d8;
+  --accent-3: #7472da; // Pressed primary fill under the dark label: 4.6:1. Was #6b69d8 (4.2:1).
   --accent-faint: #8280e820;
   --accent-ring: #8280e83a;
   --ath-color-primary-rgb: 130, 128, 232;
@@ -684,7 +711,8 @@
 [data-theme="dark"][data-accent="blue"] {
   --accent: #5b80d4;
   --accent-2: #7a9ae0;
-  --accent-3: #4268bc;
+  --accent-3: #5b7cc5; // Pressed primary fill under the dark label: 4.6:1. Was #4268bc (3.5:1).
+  --accent-text: var(--accent-2); // Dark keeps the lighter accent step for text; this undoes the light preset value, which [data-accent] also applies under dark.
   --accent-faint: #5b80d420;
   --accent-ring: #5b80d43a;
   --ath-color-primary-rgb: 91, 128, 212;
@@ -696,7 +724,8 @@
 [data-theme="dark"][data-accent="green"] {
   --accent: #46a86e;
   --accent-2: #5cba82;
-  --accent-3: #37895a;
+  --accent-3: #388d5c; // Pressed primary fill under the dark label: 4.6:1. Was #37895a (4.4:1).
+  --accent-text: var(--accent-2); // Dark keeps the lighter accent step for text; this undoes the light preset value, which [data-accent] also applies under dark.
   --accent-faint: #46a86e20;
   --accent-ring: #46a86e3a;
   --ath-color-primary-rgb: 70, 168, 110;
@@ -709,6 +738,7 @@
   --accent: #d4824a;
   --accent-2: #e09862;
   --accent-3: #bc6c38;
+  --accent-text: var(--accent-2); // Dark keeps the lighter accent step for text; this undoes the light preset value, which [data-accent] also applies under dark.
   --accent-faint: #d4824a20;
   --accent-ring: #d4824a3a;
   --ath-color-primary-rgb: 212, 130, 74;

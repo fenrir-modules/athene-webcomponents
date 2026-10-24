@@ -13,6 +13,10 @@
       "accent-dim": {
         "$value": "#fb923c"
       },
+      "accent-text": {
+        "$value": "#b03b0b",
+        "$description": "A darker shade of the orange accent for text: 6.0:1 white · 5.1 on --accent-faint · 4.6 on --accent-ring. --accent is 3.6:1 on white."
+      },
       "accent-faint": {
         "$value": "#ea580c0f"
       },

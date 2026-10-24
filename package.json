@@ -37,12 +37,12 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
     "tokens:build": "node scripts/tokens/build.mjs",
     "tokens:check": "node scripts/tokens/build.mjs --check",
     "tokens:parity": "node scripts/tokens/parity.mjs",
     "tokens:report-app": "node scripts/tokens/report-app.mjs",
     "build:lib": "npm run tokens:build && ng build athene-webcomponents",
+    "check:dist": "npm run build:lib && node scripts/check-package.mjs --dist",
     "prepublishOnly": "npm run build:lib",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

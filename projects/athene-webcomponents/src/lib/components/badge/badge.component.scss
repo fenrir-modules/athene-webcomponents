@@ -37,40 +37,40 @@
   }
 
   &--success {
-    color: var(--ath-color-success);
+    color: var(--green-text);
     background: var(--green-tint);
 
     .ath-badge__dot {
-      background: var(--ath-color-success);
+      background: var(--green);
     }
   }
 
   // Warning is amber, not the user's accent — a violet or green accent
   // would otherwise turn every warning into a "brand" badge.
   &--warning {
-    color: var(--ath-color-warning);
+    color: var(--amber-text);
     background: var(--amber-tint);
 
     .ath-badge__dot {
-      background: var(--ath-color-warning);
+      background: var(--amber);
     }
   }
 
   &--error {
-    color: var(--ath-color-error);
+    color: var(--red-text);
     background: var(--red-tint);
 
     .ath-badge__dot {
-      background: var(--ath-color-error);
+      background: var(--red);
     }
   }
 
   &--info {
-    color: var(--ath-color-info);
+    color: var(--blue-text);
     background: var(--blue-tint);
 
     .ath-badge__dot {
-      background: var(--ath-color-info);
+      background: var(--blue);
     }
   }
 

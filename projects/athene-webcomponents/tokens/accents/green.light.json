@@ -13,6 +13,10 @@
       "accent-dim": {
         "$value": "#34d399"
       },
+      "accent-text": {
+        "$value": "#047152",
+        "$description": "A darker shade of the green accent for text: 6.0:1 white · 5.1 on --accent-faint · 4.6 on --accent-ring. --accent is 3.8:1 on white."
+      },
       "accent-faint": {
         "$value": "#0596690f"
       },

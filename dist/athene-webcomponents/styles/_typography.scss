@@ -19,7 +19,7 @@
 html,
 body {
   font-family: var(--font-sans);
-  font-feature-settings: "ss01", "cv11";
+  font-feature-settings: 'ss01', 'cv11';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 14px;
@@ -35,7 +35,7 @@ body {
 
 .mono {
   font-family: var(--font-mono);
-  font-feature-settings: "ss01", "zero", "tnum";
+  font-feature-settings: 'ss01', 'zero', 'tnum';
   font-size: 12px;
 }
 
@@ -146,15 +146,15 @@ body {
 }
 
 .ath-text-success {
-  color: var(--ath-color-success);
+  color: var(--green-text);
 }
 
 .ath-text-warning {
-  color: var(--ath-color-warning);
+  color: var(--amber-text);
 }
 
 .ath-text-error {
-  color: var(--ath-color-error);
+  color: var(--red-text);
 }
 
 .ath-font-normal {

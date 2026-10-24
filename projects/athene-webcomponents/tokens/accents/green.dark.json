@@ -8,7 +8,12 @@
         "$value": "#5cba82"
       },
       "accent-3": {
-        "$value": "#37895a"
+        "$value": "#388d5c",
+        "$description": "Pressed primary fill under the dark label: 4.6:1. Was #37895a (4.4:1)."
+      },
+      "accent-text": {
+        "$value": "{color.accent.accent-2}",
+        "$description": "Dark keeps the lighter accent step for text; this undoes the light preset value, which [data-accent] also applies under dark."
       },
       "accent-faint": {
         "$value": "#46a86e20"

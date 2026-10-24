@@ -4,6 +4,7 @@ Athene's Angular component library: design tokens, global styles and the `ath-*`
 
 ```sh
 npm run build:lib        # tokens:build, then ng build athene-webcomponents → dist/
+npm run check:dist       # build:lib, then fail if dist/ differs from the commit (CI runs it)
 npm test                 # Karma unit tests
 npm run test:tokens      # token pipeline tests (node --test)
 npm run lint             # tsc, a11y, tokens:check, Stylelint
@@ -11,6 +12,8 @@ npm run storybook        # component catalogue on :6006
 npm run build-storybook  # static catalogue → storybook-static/
 npm run test:storybook   # axe + screenshots over storybook-static/ (see "Component catalogue")
 ```
+
+**Git installs ship the committed `dist/`.** The app installs this package from a git commit, and that commit carries the built `dist/athene-webcomponents/`. So `package.json` has no `build`, `prepare`, `prepack` or `(pre|post)install` script: with any of them npm runs a full `npm install` with every devDependency (Storybook, ng-packagr, Playwright, Karma) in the clone, in every consumer's CI. Build with `npm run build:lib` and commit `dist/` together with the source change; `npm run check:dist` and CI (`scripts/check-package.mjs --dist`) fail when the committed `dist/` is not byte for byte what the sources build to, or when one of those scripts comes back.
 
 ## Design tokens
 
@@ -42,16 +45,18 @@ All design tokens live in **DTCG JSON** under `projects/athene-webcomponents/tok
 
 ### Contrast gate
 
-`tokens.config.json → contrast` lists foreground/background pairs with a minimum ratio. The build resolves them in all 12 theme × accent contexts using WCAG 2.x maths; translucent values are composited, and `color-mix()` is evaluated. Today that is 576 checks, among them:
+`tokens.config.json → contrast` lists foreground/background pairs with a minimum ratio. The build resolves them in all 12 theme × accent contexts using WCAG 2.x maths; translucent values are composited, and `color-mix()` is evaluated. A translucent `bg` (a tint) is composited over the canvas (`--bg-0`), or over each token in the rule's `over` list, the surfaces it sits on: `{ "fg": "red-text", "bg": ["red-tint"], "over": ["bg-0", "surface"], "min": 4.5 }`. Today that is 1296 checks, among them:
 
 - `--focus-ring-color` at ≥ 3:1 on all surfaces (WCAG 1.4.11)
-- `--fg` through `--fg-4`, `--fg-label` and `--amber-text` at ≥ 4.5:1
-- the labels of "+ New", the primary button and the avatars at ≥ 4.5:1
+- `--fg` through `--fg-4` and `--fg-label` at ≥ 4.5:1
+- the status text tokens `--red-text`, `--amber-text`, `--green-text`, `--blue-text`, `--purple-text` at ≥ 4.5:1 on `--surface`, `--bg-0`, `--bg-1`, `--surface-2`, `--bg-2` and on their own tint over `--bg-0` and `--surface`
+- `--accent-text` on the surfaces and on `--accent-faint` / `--accent-ring`, and the dark accent roles that carry text (active tab, nav item and badge, segment count, primary and active chips, outline button, selection bar) on their tints
+- the labels of "+ New", the primary button (also pressed), the danger button and the avatars at ≥ 4.5:1
 
 ### Using tokens
 
 - **Focus:** `@include focus-ring` (from `_mixins.scss`), or `outline: none; box-shadow: var(--focus-ring-shadow)`. The global `:focus-visible` uses `--focus-ring-color`. `--accent-ring` is only a decorative halo next to an `--accent` border.
-- **Status text:** `--amber` is for icons, dots and fills; text uses `--amber-text`.
+- **Status text:** `--red`, `--amber`, `--green`, `--blue`, `--purple` are for icons, dots, fills and borders; text uses `--red-text`, `--amber-text`, `--green-text`, `--blue-text`, `--purple-text`, a darker (light) or lighter (dark) shade of the same hue. Accent-coloured text uses `--accent-text`; a colour the app passes in (a project colour) is mixed towards `--fg` with `--tone-text-mix`. The solid danger button reads `--action-danger-bg`, `-bg-hover` and `-fg`.
 - **z-index:** only the scale `--z-base`, `--z-raised`, `--z-dropdown`, `--z-sticky`, `--z-fixed`, `--z-overlay`, `--z-modal`, `--z-popover`, `--z-tooltip`, `--z-toast` (or a `calc()` on one of them).
 - **No fallbacks on tokens:** tokens are always defined, so a fallback is dead code that drifts.
 - `--ath-*` and `--gold` are **deprecated** aliases. They are still generated, will be removed in quality step 2.7, and must not be used in new code.
@@ -108,7 +113,7 @@ Inputs: `person: {id, name, src} | null`, or the separate `name` / `src` / `id`;
 <ath-due-label [date]="t.due_date" [afterSprintEnd]="true" sprintName="Sprint 24" placeholder="—" />
 ```
 
-One colour rule from the `--due-*` tokens: overdue and **today red**, the next two days amber (`--amber-text`), later muted, finished work muted with its plain date. Compact text: "2d overdue", "Today", "Tomorrow", "3d" (to 6 days), then the short date. `source="sprint"` reads "Sprint end · 31 Oct" with the sprint icon (`compact` keeps only the icon, the words go to the tooltip and a hidden label); `afterSprintEnd` adds an amber warning icon. The date logic is pure and tested (`due-date.ts`: `describeDue`, `dueToneOf`, `calendarDayOf`, `compactDueText`, `shortDay`). The app provides the reader's settings once:
+One colour rule from the `--due-*` tokens: overdue and **today red** (`--red-text`), the next two days amber (`--amber-text`), later muted, finished work muted with its plain date. Compact text: "2d overdue", "Today", "Tomorrow", "3d" (to 6 days), then the short date. `source="sprint"` reads "Sprint end · 31 Oct" with the sprint icon (`compact` keeps only the icon, the words go to the tooltip and a hidden label); `afterSprintEnd` adds an amber warning icon. The date logic is pure and tested (`due-date.ts`: `describeDue`, `dueToneOf`, `calendarDayOf`, `compactDueText`, `shortDay`). The app provides the reader's settings once:
 
 ```ts
 { provide: ATH_DATE_CONTEXT, useFactory: () => { const p = inject(UserPreferencesService);

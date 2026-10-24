@@ -20,7 +20,9 @@
   letter-spacing: 0;
   text-transform: uppercase;
   border-radius: var(--r-sm);
-  color: var(--pkey-color);
+  // The project colour itself is often too light (or, in dark, too dark) to
+  // read on its own 7% tint: mix it towards --fg (see --tone-text-mix).
+  color: color-mix(in srgb, var(--pkey-color) var(--tone-text-mix), var(--fg));
   background: var(--pkey-bg);
   border: 1px solid var(--pkey-border);
   line-height: 1.3;

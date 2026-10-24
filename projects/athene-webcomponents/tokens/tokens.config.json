@@ -156,9 +156,81 @@
     },
     {
       "fg": "amber-text",
+      "bg": ["surface", "bg-0", "bg-1", "surface-2", "bg-2"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — amber status text (due \"soon\", warnings)"
+    },
+    {
+      "fg": "amber-text",
+      "bg": ["amber-tint"],
+      "over": ["bg-0", "surface"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — amber text on its tint (alert, badge, chip)"
+    },
+    {
+      "fg": "red-text",
+      "bg": ["surface", "bg-0", "bg-1", "surface-2", "bg-2"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — overdue and today, errors, danger items"
+    },
+    {
+      "fg": "red-text",
+      "bg": ["red-tint"],
+      "over": ["bg-0", "surface"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — red text on its tint (alert, badge, chip)"
+    },
+    {
+      "fg": "green-text",
+      "bg": ["surface", "bg-0", "bg-1", "surface-2", "bg-2"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — success, met, trend up"
+    },
+    {
+      "fg": "green-text",
+      "bg": ["green-tint"],
+      "over": ["bg-0", "surface"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — green text on its tint (alert, badge, chip)"
+    },
+    {
+      "fg": "blue-text",
+      "bg": ["surface", "bg-0", "bg-1", "surface-2", "bg-2"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — info"
+    },
+    {
+      "fg": "blue-text",
+      "bg": ["blue-tint"],
+      "over": ["bg-0", "surface"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — blue text on its tint (alert, badge, chip)"
+    },
+    {
+      "fg": "purple-text",
+      "bg": ["surface", "bg-0", "bg-1", "surface-2", "bg-2"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — purple status text"
+    },
+    {
+      "fg": "purple-text",
+      "bg": ["purple-tint"],
+      "over": ["bg-0", "surface"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — purple text on its tint (alert, badge, chip)"
+    },
+    {
+      "fg": "accent-text",
       "bg": ["surface", "bg-0", "bg-1", "surface-2"],
       "min": 4.5,
-      "why": "WCAG 1.4.3 — due \"soon\""
+      "why": "WCAG 1.4.3 — links, mentions, accent labels"
+    },
+    {
+      "fg": "accent-text",
+      "bg": ["accent-faint", "accent-ring"],
+      "over": ["bg-0", "surface"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — accent text on accent tints (file drop, mentions)"
     },
     {
       "fg": "action-create-fg",
@@ -168,9 +240,76 @@
     },
     {
       "fg": "action-primary-fg",
-      "bg": ["action-primary-bg", "action-primary-bg-hover"],
+      "bg": ["action-primary-bg", "action-primary-bg-hover", "action-primary-bg-active"],
       "min": 4.5,
-      "why": "WCAG 1.4.3 — primary button label. Pressed (-active) is not gated yet: dark accents reach 3.5–4.4:1 there (follow-up)."
+      "why": "WCAG 1.4.3 — primary button label, also pressed"
+    },
+    {
+      "fg": "action-danger-fg",
+      "bg": ["action-danger-bg", "action-danger-bg-hover"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — danger button label"
+    },
+    {
+      "fg": "tab-active-fg",
+      "bg": ["surface", "bg-0", "bg-1"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — active tab label (accent in dark)"
+    },
+    {
+      "fg": "nav-active-fg",
+      "bg": ["nav-active-bg", "nav-active-bg-hover"],
+      "over": ["bg-1"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — active nav item on its pill"
+    },
+    {
+      "fg": "nav-badge-fg",
+      "bg": ["nav-badge-bg"],
+      "over": ["bg-1"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — nav count badge"
+    },
+    {
+      "fg": "segment-count-active-fg",
+      "bg": ["segment-count-active-bg"],
+      "over": ["segment-active-bg"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — count in the active segment / tab"
+    },
+    {
+      "fg": "chip-primary-fg",
+      "bg": ["chip-primary-bg"],
+      "over": ["bg-0", "surface"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — primary tag chip"
+    },
+    {
+      "fg": "chip-active-fg",
+      "bg": ["chip-active-bg"],
+      "over": ["bg-0", "surface"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — active filter chip"
+    },
+    {
+      "fg": "action-outline-fg",
+      "bg": ["surface", "bg-0", "bg-1"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — outline button label"
+    },
+    {
+      "fg": "action-outline-fg",
+      "bg": ["action-outline-hover-bg"],
+      "over": ["bg-0", "surface"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — outline button label on hover"
+    },
+    {
+      "fg": "selection-bar-fg",
+      "bg": ["selection-bar-bg"],
+      "over": ["bg-0", "surface"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — bulk selection bar"
     },
     {
       "fg": "avatar-1-fg",

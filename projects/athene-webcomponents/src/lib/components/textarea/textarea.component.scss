@@ -14,7 +14,7 @@
   }
 
   &__required {
-    color: var(--ath-color-error);
+    color: var(--red-text);
     margin-left: 2px;
   }
 
@@ -65,7 +65,7 @@
     align-items: center;
     gap: var(--ath-space-1);
     font-size: var(--ath-font-size-sm);
-    color: var(--ath-color-error);
+    color: var(--red-text);
   }
 
   &__hint {
@@ -78,7 +78,7 @@
     color: var(--ath-text-tertiary);
 
     &--near-limit {
-      color: var(--ath-color-warning);
+      color: var(--amber-text);
     }
   }
 

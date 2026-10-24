@@ -121,6 +121,11 @@
       "type": "color"
     },
     {
+      "name": "--accent-text",
+      "path": "color.accent.accent-text",
+      "type": "color"
+    },
+    {
       "name": "--accent-faint",
       "path": "color.accent.accent-faint",
       "type": "color"
@@ -189,6 +194,21 @@
       "name": "--action-primary-disabled-opacity",
       "path": "color.role.action-primary.action-primary-disabled-opacity",
       "type": "number"
+    },
+    {
+      "name": "--action-danger-bg",
+      "path": "color.role.action-danger.action-danger-bg",
+      "type": "color"
+    },
+    {
+      "name": "--action-danger-bg-hover",
+      "path": "color.role.action-danger.action-danger-bg-hover",
+      "type": "color"
+    },
+    {
+      "name": "--action-danger-fg",
+      "path": "color.role.action-danger.action-danger-fg",
+      "type": "color"
     },
     {
       "name": "--nav-active-bg",
@@ -491,6 +511,11 @@
       "type": "color"
     },
     {
+      "name": "--red-text",
+      "path": "color.status.red-text",
+      "type": "color"
+    },
+    {
       "name": "--amber",
       "path": "color.status.amber",
       "type": "color"
@@ -506,13 +531,28 @@
       "type": "color"
     },
     {
+      "name": "--blue-text",
+      "path": "color.status.blue-text",
+      "type": "color"
+    },
+    {
       "name": "--green",
       "path": "color.status.green",
       "type": "color"
     },
     {
+      "name": "--green-text",
+      "path": "color.status.green-text",
+      "type": "color"
+    },
+    {
       "name": "--purple",
       "path": "color.status.purple",
+      "type": "color"
+    },
+    {
+      "name": "--purple-text",
+      "path": "color.status.purple-text",
       "type": "color"
     },
     {
@@ -579,6 +619,11 @@
       "name": "--chip-type-fg",
       "path": "color.chip.chip-type-fg",
       "type": "color"
+    },
+    {
+      "name": "--tone-text-mix",
+      "path": "color.tone-text.tone-text-mix",
+      "type": null
     },
     {
       "name": "--deco-mix",

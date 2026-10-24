@@ -48,6 +48,11 @@ jobs:
         run: npx ng test --watch=false --browsers=ChromeHeadless
       - name: Build library
         run: npm run build:lib
+      # Git installs ship the committed dist/ and never build (package.json
+      # has no build/prepare/install scripts), so dist/ must be exactly what
+      # the sources build to. Locally: npm run check:dist.
+      - name: dist/ matches the build, no install-time scripts
+        run: node scripts/check-package.mjs --dist
 
   # axe on every story in light and dark. Platform independent, so Linux.
   catalogue-a11y:

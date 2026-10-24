@@ -1,19 +1,4 @@
 {
-  "projects/athene-webcomponents/src/lib/components/alert/alert.component.scss": {
-    "function-disallowed-list": {
-      "count": 1
-    }
-  },
-  "projects/athene-webcomponents/src/lib/components/avatar/avatar.component.scss": {
-    "csstools/value-no-unknown-custom-properties": {
-      "count": 2
-    }
-  },
-  "projects/athene-webcomponents/src/lib/components/button/button.component.scss": {
-    "color-no-hex": {
-      "count": 3
-    }
-  },
   "projects/athene-webcomponents/src/lib/components/search-input/search-input.component.scss": {
     "function-disallowed-list": {
       "count": 2

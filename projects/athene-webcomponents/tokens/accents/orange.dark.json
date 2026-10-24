@@ -10,6 +10,10 @@
       "accent-3": {
         "$value": "#bc6c38"
       },
+      "accent-text": {
+        "$value": "{color.accent.accent-2}",
+        "$description": "Dark keeps the lighter accent step for text; this undoes the light preset value, which [data-accent] also applies under dark."
+      },
       "accent-faint": {
         "$value": "#d4824a20"
       },

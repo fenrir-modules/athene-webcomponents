@@ -74,12 +74,12 @@ export class AthSlaBarComponent {
   protected statusColor(s: SlaStatus): string {
     switch (s) {
       case 'met':
-        return 'var(--green)';
+        return 'var(--green-text)';
       case 'breached':
-        return 'var(--red)';
+        return 'var(--red-text)';
       case 'pending':
       default:
-        return 'var(--amber)';
+        return 'var(--amber-text)';
     }
   }
 }

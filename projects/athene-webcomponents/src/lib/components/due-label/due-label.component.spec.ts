@@ -24,13 +24,13 @@ describe('AthDueLabelComponent', () => {
     fixture.detectChanges();
   }
 
-  it('draws today red via the --due-today token', () => {
+  it('draws today in the red text shade via the --due-today token', () => {
     create({ date: '2026-10-22' });
     expect(label()!.dataset['tone']).toBe('today');
     expect(label()!.textContent!.trim()).toBe('Today');
     const color = getComputedStyle(label()!).color;
     const probe = document.createElement('span');
-    probe.style.color = 'var(--red)';
+    probe.style.color = 'var(--red-text)';
     document.body.appendChild(probe);
     expect(color).toBe(getComputedStyle(probe).color);
     probe.remove();

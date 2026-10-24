@@ -13,6 +13,10 @@
       "accent-dim": {
         "$value": "#60a5fa"
       },
+      "accent-text": {
+        "$value": "{color.accent.accent-2}",
+        "$description": "--accent-2 (6.7:1 white · 5.0 on --accent-ring); --accent is 4.1:1 on a mention tint."
+      },
       "accent-faint": {
         "$value": "#2563eb0f"
       },

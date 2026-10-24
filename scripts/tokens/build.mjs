@@ -50,7 +50,7 @@ function main() {
   const failures = result.contrast.filter((r) => !r.ok);
   for (const f of failures) {
     console.error(
-      `tokens: contrast ${f.ratio.toFixed(2)}:1 < ${f.min}:1 — --${f.fg} on --${f.bg} (theme=${f.theme}, accent=${f.accent ?? 'default'})${f.why ? ' — ' + f.why : ''}`
+      `tokens: contrast ${f.ratio.toFixed(2)}:1 < ${f.min}:1 — --${f.fg} on --${f.bg}${f.over ? ` over --${f.over}` : ''} (theme=${f.theme}, accent=${f.accent ?? 'default'})${f.why ? ' — ' + f.why : ''}`
     );
   }
   let stale = 0;

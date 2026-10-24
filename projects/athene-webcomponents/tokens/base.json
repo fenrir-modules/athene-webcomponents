@@ -101,6 +101,10 @@
       "accent-dim": {
         "$value": "#818cf8"
       },
+      "accent-text": {
+        "$value": "{color.accent.accent}",
+        "$description": "Accent that carries text (links, mentions, active labels on an accent tint). Violet --accent clears 4.5:1 here; the blue, green and orange presets and dark use --accent-2, the step further from the surface (contrast gate)."
+      },
       "accent-faint": {
         "$value": "#4f46e50f"
       },
@@ -165,6 +169,20 @@
         "action-primary-disabled-opacity": {
           "$value": 0.38,
           "$type": "number"
+        }
+      },
+      "action-danger": {
+        "$type": "color",
+        "action-danger-bg": {
+          "$value": "{color.status.red}",
+          "$description": "Solid destructive button (ath-button variant=\"danger\"). White label 4.8:1."
+        },
+        "action-danger-bg-hover": {
+          "$value": "color-mix(in srgb, {color.role.action-danger.action-danger-bg} 86%, #000)",
+          "$description": "Deepened fill on hover, in both themes."
+        },
+        "action-danger-fg": {
+          "$value": "#ffffff"
         }
       },
       "nav": {
@@ -393,27 +411,46 @@
       }
     },
     "status": {
-      "$description": "Status — muted, used as dots + subtle fills. Use the *-text variant where a status colour carries text.",
+      "$description": "Status — muted, used as dots + subtle fills. Where a status colour carries text, use its *-text variant: a darker (light) or lighter (dark) shade of the same hue that clears 4.5:1 on the surfaces and on its own tint (contrast gate).",
       "$type": "color",
       "red": {
-        "$value": "#dc2626"
+        "$value": "#dc2626",
+        "$description": "Icons, dots, fills and borders. Text uses --red-text (--red is 4.0:1 on its tint)."
+      },
+      "red-text": {
+        "$value": "#c31f1f",
+        "$description": "Red that carries text (overdue, errors, danger items): 5.9:1 white · 5.4 canvas · 5.0 on --red-tint."
       },
       "amber": {
         "$value": "#cc7c2e",
         "$description": "Measured on the reference's in-progress icons. Icons, dots and fills only (3.2:1 on white) — text uses --amber-text."
       },
       "amber-text": {
-        "$value": "#9e6024",
-        "$description": "Amber that carries text (due \"soon\", warnings). --amber is 3.2:1 on white — icons/dots only; this is 5.1:1 white · 4.6 canvas."
+        "$value": "#935921",
+        "$description": "Amber that carries text (due \"soon\", warnings): 5.7:1 white · 5.2 canvas · 4.9 on --amber-tint. Was #9e6024 (4.35 on its tint)."
       },
       "blue": {
-        "$value": "#2563eb"
+        "$value": "#2563eb",
+        "$description": "Icons, dots, fills and borders. Text uses --blue-text (--blue is 4.35:1 on its tint)."
+      },
+      "blue-text": {
+        "$value": "#1a5bea",
+        "$description": "Blue that carries text (info): 5.6:1 white · 5.1 canvas · 4.7 on --blue-tint."
       },
       "green": {
-        "$value": "#16a34a"
+        "$value": "#16a34a",
+        "$description": "Icons, dots, fills and borders. Text uses --green-text (--green is 3.3:1 on white)."
+      },
+      "green-text": {
+        "$value": "#107937",
+        "$description": "Green that carries text (success, met, trend up): 5.5:1 white · 5.0 canvas · 4.7 on --green-tint."
       },
       "purple": {
         "$value": "#7c3aed"
+      },
+      "purple-text": {
+        "$value": "{color.status.purple}",
+        "$description": "Purple that carries text. Light --purple already clears 4.5:1 (5.7 white · 5.2 canvas · 4.8 on --purple-tint); dark has its own shade."
       },
       "pink": {
         "$value": "#db2777"
@@ -444,10 +481,10 @@
       "$description": "Due-date text (ath-due-label). One rule: overdue and today red, the next two days amber, later muted, finished work muted.",
       "$type": "color",
       "due-overdue": {
-        "$value": "{color.status.red}"
+        "$value": "{color.status.red-text}"
       },
       "due-today": {
-        "$value": "{color.status.red}",
+        "$value": "{color.status.red-text}",
         "$description": "today is red, as in the reference screens (04-mywork, 05-tickets)"
       },
       "due-soon": {
@@ -468,6 +505,13 @@
       "chip-type-fg": {
         "$value": "#ffffff",
         "$description": "glyph on a type square (the square carries the type colour), white in both themes"
+      }
+    },
+    "tone-text": {
+      "$description": "Text in a colour the app passes in (the project colour of ath-project-key-badge): color-mix(in srgb, <colour> var(--tone-text-mix), var(--fg)). Mixing towards --fg gives a darker shade of the same hue in light and a lighter one in dark, so the project palette (--accent in every preset, --blue, --green, --amber, --purple) clears 4.5:1 on its own 7% tint (light ≥ 4.9, dark ≥ 4.7). A very light custom colour (yellow) can still fall short.",
+      "tone-text-mix": {
+        "$value": "65%",
+        "$description": "share of the passed colour; the rest is --fg"
       }
     },
     "deco": {
