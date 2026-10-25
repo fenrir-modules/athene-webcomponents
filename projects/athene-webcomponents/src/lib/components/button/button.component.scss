@@ -74,7 +74,7 @@
   // -------------------------------------------
   // Variants — all palette-aware, no hardcoded hex
   // -------------------------------------------
-  // Ink in light, accent in dark — the role token decides, not the button.
+  // The accent preset (ink for neutral in light) — the role token decides, not the button.
   &--primary {
     background: var(--action-primary-bg);
     color: var(--action-primary-fg);
@@ -82,7 +82,7 @@
     // Medium, like every other button: the fill carries the emphasis (ref).
     font-weight: var(--weight-medium);
 
-    // Disabled comes from tokens: light fades the ink itself (40%), dark
+    // Disabled comes from tokens: light fades the fill itself (38%), dark
     // uses a neutral well with muted text — a faded accent went brown.
     // A loading button is disabled too, but keeps its colour so the
     // spinner stays visible on it.

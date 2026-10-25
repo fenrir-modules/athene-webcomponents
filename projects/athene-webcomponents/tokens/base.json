@@ -111,6 +111,10 @@
       "accent-ring": {
         "$value": "#4f46e526",
         "$description": "Soft accent halo. Decorative only (≈1.3:1): use it next to a border that turns --accent, never as the only focus indicator — that is --focus-ring-shadow / --focus-ring-color."
+      },
+      "accent-solid": {
+        "$value": "{color.accent.accent}",
+        "$description": "Light: the accent fill under a white label (primary button). Violet and blue use --accent; the green and orange presets step down to --accent-2 so white clears 4.5:1. Dark's primary reads --accent directly, so this step only matters in light."
       }
     },
     "focus": {
@@ -127,7 +131,7 @@
       }
     },
     "role": {
-      "$description": "Semantic roles — what a component reaches for instead of the raw accent. Light keeps the accent as a small signal (focus ring, links, markers): CTAs are ink, selection is neutral grey. Dark re-points the same roles at the accent.",
+      "$description": "Semantic roles — what a component reaches for instead of the raw accent. Both themes point the interactive roles at the accent (dark only re-values what differs): the primary button fills with --accent-solid in light and --accent in dark; checked controls, progress, indicators and active borders use --accent; selection and active states use accent tints with --accent-text on top. The neutral preset keeps the monochrome light look (ink CTAs, grey selection) through accents/neutral.light-roles.json.",
       "ink": {
         "$type": "color",
         "ink": {
@@ -139,15 +143,15 @@
       },
       "action-primary": {
         "action-primary-bg": {
-          "$value": "{color.role.ink.ink}",
+          "$value": "{color.accent.accent-solid}",
           "$type": "color"
         },
         "action-primary-bg-hover": {
-          "$value": "{color.role.ink.ink-hover}",
+          "$value": "color-mix(in srgb, {color.accent.accent-solid} 86%, #000)",
           "$type": "color"
         },
         "action-primary-bg-active": {
-          "$value": "#000000",
+          "$value": "color-mix(in srgb, {color.accent.accent-solid} 74%, #000)",
           "$type": "color"
         },
         "action-primary-fg": {
@@ -188,35 +192,35 @@
       "nav": {
         "$type": "color",
         "nav-active-bg": {
-          "$value": "#00000017",
-          "$description": "~9% black — reads as a pill on white chrome"
+          "$value": "color-mix(in srgb, {color.accent.accent} 12%, transparent)",
+          "$description": "12% accent — a tinted pill on the chrome, as in dark"
         },
         "nav-active-bg-hover": {
-          "$value": "#0000001f"
+          "$value": "color-mix(in srgb, {color.accent.accent} 18%, transparent)"
         },
         "nav-active-fg": {
-          "$value": "{color.text.fg}"
+          "$value": "{color.accent.accent-text}"
         },
         "nav-active-icon": {
-          "$value": "{color.text.fg}"
+          "$value": "{color.accent.accent-text}"
         },
         "nav-active-indicator": {
-          "$value": "{color.text.fg}"
+          "$value": "{color.accent.accent}"
         },
         "nav-badge-bg": {
-          "$value": "{color.surface.bg-2}"
+          "$value": "color-mix(in srgb, {color.accent.accent} 14%, transparent)"
         },
         "nav-badge-fg": {
-          "$value": "{color.text.fg-2}"
+          "$value": "{color.accent.accent-text}"
         }
       },
       "tab": {
         "$type": "color",
         "tab-active-fg": {
-          "$value": "{color.text.fg}"
+          "$value": "{color.accent.accent-text}"
         },
         "tab-active-indicator": {
-          "$value": "{color.text.fg}"
+          "$value": "{color.accent.accent}"
         },
         "segment-track-bg": {
           "$value": "{color.surface.bg-2}"
@@ -228,13 +232,13 @@
           "$value": "{color.text.fg}"
         },
         "segment-count-active-bg": {
-          "$value": "{color.surface.surface-3}"
+          "$value": "{color.accent.accent-faint}"
         },
         "segment-count-active-fg": {
-          "$value": "{color.text.fg-2}"
+          "$value": "{color.accent.accent-text}"
         },
         "progress-fill": {
-          "$value": "{color.role.ink.ink}"
+          "$value": "{color.accent.accent}"
         },
         "progress-track": {
           "$value": "{color.border.border}"
@@ -243,25 +247,25 @@
       "chip-active": {
         "$type": "color",
         "chip-active-bg": {
-          "$value": "{color.role.nav.nav-active-bg}"
+          "$value": "{color.accent.accent-faint}"
         },
         "chip-active-fg": {
-          "$value": "{color.text.fg}"
+          "$value": "{color.accent.accent-text}"
         },
         "chip-active-border": {
-          "$value": "{color.border.border-strong}"
+          "$value": "{color.accent.accent}"
         }
       },
       "action-outline": {
         "$type": "color",
         "action-outline-fg": {
-          "$value": "{color.text.fg}"
+          "$value": "{color.accent.accent-text}"
         },
         "action-outline-hover-bg": {
-          "$value": "{color.surface.hover}"
+          "$value": "{color.accent.accent-faint}"
         },
         "action-outline-hover-border": {
-          "$value": "{color.border.border-strong}"
+          "$value": "{color.accent.accent}"
         },
         "action-outline-border": {
           "$value": "{color.border.border-strong}"
@@ -270,34 +274,34 @@
       "chip-primary": {
         "$type": "color",
         "chip-primary-bg": {
-          "$value": "{color.surface.bg-2}"
+          "$value": "{color.accent.accent-ring}"
         },
         "chip-primary-fg": {
-          "$value": "{color.text.fg}"
+          "$value": "{color.accent.accent-text}"
         },
         "chip-primary-border": {
-          "$value": "{color.border.border-strong}"
+          "$value": "color-mix(in srgb, {color.accent.accent} 30%, transparent)"
         }
       },
       "control": {
         "$type": "color",
         "control-checked": {
-          "$value": "{color.role.ink.ink}"
+          "$value": "{color.accent.accent}"
         }
       },
       "selection-bar": {
         "$type": "color",
         "selection-bar-bg": {
-          "$value": "{color.surface.surface}"
+          "$value": "{color.accent.accent-faint}"
         },
         "selection-bar-border": {
-          "$value": "{color.border.border-strong}"
+          "$value": "{color.accent.accent}"
         },
         "selection-bar-fg": {
-          "$value": "{color.text.fg}"
+          "$value": "{color.accent.accent-text}"
         },
         "row-selected-bg": {
-          "$value": "{color.surface.hover-strong}"
+          "$value": "color-mix(in srgb, {color.accent.accent} 7%, transparent)"
         }
       },
       "brand-mark": {
@@ -337,7 +341,8 @@
       "rail": {
         "$type": "color",
         "rail-active-bg": {
-          "$value": "{color.surface.bg-2}"
+          "$value": "{color.role.nav.nav-active-bg}",
+          "$description": "The active nav item's pill (ath-nav-item, sidebar and settings nav): the accent tint, as in dark. Neutral keeps --bg-2."
         },
         "rail-tile-bg": {
           "$value": "{color.surface.bg-2}"

@@ -136,6 +136,11 @@
       "type": "color"
     },
     {
+      "name": "--accent-solid",
+      "path": "color.accent.accent-solid",
+      "type": "color"
+    },
+    {
       "name": "--focus-ring-color",
       "path": "color.focus.focus-ring-color",
       "type": "color"

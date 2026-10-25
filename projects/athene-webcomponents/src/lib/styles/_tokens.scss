@@ -46,6 +46,7 @@
   --accent-text: var(--accent); // Accent that carries text (links, mentions, active labels on an accent tint). Violet --accent clears 4.5:1 here; the blue, green and orange presets and dark use --accent-2, the step further from the surface (contrast gate).
   --accent-faint: #4f46e50f;
   --accent-ring: #4f46e526; // Soft accent halo. Decorative only (≈1.3:1): use it next to a border that turns --accent, never as the only focus indicator — that is --focus-ring-shadow / --focus-ring-color.
+  --accent-solid: var(--accent); // Light: the accent fill under a white label (primary button). Violet and blue use --accent; the green and orange presets step down to --accent-2 so white clears 4.5:1. Dark's primary reads --accent directly, so this step only matters in light.
 
   // color.focus — Focus indicator (WCAG 2.4.7 / 1.4.11). The ring colour clears 3:1 against every surface in every theme and accent (contrast gate); --focus-ring-shadow adds a surface-coloured gap so it also reads on accent fills.
   --focus-ring-color: var(--accent); // Outline / ring colour for :focus-visible.
@@ -56,9 +57,9 @@
   --ink-hover: #2e2e34;
 
   // color.role.action-primary
-  --action-primary-bg: var(--ink);
-  --action-primary-bg-hover: var(--ink-hover);
-  --action-primary-bg-active: #000000;
+  --action-primary-bg: var(--accent-solid);
+  --action-primary-bg-hover: color-mix(in srgb, var(--accent-solid) 86%, #000);
+  --action-primary-bg-active: color-mix(in srgb, var(--accent-solid) 74%, #000);
   --action-primary-fg: #ffffff;
   --action-primary-disabled-bg: var(--action-primary-bg);
   --action-primary-disabled-fg: var(--action-primary-fg);
@@ -71,49 +72,49 @@
   --action-danger-fg: #ffffff;
 
   // color.role.nav
-  --nav-active-bg: #00000017; // ~9% black — reads as a pill on white chrome
-  --nav-active-bg-hover: #0000001f;
-  --nav-active-fg: var(--fg);
-  --nav-active-icon: var(--fg);
-  --nav-active-indicator: var(--fg);
-  --nav-badge-bg: var(--bg-2);
-  --nav-badge-fg: var(--fg-2);
+  --nav-active-bg: color-mix(in srgb, var(--accent) 12%, transparent); // 12% accent — a tinted pill on the chrome, as in dark
+  --nav-active-bg-hover: color-mix(in srgb, var(--accent) 18%, transparent);
+  --nav-active-fg: var(--accent-text);
+  --nav-active-icon: var(--accent-text);
+  --nav-active-indicator: var(--accent);
+  --nav-badge-bg: color-mix(in srgb, var(--accent) 14%, transparent);
+  --nav-badge-fg: var(--accent-text);
 
   // color.role.tab
-  --tab-active-fg: var(--fg);
-  --tab-active-indicator: var(--fg);
+  --tab-active-fg: var(--accent-text);
+  --tab-active-indicator: var(--accent);
   --segment-track-bg: var(--bg-2);
   --segment-active-bg: var(--surface);
   --segment-active-fg: var(--fg);
-  --segment-count-active-bg: var(--surface-3);
-  --segment-count-active-fg: var(--fg-2);
-  --progress-fill: var(--ink);
+  --segment-count-active-bg: var(--accent-faint);
+  --segment-count-active-fg: var(--accent-text);
+  --progress-fill: var(--accent);
   --progress-track: var(--border);
 
   // color.role.chip-active
-  --chip-active-bg: var(--nav-active-bg);
-  --chip-active-fg: var(--fg);
-  --chip-active-border: var(--border-strong);
+  --chip-active-bg: var(--accent-faint);
+  --chip-active-fg: var(--accent-text);
+  --chip-active-border: var(--accent);
 
   // color.role.action-outline
-  --action-outline-fg: var(--fg);
-  --action-outline-hover-bg: var(--hover);
-  --action-outline-hover-border: var(--border-strong);
+  --action-outline-fg: var(--accent-text);
+  --action-outline-hover-bg: var(--accent-faint);
+  --action-outline-hover-border: var(--accent);
   --action-outline-border: var(--border-strong);
 
   // color.role.chip-primary
-  --chip-primary-bg: var(--bg-2);
-  --chip-primary-fg: var(--fg);
-  --chip-primary-border: var(--border-strong);
+  --chip-primary-bg: var(--accent-ring);
+  --chip-primary-fg: var(--accent-text);
+  --chip-primary-border: color-mix(in srgb, var(--accent) 30%, transparent);
 
   // color.role.control
-  --control-checked: var(--ink);
+  --control-checked: var(--accent);
 
   // color.role.selection-bar
-  --selection-bar-bg: var(--surface);
-  --selection-bar-border: var(--border-strong);
-  --selection-bar-fg: var(--fg);
-  --row-selected-bg: var(--hover-strong);
+  --selection-bar-bg: var(--accent-faint);
+  --selection-bar-border: var(--accent);
+  --selection-bar-fg: var(--accent-text);
+  --row-selected-bg: color-mix(in srgb, var(--accent) 7%, transparent);
 
   // color.role.brand-mark
   --brand-mark-bg: #0a0a0b;
@@ -130,7 +131,7 @@
   --notify-dot: #43946c;
 
   // color.role.rail
-  --rail-active-bg: var(--bg-2);
+  --rail-active-bg: var(--nav-active-bg); // The active nav item's pill (ath-nav-item, sidebar and settings nav): the accent tint, as in dark. Neutral keeps --bg-2.
   --rail-tile-bg: var(--bg-2);
 
   // color.avatar — Person avatars — deterministic per person (avatarTone()), muted mid-tones with white initials (all >= 4.5:1).
@@ -412,47 +413,11 @@
   --action-danger-bg: #c24f4f; // A darker shade of the dark --red so the white label clears 4.5:1 (4.6). --red (#cc6b6b) is 3.6:1.
 
   // color.role.nav
-  --nav-active-bg: color-mix(in srgb, var(--accent) 12%, transparent);
-  --nav-active-bg-hover: color-mix(in srgb, var(--accent) 18%, transparent);
-  --nav-active-fg: var(--accent-text);
   --nav-active-icon: var(--accent);
-  --nav-active-indicator: var(--accent);
-  --nav-badge-bg: color-mix(in srgb, var(--accent) 14%, transparent);
-  --nav-badge-fg: var(--accent-text);
 
   // color.role.tab
-  --tab-active-fg: var(--accent-text);
-  --tab-active-indicator: var(--accent);
   --segment-active-bg: var(--bg-1);
-  --segment-count-active-bg: var(--accent-faint);
-  --segment-count-active-fg: var(--accent-text);
-  --progress-fill: var(--accent);
   --progress-track: var(--bg-2);
-
-  // color.role.chip-active
-  --chip-active-bg: var(--accent-faint);
-  --chip-active-fg: var(--accent-text);
-  --chip-active-border: var(--accent);
-
-  // color.role.action-outline
-  --action-outline-fg: var(--accent-text);
-  --action-outline-hover-bg: var(--accent-faint);
-  --action-outline-hover-border: var(--accent);
-  --action-outline-border: var(--border-strong);
-
-  // color.role.chip-primary
-  --chip-primary-bg: var(--accent-ring);
-  --chip-primary-fg: var(--accent-text);
-  --chip-primary-border: color-mix(in srgb, var(--accent) 30%, transparent);
-
-  // color.role.control
-  --control-checked: var(--accent);
-
-  // color.role.selection-bar
-  --selection-bar-bg: var(--accent-faint);
-  --selection-bar-border: var(--accent);
-  --selection-bar-fg: var(--accent-text);
-  --row-selected-bg: color-mix(in srgb, var(--accent) 7%, transparent);
 
   // color.role.brand-mark
   --brand-mark-bg: var(--fg);
@@ -467,10 +432,6 @@
 
   // color.role.notify
   --notify-dot: var(--green);
-
-  // color.role.rail
-  --rail-active-bg: var(--nav-active-bg);
-  --rail-tile-bg: var(--bg-2);
 
   // color.avatar
   --avatar-1-bg: #d0915e;
@@ -533,12 +494,7 @@
 // ACCENT violet — light
 // ---------------------------------------------------------------------
 [data-accent="violet"] {
-  --accent: #4f46e5;
-  --accent-2: #4338ca;
-  --accent-3: #6366f1;
   --accent-dim: #818cf8;
-  --accent-faint: #4f46e50f;
-  --accent-ring: #4f46e526;
 }
 
 // ---------------------------------------------------------------------
@@ -565,6 +521,7 @@
   --accent-text: #047152; // A darker shade of the green accent for text: 6.0:1 white · 5.1 on --accent-faint · 4.6 on --accent-ring. --accent is 3.8:1 on white.
   --accent-faint: #0596690f;
   --accent-ring: #05966926;
+  --accent-solid: var(--accent-2); // Solid fill under a white label: --accent is under 4.5:1 with white (green 3.8, orange 3.6), so buttons, checked controls and progress use the darker --accent-2.
 }
 
 // ---------------------------------------------------------------------
@@ -578,6 +535,7 @@
   --accent-text: #b03b0b; // A darker shade of the orange accent for text: 6.0:1 white · 5.1 on --accent-faint · 4.6 on --accent-ring. --accent is 3.6:1 on white.
   --accent-faint: #ea580c0f;
   --accent-ring: #ea580c26;
+  --accent-solid: var(--accent-2); // Solid fill under a white label: --accent is under 4.5:1 with white (green 3.8, orange 3.6), so buttons, checked controls and progress use the darker --accent-2.
 }
 
 // ---------------------------------------------------------------------
@@ -590,6 +548,60 @@
   --accent-dim: #71717a;
   --accent-faint: #0a0a0b0f;
   --accent-ring: #0a0a0b1f;
+}
+
+// ---------------------------------------------------------------------
+// ACCENT neutral — light roles (monochrome: ink CTAs, grey selection; light theme only)
+// ---------------------------------------------------------------------
+[data-accent="neutral"]:not([data-theme="dark"]) {
+
+  // color.role.action-primary
+  --action-primary-bg: var(--ink);
+  --action-primary-bg-hover: var(--ink-hover);
+  --action-primary-bg-active: #000000;
+
+  // color.role.nav
+  --nav-active-bg: #00000017;
+  --nav-active-bg-hover: #0000001f;
+  --nav-active-fg: var(--fg);
+  --nav-active-icon: var(--fg);
+  --nav-active-indicator: var(--fg);
+  --nav-badge-bg: var(--bg-2);
+  --nav-badge-fg: var(--fg-2);
+
+  // color.role.tab
+  --tab-active-fg: var(--fg);
+  --tab-active-indicator: var(--fg);
+  --segment-count-active-bg: var(--surface-3);
+  --segment-count-active-fg: var(--fg-2);
+  --progress-fill: var(--ink);
+
+  // color.role.chip-active
+  --chip-active-bg: var(--nav-active-bg);
+  --chip-active-fg: var(--fg);
+  --chip-active-border: var(--border-strong);
+
+  // color.role.action-outline
+  --action-outline-fg: var(--fg);
+  --action-outline-hover-bg: var(--hover);
+  --action-outline-hover-border: var(--border-strong);
+
+  // color.role.chip-primary
+  --chip-primary-bg: var(--bg-2);
+  --chip-primary-fg: var(--fg);
+  --chip-primary-border: var(--border-strong);
+
+  // color.role.control
+  --control-checked: var(--ink);
+
+  // color.role.selection-bar
+  --selection-bar-bg: var(--surface);
+  --selection-bar-border: var(--border-strong);
+  --selection-bar-fg: var(--fg);
+  --row-selected-bg: var(--hover-strong);
+
+  // color.role.rail
+  --rail-active-bg: var(--bg-2);
 }
 
 // ---------------------------------------------------------------------
@@ -610,7 +622,6 @@
   --accent: #5b80d4;
   --accent-2: #7a9ae0;
   --accent-3: #5b7cc5; // Pressed primary fill under the dark label: 4.6:1. Was #4268bc (3.5:1).
-  --accent-text: var(--accent-2); // Dark keeps the lighter accent step for text; this undoes the light preset value, which [data-accent] also applies under dark.
   --accent-faint: #5b80d420;
   --accent-ring: #5b80d43a;
 }

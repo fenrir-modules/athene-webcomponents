@@ -1,23 +1,9 @@
 {
+  "$description": "Violet is the base default (base.json carries its steps). Only --accent-dim is re-set: [data-accent] also applies under dark, and dark violet has always read this lighter step (AI gradient).",
   "color": {
     "accent": {
-      "accent": {
-        "$value": "#4f46e5"
-      },
-      "accent-2": {
-        "$value": "#4338ca"
-      },
-      "accent-3": {
-        "$value": "#6366f1"
-      },
       "accent-dim": {
         "$value": "#818cf8"
-      },
-      "accent-faint": {
-        "$value": "#4f46e50f"
-      },
-      "accent-ring": {
-        "$value": "#4f46e526"
       }
     }
   }

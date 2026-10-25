@@ -1,0 +1,115 @@
+{
+  "$description": "Neutral preset, light theme only (selector excludes data-theme=\"dark\"): the monochrome look — ink CTAs and checked controls, grey selection, text-coloured active states. These are the light role values from before the accent mapping (q-accent), so neutral looks exactly as before.",
+  "color": {
+    "role": {
+      "action-primary": {
+        "action-primary-bg": {
+          "$value": "{color.role.ink.ink}"
+        },
+        "action-primary-bg-hover": {
+          "$value": "{color.role.ink.ink-hover}"
+        },
+        "action-primary-bg-active": {
+          "$value": "#000000"
+        }
+      },
+      "nav": {
+        "nav-active-bg": {
+          "$value": "#00000017"
+        },
+        "nav-active-bg-hover": {
+          "$value": "#0000001f"
+        },
+        "nav-active-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "nav-active-icon": {
+          "$value": "{color.text.fg}"
+        },
+        "nav-active-indicator": {
+          "$value": "{color.text.fg}"
+        },
+        "nav-badge-bg": {
+          "$value": "{color.surface.bg-2}"
+        },
+        "nav-badge-fg": {
+          "$value": "{color.text.fg-2}"
+        }
+      },
+      "tab": {
+        "tab-active-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "tab-active-indicator": {
+          "$value": "{color.text.fg}"
+        },
+        "segment-count-active-bg": {
+          "$value": "{color.surface.surface-3}"
+        },
+        "segment-count-active-fg": {
+          "$value": "{color.text.fg-2}"
+        },
+        "progress-fill": {
+          "$value": "{color.role.ink.ink}"
+        }
+      },
+      "chip-active": {
+        "chip-active-bg": {
+          "$value": "{color.role.nav.nav-active-bg}"
+        },
+        "chip-active-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "chip-active-border": {
+          "$value": "{color.border.border-strong}"
+        }
+      },
+      "action-outline": {
+        "action-outline-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "action-outline-hover-bg": {
+          "$value": "{color.surface.hover}"
+        },
+        "action-outline-hover-border": {
+          "$value": "{color.border.border-strong}"
+        }
+      },
+      "chip-primary": {
+        "chip-primary-bg": {
+          "$value": "{color.surface.bg-2}"
+        },
+        "chip-primary-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "chip-primary-border": {
+          "$value": "{color.border.border-strong}"
+        }
+      },
+      "control": {
+        "control-checked": {
+          "$value": "{color.role.ink.ink}"
+        }
+      },
+      "selection-bar": {
+        "selection-bar-bg": {
+          "$value": "{color.surface.surface}"
+        },
+        "selection-bar-border": {
+          "$value": "{color.border.border-strong}"
+        },
+        "selection-bar-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "row-selected-bg": {
+          "$value": "{color.surface.hover-strong}"
+        }
+      },
+      "rail": {
+        "rail-active-bg": {
+          "$value": "{color.surface.bg-2}"
+        }
+      }
+    }
+  }
+}

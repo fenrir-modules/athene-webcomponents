@@ -72,6 +72,15 @@
       "set": "accents/neutral.light.json"
     },
     {
+      "title": "ACCENT neutral — light roles (monochrome: ink CTAs, grey selection; light theme only)",
+      "selector": "[data-accent=\"neutral\"]:not([data-theme=\"dark\"])",
+      "when": {
+        "theme": "light",
+        "accent": "neutral"
+      },
+      "set": "accents/neutral.light-roles.json"
+    },
+    {
       "title": "ACCENT violet — dark",
       "selector": "[data-theme=\"dark\"][data-accent=\"violet\"]",
       "when": {
@@ -254,11 +263,11 @@
       "fg": "tab-active-fg",
       "bg": ["surface", "bg-0", "bg-1"],
       "min": 4.5,
-      "why": "WCAG 1.4.3 — active tab label (accent in dark)"
+      "why": "WCAG 1.4.3 — active tab label (accent text)"
     },
     {
       "fg": "nav-active-fg",
-      "bg": ["nav-active-bg", "nav-active-bg-hover"],
+      "bg": ["nav-active-bg", "nav-active-bg-hover", "rail-active-bg"],
       "over": ["bg-1"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — active nav item on its pill"
@@ -310,6 +319,19 @@
       "over": ["bg-0", "surface"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — bulk selection bar"
+    },
+    {
+      "fg": "control-checked",
+      "bg": ["surface", "bg-0", "bg-1"],
+      "min": 3,
+      "why": "WCAG 1.4.11 — a checked switch / checkbox fill against the surface"
+    },
+    {
+      "fg": "nav-active-icon",
+      "bg": ["nav-active-bg", "nav-active-bg-hover", "rail-active-bg"],
+      "over": ["bg-1"],
+      "min": 3,
+      "why": "WCAG 1.4.11 — active nav icon on its pill"
     },
     {
       "fg": "avatar-1-fg",

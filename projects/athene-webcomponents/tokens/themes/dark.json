@@ -145,104 +145,16 @@
         }
       },
       "nav": {
-        "nav-active-bg": {
-          "$value": "color-mix(in srgb, {color.accent.accent} 12%, transparent)"
-        },
-        "nav-active-bg-hover": {
-          "$value": "color-mix(in srgb, {color.accent.accent} 18%, transparent)"
-        },
-        "nav-active-fg": {
-          "$value": "{color.accent.accent-text}"
-        },
         "nav-active-icon": {
           "$value": "{color.accent.accent}"
-        },
-        "nav-active-indicator": {
-          "$value": "{color.accent.accent}"
-        },
-        "nav-badge-bg": {
-          "$value": "color-mix(in srgb, {color.accent.accent} 14%, transparent)"
-        },
-        "nav-badge-fg": {
-          "$value": "{color.accent.accent-text}"
         }
       },
       "tab": {
-        "tab-active-fg": {
-          "$value": "{color.accent.accent-text}"
-        },
-        "tab-active-indicator": {
-          "$value": "{color.accent.accent}"
-        },
         "segment-active-bg": {
           "$value": "{color.surface.bg-1}"
         },
-        "segment-count-active-bg": {
-          "$value": "{color.accent.accent-faint}"
-        },
-        "segment-count-active-fg": {
-          "$value": "{color.accent.accent-text}"
-        },
-        "progress-fill": {
-          "$value": "{color.accent.accent}"
-        },
         "progress-track": {
           "$value": "{color.surface.bg-2}"
-        }
-      },
-      "chip-active": {
-        "chip-active-bg": {
-          "$value": "{color.accent.accent-faint}"
-        },
-        "chip-active-fg": {
-          "$value": "{color.accent.accent-text}"
-        },
-        "chip-active-border": {
-          "$value": "{color.accent.accent}"
-        }
-      },
-      "action-outline": {
-        "action-outline-fg": {
-          "$value": "{color.accent.accent-text}"
-        },
-        "action-outline-hover-bg": {
-          "$value": "{color.accent.accent-faint}"
-        },
-        "action-outline-hover-border": {
-          "$value": "{color.accent.accent}"
-        },
-        "action-outline-border": {
-          "$value": "{color.border.border-strong}"
-        }
-      },
-      "chip-primary": {
-        "chip-primary-bg": {
-          "$value": "{color.accent.accent-ring}"
-        },
-        "chip-primary-fg": {
-          "$value": "{color.accent.accent-text}"
-        },
-        "chip-primary-border": {
-          "$value": "color-mix(in srgb, {color.accent.accent} 30%, transparent)"
-        }
-      },
-      "control": {
-        "control-checked": {
-          "$value": "{color.accent.accent}"
-        }
-      },
-      "selection-bar": {
-        "selection-bar-bg": {
-          "$value": "{color.accent.accent-faint}"
-        },
-        "selection-bar-border": {
-          "$value": "{color.accent.accent}"
-        },
-        "selection-bar-fg": {
-          "$value": "{color.accent.accent-text}"
-        },
-        "row-selected-bg": {
-          "$value": "color-mix(in srgb, {color.accent.accent} 7%, transparent)"
         }
       },
       "brand-mark": {
@@ -273,14 +185,6 @@
       "notify": {
         "notify-dot": {
           "$value": "{color.status.green}"
-        }
-      },
-      "rail": {
-        "rail-active-bg": {
-          "$value": "{color.role.nav.nav-active-bg}"
-        },
-        "rail-tile-bg": {
-          "$value": "{color.surface.bg-2}"
         }
       }
     },

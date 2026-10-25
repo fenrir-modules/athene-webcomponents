@@ -102,8 +102,8 @@ svg.lucide[stroke-width='2'] {
 // Native controls & scrollbars (moved from _tokens.scss, which is now
 // generated and holds custom properties only)
 // -------------------------------------------
-// Native checkboxes / radios follow the role token (ink in light,
-// accent in dark) instead of the browser's own blue or the raw accent.
+// Native checkboxes / radios follow the role token (the accent; ink for the
+// neutral preset in light) instead of the browser's own blue.
 input[type='checkbox'],
 input[type='radio'] {
   accent-color: var(--control-checked);

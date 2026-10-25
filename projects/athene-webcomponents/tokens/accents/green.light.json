@@ -22,6 +22,10 @@
       },
       "accent-ring": {
         "$value": "#05966926"
+      },
+      "accent-solid": {
+        "$value": "{color.accent.accent-2}",
+        "$description": "Solid fill under a white label: --accent is under 4.5:1 with white (green 3.8, orange 3.6), so buttons, checked controls and progress use the darker --accent-2."
       }
     }
   }
