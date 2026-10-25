@@ -126,9 +126,10 @@
 
   .ath-md__task--done {
     > .ath-md__box {
-      border-color: var(--ink);
+      // The accent in light (ink under neutral), ink in dark.
+      border-color: var(--control-mark);
       position: relative;
-      background: var(--ink);
+      background: var(--control-mark);
 
       // The tick, drawn in the page colour so it inverts with the theme.
       &::after {

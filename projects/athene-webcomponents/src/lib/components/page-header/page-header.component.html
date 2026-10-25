@@ -1,14 +1,29 @@
-<header class="ath-page-header" [class.ath-page-header--divided]="divider()">
+<header
+  class="ath-page-header"
+  [class.ath-page-header--divided]="divider()"
+  [class.ath-page-header--section]="level() === 2"
+  [attr.aria-busy]="loading() || null"
+>
   <div class="ath-page-header__leading">
     <ng-content select="[athPageLeading]" />
   </div>
   <div class="ath-page-header__text">
-    @if (level() === 2) {
+    @if (loading()) {
+      <div class="ath-page-header__title" aria-hidden="true">
+        <span class="ath-page-header__skeleton ath-page-header__skeleton--title"></span>
+      </div>
+    } @else if (level() === 2) {
       <h2 class="ath-page-header__title">{{ title() }}</h2>
     } @else {
       <h1 class="ath-page-header__title">{{ title() }}</h1>
     }
     <div class="ath-page-header__sub">
+      @if (loading()) {
+        <span
+          class="ath-page-header__skeleton ath-page-header__skeleton--meta"
+          aria-hidden="true"
+        ></span>
+      }
       <!-- Every item leads with its separator, and the row clips the first
            separator-width of each line: a wrapped line neither ends nor
            starts on a stray "·". -->

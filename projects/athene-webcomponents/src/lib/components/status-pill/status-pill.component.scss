@@ -37,11 +37,12 @@
   font-family: var(--font-sans);
 }
 
-// Status colors — match the design tokens
+// Status colors — match the design tokens. Red is Blocked (and, elsewhere,
+// overdue and errors); Open is a quiet grey-blue (UX-037).
 :host([data-status='open']) {
   .ath-status-pill__dot {
-    background: var(--red);
-    color: var(--red);
+    background: var(--status-open);
+    color: var(--status-open);
   }
 }
 :host([data-status='prog']) {
@@ -64,8 +65,8 @@
 }
 :host([data-status='blocked']) {
   .ath-status-pill__dot {
-    background: var(--purple);
-    color: var(--purple);
+    background: var(--red);
+    color: var(--red);
   }
 }
 :host([data-status='closed']) {

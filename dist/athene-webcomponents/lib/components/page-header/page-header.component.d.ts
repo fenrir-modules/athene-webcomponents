@@ -15,6 +15,10 @@ export type PageHeaderLevel = 1 | 2;
  *   already the view's primary on most pages.
  * - `divider`: the hairline. Turn it off only when the next element draws
  *   its own rule directly under the head (an underline tab bar).
+ * - Height: a page head (level 1) is one height whatever it holds — the
+ *   meta line keeps its room while it is empty or still loading, so a late
+ *   meta never pushes the page down. `loading` draws title and meta as
+ *   skeleton bars. A section head (level 2) folds an empty meta line.
  *
  * @example
  * <ath-page-header title="Tickets" [subItems]="['12 of 45', 'across 6 projects']">
@@ -36,6 +40,13 @@ export declare class AthPageHeaderComponent {
      */
     readonly level: import("@angular/core").InputSignal<PageHeaderLevel>;
     /**
+     * The page's object is still loading (a project, a doc): the title and
+     * the meta line draw as skeleton bars of their final height, so the head
+     * stands from the first frame and nothing below it moves when the data
+     * arrives. Actions and leading content still render.
+     */
+    readonly loading: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+    /**
      * The sub-items worth separating.
      *
      * Callers build this array inline from conditionals, so a fact that
@@ -45,5 +56,5 @@ export declare class AthPageHeaderComponent {
      */
     protected readonly visibleSubItems: import("@angular/core").Signal<string[]>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthPageHeaderComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthPageHeaderComponent, "ath-page-header", never, { "title": { "alias": "title"; "required": true; "isSignal": true; }; "subItems": { "alias": "subItems"; "required": false; "isSignal": true; }; "description": { "alias": "description"; "required": false; "isSignal": true; }; "divider": { "alias": "divider"; "required": false; "isSignal": true; }; "level": { "alias": "level"; "required": false; "isSignal": true; }; }, {}, never, ["[athPageLeading]", "[athPageMeta]", "*"], true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthPageHeaderComponent, "ath-page-header", never, { "title": { "alias": "title"; "required": true; "isSignal": true; }; "subItems": { "alias": "subItems"; "required": false; "isSignal": true; }; "description": { "alias": "description"; "required": false; "isSignal": true; }; "divider": { "alias": "divider"; "required": false; "isSignal": true; }; "level": { "alias": "level"; "required": false; "isSignal": true; }; "loading": { "alias": "loading"; "required": false; "isSignal": true; }; }, {}, never, ["[athPageLeading]", "[athPageMeta]", "*"], true, never>;
 }

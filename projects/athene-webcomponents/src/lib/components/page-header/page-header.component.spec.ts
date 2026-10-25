@@ -64,4 +64,31 @@ describe('AthPageHeaderComponent', () => {
     expect(root.querySelector('h1')).toBeNull();
     expect(root.querySelector('h2')?.textContent?.trim()).toBe('Labels');
   });
+
+  it("keeps the meta line's room on a page head while it is empty (UX-043)", () => {
+    const f = TestBed.createComponent(AthPageHeaderComponent);
+    f.componentRef.setInput('title', 'Docs');
+    f.detectChanges();
+    const root = f.nativeElement as HTMLElement;
+    document.body.append(root);
+    const sub = root.querySelector('.ath-page-header__sub') as HTMLElement;
+    expect(getComputedStyle(sub).display).not.toBe('none');
+    expect(sub.getBoundingClientRect().height).toBeGreaterThan(0);
+    f.componentRef.setInput('level', 2);
+    f.detectChanges();
+    expect(getComputedStyle(sub).display).toBe('none');
+    root.remove();
+  });
+
+  it('draws title and meta as skeleton bars while loading, without an empty h1', () => {
+    const f = TestBed.createComponent(AthPageHeaderComponent);
+    f.componentRef.setInput('title', '');
+    f.componentRef.setInput('loading', true);
+    f.detectChanges();
+    const root = f.nativeElement as HTMLElement;
+    expect(root.querySelector('h1')).toBeNull();
+    expect(root.querySelector('.ath-page-header__skeleton--title')).not.toBeNull();
+    expect(root.querySelector('.ath-page-header__skeleton--meta')).not.toBeNull();
+    expect(root.querySelector('header')?.getAttribute('aria-busy')).toBe('true');
+  });
 });

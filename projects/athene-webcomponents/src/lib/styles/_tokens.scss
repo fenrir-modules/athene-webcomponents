@@ -109,6 +109,7 @@
 
   // color.role.control
   --control-checked: var(--accent);
+  --control-mark: var(--control-checked); // Marks that were ink before the accent presets reached light (a done task box, an editor checkbox, a pressed toggle's border, an ink focus outline): the checked-control colour in light, so ink under neutral; ink in dark, which keeps its look.
 
   // color.role.selection-bar
   --selection-bar-bg: var(--accent-faint);
@@ -166,6 +167,7 @@
   --purple: #7c3aed;
   --purple-text: var(--purple); // Purple that carries text. Light --purple already clears 4.5:1 (5.7 white · 5.2 canvas · 4.8 on --purple-tint); dark has its own shade.
   --pink: #db2777;
+  --status-open: color-mix(in srgb, var(--blue) 30%, var(--fg-2)); // The "Open" status: a quiet grey-blue, not red. Red is overdue, errors and Blocked (UX-037). Resolves in each theme: light 9.0:1 surface · 6.7 on its 18% tint, dark 6.7 · 4.85.
 
   // color.status-tint
   --red-tint: #dc26260f;
@@ -197,6 +199,7 @@
   --purple-muted: color-mix(in srgb, var(--purple) var(--deco-mix), var(--surface));
   --pink-muted: color-mix(in srgb, var(--pink) var(--deco-mix), var(--surface));
   --grey-muted: color-mix(in srgb, var(--fg-4) var(--deco-mix), var(--surface));
+  --status-open-muted: color-mix(in srgb, var(--status-open) var(--deco-mix), var(--surface));
 
   // color.selection
   --selection-bg: rgba(23, 23, 26, 0.16);
@@ -418,6 +421,9 @@
   // color.role.tab
   --segment-active-bg: var(--bg-1);
   --progress-track: var(--bg-2);
+
+  // color.role.control
+  --control-mark: var(--ink);
 
   // color.role.brand-mark
   --brand-mark-bg: var(--fg);

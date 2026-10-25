@@ -287,6 +287,10 @@
         "$type": "color",
         "control-checked": {
           "$value": "{color.accent.accent}"
+        },
+        "control-mark": {
+          "$value": "{color.role.control.control-checked}",
+          "$description": "Marks that were ink before the accent presets reached light (a done task box, an editor checkbox, a pressed toggle's border, an ink focus outline): the checked-control colour in light, so ink under neutral; ink in dark, which keeps its look."
         }
       },
       "selection-bar": {
@@ -459,6 +463,10 @@
       },
       "pink": {
         "$value": "#db2777"
+      },
+      "status-open": {
+        "$value": "color-mix(in srgb, {color.status.blue} 30%, {color.text.fg-2})",
+        "$description": "The \"Open\" status: a quiet grey-blue, not red. Red is overdue, errors and Blocked (UX-037). Resolves in each theme: light 9.0:1 surface · 6.7 on its 18% tint, dark 6.7 · 4.85."
       }
     },
     "status-tint": {
@@ -550,6 +558,10 @@
       },
       "grey-muted": {
         "$value": "color-mix(in srgb, {color.text.fg-4} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "status-open-muted": {
+        "$value": "color-mix(in srgb, {color.status.status-open} {color.deco.deco-mix}, {color.surface.surface})",
         "$type": "color"
       }
     },

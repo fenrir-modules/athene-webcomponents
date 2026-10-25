@@ -56,13 +56,39 @@
     align-items: center;
     flex-wrap: wrap;
     row-gap: 2px;
+    // One line's room even while empty or loading: a page head is one
+    // height, so a meta that arrives late moves nothing (UX-043). 20px is
+    // the tallest thing a meta line holds (a status pill, a small avatar),
+    // so rich meta does not grow it either.
+    min-height: 20px;
     font-size: var(--page-meta-size);
     color: var(--fg-3);
     line-height: var(--line-normal);
   }
 
-  &__sub:not(:has(.ath-page-header__sub-item)):has(.ath-page-header__sub-slot:empty) {
+  // A section head (level 2) folds an empty meta line.
+  &--section &__sub:not(:has(.ath-page-header__sub-item)):has(.ath-page-header__sub-slot:empty) {
     display: none;
+  }
+
+  // Loading: bars where the title and the meta will be, at their heights.
+  &__skeleton {
+    display: inline-block;
+    height: 0.8em;
+    border-radius: var(--r-xs);
+    background: var(--bg-2);
+    vertical-align: middle;
+    animation: ath-page-header-pulse 1.6s ease-in-out infinite;
+
+    &--title {
+      width: min(16em, 60%);
+    }
+
+    &--meta {
+      width: min(24em, 80%);
+      // The meta row clips its first separator-width; start past it.
+      margin-left: var(--sep-w);
+    }
   }
 
   &__sub-item {
@@ -128,5 +154,22 @@
     &__actions:empty {
       display: none;
     }
+  }
+}
+
+@keyframes ath-page-header-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ath-page-header__skeleton {
+    animation: none;
+    opacity: 0.65;
   }
 }

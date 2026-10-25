@@ -24,6 +24,10 @@ export type PageHeaderLevel = 1 | 2;
  *   already the view's primary on most pages.
  * - `divider`: the hairline. Turn it off only when the next element draws
  *   its own rule directly under the head (an underline tab bar).
+ * - Height: a page head (level 1) is one height whatever it holds — the
+ *   meta line keeps its room while it is empty or still loading, so a late
+ *   meta never pushes the page down. `loading` draws title and meta as
+ *   skeleton bars. A section head (level 2) folds an empty meta line.
  *
  * @example
  * <ath-page-header title="Tickets" [subItems]="['12 of 45', 'across 6 projects']">
@@ -55,6 +59,13 @@ export class AthPageHeaderComponent {
    * page that already has its h1 (the settings sub-pages under "Settings").
    */
   readonly level = input<PageHeaderLevel>(1);
+  /**
+   * The page's object is still loading (a project, a doc): the title and
+   * the meta line draw as skeleton bars of their final height, so the head
+   * stands from the first frame and nothing below it moves when the data
+   * arrives. Actions and leading content still render.
+   */
+  readonly loading = input(false, { transform: booleanAttribute });
 
   /**
    * The sub-items worth separating.

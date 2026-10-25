@@ -351,6 +351,11 @@
       "type": "color"
     },
     {
+      "name": "--control-mark",
+      "path": "color.role.control.control-mark",
+      "type": "color"
+    },
+    {
       "name": "--selection-bar-bg",
       "path": "color.role.selection-bar.selection-bar-bg",
       "type": "color"
@@ -566,6 +571,11 @@
       "type": "color"
     },
     {
+      "name": "--status-open",
+      "path": "color.status.status-open",
+      "type": "color"
+    },
+    {
       "name": "--red-tint",
       "path": "color.status-tint.red-tint",
       "type": "color"
@@ -668,6 +678,11 @@
     {
       "name": "--grey-muted",
       "path": "color.deco.grey-muted",
+      "type": "color"
+    },
+    {
+      "name": "--status-open-muted",
+      "path": "color.deco.status-open-muted",
       "type": "color"
     },
     {

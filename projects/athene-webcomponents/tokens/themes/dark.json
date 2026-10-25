@@ -186,6 +186,11 @@
         "notify-dot": {
           "$value": "{color.status.green}"
         }
+      },
+      "control": {
+        "control-mark": {
+          "$value": "{color.role.ink.ink}"
+        }
       }
     },
     "avatar": {
