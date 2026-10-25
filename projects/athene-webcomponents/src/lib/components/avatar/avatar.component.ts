@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { LucideAngularModule, User } from 'lucide-angular';
 import { injectAthLabels } from '../../i18n/labels';
+import { isAthDecoColor } from '../color-swatch/deco-color';
 import { avatarInitials, avatarToneFor } from './avatar-tone';
 
 /** Avatar sizes; each reads its `--avatar-<size>` token. */
@@ -28,6 +29,7 @@ const ICON_SIZE: Record<AvatarSize, number> = { xs: 12, sm: 13, md: 18, lg: 22, 
  * <ath-avatar [person]="assignee ?? null" size="sm" />   <!-- null → empty seat -->
  * <ath-avatar [unassigned]="true" size="sm" />
  * <ath-avatar name="Mira Voss" />                         <!-- legacy: tone from initials -->
+ * <ath-avatar [person]="member" ring="blue" />            <!-- ring in the role's colour -->
  */
 @Component({
   selector: 'ath-avatar',
@@ -55,6 +57,12 @@ export class AthAvatarComponent {
   readonly unassigned = input(false);
   /** Accessible name and tooltip; defaults to the name or the "Unassigned" label. */
   readonly label = input<string | null>(null);
+  /**
+   * A ring in a palette colour (`AthDecoColor`): the person's role colour
+   * in member lists and pickers. Decorative; the role's name is shown or
+   * read elsewhere. `null` (or an unknown token): no ring.
+   */
+  readonly ring = input<string | null | undefined>(null);
 
   protected readonly userIcon = User;
   private readonly failedSrc = signal<string | null>(null);
@@ -71,6 +79,10 @@ export class AthAvatarComponent {
   protected readonly image = computed(() => {
     const src = this.who().src;
     return src && src !== this.failedSrc() ? src : null;
+  });
+  protected readonly ringColor = computed(() => {
+    const ring = this.ring();
+    return isAthDecoColor(ring) ? ring : null;
   });
   protected readonly iconSize = computed(() => ICON_SIZE[this.size()]);
 

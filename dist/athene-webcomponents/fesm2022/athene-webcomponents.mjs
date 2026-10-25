@@ -1,8 +1,8 @@
 import * as i0 from '@angular/core';
-import { input, booleanAttribute, computed, ChangeDetectionStrategy, Component, inject, model, signal, ElementRef, NgZone, Directive, Injectable, TemplateRef, output, contentChild, viewChild, effect, untracked, InjectionToken, contentChildren, forwardRef, DestroyRef, ViewEncapsulation, Renderer2, numberAttribute, ErrorHandler, SecurityContext, LOCALE_ID } from '@angular/core';
+import { input, booleanAttribute, computed, ChangeDetectionStrategy, Component, inject, model, signal, ElementRef, NgZone, Directive, Injectable, TemplateRef, output, contentChild, viewChild, effect, untracked, InjectionToken, contentChildren, forwardRef, DestroyRef, ViewEncapsulation, Renderer2, numberAttribute, ErrorHandler, SecurityContext, Injector, afterNextRender, LOCALE_ID } from '@angular/core';
 import { CommonModule, DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import * as i1 from 'lucide-angular';
-import { PanelLeftClose, PanelLeft, LucideAngularModule, Check, ChevronRight, User, X, Zap, Loader2, Copy, Eye, EyeOff, AlertCircle, ChevronDown, Search, Plus, Upload, Info, CheckCircle2, AlertOctagon, AlertTriangle, CheckCircle, ChevronLeft, ChevronsLeft, ChevronsRight, MoreHorizontal } from 'lucide-angular';
+import { PanelLeftClose, PanelLeft, LucideAngularModule, Check, ChevronRight, User, X, Zap, Loader2, Copy, Eye, EyeOff, AlertCircle, ChevronDown, Search, Plus, Upload, Slash, Lock, Info, CheckCircle2, AlertOctagon, AlertTriangle, CheckCircle, ChevronLeft, ChevronsLeft, ChevronsRight, MoreHorizontal } from 'lucide-angular';
 import * as i1$2 from '@athene/webcomponents/core';
 import { ATH_LABELS, ATH_DEFAULT_LABELS, ATH_STATUS_LABELS, ATH_PRIORITY_LABELS, ATH_MARKDOWN_PARSER, ATH_DATE_CONTEXT } from '@athene/webcomponents/core';
 export { ATH_DATE_CONTEXT, ATH_DEFAULT_LABELS, ATH_LABELS, ATH_MARKDOWN_PARSER, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, AthToastService } from '@athene/webcomponents/core';
@@ -1672,6 +1672,40 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImpo
             args: [{ selector: 'ath-timeline', imports: [CommonModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "<ng-content />\n", styles: [":host{display:block;position:relative}:host:before{content:\"\";position:absolute;left:12px;top:8px;bottom:8px;width:1px;background:var(--border-faint);pointer-events:none}::ng-deep ath-timeline-entry,::ng-deep ath-timeline-event{display:block;position:relative}::ng-deep ath-timeline-entry+ath-timeline-entry,::ng-deep ath-timeline-entry+ath-timeline-event,::ng-deep ath-timeline-event+ath-timeline-entry,::ng-deep ath-timeline-event+ath-timeline-event{margin-top:12px}\n"] }]
         }] });
 
+/** Every palette token, in picker order. */
+const ATH_DECO_COLORS = [
+    'neutral',
+    'blue',
+    'green',
+    'amber',
+    'red',
+    'purple',
+    'pink',
+];
+/** Whether a stored value is one of the palette tokens. */
+function isAthDecoColor(value) {
+    return typeof value === 'string' && ATH_DECO_COLORS.includes(value);
+}
+/** The palette token's accessible name. */
+function athDecoColorLabel(labels, color) {
+    switch (color) {
+        case 'neutral':
+            return labels.colorNeutral();
+        case 'blue':
+            return labels.colorBlue();
+        case 'green':
+            return labels.colorGreen();
+        case 'amber':
+            return labels.colorAmber();
+        case 'red':
+            return labels.colorRed();
+        case 'purple':
+            return labels.colorPurple();
+        case 'pink':
+            return labels.colorPink();
+    }
+}
+
 /**
  * Number of avatar colour tones defined in the design tokens
  * (`--avatar-1-bg` … `--avatar-8-bg`, per theme).
@@ -1737,6 +1771,7 @@ const ICON_SIZE = { xs: 12, sm: 13, md: 18, lg: 22, xl: 28 };
  * <ath-avatar [person]="assignee ?? null" size="sm" />   <!-- null → empty seat -->
  * <ath-avatar [unassigned]="true" size="sm" />
  * <ath-avatar name="Mira Voss" />                         <!-- legacy: tone from initials -->
+ * <ath-avatar [person]="member" ring="blue" />            <!-- ring in the role's colour -->
  */
 class AthAvatarComponent {
     constructor() {
@@ -1757,6 +1792,12 @@ class AthAvatarComponent {
         this.unassigned = input(false);
         /** Accessible name and tooltip; defaults to the name or the "Unassigned" label. */
         this.label = input(null);
+        /**
+         * A ring in a palette colour (`AthDecoColor`): the person's role colour
+         * in member lists and pickers. Decorative; the role's name is shown or
+         * read elsewhere. `null` (or an unknown token): no ring.
+         */
+        this.ring = input(null);
         this.userIcon = User;
         this.failedSrc = signal(null);
         this.who = computed(() => {
@@ -1769,6 +1810,10 @@ class AthAvatarComponent {
         this.image = computed(() => {
             const src = this.who().src;
             return src && src !== this.failedSrc() ? src : null;
+        });
+        this.ringColor = computed(() => {
+            const ring = this.ring();
+            return isAthDecoColor(ring) ? ring : null;
         });
         this.iconSize = computed(() => ICON_SIZE[this.size()]);
         this.accessibleName = computed(() => {
@@ -1790,11 +1835,11 @@ class AthAvatarComponent {
         this.failedSrc.set(this.who().src ?? null);
     }
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthAvatarComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthAvatarComponent, isStandalone: true, selector: "ath-avatar", inputs: { person: { classPropertyName: "person", publicName: "person", isSignal: true, isRequired: false, transformFunction: null }, name: { classPropertyName: "name", publicName: "name", isSignal: true, isRequired: false, transformFunction: null }, src: { classPropertyName: "src", publicName: "src", isSignal: true, isRequired: false, transformFunction: null }, id: { classPropertyName: "id", publicName: "id", isSignal: true, isRequired: false, transformFunction: null }, size: { classPropertyName: "size", publicName: "size", isSignal: true, isRequired: false, transformFunction: null }, unassigned: { classPropertyName: "unassigned", publicName: "unassigned", isSignal: true, isRequired: false, transformFunction: null }, label: { classPropertyName: "label", publicName: "label", isSignal: true, isRequired: false, transformFunction: null } }, ngImport: i0, template: "@if (empty()) {\n  <span\n    class=\"ath-avatar ath-avatar--empty\"\n    [attr.data-size]=\"size()\"\n    role=\"img\"\n    [attr.aria-label]=\"accessibleName()\"\n    [attr.title]=\"tooltip()\"\n  >\n    <lucide-icon [img]=\"userIcon\" [size]=\"iconSize()\" aria-hidden=\"true\" />\n  </span>\n} @else {\n  <span\n    class=\"ath-avatar\"\n    [attr.data-size]=\"size()\"\n    [attr.data-tone]=\"tone()\"\n    role=\"img\"\n    [attr.aria-label]=\"accessibleName()\"\n    [attr.title]=\"tooltip()\"\n  >\n    @if (image(); as url) {\n      <img [src]=\"url\" alt=\"\" class=\"ath-avatar__image\" (error)=\"onImageError()\" />\n    }\n    <span class=\"ath-avatar__initials\" aria-hidden=\"true\">{{ initials() }}</span>\n  </span>\n}\n", styles: [":host{display:inline-flex;flex:none;vertical-align:middle}.ath-avatar{--_size: var(--avatar-md);--_font: var(--avatar-font-md);position:relative;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:var(--_size);height:var(--_size);border-radius:var(--r-full);background:var(--avatar-neutral-bg);color:var(--avatar-neutral-fg);font-size:var(--_font);font-weight:var(--weight-semibold);overflow:hidden;-webkit-user-select:none;user-select:none}.ath-avatar[data-size=xs]{--_size: var(--avatar-xs);--_font: var(--avatar-font-xs)}.ath-avatar[data-size=sm]{--_size: var(--avatar-sm);--_font: var(--avatar-font-sm)}.ath-avatar[data-size=lg]{--_size: var(--avatar-lg);--_font: var(--avatar-font-lg)}.ath-avatar[data-size=xl]{--_size: var(--avatar-xl);--_font: var(--avatar-font-xl)}.ath-avatar[data-tone=\"1\"]{background:var(--avatar-1-bg);color:var(--avatar-1-fg)}.ath-avatar[data-tone=\"2\"]{background:var(--avatar-2-bg);color:var(--avatar-2-fg)}.ath-avatar[data-tone=\"3\"]{background:var(--avatar-3-bg);color:var(--avatar-3-fg)}.ath-avatar[data-tone=\"4\"]{background:var(--avatar-4-bg);color:var(--avatar-4-fg)}.ath-avatar[data-tone=\"5\"]{background:var(--avatar-5-bg);color:var(--avatar-5-fg)}.ath-avatar[data-tone=\"6\"]{background:var(--avatar-6-bg);color:var(--avatar-6-fg)}.ath-avatar[data-tone=\"7\"]{background:var(--avatar-7-bg);color:var(--avatar-7-fg)}.ath-avatar[data-tone=\"8\"]{background:var(--avatar-8-bg);color:var(--avatar-8-fg)}.ath-avatar--empty{background:var(--bg-2);color:var(--fg-3)}.ath-avatar__image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:var(--z-raised)}.ath-avatar__initials{position:relative;letter-spacing:.5px}\n"], dependencies: [{ kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthAvatarComponent, isStandalone: true, selector: "ath-avatar", inputs: { person: { classPropertyName: "person", publicName: "person", isSignal: true, isRequired: false, transformFunction: null }, name: { classPropertyName: "name", publicName: "name", isSignal: true, isRequired: false, transformFunction: null }, src: { classPropertyName: "src", publicName: "src", isSignal: true, isRequired: false, transformFunction: null }, id: { classPropertyName: "id", publicName: "id", isSignal: true, isRequired: false, transformFunction: null }, size: { classPropertyName: "size", publicName: "size", isSignal: true, isRequired: false, transformFunction: null }, unassigned: { classPropertyName: "unassigned", publicName: "unassigned", isSignal: true, isRequired: false, transformFunction: null }, label: { classPropertyName: "label", publicName: "label", isSignal: true, isRequired: false, transformFunction: null }, ring: { classPropertyName: "ring", publicName: "ring", isSignal: true, isRequired: false, transformFunction: null } }, ngImport: i0, template: "@if (empty()) {\n  <span\n    class=\"ath-avatar ath-avatar--empty\"\n    [attr.data-size]=\"size()\"\n    [attr.data-ring]=\"ringColor()\"\n    role=\"img\"\n    [attr.aria-label]=\"accessibleName()\"\n    [attr.title]=\"tooltip()\"\n  >\n    <lucide-icon [img]=\"userIcon\" [size]=\"iconSize()\" aria-hidden=\"true\" />\n  </span>\n} @else {\n  <span\n    class=\"ath-avatar\"\n    [attr.data-size]=\"size()\"\n    [attr.data-ring]=\"ringColor()\"\n    [attr.data-tone]=\"tone()\"\n    role=\"img\"\n    [attr.aria-label]=\"accessibleName()\"\n    [attr.title]=\"tooltip()\"\n  >\n    @if (image(); as url) {\n      <img [src]=\"url\" alt=\"\" class=\"ath-avatar__image\" (error)=\"onImageError()\" />\n    }\n    <span class=\"ath-avatar__initials\" aria-hidden=\"true\">{{ initials() }}</span>\n  </span>\n}\n", styles: [":host{display:inline-flex;flex:none;vertical-align:middle}.ath-avatar{--_size: var(--avatar-md);--_font: var(--avatar-font-md);position:relative;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:var(--_size);height:var(--_size);border-radius:var(--r-full);background:var(--avatar-neutral-bg);color:var(--avatar-neutral-fg);font-size:var(--_font);font-weight:var(--weight-semibold);overflow:hidden;-webkit-user-select:none;user-select:none}.ath-avatar[data-size=xs]{--_size: var(--avatar-xs);--_font: var(--avatar-font-xs)}.ath-avatar[data-size=sm]{--_size: var(--avatar-sm);--_font: var(--avatar-font-sm)}.ath-avatar[data-size=lg]{--_size: var(--avatar-lg);--_font: var(--avatar-font-lg)}.ath-avatar[data-size=xl]{--_size: var(--avatar-xl);--_font: var(--avatar-font-xl)}.ath-avatar[data-tone=\"1\"]{background:var(--avatar-1-bg);color:var(--avatar-1-fg)}.ath-avatar[data-tone=\"2\"]{background:var(--avatar-2-bg);color:var(--avatar-2-fg)}.ath-avatar[data-tone=\"3\"]{background:var(--avatar-3-bg);color:var(--avatar-3-fg)}.ath-avatar[data-tone=\"4\"]{background:var(--avatar-4-bg);color:var(--avatar-4-fg)}.ath-avatar[data-tone=\"5\"]{background:var(--avatar-5-bg);color:var(--avatar-5-fg)}.ath-avatar[data-tone=\"6\"]{background:var(--avatar-6-bg);color:var(--avatar-6-fg)}.ath-avatar[data-tone=\"7\"]{background:var(--avatar-7-bg);color:var(--avatar-7-fg)}.ath-avatar[data-tone=\"8\"]{background:var(--avatar-8-bg);color:var(--avatar-8-fg)}.ath-avatar--empty{background:var(--bg-2);color:var(--fg-3)}.ath-avatar__image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:var(--z-raised)}.ath-avatar__initials{position:relative;letter-spacing:.5px}.ath-avatar[data-ring=neutral]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--grey-muted)}.ath-avatar[data-ring=blue]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--blue-muted)}.ath-avatar[data-ring=green]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--green-muted)}.ath-avatar[data-ring=amber]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--amber-muted)}.ath-avatar[data-ring=red]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--red-muted)}.ath-avatar[data-ring=purple]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--purple-muted)}.ath-avatar[data-ring=pink]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--pink-muted)}\n"], dependencies: [{ kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
 }
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthAvatarComponent, decorators: [{
             type: Component,
-            args: [{ selector: 'ath-avatar', imports: [LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "@if (empty()) {\n  <span\n    class=\"ath-avatar ath-avatar--empty\"\n    [attr.data-size]=\"size()\"\n    role=\"img\"\n    [attr.aria-label]=\"accessibleName()\"\n    [attr.title]=\"tooltip()\"\n  >\n    <lucide-icon [img]=\"userIcon\" [size]=\"iconSize()\" aria-hidden=\"true\" />\n  </span>\n} @else {\n  <span\n    class=\"ath-avatar\"\n    [attr.data-size]=\"size()\"\n    [attr.data-tone]=\"tone()\"\n    role=\"img\"\n    [attr.aria-label]=\"accessibleName()\"\n    [attr.title]=\"tooltip()\"\n  >\n    @if (image(); as url) {\n      <img [src]=\"url\" alt=\"\" class=\"ath-avatar__image\" (error)=\"onImageError()\" />\n    }\n    <span class=\"ath-avatar__initials\" aria-hidden=\"true\">{{ initials() }}</span>\n  </span>\n}\n", styles: [":host{display:inline-flex;flex:none;vertical-align:middle}.ath-avatar{--_size: var(--avatar-md);--_font: var(--avatar-font-md);position:relative;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:var(--_size);height:var(--_size);border-radius:var(--r-full);background:var(--avatar-neutral-bg);color:var(--avatar-neutral-fg);font-size:var(--_font);font-weight:var(--weight-semibold);overflow:hidden;-webkit-user-select:none;user-select:none}.ath-avatar[data-size=xs]{--_size: var(--avatar-xs);--_font: var(--avatar-font-xs)}.ath-avatar[data-size=sm]{--_size: var(--avatar-sm);--_font: var(--avatar-font-sm)}.ath-avatar[data-size=lg]{--_size: var(--avatar-lg);--_font: var(--avatar-font-lg)}.ath-avatar[data-size=xl]{--_size: var(--avatar-xl);--_font: var(--avatar-font-xl)}.ath-avatar[data-tone=\"1\"]{background:var(--avatar-1-bg);color:var(--avatar-1-fg)}.ath-avatar[data-tone=\"2\"]{background:var(--avatar-2-bg);color:var(--avatar-2-fg)}.ath-avatar[data-tone=\"3\"]{background:var(--avatar-3-bg);color:var(--avatar-3-fg)}.ath-avatar[data-tone=\"4\"]{background:var(--avatar-4-bg);color:var(--avatar-4-fg)}.ath-avatar[data-tone=\"5\"]{background:var(--avatar-5-bg);color:var(--avatar-5-fg)}.ath-avatar[data-tone=\"6\"]{background:var(--avatar-6-bg);color:var(--avatar-6-fg)}.ath-avatar[data-tone=\"7\"]{background:var(--avatar-7-bg);color:var(--avatar-7-fg)}.ath-avatar[data-tone=\"8\"]{background:var(--avatar-8-bg);color:var(--avatar-8-fg)}.ath-avatar--empty{background:var(--bg-2);color:var(--fg-3)}.ath-avatar__image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:var(--z-raised)}.ath-avatar__initials{position:relative;letter-spacing:.5px}\n"] }]
+            args: [{ selector: 'ath-avatar', imports: [LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "@if (empty()) {\n  <span\n    class=\"ath-avatar ath-avatar--empty\"\n    [attr.data-size]=\"size()\"\n    [attr.data-ring]=\"ringColor()\"\n    role=\"img\"\n    [attr.aria-label]=\"accessibleName()\"\n    [attr.title]=\"tooltip()\"\n  >\n    <lucide-icon [img]=\"userIcon\" [size]=\"iconSize()\" aria-hidden=\"true\" />\n  </span>\n} @else {\n  <span\n    class=\"ath-avatar\"\n    [attr.data-size]=\"size()\"\n    [attr.data-ring]=\"ringColor()\"\n    [attr.data-tone]=\"tone()\"\n    role=\"img\"\n    [attr.aria-label]=\"accessibleName()\"\n    [attr.title]=\"tooltip()\"\n  >\n    @if (image(); as url) {\n      <img [src]=\"url\" alt=\"\" class=\"ath-avatar__image\" (error)=\"onImageError()\" />\n    }\n    <span class=\"ath-avatar__initials\" aria-hidden=\"true\">{{ initials() }}</span>\n  </span>\n}\n", styles: [":host{display:inline-flex;flex:none;vertical-align:middle}.ath-avatar{--_size: var(--avatar-md);--_font: var(--avatar-font-md);position:relative;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:var(--_size);height:var(--_size);border-radius:var(--r-full);background:var(--avatar-neutral-bg);color:var(--avatar-neutral-fg);font-size:var(--_font);font-weight:var(--weight-semibold);overflow:hidden;-webkit-user-select:none;user-select:none}.ath-avatar[data-size=xs]{--_size: var(--avatar-xs);--_font: var(--avatar-font-xs)}.ath-avatar[data-size=sm]{--_size: var(--avatar-sm);--_font: var(--avatar-font-sm)}.ath-avatar[data-size=lg]{--_size: var(--avatar-lg);--_font: var(--avatar-font-lg)}.ath-avatar[data-size=xl]{--_size: var(--avatar-xl);--_font: var(--avatar-font-xl)}.ath-avatar[data-tone=\"1\"]{background:var(--avatar-1-bg);color:var(--avatar-1-fg)}.ath-avatar[data-tone=\"2\"]{background:var(--avatar-2-bg);color:var(--avatar-2-fg)}.ath-avatar[data-tone=\"3\"]{background:var(--avatar-3-bg);color:var(--avatar-3-fg)}.ath-avatar[data-tone=\"4\"]{background:var(--avatar-4-bg);color:var(--avatar-4-fg)}.ath-avatar[data-tone=\"5\"]{background:var(--avatar-5-bg);color:var(--avatar-5-fg)}.ath-avatar[data-tone=\"6\"]{background:var(--avatar-6-bg);color:var(--avatar-6-fg)}.ath-avatar[data-tone=\"7\"]{background:var(--avatar-7-bg);color:var(--avatar-7-fg)}.ath-avatar[data-tone=\"8\"]{background:var(--avatar-8-bg);color:var(--avatar-8-fg)}.ath-avatar--empty{background:var(--bg-2);color:var(--fg-3)}.ath-avatar__image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:var(--z-raised)}.ath-avatar__initials{position:relative;letter-spacing:.5px}.ath-avatar[data-ring=neutral]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--grey-muted)}.ath-avatar[data-ring=blue]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--blue-muted)}.ath-avatar[data-ring=green]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--green-muted)}.ath-avatar[data-ring=amber]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--amber-muted)}.ath-avatar[data-ring=red]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--red-muted)}.ath-avatar[data-ring=purple]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--purple-muted)}.ath-avatar[data-ring=pink]{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--pink-muted)}\n"] }]
         }] });
 
 /**
@@ -1824,7 +1869,7 @@ class AthTimelineEntryComponent {
         this.effectiveAvatarName = computed(() => this.avatarName() ?? this.author());
     }
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthTimelineEntryComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthTimelineEntryComponent, isStandalone: true, selector: "ath-timeline-entry", inputs: { author: { classPropertyName: "author", publicName: "author", isSignal: true, isRequired: true, transformFunction: null }, avatarName: { classPropertyName: "avatarName", publicName: "avatarName", isSignal: true, isRequired: false, transformFunction: null }, avatarSrc: { classPropertyName: "avatarSrc", publicName: "avatarSrc", isSignal: true, isRequired: false, transformFunction: null }, timeLabel: { classPropertyName: "timeLabel", publicName: "timeLabel", isSignal: true, isRequired: false, transformFunction: null }, internal: { classPropertyName: "internal", publicName: "internal", isSignal: true, isRequired: false, transformFunction: null } }, host: { properties: { "attr.data-internal": "internal() ? 'true' : null" } }, ngImport: i0, template: "<div class=\"ath-tl-entry__avatar\">\n  <ath-avatar [name]=\"effectiveAvatarName()\" [src]=\"avatarSrc()\" size=\"sm\" />\n</div>\n<div class=\"ath-tl-entry__body\">\n  <div class=\"ath-tl-entry__meta\">\n    <b class=\"ath-tl-entry__author\">{{ author() }}</b>\n    @if (internal()) {\n      <span class=\"ath-tl-entry__internal\" [title]=\"labels.internalNote()\">{{\n        labels.internal()\n      }}</span>\n    }\n    @if (timeLabel()) {\n      <span class=\"ath-tl-entry__when\">{{ timeLabel() }}</span>\n    }\n  </div>\n  <div class=\"ath-tl-entry__content\">\n    <ng-content />\n  </div>\n</div>\n", styles: [":host{display:grid;grid-template-columns:24px 1fr;gap:10px;position:relative;padding:6px 0}.ath-tl-entry__avatar{position:relative;z-index:var(--z-raised)}.ath-tl-entry__avatar ath-avatar{box-shadow:0 0 0 2px var(--bg-0);border-radius:999px;display:inline-flex}.ath-tl-entry__body{min-width:0}.ath-tl-entry__meta{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;font-family:var(--font-sans);font-size:12.5px;line-height:1.4}.ath-tl-entry__author{color:var(--fg);font-weight:600}.ath-tl-entry__internal{display:inline-flex;align-items:center;padding:1px 6px;font-size:10.5px;font-weight:500;color:var(--amber-text);background:var(--amber-tint);border-radius:var(--r-xs);text-transform:lowercase;letter-spacing:.02em}.ath-tl-entry__when{color:var(--fg-3);font-family:var(--font-mono);font-size:11px}.ath-tl-entry__content{color:var(--fg-2);font-size:13px;line-height:1.55}.ath-tl-entry__content ::ng-deep p{margin:0 0 6px}.ath-tl-entry__content ::ng-deep p:last-child{margin-bottom:0}.ath-tl-entry__content ::ng-deep code{font-family:var(--font-mono);font-size:12px;padding:1px 5px;background:var(--surface-3);border-radius:var(--r-xs);color:var(--fg)}:host([data-internal=true]){padding:8px 10px;background:var(--amber-tint);border-radius:var(--r);margin-left:-10px;margin-right:-10px}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "component", type: AthAvatarComponent, selector: "ath-avatar", inputs: ["person", "name", "src", "id", "size", "unassigned", "label"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthTimelineEntryComponent, isStandalone: true, selector: "ath-timeline-entry", inputs: { author: { classPropertyName: "author", publicName: "author", isSignal: true, isRequired: true, transformFunction: null }, avatarName: { classPropertyName: "avatarName", publicName: "avatarName", isSignal: true, isRequired: false, transformFunction: null }, avatarSrc: { classPropertyName: "avatarSrc", publicName: "avatarSrc", isSignal: true, isRequired: false, transformFunction: null }, timeLabel: { classPropertyName: "timeLabel", publicName: "timeLabel", isSignal: true, isRequired: false, transformFunction: null }, internal: { classPropertyName: "internal", publicName: "internal", isSignal: true, isRequired: false, transformFunction: null } }, host: { properties: { "attr.data-internal": "internal() ? 'true' : null" } }, ngImport: i0, template: "<div class=\"ath-tl-entry__avatar\">\n  <ath-avatar [name]=\"effectiveAvatarName()\" [src]=\"avatarSrc()\" size=\"sm\" />\n</div>\n<div class=\"ath-tl-entry__body\">\n  <div class=\"ath-tl-entry__meta\">\n    <b class=\"ath-tl-entry__author\">{{ author() }}</b>\n    @if (internal()) {\n      <span class=\"ath-tl-entry__internal\" [title]=\"labels.internalNote()\">{{\n        labels.internal()\n      }}</span>\n    }\n    @if (timeLabel()) {\n      <span class=\"ath-tl-entry__when\">{{ timeLabel() }}</span>\n    }\n  </div>\n  <div class=\"ath-tl-entry__content\">\n    <ng-content />\n  </div>\n</div>\n", styles: [":host{display:grid;grid-template-columns:24px 1fr;gap:10px;position:relative;padding:6px 0}.ath-tl-entry__avatar{position:relative;z-index:var(--z-raised)}.ath-tl-entry__avatar ath-avatar{box-shadow:0 0 0 2px var(--bg-0);border-radius:999px;display:inline-flex}.ath-tl-entry__body{min-width:0}.ath-tl-entry__meta{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;font-family:var(--font-sans);font-size:12.5px;line-height:1.4}.ath-tl-entry__author{color:var(--fg);font-weight:600}.ath-tl-entry__internal{display:inline-flex;align-items:center;padding:1px 6px;font-size:10.5px;font-weight:500;color:var(--amber-text);background:var(--amber-tint);border-radius:var(--r-xs);text-transform:lowercase;letter-spacing:.02em}.ath-tl-entry__when{color:var(--fg-3);font-family:var(--font-mono);font-size:11px}.ath-tl-entry__content{color:var(--fg-2);font-size:13px;line-height:1.55}.ath-tl-entry__content ::ng-deep p{margin:0 0 6px}.ath-tl-entry__content ::ng-deep p:last-child{margin-bottom:0}.ath-tl-entry__content ::ng-deep code{font-family:var(--font-mono);font-size:12px;padding:1px 5px;background:var(--surface-3);border-radius:var(--r-xs);color:var(--fg)}:host([data-internal=true]){padding:8px 10px;background:var(--amber-tint);border-radius:var(--r);margin-left:-10px;margin-right:-10px}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "component", type: AthAvatarComponent, selector: "ath-avatar", inputs: ["person", "name", "src", "id", "size", "unassigned", "label", "ring"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
 }
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthTimelineEntryComponent, decorators: [{
             type: Component,
@@ -1895,7 +1940,7 @@ const AI_MARK_SMALL = {
 /** The largest size that still uses the small drawing. */
 const AI_MARK_SMALL_MAX = 20;
 
-let nextId = 0;
+let nextId$1 = 0;
 /**
  * The Athene AI mark ("Perch"), optionally with the wordmark.
  *
@@ -1921,7 +1966,7 @@ class AthAiMarkComponent {
             transform: (v) => v === '' || !!v,
         });
         /** Unique per instance: two gradients on one page must not share an id. */
-        this.gradientId = `ath-ai-mark-g${++nextId}`;
+        this.gradientId = `ath-ai-mark-g${++nextId$1}`;
         this.fillUrl = `url(#${this.gradientId})`;
         this.shape = computed(() => this.size() <= AI_MARK_SMALL_MAX ? AI_MARK_SMALL : AI_MARK_REGULAR);
         /** The name the image carries, when it stands alone. */
@@ -2200,7 +2245,7 @@ class AthAvatarStackComponent {
         this.trackById = (_, user) => user.id;
     }
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthAvatarStackComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthAvatarStackComponent, isStandalone: true, selector: "ath-avatar-stack", inputs: { users: { classPropertyName: "users", publicName: "users", isSignal: true, isRequired: false, transformFunction: null }, max: { classPropertyName: "max", publicName: "max", isSignal: true, isRequired: false, transformFunction: null }, size: { classPropertyName: "size", publicName: "size", isSignal: true, isRequired: false, transformFunction: null } }, host: { properties: { "attr.data-size": "size()" } }, ngImport: i0, template: "@for (user of visible(); track trackById($index, user)) {\n  <ath-avatar\n    [id]=\"user.id\"\n    [name]=\"user.name\"\n    [src]=\"user.src ?? ''\"\n    [size]=\"size()\"\n    class=\"ath-stack__item\"\n  />\n}\n@if (overflowCount() > 0) {\n  <span class=\"ath-stack__more\">+{{ overflowCount() }}</span>\n}\n", styles: [":host{display:inline-flex;align-items:center}.ath-stack__item{display:inline-flex}.ath-stack__item+.ath-stack__item,.ath-stack__item+.ath-stack__more{margin-left:-6px}:host ath-avatar{border-radius:999px;box-shadow:0 0 0 1.5px var(--bg-1)}.ath-stack__more{display:inline-flex;align-items:center;justify-content:center;margin-left:-6px;border-radius:999px;background:var(--bg-2);color:var(--fg-3);font-family:var(--font-sans);font-weight:600;border:1.5px solid var(--bg-1);letter-spacing:0}:host([data-size=sm]) .ath-stack__more{width:20px;height:20px;font-size:9px}:host([data-size=md]) .ath-stack__more{width:24px;height:24px;font-size:10px}:host([data-size=lg]) .ath-stack__more{width:36px;height:36px;font-size:12px}:host([data-size=xl]) .ath-stack__more{width:48px;height:48px;font-size:14px}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "component", type: AthAvatarComponent, selector: "ath-avatar", inputs: ["person", "name", "src", "id", "size", "unassigned", "label"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthAvatarStackComponent, isStandalone: true, selector: "ath-avatar-stack", inputs: { users: { classPropertyName: "users", publicName: "users", isSignal: true, isRequired: false, transformFunction: null }, max: { classPropertyName: "max", publicName: "max", isSignal: true, isRequired: false, transformFunction: null }, size: { classPropertyName: "size", publicName: "size", isSignal: true, isRequired: false, transformFunction: null } }, host: { properties: { "attr.data-size": "size()" } }, ngImport: i0, template: "@for (user of visible(); track trackById($index, user)) {\n  <ath-avatar\n    [id]=\"user.id\"\n    [name]=\"user.name\"\n    [src]=\"user.src ?? ''\"\n    [size]=\"size()\"\n    class=\"ath-stack__item\"\n  />\n}\n@if (overflowCount() > 0) {\n  <span class=\"ath-stack__more\">+{{ overflowCount() }}</span>\n}\n", styles: [":host{display:inline-flex;align-items:center}.ath-stack__item{display:inline-flex}.ath-stack__item+.ath-stack__item,.ath-stack__item+.ath-stack__more{margin-left:-6px}:host ath-avatar{border-radius:999px;box-shadow:0 0 0 1.5px var(--bg-1)}.ath-stack__more{display:inline-flex;align-items:center;justify-content:center;margin-left:-6px;border-radius:999px;background:var(--bg-2);color:var(--fg-3);font-family:var(--font-sans);font-weight:600;border:1.5px solid var(--bg-1);letter-spacing:0}:host([data-size=sm]) .ath-stack__more{width:20px;height:20px;font-size:9px}:host([data-size=md]) .ath-stack__more{width:24px;height:24px;font-size:10px}:host([data-size=lg]) .ath-stack__more{width:36px;height:36px;font-size:12px}:host([data-size=xl]) .ath-stack__more{width:48px;height:48px;font-size:14px}\n"], dependencies: [{ kind: "ngmodule", type: CommonModule }, { kind: "component", type: AthAvatarComponent, selector: "ath-avatar", inputs: ["person", "name", "src", "id", "size", "unassigned", "label", "ring"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
 }
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthAvatarStackComponent, decorators: [{
             type: Component,
@@ -4085,6 +4130,377 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImpo
         }] });
 
 /**
+ * A colour from the decorative palette, as a radio group (WAI-ARIA radio
+ * pattern): one tab stop, the arrow keys move and pick, Home/End jump.
+ * Each swatch is named for screen readers ("Blue"), the selected one also
+ * carries a check, so the choice does not rest on colour alone.
+ *
+ * @example
+ * <ath-color-swatch [(value)]="role.color" label="Rollenfarbe" />
+ */
+class AthColorSwatchComponent {
+    constructor() {
+        this.labels = injectAthLabels();
+        this.host = inject(ElementRef);
+        /** The picked token; `null`: none yet (the first swatch takes the tab stop). */
+        this.value = model(null);
+        /** The group's accessible name; defaults to the "Colour" label. */
+        this.label = input(null);
+        this.disabled = input(false, { transform: booleanAttribute });
+        /** The tokens offered, in order (default: the whole palette). */
+        this.colors = input(ATH_DECO_COLORS);
+        this.checkIcon = Check;
+        this.groupLabel = computed(() => this.label() || this.labels.colorPicker());
+        this.options = computed(() => this.colors().map((color) => ({ color, name: athDecoColorLabel(this.labels, color) })));
+        /** The index holding the tab stop: the picked swatch, else the first. */
+        this.stop = computed(() => Math.max(0, this.colors().findIndex((c) => c === this.value())));
+    }
+    pick(color) {
+        if (!this.disabled())
+            this.value.set(color);
+    }
+    onKey(event, index) {
+        if (this.disabled())
+            return;
+        const count = this.colors().length;
+        // Right-to-left: Left and Right follow the visual order.
+        const rtl = getComputedStyle(this.host.nativeElement).direction === 'rtl';
+        let next;
+        switch (event.key) {
+            case 'ArrowRight':
+                next = index + (rtl ? -1 : 1);
+                break;
+            case 'ArrowLeft':
+                next = index + (rtl ? 1 : -1);
+                break;
+            case 'ArrowDown':
+                next = index + 1;
+                break;
+            case 'ArrowUp':
+                next = index - 1;
+                break;
+            case 'Home':
+                next = 0;
+                break;
+            case 'End':
+                next = count - 1;
+                break;
+            case ' ':
+            case 'Enter':
+                event.preventDefault();
+                this.pick(this.colors()[index]);
+                return;
+            default:
+                return;
+        }
+        event.preventDefault();
+        next = (next + count) % count;
+        this.pick(this.colors()[next]);
+        this.focusAt(next);
+    }
+    focusAt(index) {
+        const radios = this.host.nativeElement.querySelectorAll('[role="radio"]');
+        radios[index]?.focus();
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthColorSwatchComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthColorSwatchComponent, isStandalone: true, selector: "ath-color-swatch", inputs: { value: { classPropertyName: "value", publicName: "value", isSignal: true, isRequired: false, transformFunction: null }, label: { classPropertyName: "label", publicName: "label", isSignal: true, isRequired: false, transformFunction: null }, disabled: { classPropertyName: "disabled", publicName: "disabled", isSignal: true, isRequired: false, transformFunction: null }, colors: { classPropertyName: "colors", publicName: "colors", isSignal: true, isRequired: false, transformFunction: null } }, outputs: { value: "valueChange" }, ngImport: i0, template: "<div\n  class=\"ath-swatch\"\n  role=\"radiogroup\"\n  [attr.aria-label]=\"groupLabel()\"\n  [attr.aria-disabled]=\"disabled() || null\"\n>\n  @for (option of options(); track option.color; let i = $index) {\n    <button\n      type=\"button\"\n      role=\"radio\"\n      class=\"ath-swatch__item\"\n      [attr.data-color]=\"option.color\"\n      [attr.aria-checked]=\"value() === option.color\"\n      [attr.aria-label]=\"option.name\"\n      [attr.title]=\"option.name\"\n      [attr.tabindex]=\"i === stop() ? 0 : -1\"\n      [disabled]=\"disabled()\"\n      (click)=\"pick(option.color)\"\n      (keydown)=\"onKey($event, i)\"\n    >\n      @if (value() === option.color) {\n        <lucide-icon [img]=\"checkIcon\" [size]=\"14\" aria-hidden=\"true\" />\n      }\n    </button>\n  }\n</div>\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:inline-flex}.ath-swatch{display:inline-flex;flex-wrap:wrap;gap:var(--space-2)}.ath-swatch[aria-disabled=true]{opacity:.5}.ath-swatch__item{border:none;background:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:var(--control-h-sm);height:var(--control-h-sm);border-radius:var(--r-full);border:1px solid var(--border);color:var(--surface);transition:transform var(--t-fast),box-shadow var(--t-fast)}.ath-swatch__item[data-color=neutral]{background:var(--grey-muted)}.ath-swatch__item[data-color=blue]{background:var(--blue-muted)}.ath-swatch__item[data-color=green]{background:var(--green-muted)}.ath-swatch__item[data-color=amber]{background:var(--amber-muted)}.ath-swatch__item[data-color=red]{background:var(--red-muted)}.ath-swatch__item[data-color=purple]{background:var(--purple-muted)}.ath-swatch__item[data-color=pink]{background:var(--pink-muted)}.ath-swatch__item:hover:not(:disabled){transform:scale(1.08)}.ath-swatch__item[aria-checked=true]{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--fg)}.ath-swatch__item:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-swatch__item:disabled{cursor:not-allowed}\n"], dependencies: [{ kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthColorSwatchComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-color-swatch', imports: [LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "<div\n  class=\"ath-swatch\"\n  role=\"radiogroup\"\n  [attr.aria-label]=\"groupLabel()\"\n  [attr.aria-disabled]=\"disabled() || null\"\n>\n  @for (option of options(); track option.color; let i = $index) {\n    <button\n      type=\"button\"\n      role=\"radio\"\n      class=\"ath-swatch__item\"\n      [attr.data-color]=\"option.color\"\n      [attr.aria-checked]=\"value() === option.color\"\n      [attr.aria-label]=\"option.name\"\n      [attr.title]=\"option.name\"\n      [attr.tabindex]=\"i === stop() ? 0 : -1\"\n      [disabled]=\"disabled()\"\n      (click)=\"pick(option.color)\"\n      (keydown)=\"onKey($event, i)\"\n    >\n      @if (value() === option.color) {\n        <lucide-icon [img]=\"checkIcon\" [size]=\"14\" aria-hidden=\"true\" />\n      }\n    </button>\n  }\n</div>\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:inline-flex}.ath-swatch{display:inline-flex;flex-wrap:wrap;gap:var(--space-2)}.ath-swatch[aria-disabled=true]{opacity:.5}.ath-swatch__item{border:none;background:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:var(--control-h-sm);height:var(--control-h-sm);border-radius:var(--r-full);border:1px solid var(--border);color:var(--surface);transition:transform var(--t-fast),box-shadow var(--t-fast)}.ath-swatch__item[data-color=neutral]{background:var(--grey-muted)}.ath-swatch__item[data-color=blue]{background:var(--blue-muted)}.ath-swatch__item[data-color=green]{background:var(--green-muted)}.ath-swatch__item[data-color=amber]{background:var(--amber-muted)}.ath-swatch__item[data-color=red]{background:var(--red-muted)}.ath-swatch__item[data-color=purple]{background:var(--purple-muted)}.ath-swatch__item[data-color=pink]{background:var(--pink-muted)}.ath-swatch__item:hover:not(:disabled){transform:scale(1.08)}.ath-swatch__item[aria-checked=true]{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--fg)}.ath-swatch__item:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-swatch__item:disabled{cursor:not-allowed}\n"] }]
+        }] });
+
+const ORDER = ['deny', 'inherit', 'allow'];
+const ICONS = { deny: X, inherit: Slash, allow: Check };
+/**
+ * Three segments *Deny · Inherit · Allow* for one permission in an
+ * override. A radio group (WAI-ARIA radio pattern), not `ath-segment`
+ * (which is a tab list): one tab stop on the chosen segment, the arrow keys
+ * move and choose, Home/End jump, Space/Enter choose.
+ *
+ * `inherited` is the value the "Inherit" segment currently stands for; it
+ * is read out with it ("Inherit (currently allowed)"). `compact` shows the
+ * icons only (each still named); below 480px the segments are icons only
+ * anyway.
+ *
+ * @example
+ * <ath-tri-state label="Tickets bearbeiten" [(value)]="state" [inherited]="true" />
+ */
+class AthTriStateComponent {
+    constructor() {
+        this.labels = injectAthLabels();
+        this.host = inject(ElementRef);
+        this.value = model('inherit');
+        /** The value "Inherit" stands for now; `null`: unknown. */
+        this.inherited = input(null);
+        this.disabled = input(false, { transform: booleanAttribute });
+        /** The permission's name: the group's accessible name. */
+        this.label = input.required();
+        /** Icons only (each segment keeps its accessible name). */
+        this.compact = input(false, { transform: booleanAttribute });
+        this.segments = computed(() => {
+            const inherited = this.inherited();
+            return ORDER.map((state) => ({
+                state,
+                icon: ICONS[state],
+                text: this.textOf(state),
+                name: state === 'inherit' && inherited !== null
+                    ? inherited
+                        ? this.labels.triStateInheritAllowed()
+                        : this.labels.triStateInheritDenied()
+                    : this.textOf(state),
+            }));
+        });
+    }
+    select(state) {
+        if (!this.disabled() && state !== this.value())
+            this.value.set(state);
+    }
+    onKey(event, index) {
+        if (this.disabled())
+            return;
+        const count = ORDER.length;
+        // Right-to-left: Left and Right follow the visual order.
+        const rtl = getComputedStyle(this.host.nativeElement).direction === 'rtl';
+        let next;
+        switch (event.key) {
+            case 'ArrowRight':
+                next = index + (rtl ? -1 : 1);
+                break;
+            case 'ArrowLeft':
+                next = index + (rtl ? 1 : -1);
+                break;
+            case 'ArrowDown':
+                next = index + 1;
+                break;
+            case 'ArrowUp':
+                next = index - 1;
+                break;
+            case 'Home':
+                next = 0;
+                break;
+            case 'End':
+                next = count - 1;
+                break;
+            case ' ':
+            case 'Enter':
+                event.preventDefault();
+                this.select(ORDER[index]);
+                return;
+            default:
+                return;
+        }
+        event.preventDefault();
+        next = (next + count) % count;
+        this.select(ORDER[next]);
+        this.host.nativeElement.querySelectorAll('[role="radio"]')[next]?.focus();
+    }
+    textOf(state) {
+        switch (state) {
+            case 'deny':
+                return this.labels.triStateDeny();
+            case 'inherit':
+                return this.labels.triStateInherit();
+            case 'allow':
+                return this.labels.triStateAllow();
+        }
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthTriStateComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthTriStateComponent, isStandalone: true, selector: "ath-tri-state", inputs: { value: { classPropertyName: "value", publicName: "value", isSignal: true, isRequired: false, transformFunction: null }, inherited: { classPropertyName: "inherited", publicName: "inherited", isSignal: true, isRequired: false, transformFunction: null }, disabled: { classPropertyName: "disabled", publicName: "disabled", isSignal: true, isRequired: false, transformFunction: null }, label: { classPropertyName: "label", publicName: "label", isSignal: true, isRequired: true, transformFunction: null }, compact: { classPropertyName: "compact", publicName: "compact", isSignal: true, isRequired: false, transformFunction: null } }, outputs: { value: "valueChange" }, host: { properties: { "attr.data-compact": "compact() ? '' : null" } }, ngImport: i0, template: "<div\n  class=\"ath-tri\"\n  role=\"radiogroup\"\n  [attr.aria-label]=\"label()\"\n  [attr.aria-disabled]=\"disabled() || null\"\n>\n  @for (segment of segments(); track segment.state; let i = $index) {\n    <button\n      type=\"button\"\n      role=\"radio\"\n      class=\"ath-tri__item\"\n      [attr.data-state]=\"segment.state\"\n      [attr.aria-checked]=\"value() === segment.state\"\n      [attr.aria-label]=\"segment.name\"\n      [attr.title]=\"segment.name\"\n      [attr.tabindex]=\"value() === segment.state ? 0 : -1\"\n      [disabled]=\"disabled()\"\n      (click)=\"select(segment.state)\"\n      (keydown)=\"onKey($event, i)\"\n    >\n      <lucide-icon [img]=\"segment.icon\" [size]=\"14\" aria-hidden=\"true\" />\n      <span class=\"ath-tri__text\" aria-hidden=\"true\">{{ segment.text }}</span>\n    </button>\n  }\n</div>\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:inline-flex;vertical-align:middle}.ath-tri{display:inline-flex;padding:2px;gap:2px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg-2)}.ath-tri[aria-disabled=true]{opacity:.5}.ath-tri__item{border:none;background:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:var(--space-1);height:calc(var(--control-h-sm) - 6px);padding:0 var(--space-2);border-radius:calc(var(--r) - 2px);font-size:var(--text-xs);font-weight:var(--weight-medium);color:var(--fg-3);white-space:nowrap;transition:background-color var(--t-fast),color var(--t-fast)}.ath-tri__item:hover:not(:disabled){color:var(--fg);background:var(--hover)}.ath-tri__item:disabled{cursor:not-allowed}.ath-tri__item[aria-checked=true]{color:var(--fg);background:var(--surface);box-shadow:var(--shadow-1)}.ath-tri__item[data-state=deny][aria-checked=true]{color:var(--red-text);background:var(--red-tint)}.ath-tri__item[data-state=allow][aria-checked=true]{color:var(--green-text);background:var(--green-tint)}.ath-tri__item:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}:host([data-compact]) .ath-tri__text{display:none}@media(max-width:479px){.ath-tri__text{display:none}}\n"], dependencies: [{ kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthTriStateComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-tri-state', imports: [LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, host: { '[attr.data-compact]': "compact() ? '' : null" }, template: "<div\n  class=\"ath-tri\"\n  role=\"radiogroup\"\n  [attr.aria-label]=\"label()\"\n  [attr.aria-disabled]=\"disabled() || null\"\n>\n  @for (segment of segments(); track segment.state; let i = $index) {\n    <button\n      type=\"button\"\n      role=\"radio\"\n      class=\"ath-tri__item\"\n      [attr.data-state]=\"segment.state\"\n      [attr.aria-checked]=\"value() === segment.state\"\n      [attr.aria-label]=\"segment.name\"\n      [attr.title]=\"segment.name\"\n      [attr.tabindex]=\"value() === segment.state ? 0 : -1\"\n      [disabled]=\"disabled()\"\n      (click)=\"select(segment.state)\"\n      (keydown)=\"onKey($event, i)\"\n    >\n      <lucide-icon [img]=\"segment.icon\" [size]=\"14\" aria-hidden=\"true\" />\n      <span class=\"ath-tri__text\" aria-hidden=\"true\">{{ segment.text }}</span>\n    </button>\n  }\n</div>\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:inline-flex;vertical-align:middle}.ath-tri{display:inline-flex;padding:2px;gap:2px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg-2)}.ath-tri[aria-disabled=true]{opacity:.5}.ath-tri__item{border:none;background:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:var(--space-1);height:calc(var(--control-h-sm) - 6px);padding:0 var(--space-2);border-radius:calc(var(--r) - 2px);font-size:var(--text-xs);font-weight:var(--weight-medium);color:var(--fg-3);white-space:nowrap;transition:background-color var(--t-fast),color var(--t-fast)}.ath-tri__item:hover:not(:disabled){color:var(--fg);background:var(--hover)}.ath-tri__item:disabled{cursor:not-allowed}.ath-tri__item[aria-checked=true]{color:var(--fg);background:var(--surface);box-shadow:var(--shadow-1)}.ath-tri__item[data-state=deny][aria-checked=true]{color:var(--red-text);background:var(--red-tint)}.ath-tri__item[data-state=allow][aria-checked=true]{color:var(--green-text);background:var(--green-tint)}.ath-tri__item:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}:host([data-compact]) .ath-tri__text{display:none}@media(max-width:479px){.ath-tri__text{display:none}}\n"] }]
+        }] });
+
+let nextId = 0;
+/**
+ * One permission in a roles editor: icon, name, a one-line explanation and,
+ * on the right, the control (projected: an `ath-toggle` on a role, an
+ * `ath-tri-state` in an override).
+ *
+ * With `interactive` (a toggle) the whole row is the mouse target: a click
+ * anywhere outside the control emits `activate`, which the page wires to
+ * the same change as the toggle. A click on the control itself is left to
+ * the control, so nothing toggles twice. Keyboard users reach the control
+ * directly; the row adds no tab stop of its own.
+ *
+ * `disabledReason` is the tooltip of a disabled row ("Gäste können das nie")
+ * and is read out with it. Below 480px the control moves under the text.
+ *
+ * @example
+ * <ath-permission-row [icon]="FolderPlus" label="Projekte anlegen"
+ *   description="Neue Projekte im Workspace erstellen" [interactive]="true"
+ *   (activate)="toggle('project.create')">
+ *   <ath-toggle ariaLabel="Projekte anlegen" [checked]="on" (toggled)="set($event)" />
+ * </ath-permission-row>
+ */
+class AthPermissionRowComponent {
+    constructor() {
+        this.icon = input(null);
+        this.label = input.required();
+        /** One line in `--fg-3`, cut with an ellipsis (the full text as tooltip). */
+        this.description = input(null);
+        /** Where the value comes from, e.g. "✓ von Rolle Developer geerbt". */
+        this.inheritedHint = input(null);
+        this.disabled = input(false, { transform: booleanAttribute });
+        /** Why it is disabled: tooltip and screen-reader text. */
+        this.disabledReason = input(null);
+        /** The whole row toggles (only with a two-state control). */
+        this.interactive = input(false, { transform: booleanAttribute });
+        /** A click on the row outside the control (with `interactive`). */
+        this.activate = output();
+        /** Ids a projected control can point `aria-describedby` at. */
+        this.labelId = `ath-perm-${++nextId}-label`;
+        this.descriptionId = `ath-perm-${nextId}-desc`;
+        this.control = viewChild.required('control');
+    }
+    onClick(event) {
+        if (!this.interactive() || this.disabled())
+            return;
+        const target = event.target;
+        if (target && this.control().nativeElement.contains(target))
+            return;
+        this.activate.emit();
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthPermissionRowComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthPermissionRowComponent, isStandalone: true, selector: "ath-permission-row", inputs: { icon: { classPropertyName: "icon", publicName: "icon", isSignal: true, isRequired: false, transformFunction: null }, label: { classPropertyName: "label", publicName: "label", isSignal: true, isRequired: true, transformFunction: null }, description: { classPropertyName: "description", publicName: "description", isSignal: true, isRequired: false, transformFunction: null }, inheritedHint: { classPropertyName: "inheritedHint", publicName: "inheritedHint", isSignal: true, isRequired: false, transformFunction: null }, disabled: { classPropertyName: "disabled", publicName: "disabled", isSignal: true, isRequired: false, transformFunction: null }, disabledReason: { classPropertyName: "disabledReason", publicName: "disabledReason", isSignal: true, isRequired: false, transformFunction: null }, interactive: { classPropertyName: "interactive", publicName: "interactive", isSignal: true, isRequired: false, transformFunction: null } }, outputs: { activate: "activate" }, host: { listeners: { "click": "onClick($event)" }, properties: { "class.ath-perm--interactive": "interactive() && !disabled()", "class.ath-perm--disabled": "disabled()" } }, viewQueries: [{ propertyName: "control", first: true, predicate: ["control"], descendants: true, isSignal: true }], ngImport: i0, template: "<span class=\"ath-perm__icon\" aria-hidden=\"true\">\n  @if (icon(); as glyph) {\n    <lucide-icon [img]=\"glyph\" [size]=\"16\" />\n  }\n</span>\n<span class=\"ath-perm__text\">\n  <span class=\"ath-perm__label\" [id]=\"labelId\">{{ label() }}</span>\n  @if (description() || inheritedHint() || (disabled() && disabledReason())) {\n    <span class=\"ath-perm__desc\" [id]=\"descriptionId\">\n      @if (description(); as text) {\n        <span class=\"ath-perm__explain\" [attr.title]=\"text\">{{ text }}</span>\n      }\n      @if (inheritedHint(); as hint) {\n        <span class=\"ath-perm__hint\">{{ hint }}</span>\n      }\n      @if (disabled() && disabledReason()) {\n        <span class=\"ath-perm__sr\">{{ disabledReason() }}</span>\n      }\n    </span>\n  }\n</span>\n<span class=\"ath-perm__control\" #control [athTooltip]=\"disabled() ? disabledReason() || '' : ''\">\n  <ng-content />\n</span>\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:flex;align-items:center;gap:var(--space-3);min-height:var(--row-h);padding:var(--space-2) var(--space-3);border-radius:var(--r);transition:background-color var(--t-fast)}:host(.ath-perm--interactive){cursor:pointer}:host(.ath-perm--interactive):hover{background:var(--hover)}:host(.ath-perm--disabled) .ath-perm__label,:host(.ath-perm--disabled) .ath-perm__icon{color:var(--fg-disabled)}.ath-perm__icon{display:inline-flex;flex:none;align-items:center;justify-content:center;width:20px;color:var(--fg-3)}.ath-perm__text{display:flex;flex:1;flex-direction:column;gap:1px;min-width:0}.ath-perm__label{font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--fg)}.ath-perm__desc{display:flex;flex-wrap:wrap;gap:0 var(--space-2);min-width:0;font-size:var(--text-xs);color:var(--fg-3)}.ath-perm__explain{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;max-width:100%}.ath-perm__hint{color:var(--fg-3);font-style:italic}.ath-perm__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.ath-perm__control{display:inline-flex;flex:none;align-items:center}@media(max-width:479px){:host{flex-wrap:wrap}.ath-perm__text{flex-basis:calc(100% - 20px - var(--space-3))}.ath-perm__control{margin-inline-start:calc(20px + var(--space-3))}}\n"], dependencies: [{ kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }, { kind: "directive", type: AthTooltipDirective, selector: "[athTooltip]", inputs: ["athTooltip", "tooltipPosition"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthPermissionRowComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-permission-row', imports: [LucideAngularModule, AthTooltipDirective], changeDetection: ChangeDetectionStrategy.OnPush, host: {
+                        '[class.ath-perm--interactive]': 'interactive() && !disabled()',
+                        '[class.ath-perm--disabled]': 'disabled()',
+                        '(click)': 'onClick($event)',
+                    }, template: "<span class=\"ath-perm__icon\" aria-hidden=\"true\">\n  @if (icon(); as glyph) {\n    <lucide-icon [img]=\"glyph\" [size]=\"16\" />\n  }\n</span>\n<span class=\"ath-perm__text\">\n  <span class=\"ath-perm__label\" [id]=\"labelId\">{{ label() }}</span>\n  @if (description() || inheritedHint() || (disabled() && disabledReason())) {\n    <span class=\"ath-perm__desc\" [id]=\"descriptionId\">\n      @if (description(); as text) {\n        <span class=\"ath-perm__explain\" [attr.title]=\"text\">{{ text }}</span>\n      }\n      @if (inheritedHint(); as hint) {\n        <span class=\"ath-perm__hint\">{{ hint }}</span>\n      }\n      @if (disabled() && disabledReason()) {\n        <span class=\"ath-perm__sr\">{{ disabledReason() }}</span>\n      }\n    </span>\n  }\n</span>\n<span class=\"ath-perm__control\" #control [athTooltip]=\"disabled() ? disabledReason() || '' : ''\">\n  <ng-content />\n</span>\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:flex;align-items:center;gap:var(--space-3);min-height:var(--row-h);padding:var(--space-2) var(--space-3);border-radius:var(--r);transition:background-color var(--t-fast)}:host(.ath-perm--interactive){cursor:pointer}:host(.ath-perm--interactive):hover{background:var(--hover)}:host(.ath-perm--disabled) .ath-perm__label,:host(.ath-perm--disabled) .ath-perm__icon{color:var(--fg-disabled)}.ath-perm__icon{display:inline-flex;flex:none;align-items:center;justify-content:center;width:20px;color:var(--fg-3)}.ath-perm__text{display:flex;flex:1;flex-direction:column;gap:1px;min-width:0}.ath-perm__label{font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--fg)}.ath-perm__desc{display:flex;flex-wrap:wrap;gap:0 var(--space-2);min-width:0;font-size:var(--text-xs);color:var(--fg-3)}.ath-perm__explain{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;max-width:100%}.ath-perm__hint{color:var(--fg-3);font-style:italic}.ath-perm__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.ath-perm__control{display:inline-flex;flex:none;align-items:center}@media(max-width:479px){:host{flex-wrap:wrap}.ath-perm__text{flex-basis:calc(100% - 20px - var(--space-3))}.ath-perm__control{margin-inline-start:calc(20px + var(--space-3))}}\n"] }]
+        }] });
+
+/**
+ * The sticky "unsaved changes" bar at the bottom of an editor: a sentence
+ * and *Discard* / *Save*. Replaces hand-kept dirty flags per field.
+ *
+ * - Appearing is announced once (`aria-live="polite"`); the bar is a named
+ *   region, so it can be found with a screen reader's landmark keys.
+ * - `confirmDiscard`: *Discard* asks first (the button turns into "Really
+ *   discard?"); Escape anywhere on the page starts the same question and
+ *   moves focus to it, a second Escape takes it back. Escape is left alone
+ *   while a dialog, menu or popover is open.
+ * - `saving`: *Save* shows its spinner and both buttons wait.
+ *
+ * Sticky to the bottom of its scroll container; full width on phones.
+ *
+ * @example
+ * <ath-save-bar [open]="dirty()" [saving]="saving()" [confirmDiscard]="true"
+ *   (save)="save()" (discard)="reset()" />
+ */
+class AthSaveBarComponent {
+    constructor() {
+        this.labels = injectAthLabels();
+        this.host = inject(ElementRef);
+        this.stack = inject(AthOverlayStack);
+        this.injector = inject(Injector);
+        this.open = input(false, { transform: booleanAttribute });
+        this.message = input(null);
+        this.saving = input(false, { transform: booleanAttribute });
+        this.saveLabel = input(null);
+        this.discardLabel = input(null);
+        /** *Discard* (and Escape) asks before it discards. */
+        this.confirmDiscard = input(false, { transform: booleanAttribute });
+        this.save = output();
+        this.discard = output();
+        /** The discard question is showing. */
+        this.confirming = signal(false);
+        /** The live region's text: the message while open, so appearing is read out. */
+        this.announcement = computed(() => (this.open() ? this.text() : ''));
+        this.text = computed(() => this.message() || this.labels.saveBarMessage());
+        this.saveText = computed(() => this.saveLabel() || this.labels.saveBarSave());
+        this.discardText = computed(() => this.confirming()
+            ? this.labels.saveBarConfirmDiscard()
+            : this.discardLabel() || this.labels.saveBarDiscard());
+        // A bar that closes forgets an open question.
+        effect(() => {
+            if (!this.open())
+                untracked(() => this.confirming.set(false));
+        });
+    }
+    onSave() {
+        if (this.saving())
+            return;
+        this.confirming.set(false);
+        this.save.emit();
+    }
+    onDiscard() {
+        if (this.saving())
+            return;
+        if (this.confirmDiscard() && !this.confirming()) {
+            this.confirming.set(true);
+            return;
+        }
+        this.confirming.set(false);
+        this.discard.emit();
+    }
+    onDocumentKey(event) {
+        if (event.key !== 'Escape' || !this.open() || this.saving() || event.defaultPrevented)
+            return;
+        // An open overlay owns this Escape.
+        if (this.stack.size > 0 || this.stack.escapeConsumed())
+            return;
+        if (!this.confirmDiscard())
+            return;
+        event.preventDefault();
+        if (this.confirming()) {
+            this.confirming.set(false);
+            return;
+        }
+        this.confirming.set(true);
+        afterNextRender(() => this.host.nativeElement
+            .querySelector('.ath-save-bar__discard button')
+            ?.focus(), { injector: this.injector });
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthSaveBarComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthSaveBarComponent, isStandalone: true, selector: "ath-save-bar", inputs: { open: { classPropertyName: "open", publicName: "open", isSignal: true, isRequired: false, transformFunction: null }, message: { classPropertyName: "message", publicName: "message", isSignal: true, isRequired: false, transformFunction: null }, saving: { classPropertyName: "saving", publicName: "saving", isSignal: true, isRequired: false, transformFunction: null }, saveLabel: { classPropertyName: "saveLabel", publicName: "saveLabel", isSignal: true, isRequired: false, transformFunction: null }, discardLabel: { classPropertyName: "discardLabel", publicName: "discardLabel", isSignal: true, isRequired: false, transformFunction: null }, confirmDiscard: { classPropertyName: "confirmDiscard", publicName: "confirmDiscard", isSignal: true, isRequired: false, transformFunction: null } }, outputs: { save: "save", discard: "discard" }, host: { listeners: { "document:keydown": "onDocumentKey($event)" }, properties: { "class.ath-save-bar--open": "open()" } }, ngImport: i0, template: "<span class=\"ath-save-bar__live\" aria-live=\"polite\">{{ announcement() }}</span>\n@if (open()) {\n  <div class=\"ath-save-bar\" role=\"region\" [attr.aria-label]=\"text()\">\n    <span class=\"ath-save-bar__message\" aria-hidden=\"true\">{{ text() }}</span>\n    <span class=\"ath-save-bar__actions\">\n      <ath-button\n        class=\"ath-save-bar__discard\"\n        [variant]=\"confirming() ? 'danger' : 'ghost'\"\n        size=\"sm\"\n        [disabled]=\"saving()\"\n        (clicked)=\"onDiscard()\"\n        >{{ discardText() }}</ath-button\n      >\n      <ath-button variant=\"primary\" size=\"sm\" [loading]=\"saving()\" (clicked)=\"onSave()\">{{\n        saveText()\n      }}</ath-button>\n    </span>\n  </div>\n}\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{position:sticky;bottom:0;z-index:var(--z-sticky);display:block;pointer-events:none}:host(.ath-save-bar--open){padding:var(--space-3) 0}.ath-save-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-3);max-width:100%;padding:var(--space-2) var(--space-2) var(--space-2) var(--space-4);border:1px solid var(--selection-bar-border);border-radius:var(--r-lg);background:var(--selection-bar-bg);color:var(--selection-bar-fg);box-shadow:var(--shadow-2);pointer-events:auto;animation:ath-save-bar-in var(--t-base)}.ath-save-bar__live{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.ath-save-bar__message{font-size:var(--text-sm);font-weight:var(--weight-medium)}.ath-save-bar__actions{display:inline-flex;gap:var(--space-2);margin-inline-start:auto}@keyframes ath-save-bar-in{0%{opacity:0;transform:translateY(8px)}}@media(prefers-reduced-motion:reduce){.ath-save-bar{animation:none}}@media(max-width:479px){:host(.ath-save-bar--open){padding:0}.ath-save-bar{border-radius:0;border-inline:0;padding:var(--space-3) var(--space-4)}.ath-save-bar__actions{width:100%}.ath-save-bar__actions>*{flex:1}}\n"], dependencies: [{ kind: "component", type: AthButtonComponent, selector: "ath-button", inputs: ["variant", "size", "type", "disabled", "loading", "fullWidth", "pressed", "expanded", "controls", "ariaLabel", "action"], outputs: ["clicked", "done", "failed"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthSaveBarComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-save-bar', imports: [AthButtonComponent], changeDetection: ChangeDetectionStrategy.OnPush, host: {
+                        '[class.ath-save-bar--open]': 'open()',
+                        '(document:keydown)': 'onDocumentKey($event)',
+                    }, template: "<span class=\"ath-save-bar__live\" aria-live=\"polite\">{{ announcement() }}</span>\n@if (open()) {\n  <div class=\"ath-save-bar\" role=\"region\" [attr.aria-label]=\"text()\">\n    <span class=\"ath-save-bar__message\" aria-hidden=\"true\">{{ text() }}</span>\n    <span class=\"ath-save-bar__actions\">\n      <ath-button\n        class=\"ath-save-bar__discard\"\n        [variant]=\"confirming() ? 'danger' : 'ghost'\"\n        size=\"sm\"\n        [disabled]=\"saving()\"\n        (clicked)=\"onDiscard()\"\n        >{{ discardText() }}</ath-button\n      >\n      <ath-button variant=\"primary\" size=\"sm\" [loading]=\"saving()\" (clicked)=\"onSave()\">{{\n        saveText()\n      }}</ath-button>\n    </span>\n  </div>\n}\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{position:sticky;bottom:0;z-index:var(--z-sticky);display:block;pointer-events:none}:host(.ath-save-bar--open){padding:var(--space-3) 0}.ath-save-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-3);max-width:100%;padding:var(--space-2) var(--space-2) var(--space-2) var(--space-4);border:1px solid var(--selection-bar-border);border-radius:var(--r-lg);background:var(--selection-bar-bg);color:var(--selection-bar-fg);box-shadow:var(--shadow-2);pointer-events:auto;animation:ath-save-bar-in var(--t-base)}.ath-save-bar__live{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.ath-save-bar__message{font-size:var(--text-sm);font-weight:var(--weight-medium)}.ath-save-bar__actions{display:inline-flex;gap:var(--space-2);margin-inline-start:auto}@keyframes ath-save-bar-in{0%{opacity:0;transform:translateY(8px)}}@media(prefers-reduced-motion:reduce){.ath-save-bar{animation:none}}@media(max-width:479px){:host(.ath-save-bar--open){padding:0}.ath-save-bar{border-radius:0;border-inline:0;padding:var(--space-3) var(--space-4)}.ath-save-bar__actions{width:100%}.ath-save-bar__actions>*{flex:1}}\n"] }]
+        }], ctorParameters: () => [] });
+
+/**
+ * A workspace role: a dot in the role's colour and its name. `locked`
+ * adds a lock for the fixed roles (Owner, Admin), read out as "Fixed
+ * role". An unknown colour draws the neutral dot.
+ *
+ * @example
+ * <ath-role-badge name="Developer" color="blue" />
+ * <ath-role-badge name="Owner" color="amber" [locked]="true" size="sm" />
+ */
+class AthRoleBadgeComponent {
+    constructor() {
+        this.labels = injectAthLabels();
+        this.name = input.required();
+        /** A palette token (`AthDecoColor`); anything else is neutral. */
+        this.color = input(null);
+        this.size = input('md');
+        this.locked = input(false, { transform: booleanAttribute });
+        this.lockIcon = Lock;
+        this.tone = computed(() => {
+            const color = this.color();
+            return isAthDecoColor(color) ? color : 'neutral';
+        });
+        this.lockedText = computed(() => this.labels.roleLocked());
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthRoleBadgeComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthRoleBadgeComponent, isStandalone: true, selector: "ath-role-badge", inputs: { name: { classPropertyName: "name", publicName: "name", isSignal: true, isRequired: true, transformFunction: null }, color: { classPropertyName: "color", publicName: "color", isSignal: true, isRequired: false, transformFunction: null }, size: { classPropertyName: "size", publicName: "size", isSignal: true, isRequired: false, transformFunction: null }, locked: { classPropertyName: "locked", publicName: "locked", isSignal: true, isRequired: false, transformFunction: null } }, ngImport: i0, template: "<span class=\"ath-role-badge\" [attr.data-color]=\"tone()\" [attr.data-size]=\"size()\">\n  <span class=\"ath-role-badge__dot\" aria-hidden=\"true\"></span>\n  @if (locked()) {\n    <lucide-icon class=\"ath-role-badge__lock\" [img]=\"lockIcon\" [size]=\"11\" aria-hidden=\"true\" />\n    <span class=\"ath-role-badge__sr\">{{ lockedText() }}:</span>\n  }\n  <span class=\"ath-role-badge__name\">{{ name() }}</span>\n</span>\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:inline-flex;max-width:100%;vertical-align:middle}.ath-role-badge{--_dot: var(--grey-muted);display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:3px 8px;border:1px solid var(--border);border-radius:var(--r-full);background:var(--surface);color:var(--fg-2);font-size:var(--text-xs);font-weight:var(--weight-medium);line-height:1.2;white-space:nowrap}.ath-role-badge[data-color=neutral]{--_dot: var(--grey-muted)}.ath-role-badge[data-color=blue]{--_dot: var(--blue-muted)}.ath-role-badge[data-color=green]{--_dot: var(--green-muted)}.ath-role-badge[data-color=amber]{--_dot: var(--amber-muted)}.ath-role-badge[data-color=red]{--_dot: var(--red-muted)}.ath-role-badge[data-color=purple]{--_dot: var(--purple-muted)}.ath-role-badge[data-color=pink]{--_dot: var(--pink-muted)}.ath-role-badge[data-size=sm]{gap:4px;padding:1px 6px}.ath-role-badge__dot{flex:none;width:8px;height:8px;border-radius:var(--r-full);background:var(--_dot)}.ath-role-badge__lock{flex:none;color:var(--fg-3)}.ath-role-badge__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.ath-role-badge__name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}\n"], dependencies: [{ kind: "ngmodule", type: LucideAngularModule }, { kind: "component", type: i1.LucideAngularComponent, selector: "lucide-angular, lucide-icon, i-lucide, span-lucide", inputs: ["class", "name", "img", "color", "absoluteStrokeWidth", "size", "strokeWidth"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthRoleBadgeComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-role-badge', imports: [LucideAngularModule], changeDetection: ChangeDetectionStrategy.OnPush, template: "<span class=\"ath-role-badge\" [attr.data-color]=\"tone()\" [attr.data-size]=\"size()\">\n  <span class=\"ath-role-badge__dot\" aria-hidden=\"true\"></span>\n  @if (locked()) {\n    <lucide-icon class=\"ath-role-badge__lock\" [img]=\"lockIcon\" [size]=\"11\" aria-hidden=\"true\" />\n    <span class=\"ath-role-badge__sr\">{{ lockedText() }}:</span>\n  }\n  <span class=\"ath-role-badge__name\">{{ name() }}</span>\n</span>\n", styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}:host{display:inline-flex;max-width:100%;vertical-align:middle}.ath-role-badge{--_dot: var(--grey-muted);display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:3px 8px;border:1px solid var(--border);border-radius:var(--r-full);background:var(--surface);color:var(--fg-2);font-size:var(--text-xs);font-weight:var(--weight-medium);line-height:1.2;white-space:nowrap}.ath-role-badge[data-color=neutral]{--_dot: var(--grey-muted)}.ath-role-badge[data-color=blue]{--_dot: var(--blue-muted)}.ath-role-badge[data-color=green]{--_dot: var(--green-muted)}.ath-role-badge[data-color=amber]{--_dot: var(--amber-muted)}.ath-role-badge[data-color=red]{--_dot: var(--red-muted)}.ath-role-badge[data-color=purple]{--_dot: var(--purple-muted)}.ath-role-badge[data-color=pink]{--_dot: var(--pink-muted)}.ath-role-badge[data-size=sm]{gap:4px;padding:1px 6px}.ath-role-badge__dot{flex:none;width:8px;height:8px;border-radius:var(--r-full);background:var(--_dot)}.ath-role-badge__lock{flex:none;color:var(--fg-3)}.ath-role-badge__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.ath-role-badge__name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}\n"] }]
+        }] });
+
+/**
  * Athene Alert
  *
  * Feedback in the page: info, warn, error or success, inline or as a
@@ -5476,5 +5892,5 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImpo
  * Generated bundle index. Do not edit.
  */
 
-export { AI_MARK_REGULAR, AI_MARK_SMALL, AI_MARK_SMALL_MAX, AVATAR_TONE_COUNT, AthAiMarkComponent, AthAlertComponent, AthAvatarComponent, AthAvatarStackComponent, AthBadgeComponent, AthBreadcrumbComponent, AthButtonComponent, AthChipComponent, AthCodeBlockComponent, AthComboboxComponent, AthCopyButtonComponent, AthDialogComponent, AthDividerComponent, AthDropdownComponent, AthDueLabelComponent, AthEmptyStateComponent, AthFileDropComponent, AthFilterChipComponent, AthFloatingDirective, AthInputComponent, AthKbdComponent, AthKpiStripComponent, AthKpiTileComponent, AthListboxComponent, AthMarkdownComponent, AthMenuComponent, AthMenuItemComponent, AthMenuSeparatorComponent, AthMenuTriggerDirective, AthNavItemComponent, AthOptionPickerComponent, AthOverlayStack, AthPageComponent, AthPageHeaderComponent, AthPaginationComponent, AthPanelComponent, AthPanelGridComponent, AthPopoverComponent, AthPopoverContentDirective, AthPopoverTriggerDirective, AthPriorityComponent, AthProgressComponent, AthSearchInputComponent, AthSegmentComponent, AthSelectComponent, AthSheetComponent, AthSidebarComponent, AthSkeletonCardComponent, AthSkeletonComponent, AthSkeletonListComponent, AthSkeletonTableComponent, AthSlaBarComponent, AthSparklineComponent, AthSpinnerComponent, AthStatusPillComponent, AthTableComponent, AthTabsComponent, AthTextareaComponent, AthTimelineComponent, AthTimelineEntryComponent, AthTimelineEventComponent, AthTimerPillComponent, AthToastContainerComponent, AthToggleComponent, AthTooltipDirective, AthUserPickerComponent, DROPDOWN_SEPARATOR, athEscapeHtml, athPlainTextHtml, avatarInitials, avatarToneFor, calendarDayOf, calendarDaysUntil, compactDueText, describeDue, dueToneOf, floatPanel, formatAthLabel, fullDueDate, hasKpiTrend, injectAthLabels, installTopLayerStyles, isDayOnly, isDropdownSeparator, isVirtualAnchor, panelGridColumns, resolveAnchor, resolveFloatingTarget, runAthAction, shortDay, sparklineGeometry, supportsTopLayer, toneOfKey, zonedWallClock };
+export { AI_MARK_REGULAR, AI_MARK_SMALL, AI_MARK_SMALL_MAX, ATH_DECO_COLORS, AVATAR_TONE_COUNT, AthAiMarkComponent, AthAlertComponent, AthAvatarComponent, AthAvatarStackComponent, AthBadgeComponent, AthBreadcrumbComponent, AthButtonComponent, AthChipComponent, AthCodeBlockComponent, AthColorSwatchComponent, AthComboboxComponent, AthCopyButtonComponent, AthDialogComponent, AthDividerComponent, AthDropdownComponent, AthDueLabelComponent, AthEmptyStateComponent, AthFileDropComponent, AthFilterChipComponent, AthFloatingDirective, AthInputComponent, AthKbdComponent, AthKpiStripComponent, AthKpiTileComponent, AthListboxComponent, AthMarkdownComponent, AthMenuComponent, AthMenuItemComponent, AthMenuSeparatorComponent, AthMenuTriggerDirective, AthNavItemComponent, AthOptionPickerComponent, AthOverlayStack, AthPageComponent, AthPageHeaderComponent, AthPaginationComponent, AthPanelComponent, AthPanelGridComponent, AthPermissionRowComponent, AthPopoverComponent, AthPopoverContentDirective, AthPopoverTriggerDirective, AthPriorityComponent, AthProgressComponent, AthRoleBadgeComponent, AthSaveBarComponent, AthSearchInputComponent, AthSegmentComponent, AthSelectComponent, AthSheetComponent, AthSidebarComponent, AthSkeletonCardComponent, AthSkeletonComponent, AthSkeletonListComponent, AthSkeletonTableComponent, AthSlaBarComponent, AthSparklineComponent, AthSpinnerComponent, AthStatusPillComponent, AthTableComponent, AthTabsComponent, AthTextareaComponent, AthTimelineComponent, AthTimelineEntryComponent, AthTimelineEventComponent, AthTimerPillComponent, AthToastContainerComponent, AthToggleComponent, AthTooltipDirective, AthTriStateComponent, AthUserPickerComponent, DROPDOWN_SEPARATOR, athDecoColorLabel, athEscapeHtml, athPlainTextHtml, avatarInitials, avatarToneFor, calendarDayOf, calendarDaysUntil, compactDueText, describeDue, dueToneOf, floatPanel, formatAthLabel, fullDueDate, hasKpiTrend, injectAthLabels, installTopLayerStyles, isAthDecoColor, isDayOnly, isDropdownSeparator, isVirtualAnchor, panelGridColumns, resolveAnchor, resolveFloatingTarget, runAthAction, shortDay, sparklineGeometry, supportsTopLayer, toneOfKey, zonedWallClock };
 //# sourceMappingURL=athene-webcomponents.mjs.map

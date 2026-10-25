@@ -74,3 +74,17 @@ export const LongName: Story = {
     template: `<ath-avatar [name]="name" id="u-long" size="md" />`,
   }),
 };
+
+/** `ring`: the person's role colour, in member lists and pickers. */
+export const RoleRing: Story = {
+  render: () => ({
+    template: `
+      <div style="display:flex;gap:12px;align-items:center">
+        <ath-avatar [person]="{ id: 'u-ada', name: 'Ada Lovelace' }" size="sm" ring="amber" />
+        <ath-avatar [person]="{ id: 'u-alan', name: 'Alan Turing' }" size="md" ring="blue" />
+        <ath-avatar [person]="{ id: 'u-grace', name: 'Grace Hopper' }" size="lg" ring="green" />
+        <ath-avatar [person]="{ id: 'u-kat', name: 'Katherine Johnson' }" size="md" ring="neutral" />
+      </div>
+    `,
+  }),
+};

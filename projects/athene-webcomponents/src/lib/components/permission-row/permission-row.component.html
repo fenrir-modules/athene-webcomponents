@@ -1,0 +1,24 @@
+<span class="ath-perm__icon" aria-hidden="true">
+  @if (icon(); as glyph) {
+    <lucide-icon [img]="glyph" [size]="16" />
+  }
+</span>
+<span class="ath-perm__text">
+  <span class="ath-perm__label" [id]="labelId">{{ label() }}</span>
+  @if (description() || inheritedHint() || (disabled() && disabledReason())) {
+    <span class="ath-perm__desc" [id]="descriptionId">
+      @if (description(); as text) {
+        <span class="ath-perm__explain" [attr.title]="text">{{ text }}</span>
+      }
+      @if (inheritedHint(); as hint) {
+        <span class="ath-perm__hint">{{ hint }}</span>
+      }
+      @if (disabled() && disabledReason()) {
+        <span class="ath-perm__sr">{{ disabledReason() }}</span>
+      }
+    </span>
+  }
+</span>
+<span class="ath-perm__control" #control [athTooltip]="disabled() ? disabledReason() || '' : ''">
+  <ng-content />
+</span>

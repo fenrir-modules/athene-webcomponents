@@ -137,6 +137,43 @@ One colour rule from the `--due-*` tokens: overdue and **today red** (`--red-tex
 
 The Athene AI mark ("Perch"): a solid rounded A — Athene's A and a perched little owl — with two round eyes cut out and a four-point spark beside its head. `variant`: `color` (body in `currentColor`, spark in `--accent`; hints, rows), `mono` (all `currentColor`), `gradient` (`--ai-from` → `--ai-to`, for hero areas from 24 px). Two optical sizes from one 24-unit grid: up to 20 px the eyes sit wider apart and the spark grows (`AI_MARK_SMALL`), from 21 px the regular drawing (`AI_MARK_REGULAR`); the path data is exported for icon slots (a lucide-style icon of the app's nav). Decorative unless `label` is set; with `wordmark` the text is what screen readers read. Every gradient has its own id, so several marks on a page never share a paint server. Tokens of AI surfaces: `--ai-gradient`, `--ai-surface` (a ≤ 9% accent wash for hero cards), `--ai-border`.
 
+### Roles editor: `ath-permission-row`, `ath-tri-state`, `ath-save-bar`, `ath-color-swatch`, `ath-role-badge`
+
+```html
+<ath-permission-row
+  [icon]="FolderPlus"
+  label="Projekte anlegen"
+  description="Neue Projekte im Workspace"
+  [interactive]="true"
+  (activate)="flip()"
+  [disabled]="guest"
+  disabledReason="Gäste können das nie"
+>
+  <ath-toggle
+    ariaLabel="Projekte anlegen"
+    [checked]="on"
+    [disabled]="guest"
+    (toggled)="set($event)"
+  />
+</ath-permission-row>
+<ath-tri-state label="Tickets bearbeiten" [(value)]="state" [inherited]="true" />
+<ath-save-bar
+  [open]="dirty()"
+  [saving]="saving()"
+  [confirmDiscard]="true"
+  (save)="save()"
+  (discard)="reset()"
+/>
+<ath-color-swatch [(value)]="color" label="Rollenfarbe" />
+<ath-role-badge name="Developer" color="blue" /> <ath-avatar [person]="p" ring="blue" />
+```
+
+- `ath-permission-row`: icon, name, one-line explanation (`--fg-3`, ellipsis), optional `inheritedHint`; the control is projected. With `interactive` a click anywhere on the row outside the control emits `activate` (a click on the control is left to it, so nothing toggles twice); the row adds no tab stop. `disabledReason` is the control's tooltip and is read out. Below 480 px the control moves under the text. `labelId` / `descriptionId` are public for `aria-describedby`.
+- `ath-tri-state`: _Deny · Inherit · Allow_ as a radio group (not `ath-segment`, a tab list): one tab stop, arrows move and choose (mirrored in RTL), Home/End, Space/Enter. `inherited` is read out with "Inherit (currently allowed)". `compact`, and phones, show icons only (each still named).
+- `ath-save-bar`: sticky at the bottom of its scroll container (`--selection-bar-*`), a named region whose appearance is announced (`aria-live="polite"`). `confirmDiscard`: _Discard_ asks first; Escape starts the question and focuses it, a second Escape takes it back; Escape is left to open overlays (`AthOverlayStack`). `saving` shows the spinner and blocks both buttons. Full width on phones.
+- `ath-color-swatch`, `ath-role-badge`, `ath-avatar [ring]`: the palette `AthDecoColor` (`neutral`, `blue`, `green`, `amber`, `red`, `purple`, `pink`; the same tokens as `TicketTypeColor` in athene-contracts), drawn with the `--<hue>-muted` deco tokens (`--grey-muted` for neutral). The swatch is a radio group with named swatches and a check on the picked one; an unknown token is neutral on a badge and no ring on an avatar. `ATH_DECO_COLORS`, `isAthDecoColor()` and `athDecoColorLabel()` are exported.
+- Words: the `AthLabels` `triState*`, `saveBar*`, `color*`, `colorPicker` and `roleLocked` (English defaults; the app translates them in its `ATH_LABELS` provider).
+
 ### `ath-chip`
 
 `kind`: `tag` (semantic `variant`: default, primary, success, warning, error, info), `label` (dot in `color`), `epic` (outline, bolt in `color`, default `--purple`), `type` (16px square in `color` with `icon`; no text = the square alone; `muted` = grey glyph), `status` (toned dot or `icon`), `count` (`[count]="3"` → "+3", `tooltip` names the hidden items and is read as "3 more: …"). `tag` takes `shape`: `pill` (default) or `square`, the plain grey tag of dense ticket rows and board cards (references 05/06: `--r-xs`, `--bg-2`, faint border, no dot). All kinds are `--chip-h` (20px) tall. `removable` + `(removed)` (does not bubble to a clickable row; `name` feeds "Remove {name}").

@@ -1,0 +1,83 @@
+// ===========================================
+// ATH-SAVE-BAR
+// ===========================================
+
+@use '../../styles/mixins' as m;
+
+:host {
+  position: sticky;
+  bottom: 0;
+  z-index: var(--z-sticky);
+  display: block;
+  pointer-events: none;
+}
+
+:host(.ath-save-bar--open) {
+  padding: var(--space-3) 0;
+}
+
+.ath-save-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  max-width: 100%;
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border: 1px solid var(--selection-bar-border);
+  border-radius: var(--r-lg);
+  background: var(--selection-bar-bg);
+  color: var(--selection-bar-fg);
+  box-shadow: var(--shadow-2);
+  pointer-events: auto;
+  animation: ath-save-bar-in var(--t-base);
+
+  &__live {
+    @include m.visually-hidden;
+  }
+
+  &__message {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+  }
+
+  &__actions {
+    display: inline-flex;
+    gap: var(--space-2);
+    margin-inline-start: auto;
+  }
+}
+
+@keyframes ath-save-bar-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ath-save-bar {
+    animation: none;
+  }
+}
+
+// Phones: edge to edge, the buttons share the width.
+@media (max-width: 479px) {
+  :host(.ath-save-bar--open) {
+    padding: 0;
+  }
+
+  .ath-save-bar {
+    border-radius: 0;
+    border-inline: 0;
+    padding: var(--space-3) var(--space-4);
+
+    &__actions {
+      width: 100%;
+
+      > * {
+        flex: 1;
+      }
+    }
+  }
+}

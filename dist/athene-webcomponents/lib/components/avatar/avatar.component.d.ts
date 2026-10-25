@@ -20,6 +20,7 @@ export interface AthPerson {
  * <ath-avatar [person]="assignee ?? null" size="sm" />   <!-- null → empty seat -->
  * <ath-avatar [unassigned]="true" size="sm" />
  * <ath-avatar name="Mira Voss" />                         <!-- legacy: tone from initials -->
+ * <ath-avatar [person]="member" ring="blue" />            <!-- ring in the role's colour -->
  */
 export declare class AthAvatarComponent {
     private readonly labels;
@@ -39,6 +40,12 @@ export declare class AthAvatarComponent {
     readonly unassigned: import("@angular/core").InputSignal<boolean>;
     /** Accessible name and tooltip; defaults to the name or the "Unassigned" label. */
     readonly label: import("@angular/core").InputSignal<string | null>;
+    /**
+     * A ring in a palette colour (`AthDecoColor`): the person's role colour
+     * in member lists and pickers. Decorative; the role's name is shown or
+     * read elsewhere. `null` (or an unknown token): no ring.
+     */
+    readonly ring: import("@angular/core").InputSignal<string | null | undefined>;
     protected readonly userIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
     private readonly failedSrc;
     private readonly who;
@@ -46,6 +53,7 @@ export declare class AthAvatarComponent {
     protected readonly initials: import("@angular/core").Signal<string>;
     protected readonly tone: import("@angular/core").Signal<number | null>;
     protected readonly image: import("@angular/core").Signal<string | null>;
+    protected readonly ringColor: import("@angular/core").Signal<import("../color-swatch/deco-color").AthDecoColor | null>;
     protected readonly iconSize: import("@angular/core").Signal<number>;
     protected readonly accessibleName: import("@angular/core").Signal<string | null>;
     /**
@@ -56,5 +64,5 @@ export declare class AthAvatarComponent {
     protected readonly tooltip: import("@angular/core").Signal<string | null>;
     protected onImageError(): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthAvatarComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthAvatarComponent, "ath-avatar", never, { "person": { "alias": "person"; "required": false; "isSignal": true; }; "name": { "alias": "name"; "required": false; "isSignal": true; }; "src": { "alias": "src"; "required": false; "isSignal": true; }; "id": { "alias": "id"; "required": false; "isSignal": true; }; "size": { "alias": "size"; "required": false; "isSignal": true; }; "unassigned": { "alias": "unassigned"; "required": false; "isSignal": true; }; "label": { "alias": "label"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthAvatarComponent, "ath-avatar", never, { "person": { "alias": "person"; "required": false; "isSignal": true; }; "name": { "alias": "name"; "required": false; "isSignal": true; }; "src": { "alias": "src"; "required": false; "isSignal": true; }; "id": { "alias": "id"; "required": false; "isSignal": true; }; "size": { "alias": "size"; "required": false; "isSignal": true; }; "unassigned": { "alias": "unassigned"; "required": false; "isSignal": true; }; "label": { "alias": "label"; "required": false; "isSignal": true; }; "ring": { "alias": "ring"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
 }

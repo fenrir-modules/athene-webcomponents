@@ -4,6 +4,8 @@
 // Sizes come from the --avatar-* tokens; a person and an empty seat of the
 // same size line up in a column.
 
+@use '../color-swatch/deco' as d;
+
 :host {
   display: inline-flex;
   flex: none;
@@ -102,5 +104,15 @@
   &__initials {
     position: relative;
     letter-spacing: 0.5px;
+  }
+
+  // The role ring: a surface gap, then the palette colour (`ring`). Drawn
+  // as a shadow, so the avatar keeps its size and its column.
+  @each $name, $value in d.$deco-colors {
+    &[data-ring='#{$name}'] {
+      box-shadow:
+        0 0 0 1.5px var(--surface),
+        0 0 0 3px #{$value};
+    }
   }
 }

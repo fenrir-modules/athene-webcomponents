@@ -1,0 +1,8 @@
+<span class="ath-role-badge" [attr.data-color]="tone()" [attr.data-size]="size()">
+  <span class="ath-role-badge__dot" aria-hidden="true"></span>
+  @if (locked()) {
+    <lucide-icon class="ath-role-badge__lock" [img]="lockIcon" [size]="11" aria-hidden="true" />
+    <span class="ath-role-badge__sr">{{ lockedText() }}:</span>
+  }
+  <span class="ath-role-badge__name">{{ name() }}</span>
+</span>

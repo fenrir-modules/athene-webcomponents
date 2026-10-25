@@ -1,0 +1,11 @@
+// The palette tokens' colours (deco-color.ts), for `[data-color]` hosts.
+// `neutral` is the grey deco mark.
+$deco-colors: (
+  'neutral': var(--grey-muted),
+  'blue': var(--blue-muted),
+  'green': var(--green-muted),
+  'amber': var(--amber-muted),
+  'red': var(--red-muted),
+  'purple': var(--purple-muted),
+  'pink': var(--pink-muted),
+);

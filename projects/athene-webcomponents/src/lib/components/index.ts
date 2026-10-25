@@ -43,6 +43,13 @@ export * from './floating';
 export * from './user-picker';
 export * from './file-drop';
 
+// Roles editor (custom roles, phase A)
+export * from './color-swatch';
+export * from './tri-state';
+export * from './permission-row';
+export * from './save-bar';
+export * from './role-badge';
+
 // Feedback
 export * from './alert';
 export * from './dialog';

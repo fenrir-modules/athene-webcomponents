@@ -1,0 +1,62 @@
+// ===========================================
+// ATH-COLOR-SWATCH
+// ===========================================
+
+@use '../../styles/mixins' as m;
+@use './deco' as d;
+
+:host {
+  display: inline-flex;
+}
+
+.ath-swatch {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+
+  &[aria-disabled='true'] {
+    opacity: 0.5;
+  }
+
+  &__item {
+    @include m.button-reset;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--control-h-sm);
+    height: var(--control-h-sm);
+    border-radius: var(--r-full);
+    border: 1px solid var(--border);
+    color: var(--surface);
+    transition:
+      transform var(--t-fast),
+      box-shadow var(--t-fast);
+
+    @each $name, $value in d.$deco-colors {
+      &[data-color='#{$name}'] {
+        background: $value;
+      }
+    }
+
+    &:hover:not(:disabled) {
+      transform: scale(1.08);
+    }
+
+    // The picked swatch: a ring in the text colour around a surface gap,
+    // plus the check (not colour alone).
+    &[aria-checked='true'] {
+      box-shadow:
+        0 0 0 2px var(--surface),
+        0 0 0 4px var(--fg);
+    }
+
+    &:focus-visible {
+      @include m.focus-ring;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+}

@@ -1,0 +1,19 @@
+<span class="ath-save-bar__live" aria-live="polite">{{ announcement() }}</span>
+@if (open()) {
+  <div class="ath-save-bar" role="region" [attr.aria-label]="text()">
+    <span class="ath-save-bar__message" aria-hidden="true">{{ text() }}</span>
+    <span class="ath-save-bar__actions">
+      <ath-button
+        class="ath-save-bar__discard"
+        [variant]="confirming() ? 'danger' : 'ghost'"
+        size="sm"
+        [disabled]="saving()"
+        (clicked)="onDiscard()"
+        >{{ discardText() }}</ath-button
+      >
+      <ath-button variant="primary" size="sm" [loading]="saving()" (clicked)="onSave()">{{
+        saveText()
+      }}</ath-button>
+    </span>
+  </div>
+}

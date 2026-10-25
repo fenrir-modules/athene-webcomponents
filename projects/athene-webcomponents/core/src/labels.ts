@@ -82,6 +82,30 @@ export interface AthLabels {
   /** `ath-timeline-entry` internal marker (visible word, tooltip). */
   internal: () => string;
   internalNote: () => string;
+  // Roles editor (custom roles, phase A).
+  /** `ath-tri-state`: the three states of an override. */
+  triStateDeny: () => string;
+  triStateInherit: () => string;
+  triStateAllow: () => string;
+  /** `ath-tri-state`: "inherit" with the value it currently inherits. */
+  triStateInheritAllowed: () => string;
+  triStateInheritDenied: () => string;
+  /** `ath-save-bar` defaults. */
+  saveBarMessage: () => string;
+  saveBarSave: () => string;
+  saveBarDiscard: () => string;
+  saveBarConfirmDiscard: () => string;
+  /** `ath-color-swatch`: the group's default name and each colour's name. */
+  colorPicker: () => string;
+  colorNeutral: () => string;
+  colorBlue: () => string;
+  colorGreen: () => string;
+  colorAmber: () => string;
+  colorRed: () => string;
+  colorPurple: () => string;
+  colorPink: () => string;
+  /** `ath-role-badge` with `locked`: screen-reader text of the lock. */
+  roleLocked: () => string;
 }
 
 export const ATH_DEFAULT_LABELS: AthLabels = {
@@ -131,6 +155,24 @@ export const ATH_DEFAULT_LABELS: AthLabels = {
   userPickerSearch: () => 'Search people',
   internal: () => 'internal',
   internalNote: () => 'Internal note',
+  triStateDeny: () => 'Deny',
+  triStateInherit: () => 'Inherit',
+  triStateAllow: () => 'Allow',
+  triStateInheritAllowed: () => 'Inherit (currently allowed)',
+  triStateInheritDenied: () => 'Inherit (currently denied)',
+  saveBarMessage: () => 'You have unsaved changes',
+  saveBarSave: () => 'Save',
+  saveBarDiscard: () => 'Discard',
+  saveBarConfirmDiscard: () => 'Really discard?',
+  colorPicker: () => 'Colour',
+  colorNeutral: () => 'Grey',
+  colorBlue: () => 'Blue',
+  colorGreen: () => 'Green',
+  colorAmber: () => 'Amber',
+  colorRed: () => 'Red',
+  colorPurple: () => 'Purple',
+  colorPink: () => 'Pink',
+  roleLocked: () => 'Fixed role',
 };
 
 export const ATH_LABELS = new InjectionToken<Partial<AthLabels>>('ATH_LABELS');

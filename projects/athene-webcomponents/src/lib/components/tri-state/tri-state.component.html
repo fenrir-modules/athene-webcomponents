@@ -1,0 +1,25 @@
+<div
+  class="ath-tri"
+  role="radiogroup"
+  [attr.aria-label]="label()"
+  [attr.aria-disabled]="disabled() || null"
+>
+  @for (segment of segments(); track segment.state; let i = $index) {
+    <button
+      type="button"
+      role="radio"
+      class="ath-tri__item"
+      [attr.data-state]="segment.state"
+      [attr.aria-checked]="value() === segment.state"
+      [attr.aria-label]="segment.name"
+      [attr.title]="segment.name"
+      [attr.tabindex]="value() === segment.state ? 0 : -1"
+      [disabled]="disabled()"
+      (click)="select(segment.state)"
+      (keydown)="onKey($event, i)"
+    >
+      <lucide-icon [img]="segment.icon" [size]="14" aria-hidden="true" />
+      <span class="ath-tri__text" aria-hidden="true">{{ segment.text }}</span>
+    </button>
+  }
+</div>

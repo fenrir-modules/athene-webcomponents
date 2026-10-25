@@ -1,0 +1,26 @@
+<div
+  class="ath-swatch"
+  role="radiogroup"
+  [attr.aria-label]="groupLabel()"
+  [attr.aria-disabled]="disabled() || null"
+>
+  @for (option of options(); track option.color; let i = $index) {
+    <button
+      type="button"
+      role="radio"
+      class="ath-swatch__item"
+      [attr.data-color]="option.color"
+      [attr.aria-checked]="value() === option.color"
+      [attr.aria-label]="option.name"
+      [attr.title]="option.name"
+      [attr.tabindex]="i === stop() ? 0 : -1"
+      [disabled]="disabled()"
+      (click)="pick(option.color)"
+      (keydown)="onKey($event, i)"
+    >
+      @if (value() === option.color) {
+        <lucide-icon [img]="checkIcon" [size]="14" aria-hidden="true" />
+      }
+    </button>
+  }
+</div>

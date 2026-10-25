@@ -27,6 +27,18 @@ describe('AthAvatarComponent', () => {
     expect(face().getAttribute('title')).toBe('Mira Voss');
   });
 
+  it('draws a role ring in a palette colour, and none for an unknown token', () => {
+    create({ person: { id: 'u1', name: 'Mira Voss' }, ring: 'purple' });
+    expect(face().dataset['ring']).toBe('purple');
+    expect(getComputedStyle(face()).boxShadow).not.toBe('none');
+    fixture.componentRef.setInput('ring', '#123456');
+    fixture.detectChanges();
+    expect(face().hasAttribute('data-ring')).toBeFalse();
+    fixture.componentRef.setInput('ring', null);
+    fixture.detectChanges();
+    expect(face().hasAttribute('data-ring')).toBeFalse();
+  });
+
   it('draws null as the empty seat, titled with the label', () => {
     create({ person: null, size: 'sm' });
     expect(face().classList).toContain('ath-avatar--empty');

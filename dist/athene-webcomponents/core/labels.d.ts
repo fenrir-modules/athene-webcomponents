@@ -76,6 +76,29 @@ export interface AthLabels {
     /** `ath-timeline-entry` internal marker (visible word, tooltip). */
     internal: () => string;
     internalNote: () => string;
+    /** `ath-tri-state`: the three states of an override. */
+    triStateDeny: () => string;
+    triStateInherit: () => string;
+    triStateAllow: () => string;
+    /** `ath-tri-state`: "inherit" with the value it currently inherits. */
+    triStateInheritAllowed: () => string;
+    triStateInheritDenied: () => string;
+    /** `ath-save-bar` defaults. */
+    saveBarMessage: () => string;
+    saveBarSave: () => string;
+    saveBarDiscard: () => string;
+    saveBarConfirmDiscard: () => string;
+    /** `ath-color-swatch`: the group's default name and each colour's name. */
+    colorPicker: () => string;
+    colorNeutral: () => string;
+    colorBlue: () => string;
+    colorGreen: () => string;
+    colorAmber: () => string;
+    colorRed: () => string;
+    colorPurple: () => string;
+    colorPink: () => string;
+    /** `ath-role-badge` with `locked`: screen-reader text of the lock. */
+    roleLocked: () => string;
 }
 export declare const ATH_DEFAULT_LABELS: AthLabels;
 export declare const ATH_LABELS: InjectionToken<Partial<AthLabels>>;
