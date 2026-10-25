@@ -23,8 +23,8 @@
       (blur)="onTouched()"
       class="ath-select__field"
     >
-      @if (placeholder()) {
-        <option value="" disabled [selected]="!fieldValue()">{{ placeholder() }}</option>
+      @if (placeholderText()) {
+        <option value="" disabled [selected]="!fieldValue()">{{ placeholderText() }}</option>
       }
       @for (option of options(); track option.value) {
         <!-- [selected] as well as the select's [value]: options that arrive after

@@ -10,6 +10,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { LucideAngularModule, ChevronDown, AlertCircle } from 'lucide-angular';
+import { injectAthLabels } from '../../i18n/labels';
 
 /**
  * Select option definition
@@ -53,8 +54,17 @@ export class AthSelectComponent implements ControlValueAccessor {
   /** Select label */
   readonly label = input('');
 
-  /** Placeholder text */
-  readonly placeholder = input('Select an option');
+  private readonly labels = injectAthLabels();
+
+  /**
+   * The empty first option. Left out: the app's `selectPlaceholder` label
+   * (`ATH_LABELS`, English by default); `''`: none — the select always
+   * shows a value.
+   */
+  readonly placeholder = input<string | undefined>(undefined);
+  protected readonly placeholderText = computed(
+    () => this.placeholder() ?? this.labels.selectPlaceholder()
+  );
 
   /** Select options */
   readonly options = input<SelectOption[]>([]);

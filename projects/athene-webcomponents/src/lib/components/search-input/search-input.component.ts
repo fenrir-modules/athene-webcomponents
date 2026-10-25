@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  computed,
   Component,
   input,
   numberAttribute,
@@ -31,8 +32,11 @@ import { injectAthLabels } from '../../i18n/labels';
 export class AthSearchInputComponent {
   protected readonly labels = injectAthLabels();
 
-  /** Placeholder text */
-  readonly placeholder = input('Search...');
+  /** Placeholder text; left out, the app's `searchPlaceholder` label (`ATH_LABELS`). */
+  readonly placeholder = input<string | undefined>(undefined);
+  protected readonly placeholderText = computed(
+    () => this.placeholder() ?? this.labels.searchPlaceholder()
+  );
 
   /** Debounce time in ms; read per keystroke, so a change applies to the next one. */
   readonly debounce = input(300, { transform: numberAttribute });

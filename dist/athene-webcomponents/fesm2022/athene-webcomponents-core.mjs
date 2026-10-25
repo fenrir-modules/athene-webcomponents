@@ -66,6 +66,8 @@ const ATH_DEFAULT_LABELS = {
     colorPurple: () => 'Purple',
     colorPink: () => 'Pink',
     roleLocked: () => 'Fixed role',
+    selectPlaceholder: () => 'Select an option',
+    searchPlaceholder: () => 'Search…',
 };
 const ATH_LABELS = new InjectionToken('ATH_LABELS');
 

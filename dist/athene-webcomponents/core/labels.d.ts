@@ -99,6 +99,10 @@ export interface AthLabels {
     colorPink: () => string;
     /** `ath-role-badge` with `locked`: screen-reader text of the lock. */
     roleLocked: () => string;
+    /** `ath-select`: the empty first option when no `placeholder` is given. */
+    selectPlaceholder: () => string;
+    /** `ath-search-input`: the field's placeholder when none is given. */
+    searchPlaceholder: () => string;
 }
 export declare const ATH_DEFAULT_LABELS: AthLabels;
 export declare const ATH_LABELS: InjectionToken<Partial<AthLabels>>;

@@ -9,8 +9,9 @@ import * as i0 from "@angular/core";
  */
 export declare class AthSearchInputComponent {
     protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
-    /** Placeholder text */
-    readonly placeholder: import("@angular/core").InputSignal<string>;
+    /** Placeholder text; left out, the app's `searchPlaceholder` label (`ATH_LABELS`). */
+    readonly placeholder: import("@angular/core").InputSignal<string | undefined>;
+    protected readonly placeholderText: import("@angular/core").Signal<string>;
     /** Debounce time in ms; read per keystroke, so a change applies to the next one. */
     readonly debounce: import("@angular/core").InputSignalWithTransform<number, unknown>;
     /** Search event emitter */

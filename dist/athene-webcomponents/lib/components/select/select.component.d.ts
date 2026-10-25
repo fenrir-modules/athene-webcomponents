@@ -24,8 +24,14 @@ export declare class AthSelectComponent implements ControlValueAccessor {
     readonly size: import("@angular/core").InputSignal<SelectSize>;
     /** Select label */
     readonly label: import("@angular/core").InputSignal<string>;
-    /** Placeholder text */
-    readonly placeholder: import("@angular/core").InputSignal<string>;
+    private readonly labels;
+    /**
+     * The empty first option. Left out: the app's `selectPlaceholder` label
+     * (`ATH_LABELS`, English by default); `''`: none — the select always
+     * shows a value.
+     */
+    readonly placeholder: import("@angular/core").InputSignal<string | undefined>;
+    protected readonly placeholderText: import("@angular/core").Signal<string>;
     /** Select options */
     readonly options: import("@angular/core").InputSignal<SelectOption[]>;
     /** Error message */

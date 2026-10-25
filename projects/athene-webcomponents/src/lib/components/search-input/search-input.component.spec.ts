@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ATH_LABELS } from '../../i18n/labels';
 import { AthSearchInputComponent } from './search-input.component';
 
 describe('AthSearchInputComponent', () => {
@@ -47,5 +48,16 @@ describe('AthSearchInputComponent', () => {
     expect(
       (fixture.nativeElement as HTMLElement).querySelector('.ath-search-input__clear')
     ).toBeNull();
+  });
+
+  it('takes its placeholder from ATH_LABELS when none is given (UX-031)', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [{ provide: ATH_LABELS, useValue: { searchPlaceholder: () => 'Suchen…' } }],
+    });
+    const f = TestBed.createComponent(AthSearchInputComponent);
+    f.detectChanges();
+    const input = (f.nativeElement as HTMLElement).querySelector('input')!;
+    expect(input.placeholder).toBe('Suchen…');
   });
 });

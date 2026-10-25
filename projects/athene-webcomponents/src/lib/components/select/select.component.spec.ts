@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { ATH_LABELS } from '../../i18n/labels';
 import { AthSelectComponent, type SelectOption } from './select.component';
 
 @Component({
@@ -84,5 +85,38 @@ describe('AthSelectComponent', () => {
     fixture.componentRef.setInput('ariaLabel', '');
     fixture.detectChanges();
     expect(select.hasAttribute('aria-label')).toBeFalse();
+  });
+
+  /** UX-041 / UX-031: "Select an option" stood English on German pages. */
+  describe('placeholder', () => {
+    function bare(labels?: { selectPlaceholder: () => string }) {
+      if (labels) {
+        TestBed.configureTestingModule({ providers: [{ provide: ATH_LABELS, useValue: labels }] });
+      }
+      const fixture = TestBed.createComponent(AthSelectComponent);
+      fixture.componentRef.setInput('options', PROJECTS.slice(1));
+      fixture.detectChanges();
+      return (fixture.nativeElement as HTMLElement).querySelector('select')!;
+    }
+
+    it('takes the app’s word from ATH_LABELS when none is given', () => {
+      const select = bare({ selectPlaceholder: () => 'Bitte wählen' });
+      expect(select.options[0].textContent?.trim()).toBe('Bitte wählen');
+    });
+
+    it('falls back to the English default', () => {
+      expect(bare().options[0].textContent?.trim()).toBe('Select an option');
+    });
+
+    it('an empty placeholder means none: the select always shows a value', () => {
+      TestBed.configureTestingModule({});
+      const fixture = TestBed.createComponent(AthSelectComponent);
+      fixture.componentRef.setInput('options', PROJECTS.slice(1));
+      fixture.componentRef.setInput('placeholder', '');
+      fixture.detectChanges();
+      const select = (fixture.nativeElement as HTMLElement).querySelector('select')!;
+      expect(select.options.length).toBe(2);
+      expect(select.options[0].textContent?.trim()).toBe('Atlas');
+    });
   });
 });
