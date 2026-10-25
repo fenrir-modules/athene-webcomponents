@@ -18,6 +18,8 @@ export type AthNavDot = 'ok' | 'warn' | 'error';
  *   shows it to the right; an unread `badge` becomes a dot on the icon.
  * - Active: a tinted pill, the accent on the icon, and (with `indicator`)
  *   a 2-px bar at the left edge.
+ * - `[athNavItemEnd]`: a projected marker at the row's end (a "Beta" pill),
+ *   inside the link and its active pill; it folds away with the label.
  *
  * Layout contract: the row stretches to its parent's width in both modes;
  * the icon sits in a fixed 40-px cell so it keeps its x position while a
@@ -26,6 +28,7 @@ export type AthNavDot = 'ok' | 'warn' | 'error';
  * @example
  * <ath-nav-item [icon]="Inbox" label="Inbox" route="/app/inbox" [badge]="3" />
  * <ath-nav-item [chip]="{ text: 'ATL', color: 'var(--blue)' }" label="Atlas" [route]="['/p', id]" />
+ * <ath-nav-item [icon]="Sparkles" label="Assistant" route="/ai"><span athNavItemEnd>Beta</span></ath-nav-item>
  */
 export declare class AthNavItemComponent {
     /** Visible label; also the tooltip and accessible name when compact. */
@@ -55,5 +58,5 @@ export declare class AthNavItemComponent {
     /** Pointer over the row or keyboard focus on it: shows the tooltip. */
     protected readonly active: import("@angular/core").WritableSignal<boolean>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthNavItemComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<AthNavItemComponent, "ath-nav-item", never, { "label": { "alias": "label"; "required": true; "isSignal": true; }; "route": { "alias": "route"; "required": false; "isSignal": true; }; "exact": { "alias": "exact"; "required": false; "isSignal": true; }; "icon": { "alias": "icon"; "required": false; "isSignal": true; }; "chip": { "alias": "chip"; "required": false; "isSignal": true; }; "badge": { "alias": "badge"; "required": false; "isSignal": true; }; "dot": { "alias": "dot"; "required": false; "isSignal": true; }; "muted": { "alias": "muted"; "required": false; "isSignal": true; }; "compact": { "alias": "compact"; "required": false; "isSignal": true; }; "indicator": { "alias": "indicator"; "required": false; "isSignal": true; }; "tooltip": { "alias": "tooltip"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<AthNavItemComponent, "ath-nav-item", never, { "label": { "alias": "label"; "required": true; "isSignal": true; }; "route": { "alias": "route"; "required": false; "isSignal": true; }; "exact": { "alias": "exact"; "required": false; "isSignal": true; }; "icon": { "alias": "icon"; "required": false; "isSignal": true; }; "chip": { "alias": "chip"; "required": false; "isSignal": true; }; "badge": { "alias": "badge"; "required": false; "isSignal": true; }; "dot": { "alias": "dot"; "required": false; "isSignal": true; }; "muted": { "alias": "muted"; "required": false; "isSignal": true; }; "compact": { "alias": "compact"; "required": false; "isSignal": true; }; "indicator": { "alias": "indicator"; "required": false; "isSignal": true; }; "tooltip": { "alias": "tooltip"; "required": false; "isSignal": true; }; }, {}, never, ["[athNavItemEnd]"], true, never>;
 }

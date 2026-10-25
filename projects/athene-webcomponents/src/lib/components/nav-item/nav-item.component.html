@@ -40,6 +40,9 @@
     @if (dot(); as tone) {
       <span class="ath-nav-item__dot" [attr.data-tone]="tone" aria-hidden="true"></span>
     }
+    <!-- A marker at the row's end ("Beta"): inside the link, so the active
+         pill covers it and the link's name includes it. -->
+    <span class="ath-nav-item__end"><ng-content select="[athNavItemEnd]" /></span>
   </span>
 
   @if (tooltipText(); as text) {

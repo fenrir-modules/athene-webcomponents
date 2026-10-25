@@ -170,6 +170,17 @@ $dur-fast: 120ms;
   text-overflow: ellipsis;
 }
 
+// The projected end marker: right-aligned after the label, never shrunk.
+.ath-nav-item__end {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+
+  &:empty {
+    display: none;
+  }
+}
+
 .ath-nav-item__badge {
   flex-shrink: 0;
   display: inline-flex;

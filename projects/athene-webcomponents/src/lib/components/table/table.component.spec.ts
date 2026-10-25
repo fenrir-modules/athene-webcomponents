@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AthTableComponent } from './table.component';
@@ -6,7 +6,7 @@ import { AthTableComponent } from './table.component';
 @Component({
   imports: [AthTableComponent],
   template: `
-    <ath-table>
+    <ath-table [flush]="flush()">
       <thead>
         <tr>
           <th>Name</th>
@@ -20,7 +20,9 @@ import { AthTableComponent } from './table.component';
     </ath-table>
   `,
 })
-class HostComponent {}
+class HostComponent {
+  readonly flush = signal(false);
+}
 
 describe('AthTableComponent', () => {
   let fixture: ComponentFixture<HostComponent>;
@@ -39,5 +41,14 @@ describe('AthTableComponent', () => {
     expect(table).not.toBeNull();
     expect(table.textContent).toContain('Name');
     expect(table.textContent).toContain('Item');
+  });
+
+  it('draws its frame unless flush', () => {
+    const frame = () =>
+      (fixture.nativeElement as HTMLElement).querySelector('.ath-table') as HTMLElement;
+    expect(frame().classList).not.toContain('ath-table--flush');
+    fixture.componentInstance.flush.set(true);
+    fixture.detectChanges();
+    expect(frame().classList).toContain('ath-table--flush');
   });
 });

@@ -85,6 +85,32 @@
 }
 
 // -------------------------------------------
+// Flush: no frame, between two hairlines
+// -------------------------------------------
+.ath-table--flush {
+  border: 0;
+  border-block: 1px solid var(--border-faint);
+  border-radius: 0;
+  background: transparent;
+
+  .ath-table__table thead th {
+    background: transparent;
+  }
+
+  .ath-table__table :is(thead th, tbody td) {
+    padding-inline: var(--space-3);
+
+    &:first-child {
+      padding-left: var(--space-1);
+    }
+
+    &:last-child {
+      padding-right: var(--space-1);
+    }
+  }
+}
+
+// -------------------------------------------
 // Compact Toggle in Table
 // -------------------------------------------
 .ath-table__table td .ath-toggle {

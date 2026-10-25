@@ -1,3 +1,4 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Inbox } from 'lucide-angular';
@@ -44,4 +45,31 @@ describe('AthNavItemComponent', () => {
     expect(q('.ath-nav-item__icon-dot')).not.toBeNull();
     expect(q('.ath-nav-item__tooltip')?.textContent?.trim()).toBe('Inbox · 3');
   });
+
+  it('projects an end marker inside the link, after the label', () => {
+    const host = TestBed.configureTestingModule({
+      imports: [EndHostComponent],
+      providers: [provideRouter([])],
+    }).createComponent(EndHostComponent);
+    host.detectChanges();
+    const root = host.nativeElement as HTMLElement;
+    const end = root.querySelector('a .ath-nav-item__tail .ath-nav-item__end');
+    expect(end?.querySelector('.beta')?.textContent).toBe('Beta');
+    expect(end?.previousElementSibling?.classList).toContain('ath-nav-item__label');
+    expect(root.querySelector('a')?.textContent).toContain('Beta');
+  });
+
+  it('draws no end cell without a marker', () => {
+    render({});
+    expect(q('.ath-nav-item__end')?.childElementCount).toBe(0);
+  });
 });
+
+@Component({
+  imports: [AthNavItemComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<ath-nav-item label="Assistant" route="/ai"
+    ><span athNavItemEnd class="beta">Beta</span></ath-nav-item
+  >`,
+})
+class EndHostComponent {}
