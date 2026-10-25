@@ -556,6 +556,32 @@
       "selection-fg": {
         "$value": "inherit"
       }
+    },
+    "ai": {
+      "$description": "Athene AI surfaces (AI1): the mark's hero gradient and the hero card behind it. Built from the accent steps, so every accent preset and both themes follow. Decorative only: text on these keeps --fg / --accent-text.",
+      "ai-from": {
+        "$value": "{color.accent.accent-dim}",
+        "$type": "color",
+        "$description": "Gradient start (the lighter accent step in light, the deeper one in dark)."
+      },
+      "ai-to": {
+        "$value": "{color.accent.accent-2}",
+        "$type": "color",
+        "$description": "Gradient end."
+      },
+      "ai-gradient": {
+        "$value": "linear-gradient(135deg, {color.ai.ai-from} 0%, {color.ai.ai-to} 100%)",
+        "$description": "The accent gradient of AI surfaces: the hero mark, a thin hero rule. Not behind text."
+      },
+      "ai-surface": {
+        "$value": "linear-gradient(135deg, color-mix(in srgb, {color.accent.accent} 9%, transparent) 0%, color-mix(in srgb, {color.accent.accent-dim} 4%, transparent) 55%, transparent 100%)",
+        "$description": "A barely tinted wash for the Athene AI hero card, over --surface. Text on it keeps its contrast (≤ 9% accent)."
+      },
+      "ai-border": {
+        "$value": "color-mix(in srgb, {color.accent.accent} 22%, {color.border.border})",
+        "$type": "color",
+        "$description": "Border of an Athene AI card: the hairline, warmed towards the accent."
+      }
     }
   },
   "radius": {

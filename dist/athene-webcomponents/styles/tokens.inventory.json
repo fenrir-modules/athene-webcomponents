@@ -676,6 +676,31 @@
       "type": "color"
     },
     {
+      "name": "--ai-from",
+      "path": "color.ai.ai-from",
+      "type": "color"
+    },
+    {
+      "name": "--ai-to",
+      "path": "color.ai.ai-to",
+      "type": "color"
+    },
+    {
+      "name": "--ai-gradient",
+      "path": "color.ai.ai-gradient",
+      "type": null
+    },
+    {
+      "name": "--ai-surface",
+      "path": "color.ai.ai-surface",
+      "type": null
+    },
+    {
+      "name": "--ai-border",
+      "path": "color.ai.ai-border",
+      "type": "color"
+    },
+    {
       "name": "--r-xs",
       "path": "radius.r-xs",
       "type": "dimension"

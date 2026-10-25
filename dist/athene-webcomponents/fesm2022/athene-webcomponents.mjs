@@ -1856,6 +1856,90 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImpo
         }] });
 
 /**
+ * The Athene AI mark, drawn on a 24-unit grid (AI1).
+ *
+ * "Perch": a solid, rounded A — the A of Athene and a perched little owl
+ * (Athene noctua) at once — with two round eyes cut out of it, the notch
+ * between its feet, and a four-point spark beside its head.
+ *
+ * Two optical sizes: below 21 px the eyes sit wider apart and are a little
+ * smaller, so they never run together, and the spark grows so it still
+ * reads as a spark rather than a dot.
+ */
+/** The body: rounded apex, rounded base corners, the notch between the feet. */
+const BODY = 'M10.5 4.5Q12 2.2 13.5 4.5L20.25 18.55Q21.45 21 18.75 21H15.1Q14.6 21 14.3 20.6' +
+    'L12 17.3 9.7 20.6Q9.4 21 8.9 21H5.25Q2.55 21 3.75 18.55Z';
+/** Two decimals at most, so the path data stays clean (13.7 + 1.7). */
+const n = (v) => +v.toFixed(2);
+/** A circle as a sub-path (cut out of the body by the even-odd rule). */
+function eye(cx, cy, r) {
+    return `M${n(cx)} ${n(cy + r)}a${n(r)} ${n(r)} 0 1 0 0-${n(2 * r)}a${n(r)} ${n(r)} 0 0 0 0 ${n(2 * r)}Z`;
+}
+/** A four-point spark with concave sides. */
+function spark(cx, cy, rx, ry, c) {
+    return (`M${n(cx)} ${n(cy - ry)}Q${n(cx + c)} ${n(cy - c)} ${n(cx + rx)} ${n(cy)}` +
+        `Q${n(cx + c)} ${n(cy + c)} ${n(cx)} ${n(cy + ry)}` +
+        `Q${n(cx - c)} ${n(cy + c)} ${n(cx - rx)} ${n(cy)}` +
+        `Q${n(cx - c)} ${n(cy - c)} ${n(cx)} ${n(cy - ry)}Z`);
+}
+/** 21 px and up (24, 32, 48 …). */
+const AI_MARK_REGULAR = {
+    body: BODY + eye(9.5, 13.5, 1.95) + eye(14.5, 13.5, 1.95),
+    spark: spark(18.9, 5.1, 2, 2.75, 0.4),
+};
+/** Up to 20 px (16, 20). */
+const AI_MARK_SMALL = {
+    body: BODY + eye(9.3, 13.7, 1.7) + eye(14.7, 13.7, 1.7),
+    spark: spark(18.9, 5, 2.4, 3.2, 0.5),
+};
+/** The largest size that still uses the small drawing. */
+const AI_MARK_SMALL_MAX = 20;
+
+let nextId = 0;
+/**
+ * The Athene AI mark ("Perch"), optionally with the wordmark.
+ *
+ * Decorative unless it carries a `label` (then `role="img"` with that
+ * name). With `wordmark`, the text "Athene AI" follows the mark and is
+ * what screen readers read; the mark itself is then hidden from them.
+ *
+ * @example
+ * <ath-ai-mark />                                   <!-- 16 px, decorative -->
+ * <ath-ai-mark [size]="48" variant="gradient" />
+ * <ath-ai-mark [size]="20" wordmark />
+ * <ath-ai-mark label="Athene AI" />
+ */
+class AthAiMarkComponent {
+    constructor() {
+        /** Edge length in px; the drawing switches to its small optical size up to 20. */
+        this.size = input(16);
+        this.variant = input('color');
+        /** Accessible name of the mark alone; empty = decorative. Ignored with `wordmark`. */
+        this.label = input('');
+        /** Show "Athene AI" next to the mark. */
+        this.wordmark = input(false, {
+            transform: (v) => v === '' || !!v,
+        });
+        /** Unique per instance: two gradients on one page must not share an id. */
+        this.gradientId = `ath-ai-mark-g${++nextId}`;
+        this.fillUrl = `url(#${this.gradientId})`;
+        this.shape = computed(() => this.size() <= AI_MARK_SMALL_MAX ? AI_MARK_SMALL : AI_MARK_REGULAR);
+        /** The name the image carries, when it stands alone. */
+        this.imageName = computed(() => (this.wordmark() ? '' : this.label().trim()));
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthAiMarkComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "19.2.25", type: AthAiMarkComponent, isStandalone: true, selector: "ath-ai-mark", inputs: { size: { classPropertyName: "size", publicName: "size", isSignal: true, isRequired: false, transformFunction: null }, variant: { classPropertyName: "variant", publicName: "variant", isSignal: true, isRequired: false, transformFunction: null }, label: { classPropertyName: "label", publicName: "label", isSignal: true, isRequired: false, transformFunction: null }, wordmark: { classPropertyName: "wordmark", publicName: "wordmark", isSignal: true, isRequired: false, transformFunction: null } }, host: { properties: { "attr.data-variant": "variant()", "style.--ai-mark-size": "size() + \"px\"" }, classAttribute: "ath-ai-mark" }, ngImport: i0, template: "<svg\n  class=\"ath-ai-mark__svg\"\n  viewBox=\"0 0 24 24\"\n  [attr.width]=\"size()\"\n  [attr.height]=\"size()\"\n  [attr.role]=\"imageName() ? 'img' : null\"\n  [attr.aria-label]=\"imageName() || null\"\n  [attr.aria-hidden]=\"imageName() ? null : 'true'\"\n  focusable=\"false\"\n>\n  @if (variant() === 'gradient') {\n    <defs>\n      <linearGradient\n        [attr.id]=\"gradientId\"\n        x1=\"4\"\n        y1=\"3\"\n        x2=\"20\"\n        y2=\"21\"\n        gradientUnits=\"userSpaceOnUse\"\n      >\n        <stop class=\"ath-ai-mark__from\" offset=\"0\" />\n        <stop class=\"ath-ai-mark__to\" offset=\"1\" />\n      </linearGradient>\n    </defs>\n  }\n  <path\n    class=\"ath-ai-mark__body\"\n    fill-rule=\"evenodd\"\n    [attr.d]=\"shape().body\"\n    [attr.fill]=\"variant() === 'gradient' ? fillUrl : null\"\n  />\n  <path\n    class=\"ath-ai-mark__spark\"\n    [attr.d]=\"shape().spark\"\n    [attr.fill]=\"variant() === 'gradient' ? fillUrl : null\"\n  />\n</svg>\n@if (wordmark()) {\n  <span class=\"ath-ai-mark__word\">Athene <span class=\"ath-ai-mark__ai\">AI</span></span>\n}\n", styles: [":host{--ai-mark-size: 16px;display:inline-flex;align-items:center;gap:calc(var(--ai-mark-size) * .4);flex-shrink:0;color:inherit;line-height:1;vertical-align:middle}.ath-ai-mark__svg{display:block;flex-shrink:0;overflow:visible}:host(:not([data-variant=gradient])) .ath-ai-mark__body,:host(:not([data-variant=gradient])) .ath-ai-mark__spark{fill:currentcolor}:host([data-variant=color]) .ath-ai-mark__spark{fill:var(--accent)}.ath-ai-mark__from{stop-color:var(--ai-from)}.ath-ai-mark__to{stop-color:var(--ai-to)}.ath-ai-mark__word{font-family:var(--font-sans);font-size:calc(var(--ai-mark-size) * .82);font-weight:var(--weight-semibold);letter-spacing:-.015em;color:var(--fg);white-space:nowrap}.ath-ai-mark__ai{color:var(--accent-text)}\n"], changeDetection: i0.ChangeDetectionStrategy.OnPush }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImport: i0, type: AthAiMarkComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'ath-ai-mark', changeDetection: ChangeDetectionStrategy.OnPush, host: {
+                        class: 'ath-ai-mark',
+                        '[attr.data-variant]': 'variant()',
+                        '[style.--ai-mark-size]': 'size() + "px"',
+                    }, template: "<svg\n  class=\"ath-ai-mark__svg\"\n  viewBox=\"0 0 24 24\"\n  [attr.width]=\"size()\"\n  [attr.height]=\"size()\"\n  [attr.role]=\"imageName() ? 'img' : null\"\n  [attr.aria-label]=\"imageName() || null\"\n  [attr.aria-hidden]=\"imageName() ? null : 'true'\"\n  focusable=\"false\"\n>\n  @if (variant() === 'gradient') {\n    <defs>\n      <linearGradient\n        [attr.id]=\"gradientId\"\n        x1=\"4\"\n        y1=\"3\"\n        x2=\"20\"\n        y2=\"21\"\n        gradientUnits=\"userSpaceOnUse\"\n      >\n        <stop class=\"ath-ai-mark__from\" offset=\"0\" />\n        <stop class=\"ath-ai-mark__to\" offset=\"1\" />\n      </linearGradient>\n    </defs>\n  }\n  <path\n    class=\"ath-ai-mark__body\"\n    fill-rule=\"evenodd\"\n    [attr.d]=\"shape().body\"\n    [attr.fill]=\"variant() === 'gradient' ? fillUrl : null\"\n  />\n  <path\n    class=\"ath-ai-mark__spark\"\n    [attr.d]=\"shape().spark\"\n    [attr.fill]=\"variant() === 'gradient' ? fillUrl : null\"\n  />\n</svg>\n@if (wordmark()) {\n  <span class=\"ath-ai-mark__word\">Athene <span class=\"ath-ai-mark__ai\">AI</span></span>\n}\n", styles: [":host{--ai-mark-size: 16px;display:inline-flex;align-items:center;gap:calc(var(--ai-mark-size) * .4);flex-shrink:0;color:inherit;line-height:1;vertical-align:middle}.ath-ai-mark__svg{display:block;flex-shrink:0;overflow:visible}:host(:not([data-variant=gradient])) .ath-ai-mark__body,:host(:not([data-variant=gradient])) .ath-ai-mark__spark{fill:currentcolor}:host([data-variant=color]) .ath-ai-mark__spark{fill:var(--accent)}.ath-ai-mark__from{stop-color:var(--ai-from)}.ath-ai-mark__to{stop-color:var(--ai-to)}.ath-ai-mark__word{font-family:var(--font-sans);font-size:calc(var(--ai-mark-size) * .82);font-weight:var(--weight-semibold);letter-spacing:-.015em;color:var(--fg);white-space:nowrap}.ath-ai-mark__ai{color:var(--accent-text)}\n"] }]
+        }] });
+
+/**
  * Athene Table Component
  *
  * Clean data table with consistent styling.
@@ -5392,5 +5476,5 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "19.2.25", ngImpo
  * Generated bundle index. Do not edit.
  */
 
-export { AVATAR_TONE_COUNT, AthAlertComponent, AthAvatarComponent, AthAvatarStackComponent, AthBadgeComponent, AthBreadcrumbComponent, AthButtonComponent, AthChipComponent, AthCodeBlockComponent, AthComboboxComponent, AthCopyButtonComponent, AthDialogComponent, AthDividerComponent, AthDropdownComponent, AthDueLabelComponent, AthEmptyStateComponent, AthFileDropComponent, AthFilterChipComponent, AthFloatingDirective, AthInputComponent, AthKbdComponent, AthKpiStripComponent, AthKpiTileComponent, AthListboxComponent, AthMarkdownComponent, AthMenuComponent, AthMenuItemComponent, AthMenuSeparatorComponent, AthMenuTriggerDirective, AthNavItemComponent, AthOptionPickerComponent, AthOverlayStack, AthPageComponent, AthPageHeaderComponent, AthPaginationComponent, AthPanelComponent, AthPanelGridComponent, AthPopoverComponent, AthPopoverContentDirective, AthPopoverTriggerDirective, AthPriorityComponent, AthProgressComponent, AthSearchInputComponent, AthSegmentComponent, AthSelectComponent, AthSheetComponent, AthSidebarComponent, AthSkeletonCardComponent, AthSkeletonComponent, AthSkeletonListComponent, AthSkeletonTableComponent, AthSlaBarComponent, AthSparklineComponent, AthSpinnerComponent, AthStatusPillComponent, AthTableComponent, AthTabsComponent, AthTextareaComponent, AthTimelineComponent, AthTimelineEntryComponent, AthTimelineEventComponent, AthTimerPillComponent, AthToastContainerComponent, AthToggleComponent, AthTooltipDirective, AthUserPickerComponent, DROPDOWN_SEPARATOR, athEscapeHtml, athPlainTextHtml, avatarInitials, avatarToneFor, calendarDayOf, calendarDaysUntil, compactDueText, describeDue, dueToneOf, floatPanel, formatAthLabel, fullDueDate, hasKpiTrend, injectAthLabels, installTopLayerStyles, isDayOnly, isDropdownSeparator, isVirtualAnchor, panelGridColumns, resolveAnchor, resolveFloatingTarget, runAthAction, shortDay, sparklineGeometry, supportsTopLayer, toneOfKey, zonedWallClock };
+export { AI_MARK_REGULAR, AI_MARK_SMALL, AI_MARK_SMALL_MAX, AVATAR_TONE_COUNT, AthAiMarkComponent, AthAlertComponent, AthAvatarComponent, AthAvatarStackComponent, AthBadgeComponent, AthBreadcrumbComponent, AthButtonComponent, AthChipComponent, AthCodeBlockComponent, AthComboboxComponent, AthCopyButtonComponent, AthDialogComponent, AthDividerComponent, AthDropdownComponent, AthDueLabelComponent, AthEmptyStateComponent, AthFileDropComponent, AthFilterChipComponent, AthFloatingDirective, AthInputComponent, AthKbdComponent, AthKpiStripComponent, AthKpiTileComponent, AthListboxComponent, AthMarkdownComponent, AthMenuComponent, AthMenuItemComponent, AthMenuSeparatorComponent, AthMenuTriggerDirective, AthNavItemComponent, AthOptionPickerComponent, AthOverlayStack, AthPageComponent, AthPageHeaderComponent, AthPaginationComponent, AthPanelComponent, AthPanelGridComponent, AthPopoverComponent, AthPopoverContentDirective, AthPopoverTriggerDirective, AthPriorityComponent, AthProgressComponent, AthSearchInputComponent, AthSegmentComponent, AthSelectComponent, AthSheetComponent, AthSidebarComponent, AthSkeletonCardComponent, AthSkeletonComponent, AthSkeletonListComponent, AthSkeletonTableComponent, AthSlaBarComponent, AthSparklineComponent, AthSpinnerComponent, AthStatusPillComponent, AthTableComponent, AthTabsComponent, AthTextareaComponent, AthTimelineComponent, AthTimelineEntryComponent, AthTimelineEventComponent, AthTimerPillComponent, AthToastContainerComponent, AthToggleComponent, AthTooltipDirective, AthUserPickerComponent, DROPDOWN_SEPARATOR, athEscapeHtml, athPlainTextHtml, avatarInitials, avatarToneFor, calendarDayOf, calendarDaysUntil, compactDueText, describeDue, dueToneOf, floatPanel, formatAthLabel, fullDueDate, hasKpiTrend, injectAthLabels, installTopLayerStyles, isDayOnly, isDropdownSeparator, isVirtualAnchor, panelGridColumns, resolveAnchor, resolveFloatingTarget, runAthAction, shortDay, sparklineGeometry, supportsTopLayer, toneOfKey, zonedWallClock };
 //# sourceMappingURL=athene-webcomponents.mjs.map

@@ -1,0 +1,40 @@
+<svg
+  class="ath-ai-mark__svg"
+  viewBox="0 0 24 24"
+  [attr.width]="size()"
+  [attr.height]="size()"
+  [attr.role]="imageName() ? 'img' : null"
+  [attr.aria-label]="imageName() || null"
+  [attr.aria-hidden]="imageName() ? null : 'true'"
+  focusable="false"
+>
+  @if (variant() === 'gradient') {
+    <defs>
+      <linearGradient
+        [attr.id]="gradientId"
+        x1="4"
+        y1="3"
+        x2="20"
+        y2="21"
+        gradientUnits="userSpaceOnUse"
+      >
+        <stop class="ath-ai-mark__from" offset="0" />
+        <stop class="ath-ai-mark__to" offset="1" />
+      </linearGradient>
+    </defs>
+  }
+  <path
+    class="ath-ai-mark__body"
+    fill-rule="evenodd"
+    [attr.d]="shape().body"
+    [attr.fill]="variant() === 'gradient' ? fillUrl : null"
+  />
+  <path
+    class="ath-ai-mark__spark"
+    [attr.d]="shape().spark"
+    [attr.fill]="variant() === 'gradient' ? fillUrl : null"
+  />
+</svg>
+@if (wordmark()) {
+  <span class="ath-ai-mark__word">Athene <span class="ath-ai-mark__ai">AI</span></span>
+}

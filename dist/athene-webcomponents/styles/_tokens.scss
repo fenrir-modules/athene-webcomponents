@@ -201,6 +201,13 @@
   --selection-bg: rgba(23, 23, 26, 0.16);
   --selection-fg: inherit;
 
+  // color.ai — Athene AI surfaces (AI1): the mark's hero gradient and the hero card behind it. Built from the accent steps, so every accent preset and both themes follow. Decorative only: text on these keeps --fg / --accent-text.
+  --ai-from: var(--accent-dim); // Gradient start (the lighter accent step in light, the deeper one in dark).
+  --ai-to: var(--accent-2); // Gradient end.
+  --ai-gradient: linear-gradient(135deg, var(--ai-from) 0%, var(--ai-to) 100%); // The accent gradient of AI surfaces: the hero mark, a thin hero rule. Not behind text.
+  --ai-surface: linear-gradient(135deg, color-mix(in srgb, var(--accent) 9%, transparent) 0%, color-mix(in srgb, var(--accent-dim) 4%, transparent) 55%, transparent 100%); // A barely tinted wash for the Athene AI hero card, over --surface. Text on it keeps its contrast (≤ 9% accent).
+  --ai-border: color-mix(in srgb, var(--accent) 22%, var(--border)); // Border of an Athene AI card: the hairline, warmed towards the accent.
+
   // ===== radius
   // radius — Radii — Linear-class, small & precise.
   --r-xs: 4px;
