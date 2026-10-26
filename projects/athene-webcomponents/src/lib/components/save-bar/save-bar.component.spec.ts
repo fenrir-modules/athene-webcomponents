@@ -21,22 +21,22 @@ describe('AthSaveBarComponent', () => {
     render({ open: false });
     expect(region()).toBeNull();
     const live = host().querySelector('[aria-live="polite"]')!;
-    expect(live.textContent!.trim()).toBe('');
+    expect(live.textContent.trim()).toBe('');
   });
 
   it('appears as a named region and announces itself', () => {
     render({ open: true });
     expect(region()!.getAttribute('aria-label')).toBe('You have unsaved changes');
-    expect(host().querySelector('[aria-live="polite"]')!.textContent!.trim()).toBe(
+    expect(host().querySelector('[aria-live="polite"]')!.textContent.trim()).toBe(
       'You have unsaved changes'
     );
-    expect(buttons().map((b) => b.textContent!.trim())).toEqual(['Discard', 'Save']);
+    expect(buttons().map((b) => b.textContent.trim())).toEqual(['Discard', 'Save']);
   });
 
   it('takes its own words', () => {
     render({ open: true, message: 'Role changed', saveLabel: 'Apply', discardLabel: 'Reset' });
     expect(region()!.textContent).toContain('Role changed');
-    expect(buttons().map((b) => b.textContent!.trim())).toEqual(['Reset', 'Apply']);
+    expect(buttons().map((b) => b.textContent.trim())).toEqual(['Reset', 'Apply']);
   });
 
   it('emits save and discard', () => {
@@ -57,7 +57,7 @@ describe('AthSaveBarComponent', () => {
     buttons()[0].click();
     fixture.detectChanges();
     expect(discarded).toBe(0);
-    expect(buttons()[0].textContent!.trim()).toBe('Really discard?');
+    expect(buttons()[0].textContent.trim()).toBe('Really discard?');
     buttons()[0].click();
     expect(discarded).toBe(1);
   });
@@ -68,10 +68,10 @@ describe('AthSaveBarComponent', () => {
     fixture.componentInstance.discard.subscribe(() => discarded++);
     escape();
     fixture.detectChanges();
-    expect(buttons()[0].textContent!.trim()).toBe('Really discard?');
+    expect(buttons()[0].textContent.trim()).toBe('Really discard?');
     escape();
     fixture.detectChanges();
-    expect(buttons()[0].textContent!.trim()).toBe('Discard');
+    expect(buttons()[0].textContent.trim()).toBe('Discard');
     expect(discarded).toBe(0);
   });
 

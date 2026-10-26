@@ -55,7 +55,7 @@ describe('AthAlertComponent', () => {
     fixture.componentRef.setInput('retry', retry);
     fixture.detectChanges();
     const button = box().querySelector<HTMLButtonElement>('.ath-alert__retry button')!;
-    expect(button.textContent!.trim()).toBe('Retry');
+    expect(button.textContent.trim()).toBe('Retry');
     button.click();
     button.click();
     fixture.detectChanges();

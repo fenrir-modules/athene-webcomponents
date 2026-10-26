@@ -20,7 +20,7 @@ describe('AthAvatarComponent', () => {
 
   it('shows initials on the tone of the person id', () => {
     create({ person: { id: 'user-42', name: 'Mira Voss' }, size: 'sm' });
-    expect(face().textContent!.trim()).toBe('MV');
+    expect(face().textContent.trim()).toBe('MV');
     expect(face().dataset['tone']).toBe(String(toneOfKey('user-42')));
     expect(face().getAttribute('role')).toBe('img');
     expect(face().getAttribute('aria-label')).toBe('Mira Voss');
@@ -77,7 +77,7 @@ describe('AthAvatarComponent', () => {
 
   it('keeps the legacy name input: initials tone, no tooltip', () => {
     create({ name: 'Dev User' });
-    expect(face().textContent!.trim()).toBe('DU');
+    expect(face().textContent.trim()).toBe('DU');
     expect(face().getAttribute('title')).toBeNull();
     expect(face().dataset['tone']).toBeDefined();
   });
@@ -89,6 +89,6 @@ describe('AthAvatarComponent', () => {
     img.dispatchEvent(new Event('error'));
     fixture.detectChanges();
     expect(face().querySelector('img')).toBeNull();
-    expect(face().textContent!.trim()).toBe('AL');
+    expect(face().textContent.trim()).toBe('AL');
   });
 });

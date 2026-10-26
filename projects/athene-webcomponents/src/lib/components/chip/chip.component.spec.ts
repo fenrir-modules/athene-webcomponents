@@ -88,7 +88,7 @@ describe('AthChipComponent', () => {
 
   it('reads "+N" as "N more: names"', () => {
     const count = chips()[6];
-    expect(count.textContent!.trim()).toBe('+3');
+    expect(count.textContent.trim()).toBe('+3');
     expect(count.getAttribute('aria-label')).toBe('3 more: design, api, backend');
   });
 

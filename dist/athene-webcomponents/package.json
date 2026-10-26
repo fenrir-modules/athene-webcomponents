@@ -4,10 +4,10 @@
   "description": "Athene UI Component Library",
   "sideEffects": false,
   "peerDependencies": {
-    "@angular/common": "^19.2.0",
-    "@angular/core": "^19.2.0",
-    "@angular/forms": "^19.2.0",
-    "@angular/router": "^19.2.0"
+    "@angular/common": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@angular/forms": "^20.3.0",
+    "@angular/router": "^20.3.0"
   },
   "dependencies": {
     "@lucide/angular": "^1.55.0",

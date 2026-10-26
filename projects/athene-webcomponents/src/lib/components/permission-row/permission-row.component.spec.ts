@@ -55,8 +55,8 @@ describe('AthPermissionRowComponent', () => {
 
   it('shows the icon, name and one-line explanation', () => {
     expect(row().querySelector('ath-icon')).not.toBeNull();
-    expect(row().querySelector('.ath-perm__label')!.textContent!.trim()).toBe('Create projects');
-    expect(row().querySelector('.ath-perm__explain')!.textContent!.trim()).toBe(
+    expect(row().querySelector('.ath-perm__label')!.textContent.trim()).toBe('Create projects');
+    expect(row().querySelector('.ath-perm__explain')!.textContent.trim()).toBe(
       'New projects in the workspace'
     );
     expect(row().querySelector('.ath-perm__icon')!.getAttribute('aria-hidden')).toBe('true');
@@ -93,7 +93,7 @@ describe('AthPermissionRowComponent', () => {
     fixture.componentInstance.disabled.set(true);
     fixture.componentInstance.reason.set('Guests can never do this');
     fixture.detectChanges();
-    expect(row().querySelector('.ath-perm__sr')!.textContent!.trim()).toBe(
+    expect(row().querySelector('.ath-perm__sr')!.textContent.trim()).toBe(
       'Guests can never do this'
     );
   });
@@ -101,7 +101,7 @@ describe('AthPermissionRowComponent', () => {
   it('shows the inherited hint', () => {
     fixture.componentInstance.hint.set('✓ inherited from role Developer');
     fixture.detectChanges();
-    expect(row().querySelector('.ath-perm__hint')!.textContent!.trim()).toBe(
+    expect(row().querySelector('.ath-perm__hint')!.textContent.trim()).toBe(
       '✓ inherited from role Developer'
     );
   });

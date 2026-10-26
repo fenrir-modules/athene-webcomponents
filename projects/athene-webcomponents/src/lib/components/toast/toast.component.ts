@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AthIconComponent } from '../icon/icon.component';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide';
@@ -39,7 +39,7 @@ export class AthToastContainerComponent {
   protected readonly infoIcon = Info;
   protected readonly closeIcon = X;
 
-  constructor(protected toastService: AthToastService) {}
+  protected readonly toastService = inject(AthToastService);
 
   get toasts() {
     return this.toastService.toasts();

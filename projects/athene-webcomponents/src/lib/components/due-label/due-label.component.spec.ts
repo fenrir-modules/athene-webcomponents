@@ -83,7 +83,7 @@ describe('AthDueLabelComponent', () => {
 
   it('shows the placeholder without a date, nothing by default', () => {
     create({ date: null });
-    expect(el().textContent!.trim()).toBe('');
+    expect(el().textContent.trim()).toBe('');
     fixture.componentRef.setInput('placeholder', '—');
     fixture.detectChanges();
     expect(el().querySelector('.ath-due--none')!.textContent).toBe('—');

@@ -71,7 +71,7 @@ describe('AthSkeletonListComponent', () => {
     const cells = el.querySelectorAll<HTMLElement>('.ath-skeleton-list__cell');
     expect(cells.length).toBe(3);
     expect(cells[0].getBoundingClientRect().height).toBe(44);
-    expect(el.querySelector('[role="status"]')!.textContent!.trim()).toBe('Lädt');
+    expect(el.querySelector('[role="status"]')!.textContent.trim()).toBe('Lädt');
   });
 
   it('lays out a card grid', () => {

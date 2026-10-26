@@ -116,7 +116,7 @@ describe('AthKpiTileComponent', () => {
       const dot = prog.querySelector<HTMLElement>('.ath-kpi__label .ath-kpi__dot')!;
       expect(getComputedStyle(dot).backgroundColor).toBe('rgb(1, 2, 3)');
       expect(dot.getAttribute('aria-hidden')).toBe('true');
-      expect(prog.querySelector('.ath-kpi__label')!.textContent!.trim()).toBe('In progress');
+      expect(prog.querySelector('.ath-kpi__label')!.textContent.trim()).toBe('In progress');
     });
 
     it('lets alert win over a value tone', () => {

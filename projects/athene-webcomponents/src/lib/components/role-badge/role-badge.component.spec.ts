@@ -17,7 +17,7 @@ describe('AthRoleBadgeComponent', () => {
     render({ name: 'Developer', color: 'blue' });
     expect(badge().getAttribute('data-color')).toBe('blue');
     expect(badge().querySelector('.ath-role-badge__dot')!.getAttribute('aria-hidden')).toBe('true');
-    expect(badge().textContent!.trim()).toBe('Developer');
+    expect(badge().textContent.trim()).toBe('Developer');
   });
 
   it('draws an unknown or missing colour neutral', () => {
@@ -31,7 +31,7 @@ describe('AthRoleBadgeComponent', () => {
   it('marks a fixed role with a lock that is read out', () => {
     render({ name: 'Owner', color: 'amber', locked: true, size: 'sm' });
     expect(badge().querySelector('ath-icon')).not.toBeNull();
-    expect(badge().querySelector('.ath-role-badge__sr')!.textContent!.trim()).toBe('Fixed role:');
+    expect(badge().querySelector('.ath-role-badge__sr')!.textContent.trim()).toBe('Fixed role:');
     expect(badge().getAttribute('data-size')).toBe('sm');
   });
 });
