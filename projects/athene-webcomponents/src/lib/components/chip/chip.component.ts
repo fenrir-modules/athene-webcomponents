@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { LucideAngularModule, X, Zap } from 'lucide-angular';
+import { AthIconComponent, type AthIconData } from '../icon/icon.component';
+import { X, Zap } from 'lucide';
 import { formatAthLabel, injectAthLabels } from '../../i18n/labels';
 import { AthTooltipDirective } from '../tooltip';
 
-/** A lucide icon (`lucide-angular` does not export its data type from its entry). */
-export type AthChipIcon = typeof Zap;
+/** A lucide icon (`import { Bug } from '@athene/webcomponents/icons'`). */
+export type AthChipIcon = AthIconData;
 
 /** Semantic tone of a `tag` or `status` chip. */
 export type ChipVariant = 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info';
@@ -47,7 +48,7 @@ export type ChipShape = 'pill' | 'square';
  */
 @Component({
   selector: 'ath-chip',
-  imports: [LucideAngularModule, AthTooltipDirective],
+  imports: [AthIconComponent, AthTooltipDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './chip.component.html',
   styleUrl: './chip.component.scss',

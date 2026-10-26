@@ -104,9 +104,9 @@ export declare class AthListboxComponent<T = string> {
     /** The user chose the "create" row; carries the trimmed query. */
     readonly create: import("@angular/core").OutputEmitterRef<string>;
     readonly listId: string;
-    protected readonly checkIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly plusIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly searchIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly checkIcon: import("lucide").IconNode;
+    protected readonly plusIcon: import("lucide").IconNode;
+    protected readonly searchIcon: import("lucide").IconNode;
     private readonly searchRef;
     private readonly listRef;
     private readonly activeRaw;

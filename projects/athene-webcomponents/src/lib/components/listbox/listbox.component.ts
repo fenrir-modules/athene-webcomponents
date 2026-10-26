@@ -12,7 +12,8 @@ import {
   viewChild,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { Check, LucideAngularModule, Plus, Search } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { Check, Plus, Search } from 'lucide';
 import { formatAthLabel, injectAthLabels } from '../../i18n/label-utils';
 import type { AthIconData } from '../floating/icon';
 import { Typeahead, edgeIndex, isTypeaheadKey, stepIndex } from '../floating/list-keys';
@@ -101,7 +102,7 @@ function foldText(text: string): string {
  */
 @Component({
   selector: 'ath-listbox',
-  imports: [NgTemplateOutlet, LucideAngularModule],
+  imports: [NgTemplateOutlet, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './listbox.component.html',
   styleUrl: './listbox.component.scss',

@@ -8,7 +8,8 @@ import {
   signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { LucideAngularModule, ChevronRight } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { ChevronRight } from 'lucide';
 import { injectAthLabels } from '../../i18n/labels';
 import { AthDropdownComponent, type DropdownItem } from '../dropdown/dropdown.component';
 
@@ -46,7 +47,7 @@ const NARROW_QUERY = '(max-width: 640px)';
  */
 @Component({
   selector: 'ath-breadcrumb',
-  imports: [RouterLink, LucideAngularModule, AthDropdownComponent],
+  imports: [RouterLink, AthIconComponent, AthDropdownComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './breadcrumb.component.html',
   styleUrl: './breadcrumb.component.scss',

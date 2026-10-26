@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { Inbox } from 'lucide-angular';
+import { Inbox } from 'lucide';
 import { AthNavItemComponent } from './nav-item.component';
 
 describe('AthNavItemComponent', () => {

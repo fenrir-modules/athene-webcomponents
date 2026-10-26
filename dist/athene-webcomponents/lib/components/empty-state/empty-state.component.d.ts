@@ -1,15 +1,11 @@
+import { type AthIconData } from '../icon/icon.component';
 import * as i0 from "@angular/core";
 /**
- * Lucide's icon data, mirrored exactly: `lucide-angular` does not export
- * `LucideIconData` from its public entry, so consumers pass `Inbox`,
- * `CheckCircle2`, … straight in without a cast.
+ * A Lucide icon (`import { Inbox } from '@athene/webcomponents/icons'`).
+ * `LucideIconDataLike` stays as the older name of the same type.
  */
-type LucideIconNode = readonly [string, {
-    [key: string]: string | number;
-}];
-export type LucideIconDataLike = readonly LucideIconNode[];
-/** A lucide icon (`import { Inbox } from 'lucide-angular'`) — no cast needed. */
-export type EmptyStateIcon = LucideIconDataLike | readonly (readonly [string, Record<string, string | number>])[];
+export type LucideIconDataLike = AthIconData;
+export type EmptyStateIcon = AthIconData;
 /** One "what will appear here" row in a compact empty state. */
 export interface EmptyStateHint {
     icon?: EmptyStateIcon | null;
@@ -44,7 +40,7 @@ export declare class AthEmptyStateComponent {
     /** Optional sub-message */
     readonly subMessage: import("@angular/core").InputSignal<string>;
     /** Optional lucide icon shown above the message. */
-    readonly icon: import("@angular/core").InputSignal<EmptyStateIcon | null>;
+    readonly icon: import("@angular/core").InputSignal<AthIconData | null>;
     /**
      * No frame of its own, for an empty state that already sits inside a
      * panel; the dashed box inside a white panel drew a card in a card.
@@ -56,7 +52,7 @@ export declare class AthEmptyStateComponent {
     readonly hints: import("@angular/core").InputSignal<readonly EmptyStateHint[]>;
     /** Primary action label; emits `action` when clicked. */
     readonly actionLabel: import("@angular/core").InputSignal<string>;
-    readonly actionIcon: import("@angular/core").InputSignal<EmptyStateIcon | null>;
+    readonly actionIcon: import("@angular/core").InputSignal<AthIconData | null>;
     /** Secondary (outline) action label; emits `secondaryAction`. */
     readonly secondaryActionLabel: import("@angular/core").InputSignal<string>;
     readonly action: import("@angular/core").OutputEmitterRef<void>;
@@ -64,4 +60,3 @@ export declare class AthEmptyStateComponent {
     static ɵfac: i0.ɵɵFactoryDeclaration<AthEmptyStateComponent, never>;
     static ɵcmp: i0.ɵɵComponentDeclaration<AthEmptyStateComponent, "ath-empty-state", never, { "message": { "alias": "message"; "required": true; "isSignal": true; }; "subMessage": { "alias": "subMessage"; "required": false; "isSignal": true; }; "icon": { "alias": "icon"; "required": false; "isSignal": true; }; "bare": { "alias": "bare"; "required": false; "isSignal": true; }; "size": { "alias": "size"; "required": false; "isSignal": true; }; "hints": { "alias": "hints"; "required": false; "isSignal": true; }; "actionLabel": { "alias": "actionLabel"; "required": false; "isSignal": true; }; "actionIcon": { "alias": "actionIcon"; "required": false; "isSignal": true; }; "secondaryActionLabel": { "alias": "secondaryActionLabel"; "required": false; "isSignal": true; }; }, { "action": "action"; "secondaryAction": "secondaryAction"; }, never, ["*", "*"], true, never>;
 }
-export {};

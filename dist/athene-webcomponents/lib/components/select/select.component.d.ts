@@ -52,8 +52,8 @@ export declare class AthSelectComponent implements ControlValueAccessor {
     protected readonly fieldValue: import("@angular/core").WritableSignal<string>;
     private readonly formDisabled;
     protected readonly isDisabled: import("@angular/core").Signal<boolean>;
-    protected readonly chevronIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly alertIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly chevronIcon: import("lucide").IconNode;
+    protected readonly alertIcon: import("lucide").IconNode;
     private onChange;
     protected onTouched: () => void;
     writeValue(value: string): void;

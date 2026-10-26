@@ -30,7 +30,7 @@ describe('AthRoleBadgeComponent', () => {
 
   it('marks a fixed role with a lock that is read out', () => {
     render({ name: 'Owner', color: 'amber', locked: true, size: 'sm' });
-    expect(badge().querySelector('lucide-icon')).not.toBeNull();
+    expect(badge().querySelector('ath-icon')).not.toBeNull();
     expect(badge().querySelector('.ath-role-badge__sr')!.textContent!.trim()).toBe('Fixed role:');
     expect(badge().getAttribute('data-size')).toBe('sm');
   });

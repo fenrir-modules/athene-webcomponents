@@ -5,7 +5,7 @@
   [attr.role]="role()"
 >
   @if (showIcon()) {
-    <lucide-icon class="ath-alert__icon" [img]="glyph()" [size]="16" aria-hidden="true" />
+    <ath-icon class="ath-alert__icon" [img]="glyph()" [size]="16" aria-hidden="true" />
   }
   <span class="ath-alert__message">
     @if (title()) {
@@ -26,7 +26,7 @@
       [attr.aria-label]="dismissText()"
       (click)="dismiss()"
     >
-      <lucide-icon [img]="closeIcon" [size]="14" aria-hidden="true" />
+      <ath-icon [img]="closeIcon" [size]="14" aria-hidden="true" />
     </button>
   }
 </div>

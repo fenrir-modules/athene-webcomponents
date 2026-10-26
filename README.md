@@ -87,6 +87,23 @@ Style Dictionary 5 brings 13 runtime dependencies: prettier, colorjs.io, tinycol
 
 The generator is about 450 lines of plain Node with no dependencies and is covered by `scripts/tokens/tokens.test.mjs`. The sources follow DTCG, so switching to Style Dictionary later only means writing a format; the JSON doesn't change.
 
+## Icons: `ath-icon` and `@athene/webcomponents/icons` (W4-A)
+
+```ts
+import { AthIconComponent } from '@athene/webcomponents';
+import { Users } from '@athene/webcomponents/icons';
+```
+
+```html
+<ath-icon [img]="Users" [size]="16" />
+```
+
+- `@athene/webcomponents/icons` re-exports every icon of the framework-free `lucide` package as plain data (`AthIconData`), under the names `lucide-angular` used. It has no code of its own, so a bundle gets exactly the icons it imports, in the chunk that imports them.
+- `ath-icon` replaces `lucide-angular`'s `<lucide-icon>` (deprecated, Angular up to 21 only) with the same shape and inputs: an inline host with the `<svg>` inside; `img`, `size`, `strokeWidth`, `color`, `absoluteStrokeWidth`; a static `class` lands on the host and the svg. Host styles, toggled host classes, `role`, `aria-label` and `title` work as before.
+- The svg is drawn by `LucideDynamicIcon` from `@lucide/angular` and is always `aria-hidden`; name the host when the icon carries meaning. Not used: the per-icon components of `@lucide/angular`, each with its own copy of the template (2–3 kB per icon in a bundle).
+- An icon of your own is `{ name, node }`; the svg gets the class `lucide-<name>`. `LucideDynamicIcon` passes only a fixed set of attributes to the paths (no `fill-rule`); set such a property in CSS on `svg.lucide-<name>`.
+- `@lucide/angular` and `lucide` are released together; update both to the same version.
+
 ## Display primitives (quality step 1.7)
 
 Presentational only: the app passes ids, names, colours and dates; resolving them (directories, ticket types, sprints) stays in the app. Every word comes from `ATH_LABELS` (`core/src/labels.ts`); labels with placeholders (`{count}`, `{name}`, `{sprint}`) keep them in the translation, e.g. `dueOverdue: () => t('time.due.overdue', { count: '{count}' })`.

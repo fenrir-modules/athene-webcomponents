@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { LucideAngularModule } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
 import type { AthIconData } from '../floating/icon';
 
 export type { AthIconData } from '../floating/icon';
@@ -39,7 +39,7 @@ export type AthNavDot = 'ok' | 'warn' | 'error';
  */
 @Component({
   selector: 'ath-nav-item',
-  imports: [RouterLink, RouterLinkActive, LucideAngularModule],
+  imports: [RouterLink, RouterLinkActive, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './nav-item.component.html',
   styleUrl: './nav-item.component.scss',

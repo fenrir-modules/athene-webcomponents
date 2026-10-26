@@ -11,7 +11,7 @@
 >
   @if (busy()) {
     <span class="ath-button__loader-wrap">
-      <lucide-icon [img]="loaderIcon" class="ath-button__loader" [size]="18" aria-hidden="true" />
+      <ath-icon [img]="loaderIcon" class="ath-button__loader" [size]="18" aria-hidden="true" />
     </span>
   }
   <span class="ath-button__content" [class.ath-button__content--hidden]="busy()">

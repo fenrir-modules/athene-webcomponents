@@ -15,8 +15,8 @@ export declare class AthSidebarComponent {
     protected readonly labels: import("dist/athene-webcomponents/core/labels").AthLabels;
     /** Collapsed state. Two-way: `[(collapsed)]` (`collapsedChange`). */
     readonly collapsed: import("@angular/core").ModelSignal<boolean>;
-    protected readonly collapseIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly expandIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly collapseIcon: import("lucide").IconNode;
+    protected readonly expandIcon: import("lucide").IconNode;
     protected readonly sidebarClasses: import("@angular/core").Signal<string>;
     toggleCollapse(): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthSidebarComponent, never>;

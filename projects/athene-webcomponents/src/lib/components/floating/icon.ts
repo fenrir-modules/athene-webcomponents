@@ -1,7 +1,6 @@
-import type { Check } from 'lucide-angular';
-
 /**
- * A Lucide icon as `lucide-angular` exports it (`import { Pencil } from
- * 'lucide-angular'`). The package does not export the type itself.
+ * A Lucide icon (`import { Pencil } from '@athene/webcomponents/icons'`).
+ * Kept here, where the overlay components first defined it; the type lives
+ * with `ath-icon`.
  */
-export type AthIconData = typeof Check;
+export type { AthIconData } from '../icon/icon.component';

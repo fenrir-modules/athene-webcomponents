@@ -1,5 +1,5 @@
 <div class="ath-search-input">
-  <lucide-icon [img]="searchIcon" [size]="18" class="ath-search-input__icon" />
+  <ath-icon [img]="searchIcon" [size]="18" class="ath-search-input__icon" />
   <input
     type="text"
     class="ath-search-input__field"
@@ -14,7 +14,7 @@
       [attr.aria-label]="labels.clearSearch()"
       (click)="clear()"
     >
-      <lucide-icon [img]="clearIcon" [size]="16" />
+      <ath-icon [img]="clearIcon" [size]="16" />
     </button>
   }
 </div>

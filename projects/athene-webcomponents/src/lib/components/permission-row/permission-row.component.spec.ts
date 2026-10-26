@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FolderPlus } from 'lucide-angular';
+import { FolderPlus } from 'lucide';
 import { AthToggleComponent } from '../toggle';
 import { AthPermissionRowComponent } from './permission-row.component';
 
@@ -54,7 +54,7 @@ describe('AthPermissionRowComponent', () => {
   });
 
   it('shows the icon, name and one-line explanation', () => {
-    expect(row().querySelector('lucide-icon')).not.toBeNull();
+    expect(row().querySelector('ath-icon')).not.toBeNull();
     expect(row().querySelector('.ath-perm__label')!.textContent!.trim()).toBe('Create projects');
     expect(row().querySelector('.ath-perm__explain')!.textContent!.trim()).toBe(
       'New projects in the workspace'

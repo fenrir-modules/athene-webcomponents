@@ -6,7 +6,8 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { AlertTriangle, LucideAngularModule, Zap } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { AlertTriangle, Zap } from 'lucide';
 import { formatAthLabel, injectAthLabels } from '../../i18n/labels';
 import { ATH_DATE_CONTEXT, type AthDateContext, type DueSource, describeDue } from './due-date';
 
@@ -33,7 +34,7 @@ import { ATH_DATE_CONTEXT, type AthDateContext, type DueSource, describeDue } fr
  */
 @Component({
   selector: 'ath-due-label',
-  imports: [LucideAngularModule],
+  imports: [AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './due-label.component.html',
   styleUrl: './due-label.component.scss',

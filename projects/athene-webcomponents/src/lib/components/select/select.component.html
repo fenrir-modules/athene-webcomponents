@@ -38,12 +38,12 @@
         </option>
       }
     </select>
-    <lucide-icon [img]="chevronIcon" [size]="16" class="ath-select__chevron" />
+    <ath-icon [img]="chevronIcon" [size]="16" class="ath-select__chevron" />
   </div>
 
   @if (error()) {
     <div class="ath-select__error">
-      <lucide-icon [img]="alertIcon" [size]="14" />
+      <ath-icon [img]="alertIcon" [size]="14" />
       {{ error() }}
     </div>
   }

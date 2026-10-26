@@ -6,14 +6,8 @@ import {
   output,
   type Signal,
 } from '@angular/core';
-import {
-  AlertOctagon,
-  AlertTriangle,
-  CheckCircle2,
-  Info,
-  LucideAngularModule,
-  X,
-} from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { AlertOctagon, AlertTriangle, CheckCircle2, Info, X } from 'lucide';
 import { injectAthLabels } from '../../i18n/labels';
 import { AthButtonComponent, type AthAction } from '../button';
 
@@ -45,7 +39,7 @@ export type AlertAppearance = 'inline' | 'banner';
  */
 @Component({
   selector: 'ath-alert',
-  imports: [LucideAngularModule, AthButtonComponent],
+  imports: [AthIconComponent, AthButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.ath-alert--empty]': '!message() && !title()',

@@ -6,7 +6,7 @@
   (click)="openPicker()"
 >
   <span class="ath-fdrop__icon" aria-hidden="true">
-    <lucide-icon [img]="uploadIcon" [size]="20" />
+    <ath-icon [img]="uploadIcon" [size]="20" />
   </span>
   <span class="ath-fdrop__prompt">
     <ng-content>{{ prompt() ?? labels.fileDropPrompt() }}</ng-content>

@@ -1,3 +1,4 @@
+import type { AthIconData } from '../floating/icon';
 import * as i0 from "@angular/core";
 export type { AthIconData } from '../floating/icon';
 /** Colour and short text drawn in place of an icon (a project's key). */
@@ -38,7 +39,7 @@ export declare class AthNavItemComponent {
     /** Exact match for the active state (default: prefix match, like Angular). */
     readonly exact: import("@angular/core").InputSignal<boolean>;
     /** Either an icon or a chip. */
-    readonly icon: import("@angular/core").InputSignal<import("node_modules/lucide-angular/icons/types").LucideIconData | null>;
+    readonly icon: import("@angular/core").InputSignal<AthIconData | null>;
     readonly chip: import("@angular/core").InputSignal<AthNavChip | null>;
     /** A count (unread items); nothing below 1. */
     readonly badge: import("@angular/core").InputSignal<number | null>;

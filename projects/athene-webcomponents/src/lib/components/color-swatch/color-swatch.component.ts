@@ -8,7 +8,8 @@ import {
   input,
   model,
 } from '@angular/core';
-import { Check, LucideAngularModule } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { Check } from 'lucide';
 import { injectAthLabels } from '../../i18n/labels';
 import { ATH_DECO_COLORS, type AthDecoColor, athDecoColorLabel } from './deco-color';
 
@@ -23,7 +24,7 @@ import { ATH_DECO_COLORS, type AthDecoColor, athDecoColorLabel } from './deco-co
  */
 @Component({
   selector: 'ath-color-swatch',
-  imports: [LucideAngularModule],
+  imports: [AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './color-swatch.component.html',
   styleUrl: './color-swatch.component.scss',

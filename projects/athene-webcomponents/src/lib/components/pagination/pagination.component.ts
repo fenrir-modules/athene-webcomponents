@@ -8,14 +8,8 @@ import {
   output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  LucideAngularModule,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  MoreHorizontal,
-} from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, MoreHorizontal } from 'lucide';
 import { formatAthLabel, injectAthLabels } from '../../i18n/labels';
 
 export type PaginationMode = 'numbered' | 'cursor';
@@ -35,7 +29,7 @@ export type PaginationMode = 'numbered' | 'cursor';
  */
 @Component({
   selector: 'ath-pagination',
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pagination.component.html',
   styleUrl: './pagination.component.scss',

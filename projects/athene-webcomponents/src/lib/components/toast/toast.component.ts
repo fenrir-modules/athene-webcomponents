@@ -1,13 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  LucideAngularModule,
-  X,
-  CheckCircle,
-  AlertCircle,
-  Info,
-  AlertTriangle,
-} from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide';
 import { AthToastService, type ToastVariant } from '@athene/webcomponents/core';
 
 // The service and its types live in the light `@athene/webcomponents/core`
@@ -33,7 +27,7 @@ export {
  */
 @Component({
   selector: 'ath-toast-container',
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './toast.component.html',
   styleUrl: './toast.component.scss',

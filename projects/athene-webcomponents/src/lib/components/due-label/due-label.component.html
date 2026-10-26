@@ -1,7 +1,7 @@
 @if (view(); as v) {
   <span class="ath-due" [attr.data-tone]="v.tone" [attr.title]="title()">
     @if (isSprint()) {
-      <lucide-icon class="ath-due__icon" [img]="ic.sprint" [size]="11" aria-hidden="true" />
+      <ath-icon class="ath-due__icon" [img]="ic.sprint" [size]="11" aria-hidden="true" />
       @if (compact()) {
         <span class="ath-due__sr">{{ sprintEndText() }}</span>
       } @else {
@@ -11,7 +11,7 @@
     <span class="ath-due__text">{{ v.text }}</span>
     <span class="ath-due__sr">, {{ dueOnText() }}</span>
     @if (showWarn()) {
-      <lucide-icon
+      <ath-icon
         class="ath-due__warn"
         [img]="ic.warn"
         [size]="11"

@@ -19,7 +19,7 @@ export declare class AthColorSwatchComponent {
     readonly disabled: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** The tokens offered, in order (default: the whole palette). */
     readonly colors: import("@angular/core").InputSignal<readonly AthDecoColor[]>;
-    protected readonly checkIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly checkIcon: import("lucide").IconNode;
     protected readonly groupLabel: import("@angular/core").Signal<string>;
     protected readonly options: import("@angular/core").Signal<{
         color: AthDecoColor;

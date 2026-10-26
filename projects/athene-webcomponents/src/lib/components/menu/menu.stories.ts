@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
-import { Archive, Copy, Pencil, Trash2 } from 'lucide-angular';
+import { Archive, Copy, Pencil, Trash2 } from 'lucide';
 import { RTL_TEXT } from '../../stories/story-data';
 import { AthButtonComponent } from '../button/button.component';
 import { AthMenuComponent } from './menu.component';

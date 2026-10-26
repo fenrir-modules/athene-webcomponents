@@ -68,7 +68,7 @@ export declare class AthButtonComponent {
     private readonly running;
     /** Busy: an `[action]` is running or `[loading]` is set. */
     readonly busy: import("@angular/core").Signal<boolean>;
-    protected readonly loaderIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly loaderIcon: import("lucide").IconNode;
     protected readonly buttonClasses: import("@angular/core").Signal<string>;
     handleClick(event: MouseEvent): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthButtonComponent, never>;

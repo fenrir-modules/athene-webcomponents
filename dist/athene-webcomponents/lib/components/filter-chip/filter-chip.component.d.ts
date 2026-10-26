@@ -20,8 +20,8 @@ export declare class AthFilterChipComponent {
     readonly disabled: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     readonly clicked: import("@angular/core").OutputEmitterRef<void>;
     readonly cleared: import("@angular/core").OutputEmitterRef<void>;
-    protected readonly chevronIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly clearIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly chevronIcon: import("lucide").IconNode;
+    protected readonly clearIcon: import("lucide").IconNode;
     protected clearLabel(): string;
     onClick(): void;
     onClear(event: MouseEvent): void;

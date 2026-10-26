@@ -1,7 +1,7 @@
-import { Zap } from 'lucide-angular';
+import { type AthIconData } from '../icon/icon.component';
 import * as i0 from "@angular/core";
-/** A lucide icon (`lucide-angular` does not export its data type from its entry). */
-export type AthChipIcon = typeof Zap;
+/** A lucide icon (`import { Bug } from '@athene/webcomponents/icons'`). */
+export type AthChipIcon = AthIconData;
 /** Semantic tone of a `tag` or `status` chip. */
 export type ChipVariant = 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info';
 /**
@@ -48,7 +48,7 @@ export declare class AthChipComponent {
     /** Any CSS colour: the label dot, the epic glyph, the type square, the status dot. */
     readonly color: import("@angular/core").InputSignal<string | null | undefined>;
     /** Glyph for `epic` (default bolt), `type` (required) and `status` (instead of the dot). */
-    readonly icon: import("@angular/core").InputSignal<import("node_modules/lucide-angular/icons/types").LucideIconData | null>;
+    readonly icon: import("@angular/core").InputSignal<AthIconData | null>;
     /** N of a `count` chip. */
     readonly count: import("@angular/core").InputSignal<number | null>;
     /** Hover text, also the accessible description (names behind "+N", an epic's full title). */
@@ -61,8 +61,8 @@ export declare class AthChipComponent {
     /** The chip's text, for the default remove label (projected text is not readable here). */
     readonly name: import("@angular/core").InputSignal<string | null>;
     readonly removed: import("@angular/core").OutputEmitterRef<void>;
-    protected readonly removeIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly glyph: import("@angular/core").Signal<import("node_modules/lucide-angular/icons/types").LucideIconData | null>;
+    protected readonly removeIcon: import("lucide").IconNode;
+    protected readonly glyph: import("@angular/core").Signal<AthIconData | null>;
     protected readonly countText: import("@angular/core").Signal<string>;
     /** "+3" is read as "3 more: a, b, c". */
     protected readonly countLabel: import("@angular/core").Signal<string>;

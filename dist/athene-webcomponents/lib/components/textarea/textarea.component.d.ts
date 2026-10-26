@@ -35,7 +35,7 @@ export declare class AthTextareaComponent implements ControlValueAccessor {
     protected readonly fieldValue: import("@angular/core").WritableSignal<string>;
     private readonly formDisabled;
     protected readonly isDisabled: import("@angular/core").Signal<boolean>;
-    protected readonly alertIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly alertIcon: import("lucide").IconNode;
     private onChange;
     protected onTouched: () => void;
     readonly characterCount: import("@angular/core").Signal<number>;

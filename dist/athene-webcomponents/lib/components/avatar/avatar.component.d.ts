@@ -46,7 +46,7 @@ export declare class AthAvatarComponent {
      * read elsewhere. `null` (or an unknown token): no ring.
      */
     readonly ring: import("@angular/core").InputSignal<string | null | undefined>;
-    protected readonly userIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly userIcon: import("lucide").IconNode;
     private readonly failedSrc;
     private readonly who;
     protected readonly empty: import("@angular/core").Signal<boolean>;

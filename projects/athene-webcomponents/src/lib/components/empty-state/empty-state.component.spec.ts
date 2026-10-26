@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Inbox } from 'lucide-angular';
+import { Inbox } from 'lucide';
 import { AthEmptyStateComponent } from './empty-state.component';
 
 describe('AthEmptyStateComponent', () => {

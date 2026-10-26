@@ -10,7 +10,8 @@
     "@angular/router": "^19.2.0"
   },
   "dependencies": {
-    "lucide-angular": "^0.469.0",
+    "@lucide/angular": "^1.55.0",
+    "lucide": "^1.55.0",
     "tslib": "^2.3.0"
   },
   "module": "fesm2022/athene-webcomponents.mjs",
@@ -26,6 +27,10 @@
     "./core": {
       "types": "./core/index.d.ts",
       "default": "./fesm2022/athene-webcomponents-core.mjs"
+    },
+    "./icons": {
+      "types": "./icons/index.d.ts",
+      "default": "./fesm2022/athene-webcomponents-icons.mjs"
     }
   }
 }

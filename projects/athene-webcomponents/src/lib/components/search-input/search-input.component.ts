@@ -10,7 +10,8 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, Search, X } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { Search, X } from 'lucide';
 import { Subject, debounce, distinctUntilChanged, timer } from 'rxjs';
 import { injectAthLabels } from '../../i18n/labels';
 
@@ -24,7 +25,7 @@ import { injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-search-input',
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './search-input.component.html',
   styleUrl: './search-input.component.scss',

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
-import { Calendar, Home, Inbox, Settings } from 'lucide-angular';
+import { Calendar, Home, Inbox, Settings } from 'lucide';
 import { AthNavItemComponent } from '../nav-item/nav-item.component';
 import { AthSidebarComponent } from './sidebar.component';
 

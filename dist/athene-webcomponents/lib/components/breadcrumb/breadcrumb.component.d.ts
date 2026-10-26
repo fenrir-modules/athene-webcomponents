@@ -43,7 +43,7 @@ export declare class AthBreadcrumbComponent {
     readonly maxVisible: import("@angular/core").InputSignal<number>;
     protected readonly navLabel: import("@angular/core").Signal<string>;
     protected readonly moreLabel: import("@angular/core").Signal<string>;
-    protected readonly separatorIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly separatorIcon: import("lucide").IconNode;
     private readonly narrow;
     protected readonly shown: import("@angular/core").Signal<Shown[]>;
     constructor();

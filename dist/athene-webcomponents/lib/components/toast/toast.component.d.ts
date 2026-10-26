@@ -13,14 +13,14 @@ export { AthToastService, type ToastAction, type ToastMessage, type ToastOptions
  */
 export declare class AthToastContainerComponent {
     protected toastService: AthToastService;
-    protected readonly successIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly errorIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly warningIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly infoIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly closeIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly successIcon: import("lucide").IconNode;
+    protected readonly errorIcon: import("lucide").IconNode;
+    protected readonly warningIcon: import("lucide").IconNode;
+    protected readonly infoIcon: import("lucide").IconNode;
+    protected readonly closeIcon: import("lucide").IconNode;
     constructor(toastService: AthToastService);
     get toasts(): import("@athene/webcomponents/core").ToastMessage[];
-    getIcon(variant: ToastVariant): import("node_modules/lucide-angular/icons/types").LucideIconData;
+    getIcon(variant: ToastVariant): import("lucide").IconNode;
     dismiss(id: string): void;
     runAction(id: string): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthToastContainerComponent, never>;

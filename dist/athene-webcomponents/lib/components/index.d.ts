@@ -5,6 +5,7 @@ export * from './breadcrumb';
 export * from './divider';
 export * from './tabs';
 export * from './timeline';
+export * from './icon';
 export * from './ai-mark';
 export * from './table';
 export * from './badge';

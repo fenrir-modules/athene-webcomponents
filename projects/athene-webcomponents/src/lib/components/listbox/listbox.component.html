@@ -1,11 +1,6 @@
 @if (searchable()) {
   <div class="ath-listbox__search">
-    <lucide-icon
-      class="ath-listbox__search-icon"
-      [img]="searchIcon"
-      [size]="14"
-      aria-hidden="true"
-    />
+    <ath-icon class="ath-listbox__search-icon" [img]="searchIcon" [size]="14" aria-hidden="true" />
     <input
       #search
       class="ath-listbox__search-input"
@@ -90,7 +85,7 @@
           aria-hidden="true"
         >
           @if (row.selected) {
-            <lucide-icon [img]="checkIcon" [size]="12" />
+            <ath-icon [img]="checkIcon" [size]="12" />
           }
         </span>
       }
@@ -105,7 +100,7 @@
         />
       } @else {
         @if (optionIcon(row.option); as icon) {
-          <lucide-icon class="ath-listbox__icon" [img]="icon" [size]="14" aria-hidden="true" />
+          <ath-icon class="ath-listbox__icon" [img]="icon" [size]="14" aria-hidden="true" />
         }
         <span class="ath-listbox__text">
           <span class="ath-listbox__label">{{ row.option.label }}</span>
@@ -114,7 +109,7 @@
           }
         </span>
         @if (!multiple() && row.selected) {
-          <lucide-icon class="ath-listbox__tick" [img]="checkIcon" [size]="14" aria-hidden="true" />
+          <ath-icon class="ath-listbox__tick" [img]="checkIcon" [size]="14" aria-hidden="true" />
         }
       }
     </li>
@@ -127,7 +122,7 @@
       [attr.data-index]="row.index"
       [class.ath-listbox__option--active]="row.index === activeIndex()"
     >
-      <lucide-icon class="ath-listbox__icon" [img]="plusIcon" [size]="14" aria-hidden="true" />
+      <ath-icon class="ath-listbox__icon" [img]="plusIcon" [size]="14" aria-hidden="true" />
       <span class="ath-listbox__label">{{ row.label }}</span>
     </li>
   }

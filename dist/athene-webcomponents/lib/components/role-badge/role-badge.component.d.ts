@@ -17,7 +17,7 @@ export declare class AthRoleBadgeComponent {
     readonly color: import("@angular/core").InputSignal<string | null | undefined>;
     readonly size: import("@angular/core").InputSignal<RoleBadgeSize>;
     readonly locked: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
-    protected readonly lockIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly lockIcon: import("lucide").IconNode;
     protected readonly tone: import("@angular/core").Signal<import("../color-swatch/deco-color").AthDecoColor>;
     protected readonly lockedText: import("@angular/core").Signal<string>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AthRoleBadgeComponent, never>;

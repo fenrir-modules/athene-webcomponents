@@ -15,7 +15,8 @@ import {
   viewChild,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { LucideAngularModule, X } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { X } from 'lucide';
 import { injectAthLabels } from '../../i18n/label-utils';
 import { AthOverlayStack, type AthOverlayEntry } from '../floating/overlay-stack';
 import { focusSafely, tabbables, trapTab } from '../floating/focus';
@@ -67,7 +68,7 @@ let nextDialogId = 0;
  */
 @Component({
   selector: 'ath-dialog',
-  imports: [LucideAngularModule, NgTemplateOutlet],
+  imports: [AthIconComponent, NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dialog.component.html',
   styleUrl: './dialog.component.scss',

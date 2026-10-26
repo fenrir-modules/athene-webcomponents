@@ -11,5 +11,5 @@
       "output": "styles"
     }
   ],
-  "allowedNonPeerDependencies": ["lucide-angular"]
+  "allowedNonPeerDependencies": ["@lucide/angular", "lucide"]
 }

@@ -7,7 +7,8 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, Copy, Check } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { Copy, Check } from 'lucide';
 import { injectAthLabels } from '../../i18n/labels';
 
 /**
@@ -21,7 +22,7 @@ import { injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-copy-button',
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './copy-button.component.html',
   styleUrl: './copy-button.component.scss',

@@ -1,3 +1,4 @@
+import type { AthIconData } from '../floating/icon';
 import * as i0 from "@angular/core";
 export type MenuItemVariant = 'default' | 'danger';
 /**
@@ -19,10 +20,10 @@ export declare class AthMenuItemComponent {
     /** The item element (the `<button>` or `<a>`). */
     readonly element: HTMLElement;
     protected readonly isButton: boolean;
-    protected readonly checkIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly checkIcon: import("lucide").IconNode;
     protected readonly reasonId: string;
     /** A Lucide icon before the label. */
-    readonly icon: import("@angular/core").InputSignal<import("node_modules/lucide-angular/icons/types").LucideIconData | null | undefined>;
+    readonly icon: import("@angular/core").InputSignal<AthIconData | null | undefined>;
     /** Shortcut hint shown at the end, e.g. `⌘E`. */
     readonly shortcut: import("@angular/core").InputSignal<string | null>;
     /** `aria-keyshortcuts` value, e.g. `Meta+E` (the hint itself is hidden from AT). */

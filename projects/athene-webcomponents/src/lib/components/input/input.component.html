@@ -36,14 +36,14 @@
         [attr.aria-pressed]="showPassword()"
         tabindex="-1"
       >
-        <lucide-icon [img]="showPassword() ? eyeOffIcon : eyeIcon" [size]="18" />
+        <ath-icon [img]="showPassword() ? eyeOffIcon : eyeIcon" [size]="18" />
       </button>
     }
   </div>
 
   @if (error()) {
     <div class="ath-input__error">
-      <lucide-icon [img]="alertIcon" [size]="14" />
+      <ath-icon [img]="alertIcon" [size]="14" />
       {{ error() }}
     </div>
   }

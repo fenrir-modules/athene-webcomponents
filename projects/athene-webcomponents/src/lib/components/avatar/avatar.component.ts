@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
-import { LucideAngularModule, User } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { User } from 'lucide';
 import { injectAthLabels } from '../../i18n/labels';
 import { isAthDecoColor } from '../color-swatch/deco-color';
 import { avatarInitials, avatarToneFor } from './avatar-tone';
@@ -33,7 +34,7 @@ const ICON_SIZE: Record<AvatarSize, number> = { xs: 12, sm: 13, md: 18, lg: 22, 
  */
 @Component({
   selector: 'ath-avatar',
-  imports: [LucideAngularModule],
+  imports: [AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './avatar.component.html',
   styleUrl: './avatar.component.scss',

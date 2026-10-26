@@ -1,6 +1,6 @@
 import { ApplicationRef, ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, ComponentFixtureAutoDetect, TestBed } from '@angular/core/testing';
-import { Pencil } from 'lucide-angular';
+import { Pencil } from 'lucide';
 import { AthButtonComponent } from '../button/button.component';
 import { AthMenuComponent } from './menu.component';
 import { AthMenuItemComponent, AthMenuSeparatorComponent } from './menu-item.component';
@@ -173,7 +173,7 @@ describe('AthMenuComponent', () => {
   it('renders icon and shortcut hint', async () => {
     await openWith('ArrowDown');
     const edit = items()[0];
-    expect(edit.querySelector('lucide-icon')).not.toBeNull();
+    expect(edit.querySelector('ath-icon')).not.toBeNull();
     const kbd = edit.querySelector('kbd')!;
     expect(kbd.textContent).toBe('E');
     expect(kbd.getAttribute('aria-hidden')).toBe('true');

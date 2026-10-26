@@ -1,3 +1,4 @@
+import type { AthIconData } from '../floating/icon';
 import * as i0 from "@angular/core";
 /**
  * One permission in a roles editor: icon, name, a one-line explanation and,
@@ -21,7 +22,7 @@ import * as i0 from "@angular/core";
  * </ath-permission-row>
  */
 export declare class AthPermissionRowComponent {
-    readonly icon: import("@angular/core").InputSignal<import("node_modules/lucide-angular/icons/types").LucideIconData | null>;
+    readonly icon: import("@angular/core").InputSignal<AthIconData | null>;
     readonly label: import("@angular/core").InputSignal<string>;
     /** One line in `--fg-3`, cut with an ellipsis (the full text as tooltip). */
     readonly description: import("@angular/core").InputSignal<string | null>;

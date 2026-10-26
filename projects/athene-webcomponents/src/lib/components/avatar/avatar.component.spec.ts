@@ -44,7 +44,7 @@ describe('AthAvatarComponent', () => {
     expect(face().classList).toContain('ath-avatar--empty');
     expect(face().getAttribute('aria-label')).toBe('Unassigned');
     expect(face().getAttribute('title')).toBe('Unassigned');
-    expect(face().querySelector('lucide-icon')).not.toBeNull();
+    expect(face().querySelector('ath-icon')).not.toBeNull();
     expect(face().dataset['tone']).toBeUndefined();
   });
 

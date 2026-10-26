@@ -22,14 +22,14 @@
       @if (kind() === 'type') {
         <span class="ath-chip__square" aria-hidden="true">
           @if (glyph()) {
-            <lucide-icon [img]="glyph()!" [size]="11" [strokeWidth]="2.4" />
+            <ath-icon [img]="glyph()!" [size]="11" [strokeWidth]="2.4" />
           }
         </span>
         @if (tooltip()) {
           <span class="ath-chip__sr">{{ tooltip() }}</span>
         }
       } @else if (glyph()) {
-        <lucide-icon
+        <ath-icon
           class="ath-chip__glyph"
           [img]="glyph()!"
           [size]="11"
@@ -47,7 +47,7 @@
           [attr.aria-label]="resolvedRemoveLabel()"
           (click)="remove($event)"
         >
-          <lucide-icon [img]="removeIcon" [size]="11" aria-hidden="true" />
+          <ath-icon [img]="removeIcon" [size]="11" aria-hidden="true" />
         </button>
       }
     </span>

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { Inbox, ListTodo, MessageSquare, Plus } from 'lucide-angular';
+import { Inbox, ListTodo, MessageSquare, Plus } from 'lucide';
 import { LONG_TEXT } from '../../stories/story-data';
 import { AthEmptyStateComponent } from './empty-state.component';
 

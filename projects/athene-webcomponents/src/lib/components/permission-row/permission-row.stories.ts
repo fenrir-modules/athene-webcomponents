@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { FolderPlus, Hand, Pencil, Plus, Ticket } from 'lucide-angular';
+import { FolderPlus, Hand, Pencil, Plus, Ticket } from 'lucide';
 import { LONG_TEXT } from '../../stories/story-data';
 import { AthToggleComponent } from '../toggle';
 import { AthTriStateComponent } from '../tri-state';

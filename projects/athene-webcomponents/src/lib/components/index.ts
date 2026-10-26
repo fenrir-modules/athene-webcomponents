@@ -12,6 +12,7 @@ export * from './tabs';
 export * from './timeline';
 
 // Data Display
+export * from './icon';
 export * from './ai-mark';
 export * from './table';
 export * from './badge';

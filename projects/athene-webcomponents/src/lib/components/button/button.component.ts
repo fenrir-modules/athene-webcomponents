@@ -9,7 +9,8 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { LucideAngularModule, Loader2 } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { Loader2 } from 'lucide';
 import { type AthAction, runAthAction } from './button.action';
 
 /**
@@ -52,7 +53,7 @@ export type ButtonType = 'button' | 'submit' | 'reset';
  */
 @Component({
   selector: 'ath-button',
-  imports: [LucideAngularModule],
+  imports: [AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './button.component.html',
   styleUrl: './button.component.scss',

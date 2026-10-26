@@ -8,7 +8,8 @@ import {
   input,
   model,
 } from '@angular/core';
-import { Check, LucideAngularModule, Slash, X } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { Check, Slash, X } from 'lucide';
 import { injectAthLabels } from '../../i18n/labels';
 import type { AthIconData } from '../floating/icon';
 
@@ -34,7 +35,7 @@ const ICONS: Record<TriStateValue, AthIconData> = { deny: X, inherit: Slash, all
  */
 @Component({
   selector: 'ath-tri-state',
-  imports: [LucideAngularModule],
+  imports: [AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tri-state.component.html',
   styleUrl: './tri-state.component.scss',

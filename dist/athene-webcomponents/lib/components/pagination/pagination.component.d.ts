@@ -29,11 +29,11 @@ export declare class AthPaginationComponent {
     readonly summary: import("@angular/core").InputSignal<string>;
     readonly previous: import("@angular/core").OutputEmitterRef<void>;
     readonly next: import("@angular/core").OutputEmitterRef<void>;
-    protected readonly prevIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly nextIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly firstIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly lastIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly ellipsisIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly prevIcon: import("lucide").IconNode;
+    protected readonly nextIcon: import("lucide").IconNode;
+    protected readonly firstIcon: import("lucide").IconNode;
+    protected readonly lastIcon: import("lucide").IconNode;
+    protected readonly ellipsisIcon: import("lucide").IconNode;
     protected readonly pages: import("@angular/core").Signal<(number | "ellipsis")[]>;
     goTo(page: number): void;
     goPrev(): void;

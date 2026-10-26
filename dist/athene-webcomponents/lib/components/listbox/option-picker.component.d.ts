@@ -58,8 +58,8 @@ export declare class AthOptionPickerComponent<T = string> {
     readonly create: import("@angular/core").OutputEmitterRef<string>;
     readonly opened: import("@angular/core").OutputEmitterRef<void>;
     readonly closed: import("@angular/core").OutputEmitterRef<AthOverlayCloseReason>;
-    protected readonly chevronIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly clearIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly chevronIcon: import("lucide").IconNode;
+    protected readonly clearIcon: import("lucide").IconNode;
     protected readonly labelId: string;
     protected readonly valueId: string;
     private readonly popover;

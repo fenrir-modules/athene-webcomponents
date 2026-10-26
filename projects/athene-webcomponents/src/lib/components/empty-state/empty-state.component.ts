@@ -1,20 +1,14 @@
 import { ChangeDetectionStrategy, Component, booleanAttribute, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule } from 'lucide-angular';
+import { AthIconComponent, type AthIconData } from '../icon/icon.component';
 import { AthButtonComponent } from '../button/button.component';
 
 /**
- * Lucide's icon data, mirrored exactly: `lucide-angular` does not export
- * `LucideIconData` from its public entry, so consumers pass `Inbox`,
- * `CheckCircle2`, … straight in without a cast.
+ * A Lucide icon (`import { Inbox } from '@athene/webcomponents/icons'`).
+ * `LucideIconDataLike` stays as the older name of the same type.
  */
-type LucideIconNode = readonly [string, { [key: string]: string | number }];
-export type LucideIconDataLike = readonly LucideIconNode[];
-
-/** A lucide icon (`import { Inbox } from 'lucide-angular'`) — no cast needed. */
-export type EmptyStateIcon =
-  | LucideIconDataLike
-  | readonly (readonly [string, Record<string, string | number>])[];
+export type LucideIconDataLike = AthIconData;
+export type EmptyStateIcon = AthIconData;
 
 /** One "what will appear here" row in a compact empty state. */
 export interface EmptyStateHint {
@@ -48,7 +42,7 @@ export type EmptyStateSize = 'default' | 'compact';
  */
 @Component({
   selector: 'ath-empty-state',
-  imports: [CommonModule, LucideAngularModule, AthButtonComponent],
+  imports: [CommonModule, AthIconComponent, AthButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './empty-state.component.html',
   styleUrl: './empty-state.component.scss',

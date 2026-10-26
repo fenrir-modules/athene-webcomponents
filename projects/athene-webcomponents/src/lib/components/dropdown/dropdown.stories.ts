@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
-import { Copy, Pencil, Trash2 } from 'lucide-angular';
+import { Copy, Pencil, Trash2 } from 'lucide';
 import { AthButtonComponent } from '../button/button.component';
 import { AthDropdownComponent, DROPDOWN_SEPARATOR, type DropdownItem } from './dropdown.component';
 

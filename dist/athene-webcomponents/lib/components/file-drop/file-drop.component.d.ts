@@ -28,7 +28,7 @@ export declare class AthFileDropComponent {
         file: File;
         reason: "size" | "type";
     }[]>;
-    protected readonly uploadIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly uploadIcon: import("lucide").IconNode;
     protected readonly dragging: import("@angular/core").WritableSignal<boolean>;
     private readonly fileInput;
     onDragOver(event: DragEvent): void;

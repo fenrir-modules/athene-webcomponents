@@ -78,7 +78,7 @@ export declare class AthDialogComponent implements OnChanges, OnDestroy {
     readonly openChange: import("@angular/core").OutputEmitterRef<boolean>;
     /** The dialog is shown (after `showModal()`). */
     readonly opened: import("@angular/core").OutputEmitterRef<void>;
-    protected readonly closeIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly closeIcon: import("lucide").IconNode;
     protected readonly closeText: import("@angular/core").Signal<string>;
     private dialogEl;
     private returnFocus;

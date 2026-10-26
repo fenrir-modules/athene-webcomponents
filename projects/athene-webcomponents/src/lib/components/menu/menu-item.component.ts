@@ -7,7 +7,8 @@ import {
   input,
   output,
 } from '@angular/core';
-import { Check, LucideAngularModule } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { Check } from 'lucide';
 import type { AthIconData } from '../floating/icon';
 import { focusSafely } from '../floating/focus';
 import { ATH_MENU_PARENT } from './menu-parent';
@@ -32,16 +33,16 @@ let nextReasonId = 0;
  */
 @Component({
   selector: 'ath-menu-item, button[athMenuItem], a[athMenuItem]',
-  imports: [LucideAngularModule],
+  imports: [AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   exportAs: 'athMenuItem',
   template: `
     @if (icon(); as img) {
-      <lucide-icon class="ath-menu-item__icon" [img]="img" [size]="16" aria-hidden="true" />
+      <ath-icon class="ath-menu-item__icon" [img]="img" [size]="16" aria-hidden="true" />
     } @else if (checked() !== null) {
       <span class="ath-menu-item__icon" aria-hidden="true">
         @if (checked()) {
-          <lucide-icon [img]="checkIcon" [size]="16" />
+          <ath-icon [img]="checkIcon" [size]="16" />
         }
       </span>
     }

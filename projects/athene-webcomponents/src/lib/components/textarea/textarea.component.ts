@@ -10,7 +10,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
-import { LucideAngularModule, AlertCircle } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { AlertCircle } from 'lucide';
 
 /** Which way the user may resize the field. */
 export type TextareaResize = 'none' | 'vertical' | 'both';
@@ -26,7 +27,7 @@ export type TextareaResize = 'none' | 'vertical' | 'both';
  */
 @Component({
   selector: 'ath-textarea',
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {

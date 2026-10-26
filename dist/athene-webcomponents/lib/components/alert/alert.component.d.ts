@@ -43,12 +43,12 @@ export declare class AthAlertComponent {
     /** Dismiss button's accessible name; default `ATH_LABELS.dismiss`. */
     readonly dismissLabel: import("@angular/core").InputSignal<string | null>;
     readonly dismissed: import("@angular/core").OutputEmitterRef<void>;
-    protected readonly closeIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly closeIcon: import("lucide").IconNode;
     protected readonly tone: Signal<'info' | 'success' | 'warn' | 'error'>;
     /** Errors and warnings interrupt; info and success wait their turn. */
     protected readonly role: Signal<'alert' | 'status'>;
     protected readonly showIcon: Signal<boolean>;
-    protected readonly glyph: Signal<import("node_modules/lucide-angular/icons/types").LucideIconData>;
+    protected readonly glyph: Signal<import("lucide").IconNode>;
     protected readonly retryText: Signal<string>;
     protected readonly dismissText: Signal<string>;
     dismiss(): void;

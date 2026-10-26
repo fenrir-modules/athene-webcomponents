@@ -7,7 +7,7 @@ import {
   output,
   viewChild,
 } from '@angular/core';
-import { LucideAngularModule } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
 import type { AthIconData } from '../floating/icon';
 import { AthTooltipDirective } from '../tooltip';
 
@@ -36,7 +36,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'ath-permission-row',
-  imports: [LucideAngularModule, AthTooltipDirective],
+  imports: [AthIconComponent, AthTooltipDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './permission-row.component.html',
   styleUrl: './permission-row.component.scss',

@@ -17,8 +17,8 @@ export declare class AthSearchInputComponent {
     /** Search event emitter */
     readonly searched: import("@angular/core").OutputEmitterRef<string>;
     protected readonly value: import("@angular/core").WritableSignal<string>;
-    protected readonly searchIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly clearIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly searchIcon: import("lucide").IconNode;
+    protected readonly clearIcon: import("lucide").IconNode;
     private readonly query$;
     constructor();
     onInput(event: Event): void;

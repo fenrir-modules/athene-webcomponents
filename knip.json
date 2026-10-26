@@ -3,6 +3,7 @@
   "entry": [
     "projects/athene-webcomponents/src/public-api.ts",
     "projects/athene-webcomponents/core/src/public-api.ts",
+    "projects/athene-webcomponents/icons/src/public-api.ts",
     "projects/**/*.spec.ts",
     "projects/**/*.stories.ts",
     ".storybook/*.ts",

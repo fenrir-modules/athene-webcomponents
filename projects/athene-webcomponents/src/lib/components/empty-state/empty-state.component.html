@@ -3,7 +3,7 @@
     <div class="ath-empty-state__lead">
       @if (icon(); as icon) {
         <span class="ath-empty-state__tile" aria-hidden="true">
-          <lucide-icon [img]="icon" [size]="16" />
+          <ath-icon [img]="icon" [size]="16" />
         </span>
       }
       <div class="ath-empty-state__text">
@@ -22,7 +22,7 @@
           @if (actionLabel()) {
             <ath-button variant="primary" size="sm" (clicked)="action.emit()">
               @if (actionIcon(); as actionIcon) {
-                <lucide-icon [img]="actionIcon" [size]="13" />
+                <ath-icon [img]="actionIcon" [size]="13" />
               }
               {{ actionLabel() }}
             </ath-button>
@@ -36,7 +36,7 @@
           <li class="ath-empty-state__hint">
             <span class="ath-empty-state__hint-icon" aria-hidden="true">
               @if (hint.icon) {
-                <lucide-icon [img]="hint.icon" [size]="14" />
+                <ath-icon [img]="hint.icon" [size]="14" />
               }
             </span>
             <span class="ath-empty-state__hint-text">
@@ -55,7 +55,7 @@
   <div class="ath-empty-state" [class.ath-empty-state--bare]="bare()">
     @if (icon(); as icon) {
       <span class="ath-empty-state__icon">
-        <lucide-icon [img]="icon" [size]="18" />
+        <ath-icon [img]="icon" [size]="18" />
       </span>
     }
     <p class="ath-empty-state__message">{{ message() }}</p>

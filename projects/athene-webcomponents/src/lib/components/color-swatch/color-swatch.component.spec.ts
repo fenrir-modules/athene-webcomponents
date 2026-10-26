@@ -43,7 +43,7 @@ describe('AthColorSwatchComponent', () => {
     render({ value: 'green' });
     const picked = radios()[2];
     expect(picked.getAttribute('aria-checked')).toBe('true');
-    expect(picked.querySelector('lucide-icon')).not.toBeNull();
+    expect(picked.querySelector('ath-icon')).not.toBeNull();
     expect(radios().filter((r) => r.tabIndex === 0)).toEqual([picked]);
   });
 

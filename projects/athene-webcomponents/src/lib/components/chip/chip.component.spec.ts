@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Bug } from 'lucide-angular';
+import { Bug } from 'lucide';
 import { AthChipComponent } from './chip.component';
 
 @Component({

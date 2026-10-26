@@ -18,7 +18,7 @@ import { AthMenuItemComponent, AthMenuSeparatorComponent } from '../menu/menu-it
 export interface DropdownAction {
   id: string;
   label: string;
-  /** A Lucide icon (`import { Pencil } from 'lucide-angular'`). */
+  /** A Lucide icon (`import { Pencil } from '@athene/webcomponents/icons'`). */
   icon?: AthIconData;
   variant?: 'default' | 'danger';
   disabled?: boolean;

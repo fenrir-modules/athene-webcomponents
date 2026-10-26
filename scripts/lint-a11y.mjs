@@ -21,7 +21,7 @@ for (const file of templateFiles) {
     const inner = match[2] ?? '';
     const fullButton = match[0] ?? '';
 
-    const hasIcon = /<lucide-icon\b[\s\S]*?\/?>/i.test(inner);
+    const hasIcon = /<ath-icon\b[\s\S]*?\/?>/i.test(inner);
     if (!hasIcon) {
       continue;
     }
@@ -31,7 +31,7 @@ for (const file of templateFiles) {
     }
 
     const plainContent = inner
-      .replace(/<lucide-icon\b[\s\S]*?\/?>/gi, '')
+      .replace(/<ath-icon\b[\s\S]*?\/?>/gi, '')
       .replace(/<[^>]+>/g, '')
       .replace(/@\w+\s*\([^)]*\)\s*\{/g, '')
       .replace(/[{}]/g, '')

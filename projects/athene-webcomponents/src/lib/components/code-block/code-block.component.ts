@@ -9,7 +9,8 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, Check, Copy } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { Check, Copy } from 'lucide';
 import { injectAthLabels } from '../../i18n/labels';
 
 /**
@@ -25,7 +26,7 @@ import { injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-code-block',
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './code-block.component.html',
   styleUrl: './code-block.component.scss',

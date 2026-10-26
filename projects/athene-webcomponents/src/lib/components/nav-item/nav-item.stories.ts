@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { Inbox, MoreHorizontal } from 'lucide-angular';
+import { Inbox, MoreHorizontal } from 'lucide';
 import { LONG_TEXT } from '../../stories/story-data';
 import { AthNavItemComponent } from './nav-item.component';
 

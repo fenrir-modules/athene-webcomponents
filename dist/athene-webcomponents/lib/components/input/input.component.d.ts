@@ -46,9 +46,9 @@ export declare class AthInputComponent implements ControlValueAccessor {
     protected readonly showPassword: import("@angular/core").WritableSignal<boolean>;
     protected readonly showPasswordText: import("@angular/core").Signal<string>;
     protected readonly hidePasswordText: import("@angular/core").Signal<string>;
-    protected readonly eyeIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly eyeOffIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly alertIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly eyeIcon: import("lucide").IconNode;
+    protected readonly eyeOffIcon: import("lucide").IconNode;
+    protected readonly alertIcon: import("lucide").IconNode;
     private onChange;
     protected onTouched: () => void;
     writeValue(value: string): void;

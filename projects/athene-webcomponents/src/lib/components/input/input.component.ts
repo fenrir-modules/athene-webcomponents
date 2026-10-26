@@ -10,7 +10,8 @@ import {
 import { injectAthLabels } from '../../i18n/labels';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
-import { LucideAngularModule, Eye, EyeOff, AlertCircle } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { Eye, EyeOff, AlertCircle } from 'lucide';
 
 /**
  * Input type variants
@@ -29,7 +30,7 @@ export type InputSize = 'sm' | 'md';
  */
 @Component({
   selector: 'ath-input',
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {

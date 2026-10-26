@@ -20,8 +20,8 @@ export declare class AthCodeBlockComponent {
     readonly showLineNumbers: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     /** Hide the copy button (e.g., for short read-only snippets). */
     readonly copyable: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
-    protected readonly copyIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly checkIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly copyIcon: import("lucide").IconNode;
+    protected readonly checkIcon: import("lucide").IconNode;
     protected readonly copied: import("@angular/core").WritableSignal<boolean>;
     private resetTimer;
     protected readonly lines: import("@angular/core").Signal<string[]>;

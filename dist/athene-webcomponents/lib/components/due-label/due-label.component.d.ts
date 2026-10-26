@@ -40,8 +40,8 @@ export declare class AthDueLabelComponent {
     /** Reference time, for stories and tests. */
     readonly now: import("@angular/core").InputSignal<Date | null>;
     protected readonly ic: {
-        readonly sprint: import("node_modules/lucide-angular/icons/types").LucideIconData;
-        readonly warn: import("node_modules/lucide-angular/icons/types").LucideIconData;
+        readonly sprint: import("lucide").IconNode;
+        readonly warn: import("lucide").IconNode;
     };
     private readonly ctx;
     protected readonly view: import("@angular/core").Signal<import("./due-date").DueView | null>;

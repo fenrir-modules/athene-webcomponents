@@ -1,3 +1,4 @@
+import type { AthIconData } from '../floating/icon';
 import * as i0 from "@angular/core";
 /** An override's state: forbid, take the inherited value, or allow. */
 export type TriStateValue = 'deny' | 'inherit' | 'allow';
@@ -28,7 +29,7 @@ export declare class AthTriStateComponent {
     readonly compact: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
     protected readonly segments: import("@angular/core").Signal<{
         state: TriStateValue;
-        icon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+        icon: AthIconData;
         text: string;
         name: string;
     }[]>;

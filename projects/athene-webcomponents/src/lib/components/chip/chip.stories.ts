@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { Bookmark, Bug, CircleDot, Sparkles } from 'lucide-angular';
+import { Bookmark, Bug, CircleDot, Sparkles } from 'lucide';
 import { LONG_TEXT, RTL_TEXT } from '../../stories/story-data';
 import { AthChipComponent } from './chip.component';
 

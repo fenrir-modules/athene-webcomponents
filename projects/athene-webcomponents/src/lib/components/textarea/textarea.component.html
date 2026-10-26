@@ -28,7 +28,7 @@
   <div class="ath-textarea__meta">
     @if (error()) {
       <div class="ath-textarea__error">
-        <lucide-icon [img]="alertIcon" [size]="14" />
+        <ath-icon [img]="alertIcon" [size]="14" />
         {{ error() }}
       </div>
     } @else if (hint()) {

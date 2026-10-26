@@ -17,10 +17,10 @@
         (click)="copy()"
       >
         @if (copied()) {
-          <lucide-icon [img]="checkIcon" [size]="12" />
+          <ath-icon [img]="checkIcon" [size]="12" />
           <span>{{ labels.copied() }}</span>
         } @else {
-          <lucide-icon [img]="copyIcon" [size]="12" />
+          <ath-icon [img]="copyIcon" [size]="12" />
           <span>{{ labels.copy() }}</span>
         }
       </button>

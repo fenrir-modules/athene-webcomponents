@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, PanelLeftClose, PanelLeft } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { PanelLeftClose, PanelLeft } from 'lucide';
 import { injectAthLabels } from '../../i18n/labels';
 
 /**
@@ -17,7 +18,7 @@ import { injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-sidebar',
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',

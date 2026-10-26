@@ -4,7 +4,7 @@
     <span class="ath-fchip__label">{{ label() }}</span>
     <span class="ath-fchip__value">{{ value() }}</span>
     @if (!(clearable() && active())) {
-      <lucide-icon [img]="chevronIcon" [size]="11" class="ath-fchip__chevron" />
+      <ath-icon [img]="chevronIcon" [size]="11" class="ath-fchip__chevron" />
     }
   </button>
 
@@ -16,7 +16,7 @@
       [attr.aria-label]="clearLabel()"
       (click)="onClear($event)"
     >
-      <lucide-icon [img]="clearIcon" [size]="11" />
+      <ath-icon [img]="clearIcon" [size]="11" />
     </button>
   }
 </span>

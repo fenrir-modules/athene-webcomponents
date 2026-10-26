@@ -5,7 +5,8 @@ import {
   computed,
   input,
 } from '@angular/core';
-import { Lock, LucideAngularModule } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { Lock } from 'lucide';
 import { injectAthLabels } from '../../i18n/labels';
 import { isAthDecoColor } from '../color-swatch/deco-color';
 
@@ -23,7 +24,7 @@ export type RoleBadgeSize = 'sm' | 'md';
  */
 @Component({
   selector: 'ath-role-badge',
-  imports: [LucideAngularModule],
+  imports: [AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './role-badge.component.html',
   styleUrl: './role-badge.component.scss',

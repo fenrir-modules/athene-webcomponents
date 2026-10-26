@@ -22,7 +22,7 @@
         [class.ath-picker__value--placeholder]="!hasValue()"
         >{{ summary() }}</span
       >
-      <lucide-icon class="ath-picker__chevron" [img]="chevronIcon" [size]="14" aria-hidden="true" />
+      <ath-icon class="ath-picker__chevron" [img]="chevronIcon" [size]="14" aria-hidden="true" />
     </button>
     @if (clearable() && hasValue() && !disabled()) {
       <button
@@ -31,7 +31,7 @@
         [attr.aria-label]="labels.pickerClear()"
         (click)="clear()"
       >
-        <lucide-icon [img]="clearIcon" [size]="12" aria-hidden="true" />
+        <ath-icon [img]="clearIcon" [size]="12" aria-hidden="true" />
       </button>
     }
   </div>

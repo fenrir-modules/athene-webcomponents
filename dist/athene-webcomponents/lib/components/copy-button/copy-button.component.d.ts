@@ -15,8 +15,8 @@ export declare class AthCopyButtonComponent {
     /** Optional tooltip/label */
     readonly label: import("@angular/core").InputSignal<string | null>;
     protected readonly copied: import("@angular/core").WritableSignal<boolean>;
-    protected readonly copyIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
-    protected readonly checkIcon: import("node_modules/lucide-angular/icons/types").LucideIconData;
+    protected readonly copyIcon: import("lucide").IconNode;
+    protected readonly checkIcon: import("lucide").IconNode;
     private resetTimeout;
     constructor();
     copy(): Promise<void>;

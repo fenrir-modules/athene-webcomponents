@@ -11,7 +11,8 @@ import {
   output,
   viewChild,
 } from '@angular/core';
-import { ChevronDown, LucideAngularModule, X } from 'lucide-angular';
+import { AthIconComponent } from '../icon/icon.component';
+import { ChevronDown, X } from 'lucide';
 import { formatAthLabel, injectAthLabels } from '../../i18n/label-utils';
 import type { FloatingAlign } from '../floating/floating';
 import { resolveAnchor, type FloatingAnchor } from '../floating/floating.directive';
@@ -42,12 +43,7 @@ let nextPickerId = 0;
  */
 @Component({
   selector: 'ath-option-picker',
-  imports: [
-    AthPopoverComponent,
-    AthPopoverTriggerDirective,
-    AthListboxComponent,
-    LucideAngularModule,
-  ],
+  imports: [AthPopoverComponent, AthPopoverTriggerDirective, AthListboxComponent, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './option-picker.component.html',
   styleUrl: './option-picker.component.scss',
