@@ -19,7 +19,6 @@
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
-    "lib": ["ES2022", "dom"],
     "paths": {
       "@athene/webcomponents": ["projects/athene-webcomponents/src/public-api.ts"],
       "@athene/webcomponents/core": ["projects/athene-webcomponents/core/src/public-api.ts"],

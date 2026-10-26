@@ -5,7 +5,6 @@ import {
   computed,
   input,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 /**
  * Badge variant types
@@ -23,7 +22,6 @@ export type BadgeVariant = 'default' | 'success' | 'warning' | 'error' | 'info' 
  */
 @Component({
   selector: 'ath-badge',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './badge.component.html',
   styleUrl: './badge.component.scss',

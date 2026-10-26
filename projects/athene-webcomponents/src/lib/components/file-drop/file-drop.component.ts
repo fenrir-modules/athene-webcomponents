@@ -9,7 +9,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { AthIconComponent } from '../icon/icon.component';
 import { Upload } from 'lucide';
 import { injectAthLabels } from '../../i18n/labels';
@@ -29,7 +29,7 @@ import { injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-file-drop',
-  imports: [CommonModule, AthIconComponent],
+  imports: [AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './file-drop.component.html',
   styleUrl: './file-drop.component.scss',

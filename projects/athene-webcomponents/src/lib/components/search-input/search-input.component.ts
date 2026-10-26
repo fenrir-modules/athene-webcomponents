@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { AthIconComponent } from '../icon/icon.component';
 import { Search, X } from 'lucide';
@@ -25,7 +25,7 @@ import { injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-search-input',
-  imports: [CommonModule, FormsModule, AthIconComponent],
+  imports: [FormsModule, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './search-input.component.html',
   styleUrl: './search-input.component.scss',

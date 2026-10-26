@@ -5,7 +5,6 @@ import {
   input,
   numberAttribute,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 export type SlaStatus = 'met' | 'pending' | 'breached';
 
@@ -35,7 +34,6 @@ export interface SlaTarget {
  */
 @Component({
   selector: 'ath-sla-bar',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sla-bar.component.html',
   styleUrl: './sla-bar.component.scss',

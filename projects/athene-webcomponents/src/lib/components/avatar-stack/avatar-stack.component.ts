@@ -5,7 +5,7 @@ import {
   input,
   numberAttribute,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { AthAvatarComponent, AvatarSize } from '../avatar';
 
 export interface StackedUser {
@@ -29,7 +29,7 @@ export interface StackedUser {
  */
 @Component({
   selector: 'ath-avatar-stack',
-  imports: [CommonModule, AthAvatarComponent],
+  imports: [AthAvatarComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './avatar-stack.component.html',
   styleUrl: './avatar-stack.component.scss',

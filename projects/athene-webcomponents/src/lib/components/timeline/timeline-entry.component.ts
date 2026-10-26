@@ -5,7 +5,7 @@ import {
   computed,
   input,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { AthAvatarComponent } from '../avatar';
 import { injectAthLabels } from '../../i18n/labels';
 
@@ -24,7 +24,7 @@ import { injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-timeline-entry',
-  imports: [CommonModule, AthAvatarComponent],
+  imports: [AthAvatarComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './timeline-entry.component.html',
   styleUrl: './timeline-entry.component.scss',

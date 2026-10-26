@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 /**
  * Tab item definition
@@ -22,7 +21,6 @@ export interface TabItem {
  */
 @Component({
   selector: 'ath-tabs',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.scss',

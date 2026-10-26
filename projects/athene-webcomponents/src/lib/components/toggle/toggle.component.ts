@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, booleanAttribute, input, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 /**
  * Athene Toggle Component
@@ -10,7 +9,6 @@ import { CommonModule } from '@angular/common';
  */
 @Component({
   selector: 'ath-toggle',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './toggle.component.html',
   styleUrl: './toggle.component.scss',

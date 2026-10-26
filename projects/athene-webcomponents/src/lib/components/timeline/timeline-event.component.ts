@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 /**
  * Compact timeline marker for status changes, assignments etc.
@@ -12,7 +11,6 @@ import { CommonModule } from '@angular/common';
  */
 @Component({
   selector: 'ath-timeline-event',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './timeline-event.component.html',
   styleUrl: './timeline-event.component.scss',

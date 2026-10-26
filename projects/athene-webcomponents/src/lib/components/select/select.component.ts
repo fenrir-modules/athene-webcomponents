@@ -7,7 +7,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { AthIconComponent } from '../icon/icon.component';
 import { ChevronDown, AlertCircle } from 'lucide';
@@ -36,7 +36,7 @@ export type SelectSize = 'sm' | 'md';
  */
 @Component({
   selector: 'ath-select',
-  imports: [CommonModule, FormsModule, AthIconComponent],
+  imports: [FormsModule, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {

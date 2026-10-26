@@ -6,7 +6,7 @@ import {
   input,
   model,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { AthComboboxComponent } from '../combobox';
 import type { ListboxOption } from '../listbox/listbox.component';
 import { injectAthLabels } from '../../i18n/labels';
@@ -30,7 +30,7 @@ export interface UserOption {
  */
 @Component({
   selector: 'ath-user-picker',
-  imports: [CommonModule, AthComboboxComponent],
+  imports: [AthComboboxComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './user-picker.component.html',
   styleUrl: './user-picker.component.scss',

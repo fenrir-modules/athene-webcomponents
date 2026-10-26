@@ -6,7 +6,7 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ATH_STATUS_LABELS, type TicketStatus } from '@athene/webcomponents/core';
 
 // The status type and label token live in `@athene/webcomponents/core`, so an
@@ -38,7 +38,6 @@ const LABELS: Readonly<Record<TicketStatus, string>> = {
  */
 @Component({
   selector: 'ath-status-pill',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './status-pill.component.html',
   styleUrl: './status-pill.component.scss',

@@ -6,7 +6,6 @@ import {
   input,
   numberAttribute,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 export type ProgressTone = 'accent' | 'success' | 'warning' | 'danger' | 'neutral';
 export type ProgressSize = 'xs' | 'sm' | 'md';
@@ -22,7 +21,6 @@ export type ProgressSize = 'xs' | 'sm' | 'md';
  */
 @Component({
   selector: 'ath-progress',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './progress.component.html',
   styleUrl: './progress.component.scss',

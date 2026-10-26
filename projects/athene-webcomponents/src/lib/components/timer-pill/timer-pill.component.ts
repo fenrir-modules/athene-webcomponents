@@ -8,7 +8,6 @@ import {
   output,
   type Signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 /** Long-running timer: `warn` after 8h, `alert` after 24h. */
 export type TimerPillWarning = 'warn' | 'alert';
@@ -29,7 +28,6 @@ export type TimerPillWarning = 'warn' | 'alert';
  */
 @Component({
   selector: 'ath-timer-pill',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './timer-pill.component.html',
   styleUrl: './timer-pill.component.scss',

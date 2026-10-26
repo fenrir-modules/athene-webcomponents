@@ -6,7 +6,7 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ATH_PRIORITY_LABELS, type TicketPriority } from '@athene/webcomponents/core';
 
 // The priority type and label token live in `@athene/webcomponents/core`.
@@ -32,7 +32,6 @@ const LABELS: Readonly<Record<TicketPriority, string>> = {
  */
 @Component({
   selector: 'ath-priority',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './priority.component.html',
   styleUrl: './priority.component.scss',

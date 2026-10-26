@@ -5,7 +5,6 @@ import {
   computed,
   input,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 /** Heading level of the page head's title. */
 export type PageHeaderLevel = 1 | 2;
@@ -36,7 +35,6 @@ export type PageHeaderLevel = 1 | 2;
  */
 @Component({
   selector: 'ath-page-header',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './page-header.component.html',
   styleUrl: './page-header.component.scss',

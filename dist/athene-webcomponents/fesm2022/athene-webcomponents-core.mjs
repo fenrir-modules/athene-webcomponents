@@ -92,7 +92,7 @@ const ACTION_MIN_DURATION = 8000;
  */
 class AthToastService {
     constructor() {
-        this.toastsSignal = signal([], ...(ngDevMode ? [{ debugName: "toastsSignal" }] : []));
+        this.toastsSignal = signal([], ...(ngDevMode ? [{ debugName: "toastsSignal" }] : /* istanbul ignore next */ []));
         this.toasts = this.toastsSignal.asReadonly();
     }
     success(message, options = 4000) {
@@ -127,10 +127,10 @@ class AthToastService {
             setTimeout(() => this.remove(id), duration);
         }
     }
-    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "20.3.33", ngImport: i0, type: AthToastService, deps: [], target: i0.ɵɵFactoryTarget.Injectable }); }
-    static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "20.3.33", ngImport: i0, type: AthToastService, providedIn: 'root' }); }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "21.2.25", ngImport: i0, type: AthToastService, deps: [], target: i0.ɵɵFactoryTarget.Injectable }); }
+    static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "21.2.25", ngImport: i0, type: AthToastService, providedIn: 'root' }); }
 }
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "20.3.33", ngImport: i0, type: AthToastService, decorators: [{
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "21.2.25", ngImport: i0, type: AthToastService, decorators: [{
             type: Injectable,
             args: [{ providedIn: 'root' }]
         }] });

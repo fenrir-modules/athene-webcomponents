@@ -8,7 +8,7 @@ import {
   numberAttribute,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { AthIconComponent } from '../icon/icon.component';
 import { AlertCircle } from 'lucide';
@@ -27,7 +27,7 @@ export type TextareaResize = 'none' | 'vertical' | 'both';
  */
 @Component({
   selector: 'ath-textarea',
-  imports: [CommonModule, FormsModule, AthIconComponent],
+  imports: [FormsModule, AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {

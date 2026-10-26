@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { injectAthLabels } from '../../i18n/labels';
 
 /**
@@ -18,7 +18,6 @@ export type SpinnerSize = 'sm' | 'md' | 'lg';
  */
 @Component({
   selector: 'ath-spinner',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './spinner.component.html',
   styleUrl: './spinner.component.scss',

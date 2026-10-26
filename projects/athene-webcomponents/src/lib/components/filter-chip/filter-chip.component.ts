@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, booleanAttribute, input, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { AthIconComponent } from '../icon/icon.component';
 import { ChevronDown, X } from 'lucide';
 import { formatAthLabel, injectAthLabels } from '../../i18n/labels';
@@ -16,7 +16,7 @@ import { formatAthLabel, injectAthLabels } from '../../i18n/labels';
  */
 @Component({
   selector: 'ath-filter-chip',
-  imports: [CommonModule, AthIconComponent],
+  imports: [AthIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './filter-chip.component.html',
   styleUrl: './filter-chip.component.scss',

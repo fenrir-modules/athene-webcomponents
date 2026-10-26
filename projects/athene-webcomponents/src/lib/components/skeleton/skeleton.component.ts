@@ -6,7 +6,7 @@ import {
   input,
   numberAttribute,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { injectAthLabels } from '../../i18n/labels';
 
 /**
@@ -101,7 +101,7 @@ export class AthSkeletonListComponent {
  */
 @Component({
   selector: 'ath-skeleton-table',
-  imports: [CommonModule, AthSkeletonComponent],
+  imports: [AthSkeletonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './skeleton-table.component.html',
   styleUrl: './skeleton-table.component.scss',
@@ -123,7 +123,7 @@ export class AthSkeletonTableComponent {
  */
 @Component({
   selector: 'ath-skeleton-card',
-  imports: [CommonModule, AthSkeletonComponent],
+  imports: [AthSkeletonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './skeleton-card.component.html',
   styleUrl: './skeleton-card.component.scss',

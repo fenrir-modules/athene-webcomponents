@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 export type KbdSize = 'sm' | 'md' | 'lg';
 
@@ -16,7 +15,6 @@ export type KbdSize = 'sm' | 'md' | 'lg';
  */
 @Component({
   selector: 'ath-kbd',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './kbd.component.html',
   styleUrl: './kbd.component.scss',

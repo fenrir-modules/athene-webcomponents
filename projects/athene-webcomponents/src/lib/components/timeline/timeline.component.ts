@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 /**
  * Vertical timeline container with connecting rail.
@@ -17,7 +16,6 @@ import { CommonModule } from '@angular/common';
  */
 @Component({
   selector: 'ath-timeline',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.scss',

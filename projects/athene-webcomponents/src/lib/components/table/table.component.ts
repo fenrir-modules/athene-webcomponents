@@ -5,7 +5,6 @@ import {
   booleanAttribute,
   input,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 /**
  * Athene Table Component
@@ -32,7 +31,6 @@ import { CommonModule } from '@angular/common';
  */
 @Component({
   selector: 'ath-table',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   templateUrl: './table.component.html',

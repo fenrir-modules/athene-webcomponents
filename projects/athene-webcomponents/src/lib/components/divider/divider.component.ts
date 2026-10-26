@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 export type DividerOrientation = 'horizontal' | 'vertical';
 export type DividerSpacing = 'none' | 'sm' | 'md' | 'lg';
@@ -16,7 +15,6 @@ export type DividerSpacing = 'none' | 'sm' | 'md' | 'lg';
  */
 @Component({
   selector: 'ath-divider',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './divider.component.html',
   styleUrl: './divider.component.scss',

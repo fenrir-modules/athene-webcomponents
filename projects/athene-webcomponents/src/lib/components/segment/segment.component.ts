@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 export interface SegmentOption<T = string> {
   value: T;
@@ -23,7 +22,6 @@ export type SegmentSize = 'sm' | 'md';
  */
 @Component({
   selector: 'ath-segment',
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './segment.component.html',
   styleUrl: './segment.component.scss',
