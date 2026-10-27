@@ -20,7 +20,7 @@
     "useDefineForClassFields": false,
     // TypeScript 6 no longer loads every @types package by default; the
     // specs' globals, for editors and ESLint (tsconfig.lib.json sets []).
-    "types": ["jasmine"],
+    "types": ["vitest/globals"],
     "paths": {
       "@athene/webcomponents": ["./projects/athene-webcomponents/src/public-api.ts"],
       "@athene/webcomponents/core": ["./projects/athene-webcomponents/core/src/public-api.ts"],

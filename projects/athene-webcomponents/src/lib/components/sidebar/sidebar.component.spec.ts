@@ -19,7 +19,7 @@ describe('AthSidebarComponent', () => {
     const aside = () => el.querySelector('aside')!;
     el.querySelector<HTMLButtonElement>('.ath-sidebar__toggle')!.click();
     fixture.detectChanges();
-    expect(fixture.componentInstance.collapsed()).toBeTrue();
+    expect(fixture.componentInstance.collapsed()).toBe(true);
     expect(aside().classList).toContain('ath-sidebar--collapsed');
     fixture.componentInstance.collapsed.set(false);
     fixture.detectChanges();

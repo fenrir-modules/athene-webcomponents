@@ -110,17 +110,14 @@ describe('floatPanel', () => {
     expect(parseFloat(arrow.style.left)).toBeCloseTo(centre - left, 0);
   });
 
-  it('promotes the panel into the top layer and leaves it on stop', () => {
-    if (!supportsTopLayer()) {
-      pending('no Popover API in this browser');
-      return;
-    }
+  it('promotes the panel into the top layer and leaves it on stop', ({ skip }) => {
+    skip(!supportsTopLayer(), 'no Popover API in this browser');
     const { anchor, panel } = setup('top:10px;left:20px', { w: 100, h: 40 });
     stop = floatPanel(panel, anchor);
-    expect(panel.matches(':popover-open')).toBeTrue();
+    expect(panel.matches(':popover-open')).toBe(true);
     stop();
     stop = null;
-    expect(panel.matches(':popover-open')).toBeFalse();
+    expect(panel.matches(':popover-open')).toBe(false);
   });
 
   it('centres the panel on the anchor with align="center"', () => {
@@ -176,9 +173,9 @@ describe('floatPanel', () => {
       getBoundingClientRect: () => new DOMRect(),
       contextElement: el,
     };
-    expect(isVirtualAnchor(virtual)).toBeTrue();
-    expect(isVirtualAnchor(el)).toBeFalse();
-    expect(isVirtualAnchor(null)).toBeFalse();
+    expect(isVirtualAnchor(virtual)).toBe(true);
+    expect(isVirtualAnchor(el)).toBe(false);
+    expect(isVirtualAnchor(null)).toBe(false);
     expect(resolveAnchor(virtual)).toBe(el);
     expect(resolveAnchor({ getBoundingClientRect: () => new DOMRect() })).toBeNull();
     expect(resolveFloatingTarget(virtual)).toBe(virtual);
@@ -229,7 +226,7 @@ describe('AthFloatingDirective', () => {
     const panel = fixture.componentInstance.panel()!.nativeElement;
     expect(panel.style.position).toBe('fixed');
     expect(panel.dataset['placement']).toBe('bottom');
-    if (supportsTopLayer()) expect(panel.matches(':popover-open')).toBeTrue();
+    if (supportsTopLayer()) expect(panel.matches(':popover-open')).toBe(true);
 
     fixture.componentInstance.open.set(false);
     fixture.detectChanges();

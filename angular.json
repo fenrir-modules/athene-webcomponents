@@ -24,18 +24,38 @@
           },
           "defaultConfiguration": "production"
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+        "test-build": {
+          "builder": "@angular/build:application",
           "options": {
             "tsConfig": "projects/athene-webcomponents/tsconfig.spec.json",
-            "polyfills": ["zone.js", "zone.js/testing"],
-            "styles": ["projects/athene-webcomponents/src/lib/styles/main.scss"]
+            "polyfills": ["zone.js"],
+            "styles": ["projects/athene-webcomponents/src/lib/styles/main.scss"],
+            "aot": false,
+            "optimization": false,
+            "extractLicenses": false
           },
           "configurations": {
             "zoneless": {
-              "main": "projects/athene-webcomponents/src/test-zoneless.ts",
-              "tsConfig": "projects/athene-webcomponents/tsconfig.spec.zoneless.json",
               "polyfills": []
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "runner": "vitest",
+            "buildTarget": ":test-build",
+            "tsConfig": "projects/athene-webcomponents/tsconfig.spec.json",
+            "browsers": ["chromiumHeadless"],
+            "browserViewport": "800x600",
+            "splitting": false,
+            "setupFiles": ["projects/athene-webcomponents/src/test-setup.ts"],
+            "reporters": ["default"]
+          },
+          "configurations": {
+            "zoneless": {
+              "buildTarget": ":test-build:zoneless",
+              "providersFile": "projects/athene-webcomponents/src/test-providers-zoneless.ts"
             }
           }
         },

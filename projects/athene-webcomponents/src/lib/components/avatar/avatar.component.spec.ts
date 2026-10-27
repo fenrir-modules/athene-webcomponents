@@ -33,10 +33,10 @@ describe('AthAvatarComponent', () => {
     expect(getComputedStyle(face()).boxShadow).not.toBe('none');
     fixture.componentRef.setInput('ring', '#123456');
     fixture.detectChanges();
-    expect(face().hasAttribute('data-ring')).toBeFalse();
+    expect(face().hasAttribute('data-ring')).toBe(false);
     fixture.componentRef.setInput('ring', null);
     fixture.detectChanges();
-    expect(face().hasAttribute('data-ring')).toBeFalse();
+    expect(face().hasAttribute('data-ring')).toBe(false);
   });
 
   it('draws null as the empty seat, titled with the label', () => {
@@ -64,7 +64,7 @@ describe('AthAvatarComponent', () => {
     for (const [size, px] of Object.entries(sizes)) {
       fixture.componentRef.setInput('size', size);
       fixture.detectChanges();
-      expect(face().getBoundingClientRect().width).withContext(size).toBe(px);
+      expect(face().getBoundingClientRect().width, size).toBe(px);
     }
   });
 

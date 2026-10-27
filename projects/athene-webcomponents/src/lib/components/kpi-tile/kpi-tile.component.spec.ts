@@ -57,10 +57,10 @@ describe('AthKpiTileComponent', () => {
   });
 
   it('draws a trend only for two or more samples that are not all zero', () => {
-    expect(hasKpiTrend(null)).toBeFalse();
-    expect(hasKpiTrend([3])).toBeFalse();
-    expect(hasKpiTrend([0, 0, 0])).toBeFalse();
-    expect(hasKpiTrend([0, 1])).toBeTrue();
+    expect(hasKpiTrend(null)).toBe(false);
+    expect(hasKpiTrend([3])).toBe(false);
+    expect(hasKpiTrend([0, 0, 0])).toBe(false);
+    expect(hasKpiTrend([0, 1])).toBe(true);
   });
 
   it('sets the alert figure in red and explains the delta', () => {

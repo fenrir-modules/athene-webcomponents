@@ -70,8 +70,8 @@ describe('AthDialogComponent', () => {
   it('opens a native modal dialog in the top layer, named and described', () => {
     expect(dialog()).toBeNull();
     const el = openDialog();
-    expect(el.open).toBeTrue();
-    expect(el.matches(':modal')).toBeTrue();
+    expect(el.open).toBe(true);
+    expect(el.matches(':modal')).toBe(true);
     expect(document.getElementById(el.getAttribute('aria-labelledby')!)?.textContent).toBe(
       'Create item'
     );
@@ -95,7 +95,7 @@ describe('AthDialogComponent', () => {
     q('.ath-dialog__close')!.click();
     fixture.detectChanges();
     expect(host.closedCount).toBe(1);
-    expect(host.open()).toBeFalse();
+    expect(host.open()).toBe(false);
     expect(dialog()).toBeNull();
   });
 
@@ -104,7 +104,7 @@ describe('AthDialogComponent', () => {
     fixture.detectChanges();
     openDialog();
     const ev = cancel();
-    expect(ev.defaultPrevented).toBeTrue();
+    expect(ev.defaultPrevented).toBe(true);
     expect(host.closedCount).toBe(0);
     expect(dialog()).not.toBeNull();
 
@@ -147,7 +147,7 @@ describe('AthDialogComponent', () => {
     save.focus();
     const tab = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
     save.dispatchEvent(tab);
-    expect(tab.defaultPrevented).toBeTrue();
+    expect(tab.defaultPrevented).toBe(true);
     // Wraps to the first control of the dialog (the header's close button).
     expect(document.activeElement).toBe(q('.ath-dialog__close'));
   });
@@ -167,7 +167,7 @@ describe('AthDialogComponent', () => {
     try {
       openDialog();
       if ('showPopover' in HTMLElement.prototype) {
-        expect(toasts.matches(':popover-open')).toBeTrue();
+        expect(toasts.matches(':popover-open')).toBe(true);
       }
     } finally {
       toasts.remove();
@@ -240,10 +240,10 @@ describe('AthDialogComponent (bare)', () => {
 
   it('shows only the content, named by ariaLabel, as a modal over the viewport', () => {
     const el = q<HTMLDialogElement>('dialog')!;
-    expect(el.matches(':modal')).toBeTrue();
+    expect(el.matches(':modal')).toBe(true);
     expect(el.classList).toContain('ath-dialog--bare');
     expect(el.getAttribute('aria-label')).toBe('Command palette');
-    expect(el.hasAttribute('aria-labelledby')).toBeFalse();
+    expect(el.hasAttribute('aria-labelledby')).toBe(false);
     expect(q('.ath-dialog__header')).toBeNull();
     expect(q('.ath-dialog__close')).toBeNull();
     expect(q('.ath-dialog__footer')).toBeNull();

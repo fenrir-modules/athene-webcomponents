@@ -99,9 +99,9 @@ describe('due-date', () => {
     });
 
     it('adds the time of a moment, in the reader zone, never of a day', () => {
-      expect(isDayOnly('2026-10-30T12:00:00Z')).toBeTrue();
-      expect(isDayOnly('2026-10-30T00:00:00Z')).toBeTrue();
-      expect(isDayOnly('2026-10-30T16:00:00Z')).toBeFalse();
+      expect(isDayOnly('2026-10-30T12:00:00Z')).toBe(true);
+      expect(isDayOnly('2026-10-30T00:00:00Z')).toBe(true);
+      expect(isDayOnly('2026-10-30T16:00:00Z')).toBe(false);
       expect(
         fullDueDate('2026-10-30T16:00:00Z', day, {
           locale: 'de',
@@ -129,7 +129,7 @@ describe('due-date', () => {
 
     it('marks today red and tomorrow amber', () => {
       expect(describeDue({ date: '2026-10-22', now: NOW }, LABELS)).toEqual(
-        jasmine.objectContaining({ tone: 'today', text: 'today', days: 0 })
+        expect.objectContaining({ tone: 'today', text: 'today', days: 0 })
       );
       expect(describeDue({ date: '2026-10-23', now: NOW }, LABELS)?.tone).toBe('soon');
       expect(describeDue({ date: '2026-10-20', now: NOW }, LABELS)?.text).toBe('2 days overdue');
@@ -139,14 +139,14 @@ describe('due-date', () => {
       const view = describeDue({ date: '2026-10-20', done: true, now: NOW }, LABELS, {
         dateFormat: 'dmy',
       });
-      expect(view).toEqual(jasmine.objectContaining({ tone: 'done', text: '20.10.' }));
+      expect(view).toEqual(expect.objectContaining({ tone: 'done', text: '20.10.' }));
     });
 
     it('names the day of a sprint-derived date, coloured by the same rule', () => {
       const view = describeDue({ date: '2026-10-23', source: 'sprint', now: NOW }, LABELS, {
         dateFormat: 'dmy',
       });
-      expect(view).toEqual(jasmine.objectContaining({ tone: 'soon', text: '23.10.' }));
+      expect(view).toEqual(expect.objectContaining({ tone: 'soon', text: '23.10.' }));
     });
   });
 });

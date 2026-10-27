@@ -88,7 +88,7 @@ describe('AthTriStateComponent', () => {
 
   it('does nothing while disabled', () => {
     render({ value: 'inherit', disabled: true });
-    expect(radios().every((r) => r.disabled)).toBeTrue();
+    expect(radios().every((r) => r.disabled)).toBe(true);
     key(radios()[1], 'ArrowRight');
     fixture.detectChanges();
     expect(fixture.componentInstance.value()).toBe('inherit');
@@ -96,9 +96,9 @@ describe('AthTriStateComponent', () => {
 
   it('shows icons only when compact, every segment still named', () => {
     render({ value: 'deny', compact: true });
-    expect(host().hasAttribute('data-compact')).toBeTrue();
+    expect(host().hasAttribute('data-compact')).toBe(true);
     const text = host().querySelector<HTMLElement>('.ath-tri__text')!;
     expect(getComputedStyle(text).display).toBe('none');
-    expect(radios().every((r) => !!r.getAttribute('aria-label'))).toBeTrue();
+    expect(radios().every((r) => !!r.getAttribute('aria-label'))).toBe(true);
   });
 });

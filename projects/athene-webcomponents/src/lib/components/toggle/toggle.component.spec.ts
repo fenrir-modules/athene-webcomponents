@@ -22,7 +22,7 @@ describe('AthToggleComponent', () => {
     expect(button().querySelector('.ath-toggle__content')).toBeNull();
     // A box of its own: exactly the switch, no line box (strut) around it.
     const host = fixture.nativeElement as HTMLElement;
-    expect(host.hasAttribute('data-bare')).toBeTrue();
+    expect(host.hasAttribute('data-bare')).toBe(true);
     expect(getComputedStyle(host).display).toBe('inline-flex');
     expect(Math.round(host.getBoundingClientRect().height)).toBe(
       Math.round(button().getBoundingClientRect().height)
@@ -31,10 +31,10 @@ describe('AthToggleComponent', () => {
 
   it('is named by its visible label otherwise', () => {
     render({ label: 'Maintenance' });
-    expect(button().hasAttribute('aria-label')).toBeFalse();
+    expect(button().hasAttribute('aria-label')).toBe(false);
     expect(button().textContent?.trim()).toBe('Maintenance');
     expect(button().classList).toContain('ath-toggle--boxed');
-    expect((fixture.nativeElement as HTMLElement).hasAttribute('data-bare')).toBeFalse();
+    expect((fixture.nativeElement as HTMLElement).hasAttribute('data-bare')).toBe(false);
   });
 
   it('emits the next state, not when disabled', () => {

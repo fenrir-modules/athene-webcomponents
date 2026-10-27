@@ -64,7 +64,7 @@ describe('AthDropdownComponent', () => {
     const wrapper = q('.with-button .ath-dropdown__trigger')!;
     const button = wrapper.querySelector('button')!;
     expect(wrapper.getAttribute('role')).toBeNull();
-    expect(wrapper.hasAttribute('tabindex')).toBeFalse();
+    expect(wrapper.hasAttribute('tabindex')).toBe(false);
     expect(button.getAttribute('aria-haspopup')).toBe('menu');
     expect(button.getAttribute('aria-expanded')).toBe('false');
   });

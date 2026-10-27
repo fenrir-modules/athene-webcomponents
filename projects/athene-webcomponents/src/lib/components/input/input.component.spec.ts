@@ -38,7 +38,7 @@ describe('AthInputComponent', () => {
   });
 
   it('emits value changes on input event', () => {
-    const onChange = jasmine.createSpy('onChange');
+    const onChange = vi.fn().mockName('onChange');
     component.registerOnChange(onChange);
     fixture.detectChanges();
 
@@ -71,10 +71,10 @@ describe('AthInputComponent', () => {
     await host.whenStable();
     host.detectChanges();
     expect(field.value).toBe('mira@example.com');
-    expect(field.disabled).toBeTrue();
+    expect(field.disabled).toBe(true);
     host.componentInstance.email.enable();
     await host.whenStable();
     host.detectChanges();
-    expect(field.disabled).toBeFalse();
+    expect(field.disabled).toBe(false);
   });
 });

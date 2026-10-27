@@ -84,7 +84,7 @@ describe('AthSelectComponent', () => {
     expect((fixture.nativeElement as HTMLElement).querySelector('label')).toBeNull();
     fixture.componentRef.setInput('ariaLabel', '');
     fixture.detectChanges();
-    expect(select.hasAttribute('aria-label')).toBeFalse();
+    expect(select.hasAttribute('aria-label')).toBe(false);
   });
 
   /** UX-041 / UX-031: "Select an option" stood English on German pages. */

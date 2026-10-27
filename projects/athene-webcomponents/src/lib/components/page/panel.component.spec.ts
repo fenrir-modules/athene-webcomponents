@@ -64,6 +64,6 @@ describe('AthPanelComponent', () => {
     expect(getComputedStyle(panel('full')).overflow).toBe('hidden');
     expect(panel('clip').getAttribute('data-overflow')).toBe('clip');
     expect(getComputedStyle(panel('clip')).overflow).toBe('clip');
-    expect(panel('full').hasAttribute('data-overflow')).toBeFalse();
+    expect(panel('full').hasAttribute('data-overflow')).toBe(false);
   });
 });

@@ -5,16 +5,16 @@ describe('AthToastService', () => {
   let service: AthToastService;
 
   beforeEach(() => {
-    jasmine.clock().install();
+    vi.useFakeTimers();
     service = TestBed.inject(AthToastService);
   });
 
-  afterEach(() => jasmine.clock().uninstall());
+  afterEach(() => vi.useRealTimers());
 
   it('keeps the old (message, duration) signature', () => {
     service.success('Saved', 1000);
     expect(service.toasts()[0].duration).toBe(1000);
-    jasmine.clock().tick(1001);
+    vi.advanceTimersByTime(1001);
     expect(service.toasts().length).toBe(0);
   });
 
@@ -24,7 +24,7 @@ describe('AthToastService', () => {
   });
 
   it('runs the action and closes the toast', () => {
-    const run = jasmine.createSpy('run');
+    const run = vi.fn().mockName('run');
     service.info('ATH-9 created', { duration: 0, action: { label: 'Open', run } });
     service.runAction(service.toasts()[0].id);
     expect(run).toHaveBeenCalled();
@@ -36,7 +36,7 @@ describe('AthToastContainerComponent', () => {
   it('renders the action as a keyboard-reachable button', () => {
     const fixture = TestBed.createComponent(AthToastContainerComponent);
     const service = TestBed.inject(AthToastService);
-    const run = jasmine.createSpy('run');
+    const run = vi.fn().mockName('run');
     service.success('ATH-9 created', { duration: 0, action: { label: 'Open', run } });
     fixture.detectChanges();
     const button = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>(

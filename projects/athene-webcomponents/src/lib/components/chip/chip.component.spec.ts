@@ -67,7 +67,7 @@ describe('AthChipComponent', () => {
   });
 
   it('removes without bubbling to a clickable row', () => {
-    const rowClick = jasmine.createSpy('row');
+    const rowClick = vi.fn().mockName('row');
     (fixture.nativeElement as HTMLElement)
       .querySelector('.row')!
       .addEventListener('click', rowClick);

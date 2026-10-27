@@ -71,7 +71,12 @@ describe('AthBreadcrumbComponent', () => {
     render(five);
     const more = (
       fixture.componentInstance as unknown as {
-        shown: () => { kind: string; items?: { label: string }[] }[];
+        shown: () => {
+          kind: string;
+          items?: {
+            label: string;
+          }[];
+        }[];
       }
     )
       .shown()

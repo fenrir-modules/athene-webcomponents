@@ -12,21 +12,21 @@ describe('AthSearchInputComponent', () => {
   };
 
   beforeEach(() => {
-    jasmine.clock().install();
+    vi.useFakeTimers();
     fixture = TestBed.createComponent(AthSearchInputComponent);
     seen = [];
     fixture.componentInstance.searched.subscribe((v) => seen.push(v));
   });
 
-  afterEach(() => jasmine.clock().uninstall());
+  afterEach(() => vi.useRealTimers());
 
   it('debounces with the bound [debounce], not the default (FE-09)', () => {
     fixture.componentRef.setInput('debounce', 50);
     fixture.detectChanges();
     type('ath');
-    jasmine.clock().tick(49);
+    vi.advanceTimersByTime(49);
     expect(seen).toEqual([]);
-    jasmine.clock().tick(1);
+    vi.advanceTimersByTime(1);
     expect(seen).toEqual(['ath']);
   });
 
@@ -34,7 +34,7 @@ describe('AthSearchInputComponent', () => {
     fixture.detectChanges();
     type('a');
     type('ab');
-    jasmine.clock().tick(300);
+    vi.advanceTimersByTime(300);
     expect(seen).toEqual(['ab']);
     fixture.detectChanges();
     const clear = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>(
@@ -42,7 +42,7 @@ describe('AthSearchInputComponent', () => {
     )!;
     clear.click();
     fixture.detectChanges();
-    jasmine.clock().tick(300);
+    vi.advanceTimersByTime(300);
     expect(seen).toEqual(['ab', '']);
     expect(field().value).toBe('');
     expect(

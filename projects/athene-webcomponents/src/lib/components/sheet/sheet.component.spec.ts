@@ -81,7 +81,7 @@ describe('AthSheetComponent', () => {
     expect(el.getAttribute('role')).toBe('dialog');
     expect(el.getAttribute('aria-modal')).toBe('false');
     expect(el.getAttribute('aria-label')).toBe('ATL-12 Export invoices');
-    expect(el.matches(':popover-open')).toBeTrue();
+    expect(el.matches(':popover-open')).toBe(true);
     // Layout, not the box: the slide-in animation moves the box for 220ms.
     const cs = getComputedStyle(el);
     expect(cs.position).toBe('fixed');
@@ -119,7 +119,7 @@ describe('AthSheetComponent', () => {
   it('asks to close on Escape and stays open until the parent agrees', () => {
     const el = openSheet();
     const event = key(el, 'Escape');
-    expect(event.defaultPrevented).toBeTrue();
+    expect(event.defaultPrevented).toBe(true);
     expect(host.closedCount).toBe(1);
     expect(host.changes).toEqual([false]);
     // Controlled: still open.

@@ -55,7 +55,7 @@ describe('AthSkeletonComponent', () => {
         }
       }
     }
-    expect(still.some((s) => s.includes('ath-skeleton--animated'))).toBeTrue();
+    expect(still.some((s) => s.includes('ath-skeleton--animated'))).toBe(true);
   });
 });
 

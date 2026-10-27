@@ -73,7 +73,7 @@ describe('AthPermissionRowComponent', () => {
     toggle().click();
     fixture.detectChanges();
     expect(fixture.componentInstance.activations).toBe(0);
-    expect(fixture.componentInstance.on()).toBeTrue();
+    expect(fixture.componentInstance.on()).toBe(true);
   });
 
   it('emits nothing when not interactive or when disabled', () => {

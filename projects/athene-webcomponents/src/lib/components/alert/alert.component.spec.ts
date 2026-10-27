@@ -47,9 +47,10 @@ describe('AthAlertComponent', () => {
 
   it('retries through a busy button', async () => {
     let resolve!: () => void;
-    const retry = jasmine
-      .createSpy('retry')
-      .and.callFake(() => new Promise<void>((r) => (resolve = r)));
+    const retry = vi
+      .fn()
+      .mockName('retry')
+      .mockImplementation(() => new Promise<void>((r) => (resolve = r)));
     fixture.componentRef.setInput('variant', 'error');
     fixture.componentRef.setInput('message', 'Could not load');
     fixture.componentRef.setInput('retry', retry);
@@ -60,15 +61,15 @@ describe('AthAlertComponent', () => {
     button.click();
     fixture.detectChanges();
     expect(retry).toHaveBeenCalledTimes(1);
-    expect(button.disabled).toBeTrue();
+    expect(button.disabled).toBe(true);
     resolve();
     await settle();
     fixture.detectChanges();
-    expect(button.disabled).toBeFalse();
+    expect(button.disabled).toBe(false);
   });
 
   it('dismisses with a labelled button', () => {
-    const dismissed = jasmine.createSpy('dismissed');
+    const dismissed = vi.fn().mockName('dismissed');
     fixture.componentRef.setInput('message', 'Saved');
     fixture.componentRef.setInput('dismissible', true);
     fixture.componentInstance.dismissed.subscribe(dismissed);

@@ -88,7 +88,7 @@ describe('AthListboxComponent', () => {
     expect(list.getAttribute('aria-multiselectable')).toBeNull();
     expect(options().length).toBe(4);
     expect(options()[1].getAttribute('aria-disabled')).toBe('true');
-    expect(options().every((o) => o.getAttribute('aria-selected') === 'false')).toBeTrue();
+    expect(options().every((o) => o.getAttribute('aria-selected') === 'false')).toBe(true);
   });
 
   it('selects one option by click (single)', () => {
@@ -208,7 +208,7 @@ describe('AthListboxComponent', () => {
     host.searchable.set(true);
     fixture.detectChanges();
     const event = press(' ', q('input')!);
-    expect(event.defaultPrevented).toBeFalse();
+    expect(event.defaultPrevented).toBe(false);
   });
 
   it('offers a create row for a new query', () => {
@@ -306,17 +306,17 @@ describe('AthListboxComponent driven from an outside field', () => {
     });
     box.dispatchEvent(down);
     fixture.detectChanges();
-    expect(down.defaultPrevented).toBeTrue();
+    expect(down.defaultPrevented).toBe(true);
     expect(label()).toBe('Cy');
 
     const letter = new KeyboardEvent('keydown', { key: 'x', bubbles: true, cancelable: true });
     fixture.componentInstance.list().handleKeydown(letter);
-    expect(letter.defaultPrevented).toBeFalse();
+    expect(letter.defaultPrevented).toBe(false);
 
     const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
     box.dispatchEvent(enter);
     fixture.detectChanges();
-    expect(enter.defaultPrevented).toBeTrue();
+    expect(enter.defaultPrevented).toBe(true);
     expect(fixture.componentInstance.picked).toEqual(['cy']);
     expect(document.activeElement).toBe(box);
     fixture.destroy();

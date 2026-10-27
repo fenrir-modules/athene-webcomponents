@@ -45,7 +45,7 @@ describe('AthEmptyStateComponent', () => {
     fixture.componentRef.setInput('bare', '');
     fixture.componentRef.setInput('icon', Inbox);
     fixture.detectChanges();
-    expect(fixture.componentInstance.bare()).toBeTrue();
+    expect(fixture.componentInstance.bare()).toBe(true);
     expect(el().querySelector('.ath-empty-state--bare')).not.toBeNull();
   });
 });

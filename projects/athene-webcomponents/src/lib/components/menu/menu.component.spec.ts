@@ -101,7 +101,7 @@ describe('AthMenuComponent', () => {
     expect(menu.getAttribute('aria-labelledby')).toBe(trigger.id);
     expect(items().length).toBe(4);
     expect(q('[role=separator]')).not.toBeNull();
-    expect(items().every((i) => i.tabIndex === -1)).toBeTrue();
+    expect(items().every((i) => i.tabIndex === -1)).toBe(true);
   });
 
   it('opens on the first item with click and ArrowDown, on the last with ArrowUp', async () => {

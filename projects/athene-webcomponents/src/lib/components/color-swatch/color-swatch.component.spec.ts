@@ -54,7 +54,7 @@ describe('AthColorSwatchComponent', () => {
       radios()
         .slice(1)
         .every((r) => r.tabIndex === -1)
-    ).toBeTrue();
+    ).toBe(true);
   });
 
   it('picks on click and with the arrow keys, wrapping', () => {
@@ -86,8 +86,8 @@ describe('AthColorSwatchComponent', () => {
   });
 
   it('recognises palette tokens only', () => {
-    expect(isAthDecoColor('purple')).toBeTrue();
-    expect(isAthDecoColor('#ff0000')).toBeFalse();
-    expect(isAthDecoColor(null)).toBeFalse();
+    expect(isAthDecoColor('purple')).toBe(true);
+    expect(isAthDecoColor('#ff0000')).toBe(false);
+    expect(isAthDecoColor(null)).toBe(false);
   });
 });

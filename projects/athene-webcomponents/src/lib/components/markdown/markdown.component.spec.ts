@@ -35,9 +35,9 @@ describe('AthMarkdownComponent', () => {
       fixture.componentRef.setInput('text', payload);
       fixture.detectChanges();
       const html = root().innerHTML;
-      expect(html)
-        .withContext(payload)
-        .not.toMatch(/<script|onerror|onclick|="javascript:|<iframe|<form|style=/i);
+      expect(html, payload).not.toMatch(
+        /<script|onerror|onclick|="javascript:|<iframe|<form|style=/i
+      );
     }
     expect((window as unknown as { __xss?: number }).__xss).toBeUndefined();
   });
@@ -91,7 +91,7 @@ describe('AthMarkdownComponent', () => {
     fixture.componentRef.setInput('parse', () => {
       throw new Error('boom');
     });
-    spyOn(console, 'warn');
+    vi.spyOn(console, 'warn').mockReturnValue(undefined);
     fixture.componentRef.setInput('text', 'z');
     fixture.detectChanges();
     expect(root().innerHTML).toBe('<p>z</p>');

@@ -228,8 +228,7 @@ describe('Page frame (ath-page + ath-panel-grid + ath-panel)', () => {
         expect(m.mismatch).toBe(0);
         expect(m.dead).toBeLessThanOrEqual(16);
         expect(m.dead).toBeGreaterThanOrEqual(0);
-        if (s.mode === 'fill')
-          expect(m.scrolls).withContext('fill pages never scroll the stage').toBeFalse();
+        if (s.mode === 'fill') expect(m.scrolls, 'fill pages never scroll the stage').toBe(false);
       });
     }
   }
@@ -237,7 +236,7 @@ describe('Page frame (ath-page + ath-panel-grid + ath-panel)', () => {
   it('fill: the stage keeps still and the long panel scrolls inside', () => {
     const inbox = SCENARIOS.find((s) => s.page.startsWith('/app/inbox'))!;
     const m = show(inbox, 1440, 900);
-    expect(m.scrolls).toBeFalse();
+    expect(m.scrolls).toBe(false);
     const bodies = root().querySelectorAll<HTMLElement>('.ath-panel__body');
     const feed = bodies[1];
     expect(feed.scrollHeight).toBeGreaterThan(feed.clientHeight);
@@ -254,7 +253,7 @@ describe('Page frame (ath-page + ath-panel-grid + ath-panel)', () => {
       panels: SCENARIOS[5].panels.map((p) => ({ lines: p.lines * 3 })),
     };
     const m = show(long, 1110, 760);
-    expect(m.scrolls).toBeTrue();
+    expect(m.scrolls).toBe(true);
     expect(m.mismatch).toBe(0);
     for (const body of Array.from(root().querySelectorAll<HTMLElement>('.ath-panel__body'))) {
       expect(body.scrollHeight).toBeLessThanOrEqual(body.clientHeight + 1);

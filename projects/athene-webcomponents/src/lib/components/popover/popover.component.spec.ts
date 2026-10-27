@@ -100,7 +100,7 @@ describe('AthPopoverComponent', () => {
 
   it('renders in the top layer, so a clipping container does not cut it', async () => {
     const panel = await open();
-    if (supportsTopLayer()) expect(panel.matches(':popover-open')).toBeTrue();
+    if (supportsTopLayer()) expect(panel.matches(':popover-open')).toBe(true);
     expect(panel.classList).toContain('ath-popover__panel--md');
     expect(panel.getBoundingClientRect().width).toBe(280);
     // The [popover] UA defaults (medium border, 0.25em padding, centring) are reset.
@@ -148,7 +148,7 @@ describe('AthPopoverComponent', () => {
     expect(panel.getAttribute('aria-modal')).toBe('true');
     q('.last')!.focus();
     const tab = press('Tab');
-    expect(tab.defaultPrevented).toBeTrue();
+    expect(tab.defaultPrevented).toBe(true);
     expect(document.activeElement).toBe(q('.first'));
     press('Tab', q('.first')!, true);
     expect(document.activeElement).toBe(q('.last'));
@@ -192,7 +192,7 @@ describe('AthPopoverComponent', () => {
     );
     fixture.detectChanges();
     expect(q('.inner-btn')).not.toBeNull();
-    expect(fixture.componentInstance.pop().open()).toBeTrue();
+    expect(fixture.componentInstance.pop().open()).toBe(true);
   });
 
   it('opens and closes programmatically', async () => {
@@ -271,11 +271,11 @@ describe('AthPopoverComponent with a virtual anchor', () => {
     // A press on the row (the context element) is not "outside".
     root.querySelector('.row')!.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
     fixture.detectChanges();
-    expect(fixture.componentInstance.open()).toBeTrue();
+    expect(fixture.componentInstance.open()).toBe(true);
 
     document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
     fixture.detectChanges();
-    expect(fixture.componentInstance.open()).toBeFalse();
+    expect(fixture.componentInstance.open()).toBe(false);
     expect(fixture.componentInstance.reason).toBe('outside');
     fixture.destroy();
     root.remove();
