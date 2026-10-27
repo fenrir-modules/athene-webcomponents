@@ -90,28 +90,33 @@
     "@fontsource/geist": "5.3.0",
     "@fontsource/geist-mono": "5.3.0",
     "@playwright/test": "1.63.0",
-    "@storybook/addon-a11y": "10.6.1",
-    "@storybook/addon-docs": "10.6.1",
-    "@storybook/angular": "10.6.1",
-    "@typescript-eslint/utils": "8.58.0",
+    "@storybook/addon-a11y": "10.6.2",
+    "@storybook/addon-docs": "10.6.2",
+    "@storybook/angular": "10.6.2",
+    "@typescript-eslint/utils": "8.71.2",
     "@vitest/browser-playwright": "5.0.4",
     "angular-eslint": "22.6.0",
-    "eslint": "9.39.4",
+    "eslint": "10.12.0",
     "eslint-import-resolver-typescript": "4.4.5",
     "eslint-plugin-boundaries": "7.2.0",
-    "knip": "6.40.0",
+    "knip": "6.41.0",
     "ng-packagr": "22.2.4",
     "postcss-scss": "4.0.9",
     "prettier": "3.8.1",
-    "storybook": "10.6.1",
+    "storybook": "10.6.2",
     "stylelint": "17.16.0",
     "stylelint-value-no-unknown-custom-properties": "6.1.1",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.58.0",
+    "typescript-eslint": "8.71.2",
     "vitest": "5.0.4",
-    "zone.js": "0.15.1"
+    "zone.js": "0.16.3"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
+  },
+  "overrides": {
+    "handlebars": "4.7.10",
+    "vite": "8.3.4",
+    "zod": "4.6.7"
   }
 }
