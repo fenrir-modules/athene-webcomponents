@@ -1,10 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AthTableComponent } from './table.component';
 
 @Component({
   imports: [AthTableComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ath-table [flush]="flush()">
       <thead>

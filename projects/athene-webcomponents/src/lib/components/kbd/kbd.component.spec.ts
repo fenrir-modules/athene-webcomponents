@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { AthKbdComponent } from './kbd.component';
 
 @Component({
   imports: [AthKbdComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<ath-kbd class="a" label="⌘K" size="sm" /><ath-kbd class="b">Esc</ath-kbd>`,
 })
 class HostComponent {}

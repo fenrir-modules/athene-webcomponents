@@ -1,7 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -19,10 +18,13 @@
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
+    // TypeScript 6 no longer loads every @types package by default; the
+    // specs' globals, for editors and ESLint (tsconfig.lib.json sets []).
+    "types": ["jasmine"],
     "paths": {
-      "@athene/webcomponents": ["projects/athene-webcomponents/src/public-api.ts"],
-      "@athene/webcomponents/core": ["projects/athene-webcomponents/core/src/public-api.ts"],
-      "@athene/webcomponents/*": ["projects/athene-webcomponents/src/*"]
+      "@athene/webcomponents": ["./projects/athene-webcomponents/src/public-api.ts"],
+      "@athene/webcomponents/core": ["./projects/athene-webcomponents/core/src/public-api.ts"],
+      "@athene/webcomponents/*": ["./projects/athene-webcomponents/src/*"]
     }
   },
   "angularCompilerOptions": {

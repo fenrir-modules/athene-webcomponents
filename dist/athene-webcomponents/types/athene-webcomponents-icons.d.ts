@@ -1,1 +1,1 @@
-export * from 'lucide';
+export * from "lucide";

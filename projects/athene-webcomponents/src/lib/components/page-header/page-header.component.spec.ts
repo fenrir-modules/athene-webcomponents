@@ -1,10 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AthPageHeaderComponent } from './page-header.component';
 
 @Component({
   imports: [AthPageHeaderComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ath-page-header title="Project" [subItems]="['Sprint 2', '', 'No lead']" [divider]="divider()">
       <span athPageLeading class="key">FP</span>

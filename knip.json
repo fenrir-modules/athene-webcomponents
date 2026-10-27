@@ -20,6 +20,11 @@
     "tests/storybook/*.ts",
     "tests/storybook/*.mjs"
   ],
-  "ignoreDependencies": ["@typescript-eslint/utils", "@fontsource/geist", "@fontsource/geist-mono"],
+  "ignoreDependencies": [
+    "@typescript-eslint/utils",
+    "@fontsource/geist",
+    "@fontsource/geist-mono",
+    "istanbul-lib-instrument"
+  ],
   "ignore": ["dist/**", "storybook-static/**"]
 }

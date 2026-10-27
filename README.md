@@ -2,6 +2,8 @@
 
 Athene's Angular component library: design tokens, global styles and the `ath-*` presentational primitives. No HTTP, no domain words. `athene-web` uses it through `npm run deps:sync`.
 
+Angular 22 and TypeScript 6.0; the Angular CLI needs Node ^22.22.3 or ^24.15 (CI: 24.15.0).
+
 ```sh
 npm run build:lib        # tokens:build, then ng build athene-webcomponents → dist/
 npm run check:dist       # build:lib, then fail if dist/ differs from the commit (CI runs it)
