@@ -1,6 +1,6 @@
 {
   "name": "@athene/webcomponents",
-  "version": "0.1.0",
+  "version": "0.7.6",
   "description": "Athene UI Component Library",
   "module": "dist/athene-webcomponents/fesm2022/athene-webcomponents.mjs",
   "typings": "dist/athene-webcomponents/types/athene-webcomponents.d.ts",
