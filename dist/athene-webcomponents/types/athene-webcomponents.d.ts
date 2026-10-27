@@ -3853,6 +3853,19 @@ export declare class AthDialogComponent implements OnChanges, OnDestroy {
    * `description`, `size` and `showClose` do not apply.
    */
   readonly bare: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
+  /**
+   * For a `bare` dialog: a band at the top that stays uncovered and usable
+   * while the dialog is open (a CSS length: a shell's top bar, e.g. `48px`),
+   * as `ath-sheet`'s `top`. The dialog then opens with `show()` instead of
+   * `showModal()`:
+   * fixed below the band at the modal layer, its own scrim, Tab kept
+   * inside, `aria-modal`, page scroll locked, Escape and backdrop clicks as
+   * before (through the overlay stack). What the band holds (a timer, a
+   * search) works with one click, and its popovers show above the dialog.
+   */
+  readonly uncover: import("@angular/core").InputSignal<string | null>;
+  /** A band is uncovered (bare dialogs only). */
+  protected readonly uncovered: import("@angular/core").Signal<boolean>;
   /** The user asked to close (✕, Escape, backdrop). */
   readonly closed: import("@angular/core").OutputEmitterRef<void>;
   /** Two-way partner of `open`; emits `false` on a close request. */
@@ -3945,6 +3958,11 @@ export declare class AthDialogComponent implements OnChanges, OnDestroy {
     };
     "bare": {
       "alias": "bare";
+      "required": false;
+      "isSignal": true;
+    };
+    "uncover": {
+      "alias": "uncover";
       "required": false;
       "isSignal": true;
     };

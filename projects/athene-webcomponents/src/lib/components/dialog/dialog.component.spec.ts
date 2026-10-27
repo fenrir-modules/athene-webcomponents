@@ -274,3 +274,93 @@ describe('AthDialogComponent (bare)', () => {
     expect(fixture.componentInstance.closedCount).toBe(1);
   });
 });
+
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AthDialogComponent, AthPopoverComponent, AthPopoverTriggerDirective],
+  template: `
+    <header class="band">
+      <button
+        type="button"
+        class="band-btn"
+        [athPopoverTrigger]="menu"
+        (click)="clicks = clicks + 1"
+      >
+        Timer
+      </button>
+      <ath-popover #menu ariaLabel="Menu"
+        ><button type="button" class="menu-btn">x</button></ath-popover
+      >
+    </header>
+    <ath-dialog
+      bare
+      uncover="48px"
+      [(open)]="open"
+      ariaLabel="Ticket"
+      (closed)="closedCount = closedCount + 1"
+    >
+      <div class="card"><button type="button" class="inside">Inside</button></div>
+    </ath-dialog>
+  `,
+})
+class UncoverHostComponent {
+  readonly open = signal(true);
+  clicks = 0;
+  closedCount = 0;
+}
+
+/** W5-C: a bare dialog can leave a band (a top bar) uncovered and usable. */
+describe('AthDialogComponent uncover', () => {
+  let fixture: ComponentFixture<UncoverHostComponent>;
+  let root: HTMLElement;
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(UncoverHostComponent);
+    root = fixture.nativeElement as HTMLElement;
+    document.body.appendChild(root);
+    fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    fixture.destroy();
+    root.remove();
+  });
+
+  it('opens without showModal, below the band, named as a modal', () => {
+    const el = root.querySelector('dialog') as HTMLDialogElement;
+    expect(el.open).toBe(true);
+    expect(el.matches(':modal')).toBe(false);
+    expect(el.getAttribute('aria-modal')).toBe('true');
+    expect(getComputedStyle(el).top).toBe('48px');
+  });
+
+  it('leaves the band clickable: its popover opens above the dialog, and Escape closes the popover first', async () => {
+    const band = root.querySelector('.band-btn') as HTMLButtonElement;
+    expect(band.closest('[inert]')).toBeNull();
+    band.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(fixture.componentInstance.clicks).toBe(1);
+    expect(fixture.componentInstance.open()).toBe(true);
+    const menu = document.querySelector<HTMLElement>('.menu-btn');
+    expect(menu?.checkVisibility()).toBe(true);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    fixture.detectChanges();
+    await new Promise((r) => setTimeout(r));
+    expect(menu?.checkVisibility()).toBe(false);
+    expect(fixture.componentInstance.closedCount).toBe(0);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.closedCount).toBe(1);
+  });
+
+  it('a press on the scrim still closes it', () => {
+    const el = root.querySelector('dialog') as HTMLDialogElement;
+    el.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+    el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.closedCount).toBe(1);
+  });
+});

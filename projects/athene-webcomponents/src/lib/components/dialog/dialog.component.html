@@ -6,7 +6,12 @@
     #dialog
     class="ath-dialog"
     tabindex="-1"
-    [class]="bare() ? 'ath-dialog--bare' : 'ath-dialog--' + size()"
+    [class]="
+      (bare() ? 'ath-dialog--bare' : 'ath-dialog--' + size()) +
+      (uncovered() ? ' ath-dialog--uncover' : '')
+    "
+    [style.--_dialog-uncover]="uncovered() ? uncover() : null"
+    [attr.aria-modal]="uncovered() ? 'true' : null"
     [attr.role]="role() === 'alertdialog' ? 'alertdialog' : null"
     [attr.aria-labelledby]="title() && !bare() ? titleId : null"
     [attr.aria-label]="title() && !bare() ? null : ariaLabel()"

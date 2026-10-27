@@ -110,6 +110,19 @@ export class AthDialogComponent implements OnChanges, OnDestroy {
    * `description`, `size` and `showClose` do not apply.
    */
   readonly bare = input(false, { transform: booleanAttribute });
+  /**
+   * For a `bare` dialog: a band at the top that stays uncovered and usable
+   * while the dialog is open (a CSS length: a shell's top bar, e.g. `48px`),
+   * as `ath-sheet`'s `top`. The dialog then opens with `show()` instead of
+   * `showModal()`:
+   * fixed below the band at the modal layer, its own scrim, Tab kept
+   * inside, `aria-modal`, page scroll locked, Escape and backdrop clicks as
+   * before (through the overlay stack). What the band holds (a timer, a
+   * search) works with one click, and its popovers show above the dialog.
+   */
+  readonly uncover = input<string | null>(null);
+  /** A band is uncovered (bare dialogs only). */
+  protected readonly uncovered = computed(() => this.bare() && !!this.uncover());
 
   /** The user asked to close (✕, Escape, backdrop). */
   readonly closed = output<void>();
@@ -126,7 +139,9 @@ export class AthDialogComponent implements OnChanges, OnDestroy {
   private pressedOnBackdrop = false;
   private locked = false;
 
-  private readonly entry: AthOverlayEntry = {
+  // With a band uncovered the dialog is not modal for the browser: the
+  // stack handles its Escape and lets clicks in the band through.
+  private readonly entry: AthOverlayEntry & { modal: boolean } = {
     modal: true,
     panel: () => this.dialogEl,
     anchor: () => null,
@@ -223,11 +238,18 @@ export class AthDialogComponent implements OnChanges, OnDestroy {
   }
 
   private present(el: HTMLDialogElement): void {
+    this.entry.modal = !this.uncovered();
     this.stack.open(this.entry);
     this.stack.lockScroll();
     this.locked = true;
     try {
-      if (!el.open) el.showModal();
+      if (el.open) {
+        // Already shown.
+      } else if (this.uncovered()) {
+        el.show();
+      } else {
+        el.showModal();
+      }
     } catch {
       // Not connected (yet): show it non-modally rather than not at all.
       el.setAttribute('open', '');

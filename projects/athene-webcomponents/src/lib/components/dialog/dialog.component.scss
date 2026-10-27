@@ -84,6 +84,21 @@
   }
 }
 
+// A bare dialog with a band at the top uncovered (`uncover`): shown with `show()`, so not
+// in the top layer: fixed below the band at the modal layer, the scrim is
+// its own (no ::backdrop outside the top layer).
+.ath-dialog--bare.ath-dialog--uncover {
+  // Set inline from `uncover`.
+  --_dialog-uncover: 0px;
+
+  position: fixed;
+  inset: var(--_dialog-uncover) 0 0;
+  z-index: var(--z-modal);
+  width: auto;
+  height: auto;
+  background: var(--scrim);
+}
+
 // The default slot of a bare dialog: no box of its own, so the content's
 // root is laid out (and positioned) against the dialog layer.
 .ath-dialog__bare {
