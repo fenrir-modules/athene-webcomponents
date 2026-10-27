@@ -1,131 +1,490 @@
 // ===========================================
-// ATH-TOAST STYLES
+// ATH-TOAST STYLES (W5-D)
 // ===========================================
+// A calm translucent card: hairline edge, layered shadow, a light backdrop
+// blur. The variant shows in the icon disc and the time-left hairline
+// only, so a stack of mixed toasts stays quiet.
+//
+// Motion: the toast arrives on a near-critically damped spring (≈2%
+// overshoot, 460ms, most of the way in the first 200ms) while its slot
+// opens (260ms, ease-out), so the toasts beside it glide instead of
+// jumping. It leaves faster than it came: fade and shrink in 180ms
+// (ease-in), its slot closing from 60ms on (220ms, standard) as the
+// neighbours move into the space. Reduced motion: opacity only.
+
+@use '../../styles/mixins' as m;
+
+// Spring with a little initial velocity, sampled (damping ratio 0.8): it
+// starts quickly and settles without a visible bounce. The cubic-bezier is
+// the fallback for engines without linear().
+$ease-spring-fallback: cubic-bezier(0.16, 1, 0.3, 1);
+$ease-spring: linear(
+  0,
+  0.206,
+  0.405,
+  0.578,
+  0.718,
+  0.824,
+  0.901,
+  0.953,
+  0.986,
+  1.006,
+  1.015,
+  1.019,
+  1.019,
+  1.017,
+  1.014,
+  1.01,
+  1.008,
+  1.005,
+  1.003,
+  1.002,
+  1
+);
+$ease-out: cubic-bezier(0, 0, 0.2, 1);
+$ease-in: cubic-bezier(0.4, 0, 1, 1);
+$ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+$enter: 460ms;
+$open: 260ms;
+$exit: 180ms;
+$close: 220ms;
+$shift: 280ms;
+// Room around the stack for the shadows: the container scrolls when a long
+// stack is expanded, and a scroller clips at its padding edge.
+$bleed: 24px;
 
 .ath-toast-container {
+  --_enter-y: 16px;
+
   position: fixed;
-  top: var(--toast-offset-top);
-  bottom: var(--toast-offset-bottom);
-  right: var(--toast-offset-right);
+  inset-block: var(--toast-offset-top) var(--toast-offset-bottom);
+  inset-inline-end: var(--toast-offset-right);
   z-index: var(--z-toast);
   display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  max-width: 420px;
-  width: 100%;
+  // Reversed, so a long expanded stack scrolls from its newest end; the
+  // "+N more" button (order 1) sits at the far end.
+  flex-direction: column-reverse;
+  box-sizing: content-box;
+  width: min(var(--toast-width), calc(100vw - 2 * var(--toast-offset-right)));
+  max-height: calc(100dvh - 2 * var(--toast-offset-bottom));
+  margin: -$bleed;
+  padding: $bleed;
+  overflow: hidden auto;
+  scrollbar-width: none;
   pointer-events: none;
+
+  // `placement="top"`: the bottom distance mirrored (--toast-offset-top is
+  // auto, the default stack sits at the bottom).
+  &--top {
+    --_enter-y: -16px;
+
+    inset-block: var(--toast-offset-bottom) auto;
+    flex-direction: column;
+  }
 }
 
-.ath-toast {
+// The stack: oldest first in the DOM, the newest nearest the corner.
+.ath-toast-list {
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  box-shadow: var(--shadow-3);
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   pointer-events: auto;
-  animation: ath-toast-in 200ms ease;
 
-  &--success {
-    border-left: 3px solid var(--green);
-
-    .ath-toast__icon {
-      color: var(--green);
-    }
+  .ath-toast-container--top & {
+    flex-direction: column-reverse;
   }
+}
 
-  &--error {
-    border-left: 3px solid var(--red);
+// One row per toast. Its single grid row animates between 0fr and 1fr, so
+// the stack's height follows a toast that comes, goes or collapses. The
+// card hangs from the edge nearest the corner and overflows the row while
+// it opens or closes.
+.ath-toast-slot {
+  display: grid;
+  grid-template-rows: 1fr;
+  padding-block: 4px;
+  transition:
+    grid-template-rows $shift $ease-standard,
+    padding $shift $ease-standard,
+    opacity 200ms $ease-out,
+    transform $shift $ease-standard,
+    visibility 0s;
 
-    .ath-toast__icon {
-      color: var(--red);
-    }
-  }
-
-  &--warning {
-    border-left: 3px solid var(--amber);
-
-    .ath-toast__icon {
-      color: var(--amber);
-    }
-  }
-
-  &--info {
-    border-left: 3px solid var(--blue);
-
-    .ath-toast__icon {
-      color: var(--blue);
-    }
-  }
-
-  &__icon {
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  &__message {
-    flex: 1;
-    font-size: var(--text-sm);
-    color: var(--fg);
-    line-height: var(--line-normal);
-  }
-
-  // Quiet text button ("Öffnen"): ink text, underline on hover/focus.
-  &__action {
-    flex-shrink: 0;
-    align-self: center;
-    padding: 2px 6px;
-    margin: -2px 0;
-    background: none;
-    border: none;
-    border-radius: var(--r-xs);
-    color: var(--fg);
-    font-family: inherit;
-    font-size: var(--text-sm);
-    font-weight: var(--weight-semibold);
-    cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-
-    &:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring-shadow);
-    }
-  }
-
-  &__close {
-    flex-shrink: 0;
+  // The grid item: no padding of its own, so the row can close to 0.
+  > .ath-toast-sizer {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    padding: 0;
-    color: var(--fg-3);
-    background: none;
-    border: none;
-    border-radius: var(--r-sm);
-    cursor: pointer;
-    transition: color var(--t-fast);
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 0;
+  }
 
-    &:hover {
-      color: var(--fg);
-    }
+  .ath-toast-container--top & > .ath-toast-sizer {
+    justify-content: flex-start;
+  }
+
+  &--collapsed {
+    grid-template-rows: 0fr;
+    padding-block: 0;
+    opacity: 0;
+    transform: translateY(calc(var(--_enter-y) * -0.5)) scale(0.96);
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      grid-template-rows $shift $ease-standard,
+      padding $shift $ease-standard,
+      opacity 160ms $ease-in,
+      transform $shift $ease-standard,
+      visibility 0s $shift;
+  }
+
+  &--enter {
+    animation:
+      ath-toast-open $open $ease-out,
+      ath-toast-in $enter $ease-spring-fallback;
+    animation:
+      ath-toast-open $open $ease-out,
+      ath-toast-in $enter $ease-spring;
+  }
+
+  &--leave {
+    pointer-events: none;
+    animation:
+      ath-toast-out $exit $ease-in forwards,
+      ath-toast-close $close 60ms $ease-standard forwards;
+  }
+}
+
+@keyframes ath-toast-open {
+  from {
+    grid-template-rows: 0fr;
+    padding-block: 0;
   }
 }
 
 @keyframes ath-toast-in {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateY(var(--_enter-y)) scale(0.96);
   }
+}
+
+@keyframes ath-toast-out {
   to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes ath-toast-close {
+  to {
+    grid-template-rows: 0fr;
+    padding-block: 0;
+  }
+}
+
+@keyframes ath-toast-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes ath-toast-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+// -------------------------------------------
+// The card
+// -------------------------------------------
+.ath-toast {
+  --_tone: var(--fg-3);
+  --_glyph: var(--fg-2);
+
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--space-3);
+  padding: 10px 12px;
+  border: 1px solid var(--toast-border);
+  border-radius: var(--r-xl);
+  background: var(--toast-bg);
+  box-shadow: var(--toast-shadow);
+  backdrop-filter: blur(16px) saturate(1.6);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  outline: none;
+
+  &:focus-visible {
+    box-shadow: var(--toast-shadow), var(--focus-ring-shadow);
+  }
+
+  &--success {
+    --_tone: var(--green);
+    --_glyph: var(--green-text);
+  }
+
+  &--error {
+    --_tone: var(--red);
+    --_glyph: var(--red-text);
+  }
+
+  &--warning {
+    --_tone: var(--amber);
+    --_glyph: var(--amber-text);
+  }
+
+  &--titled {
+    align-items: start;
+    padding-block: 12px;
+
+    .ath-toast__action {
+      align-self: center;
+    }
+  }
+
+  // The tinted disc.
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--r-full);
+    background: color-mix(in srgb, var(--_tone) var(--toast-tint-mix), transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--_tone) 14%, transparent);
+    color: var(--_glyph);
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    padding-block: 3px;
+  }
+
+  &__title,
+  &__message {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  &__title {
+    color: var(--fg);
+    font-size: var(--control-font);
+    font-weight: var(--weight-semibold);
+    line-height: 1.35;
+    letter-spacing: -0.005em;
+  }
+
+  &__message {
+    color: var(--fg);
+    font-size: var(--control-font);
+    font-weight: var(--weight-medium);
+    line-height: 1.4;
+    letter-spacing: -0.003em;
+  }
+
+  &--titled &__message {
+    color: var(--fg-3);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-normal);
+    line-height: var(--line-normal);
+    letter-spacing: 0;
+  }
+
+  // A small soft button ("Undo", "Öffnen"): ink on a faint fill.
+  &__action {
+    @include m.button-reset;
+
+    height: 26px;
+    padding: 0 10px;
+    border-radius: var(--r-sm);
+    background: var(--hover-strong);
+    color: var(--fg);
+    font-size: var(--control-font);
+    font-weight: var(--weight-semibold);
+    line-height: 26px;
+    white-space: nowrap;
+    transition:
+      background-color var(--t-fast),
+      transform var(--t-fast);
+
+    &:hover {
+      background: color-mix(in srgb, var(--fg) 13%, transparent);
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  // A small round badge on the toast's corner, shown with the pointer or
+  // focus on the toast (always on touch screens) and always in the tab
+  // order; it takes no room from the text.
+  &__close {
+    @include m.button-reset;
+
+    position: absolute;
+    top: -7px;
+    inset-inline-end: -7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-full);
+    background: var(--surface);
+    box-shadow: var(--shadow-1);
+    color: var(--fg-3);
+    opacity: 0;
+    transform: scale(0.85);
+    transition:
+      opacity var(--t-base),
+      transform var(--t-base),
+      color var(--t-fast);
+
+    // A larger hit area than the badge (WCAG 2.5.8).
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: inherit;
+    }
+
+    &:hover {
+      color: var(--fg);
+    }
+
+    &:focus-visible {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  &:hover &__close,
+  &:focus-within &__close {
     opacity: 1;
-    transform: translateX(0);
+    transform: none;
+  }
+
+  @media (hover: none) {
+    &__close {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  // Time left: shrinks towards the inline start (Web Animations, see the
+  // component). A toast that stays has none.
+  &__timer {
+    position: absolute;
+    inset-inline: 12px;
+    bottom: 0;
+    height: 2px;
+    border-radius: var(--r-full);
+    background: color-mix(in srgb, var(--_tone) 55%, transparent);
+    transform-origin: left center;
+    pointer-events: none;
+
+    &:dir(rtl) {
+      transform-origin: right center;
+    }
+  }
+}
+
+// "+N more": what is collapsed behind the visible toasts.
+.ath-toast-more {
+  @include m.button-reset;
+
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-end;
+  order: 1;
+  gap: var(--space-1);
+  height: 24px;
+  margin-block: 2px;
+  padding: 0 10px;
+  border: 1px solid var(--toast-border);
+  border-radius: var(--r-full);
+  background: var(--toast-bg);
+  box-shadow: var(--shadow-1);
+  backdrop-filter: blur(16px) saturate(1.6);
+  color: var(--fg-3);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  pointer-events: auto;
+  transition: color var(--t-fast);
+
+  &:hover {
+    color: var(--fg);
+  }
+
+  .ath-toast-container--top & ath-icon {
+    transform: rotate(180deg);
+  }
+
+  &--enter {
+    animation: ath-toast-fade-in 200ms $ease-out;
+  }
+}
+
+.ath-toast-live {
+  @include m.visually-hidden;
+}
+
+// -------------------------------------------
+// Phones: full width, clear of the notch and the home indicator.
+// -------------------------------------------
+@media (max-width: 599px) {
+  .ath-toast-container {
+    inset-block: auto max(var(--space-2), env(safe-area-inset-bottom));
+    inset-inline: max(var(--space-2), env(safe-area-inset-left))
+      max(var(--space-2), env(safe-area-inset-right));
+    width: auto;
+    max-height: calc(100dvh - 2 * var(--space-2));
+
+    &--top {
+      inset-block: max(var(--space-2), env(safe-area-inset-top)) auto;
+    }
+  }
+
+  .ath-toast {
+    padding-block: 12px;
+  }
+}
+
+// -------------------------------------------
+// Reduced motion: fades only, nothing moves or resizes in steps.
+// -------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  .ath-toast-slot {
+    transition:
+      opacity 120ms linear,
+      visibility 0s;
+
+    &--collapsed {
+      transform: none;
+      transition:
+        opacity 120ms linear,
+        visibility 0s 120ms;
+    }
+
+    &--enter {
+      animation: ath-toast-fade-in 120ms linear;
+    }
+
+    &--leave {
+      animation: ath-toast-fade-out 120ms linear forwards;
+    }
+  }
+
+  .ath-toast__action:active {
+    transform: none;
   }
 }

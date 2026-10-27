@@ -94,6 +94,69 @@
       "before": null,
       "after": "0 0 0 3px var(--accent-ring)",
       "why": "W4-C: form fields focus with one line (border in the focus colour + this soft halo), not the gap ring that read as a heavy double outline"
+    },
+    {
+      "selector": ":root",
+      "prop": "--toast-bg",
+      "before": null,
+      "after": "color-mix(in srgb, var(--surface) 90%, transparent)",
+      "why": "W5-D: new toast token (surface, edge, shadow, icon tint, width)"
+    },
+    {
+      "selector": ":root",
+      "prop": "--toast-border",
+      "before": null,
+      "after": "rgba(15, 23, 42, 0.08)",
+      "why": "W5-D: new toast token (surface, edge, shadow, icon tint, width)"
+    },
+    {
+      "selector": ":root",
+      "prop": "--toast-tint-mix",
+      "before": null,
+      "after": "13%",
+      "why": "W5-D: new toast token (surface, edge, shadow, icon tint, width)"
+    },
+    {
+      "selector": ":root",
+      "prop": "--toast-shadow",
+      "before": null,
+      "after": "0 0 0 0.5px rgba(15, 23, 42, 0.02), 0 1px 2px rgba(15, 23, 42, 0.05), 0 8px 20px -6px rgba(15, 23, 42, 0.1), 0 24px 44px -16px rgba(15, 23, 42, 0.18)",
+      "why": "W5-D: new toast token (surface, edge, shadow, icon tint, width)"
+    },
+    {
+      "selector": ":root",
+      "prop": "--toast-width",
+      "before": null,
+      "after": "380px",
+      "why": "W5-D: new toast token (surface, edge, shadow, icon tint, width)"
+    },
+    {
+      "selector": "[data-theme=dark]",
+      "prop": "--toast-bg",
+      "before": null,
+      "after": "color-mix(in srgb, #202026 88%, transparent)",
+      "why": "W5-D: new toast token (surface, edge, shadow, icon tint, width)"
+    },
+    {
+      "selector": "[data-theme=dark]",
+      "prop": "--toast-border",
+      "before": null,
+      "after": "rgba(255, 255, 255, 0.08)",
+      "why": "W5-D: new toast token (surface, edge, shadow, icon tint, width)"
+    },
+    {
+      "selector": "[data-theme=dark]",
+      "prop": "--toast-tint-mix",
+      "before": null,
+      "after": "20%",
+      "why": "W5-D: new toast token (surface, edge, shadow, icon tint, width)"
+    },
+    {
+      "selector": "[data-theme=dark]",
+      "prop": "--toast-shadow",
+      "before": null,
+      "after": "inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 24px -6px rgba(0, 0, 0, 0.55), 0 28px 56px -16px rgba(0, 0, 0, 0.7)",
+      "why": "W5-D: new toast token (surface, edge, shadow, icon tint, width)"
     }
   ],
   "ruleChanges": [

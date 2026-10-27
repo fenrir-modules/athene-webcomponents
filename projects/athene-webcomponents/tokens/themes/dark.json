@@ -313,6 +313,18 @@
       "selection-bg": {
         "$value": "rgba(230, 230, 235, 0.24)"
       }
+    },
+    "toast": {
+      "toast-bg": {
+        "$value": "color-mix(in srgb, #202026 88%, transparent)",
+        "$description": "A step above --surface (#1c1c21), so a toast lifts off cards and the canvas."
+      },
+      "toast-border": {
+        "$value": "rgba(255, 255, 255, 0.08)"
+      },
+      "toast-tint-mix": {
+        "$value": "20%"
+      }
     }
   },
   "density": {
@@ -334,6 +346,9 @@
     },
     "shadow-drawer": {
       "$value": "8px 0 24px -6px rgba(0, 0, 0, 0.55)"
+    },
+    "toast-shadow": {
+      "$value": "inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 24px -6px rgba(0, 0, 0, 0.55), 0 28px 56px -16px rgba(0, 0, 0, 0.7)"
     }
   }
 }

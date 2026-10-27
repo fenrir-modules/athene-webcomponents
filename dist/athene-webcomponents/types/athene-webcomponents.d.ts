@@ -2,7 +2,7 @@ import * as i0 from "@angular/core";
 import { AfterViewInit, ElementRef, InjectionToken, OnChanges, OnDestroy, Signal, SimpleChanges, TemplateRef } from "@angular/core";
 import { LucideIconData } from "@lucide/angular";
 import { IconNode } from "lucide";
-import { ATH_DATE_CONTEXT, ATH_DEFAULT_LABELS, ATH_LABELS, ATH_MARKDOWN_PARSER, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, ATH_STATUS_TONES, AthDateContext, AthDateContext as AthDateContext$1, AthLabels, AthLabels as AthLabels$1, AthMarkdownParser, AthMarkdownParser as AthMarkdownParser$1, AthToastService, AthToastService as AthToastService$1, DueDateFormat, PriorityLabelResolver, StatusLabelResolver, StatusToneResolver, TicketPriority, TicketPriority as TicketPriority$1, TicketStatus, TicketStatus as TicketStatus$1, ToastAction, ToastMessage, ToastOptions, ToastVariant, ToastVariant as ToastVariant$1 } from "@athene/webcomponents/core";
+import { ATH_DATE_CONTEXT, ATH_DEFAULT_LABELS, ATH_LABELS, ATH_MARKDOWN_PARSER, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, ATH_STATUS_TONES, AthDateContext, AthDateContext as AthDateContext$1, AthLabels, AthLabels as AthLabels$1, AthMarkdownParser, AthMarkdownParser as AthMarkdownParser$1, AthToastService, AthToastService as AthToastService$1, DueDateFormat, PriorityLabelResolver, StatusLabelResolver, StatusToneResolver, TicketPriority, TicketPriority as TicketPriority$1, TicketStatus, TicketStatus as TicketStatus$1, ToastAction, ToastMessage, ToastMessage as ToastMessage$1, ToastOptions, ToastVariant, ToastVariant as ToastVariant$1 } from "@athene/webcomponents/core";
 import { Params } from "@angular/router";
 import { Observable } from "rxjs";
 import { ControlValueAccessor } from "@angular/forms";
@@ -3954,10 +3954,25 @@ export declare class AthDialogComponent implements OnChanges, OnDestroy {
     "opened": "opened";
   }, never, ["*", "[slot=header],[athDialogHeader]", "[slot=footer],[athDialogFooter]"], true, never>;
 }
+/** Where the stack sits: at the bottom (newest at the bottom) or at the top (newest on top). */
+export type ToastPlacement = 'bottom' | 'top';
 /**
  * Athene Toast Container Component
  *
  * Renders global toast notifications. Place once in the root component.
+ *
+ * - Newest toast nearest the corner; at most `maxVisible` are shown, older
+ *   ones collapse behind a "+N more" button and their clocks stop until
+ *   they show again. Pointer or focus on the stack shows them all.
+ * - A hairline at the foot of a timed toast shows the time left. Clocks
+ *   stop while the pointer or focus is on the stack and while the page is
+ *   hidden.
+ * - New toasts are read out through two hidden live regions: errors
+ *   assertive, everything else polite. The stack itself is a labelled
+ *   region (`ATH_LABELS.toastRegion`), so a screen-reader user can find it.
+ * - Escape closes the toast that has focus. Focus then moves to the next
+ *   toast, or back to where it was before it entered the stack. Nothing
+ *   traps focus.
  *
  * @example
  * <!-- app.component.html -->
@@ -3967,16 +3982,96 @@ export declare class AthDialogComponent implements OnChanges, OnDestroy {
 export declare class AthToastContainerComponent {
   protected readonly successIcon: import("lucide").IconNode;
   protected readonly errorIcon: import("lucide").IconNode;
-  protected readonly warningIcon: import("lucide").IconNode;
-  protected readonly infoIcon: import("lucide").IconNode;
+  protected readonly warningIcon: AthIconData;
+  protected readonly infoIcon: AthIconData;
   protected readonly closeIcon: import("lucide").IconNode;
+  protected readonly moreIcon: import("lucide").IconNode;
   protected readonly toastService: AthToastService$1;
-  get toasts(): import("@athene/webcomponents").ToastMessage[];
-  getIcon(variant: ToastVariant$1): import("lucide").IconNode;
+  private readonly labels;
+  private readonly host;
+  private readonly doc;
+  private readonly injector;
+  /** How many toasts show at once; older ones collapse behind a counter (default 3). */
+  readonly maxVisible: import("@angular/core").InputSignal<number>;
+  /** `bottom` (default) or `top`; set `--toast-offset-top` / `-bottom` to match. */
+  readonly placement: import("@angular/core").InputSignal<ToastPlacement>;
+  /** Accessible name of each close button; `{message}` is the toast's text. Default `ATH_LABELS.toastDismiss`. */
+  readonly dismissLabel: import("@angular/core").InputSignal<string | null>;
+  /** Name of the notifications region. Default `ATH_LABELS.toastRegion`. */
+  readonly regionLabel: import("@angular/core").InputSignal<string | null>;
+  private readonly hovered;
+  private readonly focused;
+  /** Opened with the "+N more" button; stays open until pointer and focus leave. */
+  private readonly pinned;
+  /** Where focus was before it entered the stack. */
+  private returnFocus;
+  protected readonly expanded: import("@angular/core").Signal<boolean>;
+  /** Ids of the toasts collapsed behind the visible ones. */
+  protected readonly collapsed: import("@angular/core").Signal<Set<string>>;
+  protected readonly moreText: import("@angular/core").Signal<string>;
+  protected readonly regionText: import("@angular/core").Signal<string>;
+  /** Text of the two live regions; set a moment after a toast appears. */
+  protected readonly politeText: import("@angular/core").WritableSignal<string>;
+  protected readonly assertiveText: import("@angular/core").WritableSignal<string>;
+  private readonly announced;
+  private readonly held;
+  private readonly timers;
+  get toasts(): ToastMessage$1[];
+  constructor();
+  getIcon(variant: ToastVariant$1): AthIconData;
   dismiss(id: string): void;
   runAction(id: string): void;
+  protected closeLabel(toast: ToastMessage$1): string;
+  protected timed(toast: ToastMessage$1): boolean;
+  protected onPointerEnter(): void;
+  protected onPointerLeave(): void;
+  protected onFocusIn(event: FocusEvent): void;
+  protected onFocusOut(event: FocusEvent): void;
+  protected onKeydown(event: KeyboardEvent, id: string): void;
+  /** "+N more": shows every toast and moves focus to the oldest. */
+  protected expand(): void;
+  private leaveFocus;
+  /**
+   * Focus inside a toast that is about to close goes to the next toast (the
+   * one below it, else the one above), else back to where it came from.
+   */
+  private moveFocusFrom;
+  private focusToast;
+  private toastElement;
+  private syncVisibility;
+  private announceTask;
+  private announce;
+  /**
+   * One Web Animation per timed toast: the hairline shrinks from the time
+   * left to zero, running exactly while the service's clock runs. Rebuilt
+   * from `remaining()` on every change, so the two never drift. (Web
+   * Animations, not CSS: the global reduced-motion reset would end a CSS
+   * animation at once, and the time left is information, not decoration.)
+   */
+  private syncTimers;
   static ɵfac: i0.ɵɵFactoryDeclaration<AthToastContainerComponent, never>;
-  static ɵcmp: i0.ɵɵComponentDeclaration<AthToastContainerComponent, "ath-toast-container", never, {}, {}, never, never, true, never>;
+  static ɵcmp: i0.ɵɵComponentDeclaration<AthToastContainerComponent, "ath-toast-container", never, {
+    "maxVisible": {
+      "alias": "maxVisible";
+      "required": false;
+      "isSignal": true;
+    };
+    "placement": {
+      "alias": "placement";
+      "required": false;
+      "isSignal": true;
+    };
+    "dismissLabel": {
+      "alias": "dismissLabel";
+      "required": false;
+      "isSignal": true;
+    };
+    "regionLabel": {
+      "alias": "regionLabel";
+      "required": false;
+      "isSignal": true;
+    };
+  }, {}, never, never, true, never>;
 }
 /**
  * Spinner size variants

@@ -104,6 +104,10 @@ export interface AthLabels {
   selectPlaceholder: () => string;
   /** `ath-search-input`: the field's placeholder when none is given. */
   searchPlaceholder: () => string;
+  /** `ath-toast-container`: a toast's close button; `{message}` is the toast's text. */
+  toastDismiss: () => string;
+  /** `ath-toast-container`: name of the notifications region (a landmark). */
+  toastRegion: () => string;
 }
 export declare const ATH_DEFAULT_LABELS: AthLabels;
 export declare const ATH_LABELS: InjectionToken<Partial<AthLabels>>;
@@ -153,6 +157,8 @@ export interface ToastMessage {
   id: string;
   variant: ToastVariant;
   message: string;
+  /** Optional headline above the message. */
+  title?: string;
   duration?: number;
   action?: ToastAction;
 }
@@ -169,28 +175,62 @@ export interface ToastAction {
 export interface ToastOptions {
   duration?: number;
   action?: ToastAction;
+  /** A short headline above the message; the message becomes the detail line. */
+  title?: string;
 }
 /**
  * Toast Service
  *
  * Global notification service for displaying toast messages.
  *
+ * A toast's lifetime can stop and go on. `pause(reason)` stops every clock
+ * until the same reason is resumed: the container pauses while the pointer
+ * or the focus is on a toast and while the page is hidden. `hold(id)` stops
+ * one toast's clock, so a toast collapsed behind the visible ones does not
+ * run out unseen. A stopped toast keeps the time it had left.
+ *
  * @example
  * constructor(private toast: AthToastService) {}
  * this.toast.success('Item created');
  * this.toast.error('Something went wrong');
+ * this.toast.info('Timer discarded', { title: 'TEST-1', action: { label: 'Undo', run } });
  */
 export declare class AthToastService {
   private readonly toastsSignal;
   readonly toasts: import("@angular/core").Signal<ToastMessage[]>;
-  success(message: string, options?: number | ToastOptions): void;
-  error(message: string, options?: number | ToastOptions): void;
-  warning(message: string, options?: number | ToastOptions): void;
-  info(message: string, options?: number | ToastOptions): void;
+  private readonly pausedSignal;
+  /** True while at least one `pause(reason)` is in effect. */
+  readonly paused: import("@angular/core").Signal<boolean>;
+  private readonly clocks;
+  private readonly pauses;
+  private readonly holds;
+  /** Returns the new toast's id (for `remove`). */
+  success(message: string, options?: number | ToastOptions): string;
+  error(message: string, options?: number | ToastOptions): string;
+  warning(message: string, options?: number | ToastOptions): string;
+  info(message: string, options?: number | ToastOptions): string;
   /** Run a toast's action, then close the toast. */
   runAction(id: string): void;
   remove(id: string): void;
+  /** Closes every toast. */
+  clear(): void;
+  /**
+   * Stops every toast's clock until `resume(reason)`. Reasons stack: the
+   * clocks go on once the last one is resumed.
+   */
+  pause(reason?: string): void;
+  resume(reason?: string): void;
+  /** Stops one toast's clock until `release(id)`. */
+  hold(id: string): void;
+  release(id: string): void;
+  /** Whether a toast's clock is running now (false for a toast that stays). */
+  isRunning(id: string): boolean;
+  /** Milliseconds left on a toast's clock; null for a toast that stays (duration 0) or is gone. */
+  remaining(id: string): number | null;
   private add;
+  private sync;
+  private start;
+  private stop;
   static ɵfac: i0.ɵɵFactoryDeclaration<AthToastService, never>;
   static ɵprov: i0.ɵɵInjectableDeclaration<any>;
 }

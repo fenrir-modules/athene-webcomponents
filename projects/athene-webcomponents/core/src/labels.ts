@@ -110,6 +110,10 @@ export interface AthLabels {
   selectPlaceholder: () => string;
   /** `ath-search-input`: the field's placeholder when none is given. */
   searchPlaceholder: () => string;
+  /** `ath-toast-container`: a toast's close button; `{message}` is the toast's text. */
+  toastDismiss: () => string;
+  /** `ath-toast-container`: name of the notifications region (a landmark). */
+  toastRegion: () => string;
 }
 
 export const ATH_DEFAULT_LABELS: AthLabels = {
@@ -179,6 +183,8 @@ export const ATH_DEFAULT_LABELS: AthLabels = {
   roleLocked: () => 'Fixed role',
   selectPlaceholder: () => 'Select an option',
   searchPlaceholder: () => 'Search…',
+  toastDismiss: () => 'Dismiss notification: {message}',
+  toastRegion: () => 'Notifications',
 };
 
 export const ATH_LABELS = new InjectionToken<Partial<AthLabels>>('ATH_LABELS');

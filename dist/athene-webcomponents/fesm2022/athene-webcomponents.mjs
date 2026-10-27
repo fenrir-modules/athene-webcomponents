@@ -1,7 +1,7 @@
 import * as i0 from "@angular/core";
-import { ChangeDetectionStrategy, Component, DOCUMENT, DestroyRef, Directive, ElementRef, ErrorHandler, Injectable, InjectionToken, Injector, LOCALE_ID, Renderer2, SecurityContext, TemplateRef, ViewEncapsulation, afterNextRender, booleanAttribute, computed, contentChild, contentChildren, effect, forwardRef, inject, input, model, numberAttribute, output, signal, untracked, viewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, DOCUMENT, DestroyRef, Directive, ElementRef, ErrorHandler, Injectable, InjectionToken, Injector, LOCALE_ID, Renderer2, SecurityContext, TemplateRef, ViewEncapsulation, afterNextRender, afterRenderEffect, booleanAttribute, computed, contentChild, contentChildren, effect, forwardRef, inject, input, model, numberAttribute, output, signal, untracked, viewChild } from "@angular/core";
 import { LucideDynamicIcon } from "@lucide/angular";
-import { AlertCircle, AlertOctagon, AlertTriangle, Check, CheckCircle, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Copy, Eye, EyeOff, Info, Loader2, Lock, MoreHorizontal, PanelLeft, PanelLeftClose, Plus, Search, Slash, Upload, User, X, Zap } from "lucide";
+import { AlertCircle, AlertOctagon, AlertTriangle, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, ChevronsLeft, ChevronsRight, Copy, Eye, EyeOff, Info, Loader2, Lock, MoreHorizontal, PanelLeft, PanelLeftClose, Plus, Search, Slash, Upload, User, X, Zap } from "lucide";
 import { ATH_DATE_CONTEXT, ATH_DEFAULT_LABELS, ATH_DEFAULT_LABELS as ATH_DEFAULT_LABELS$1, ATH_LABELS, ATH_LABELS as ATH_LABELS$1, ATH_MARKDOWN_PARSER, ATH_MARKDOWN_PARSER as ATH_MARKDOWN_PARSER$1, ATH_PRIORITY_LABELS, ATH_PRIORITY_LABELS as ATH_PRIORITY_LABELS$1, ATH_STATUS_LABELS, ATH_STATUS_LABELS as ATH_STATUS_LABELS$1, ATH_STATUS_TONES, ATH_STATUS_TONES as ATH_STATUS_TONES$1, AthToastService, AthToastService as AthToastService$1 } from "@athene/webcomponents/core";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { NgTemplateOutlet } from "@angular/common";
@@ -12092,17 +12092,100 @@ i0.ɵɵngDeclareClassMetadata({
 		}]
 	}
 });
+const INFO_GLYPH = {
+	name: "toast-info",
+	node: [["path", { d: "M12 10.5v7" }], ["path", { d: "M12 6.5h.01" }]]
+};
+const ALERT_GLYPH = {
+	name: "toast-alert",
+	node: [["path", { d: "M12 6v8" }], ["path", { d: "M12 18h.01" }]]
+};
+const HOVER = "ath-toast:hover";
+const FOCUS = "ath-toast:focus";
+const HIDDEN = "ath-toast:hidden";
+const ANNOUNCE_DELAY = 100;
 var AthToastContainerComponent = class AthToastContainerComponent {
-	constructor() {
-		this.successIcon = CheckCircle;
-		this.errorIcon = AlertCircle;
-		this.warningIcon = AlertTriangle;
-		this.infoIcon = Info;
-		this.closeIcon = X;
-		this.toastService = inject(AthToastService$1);
-	}
 	get toasts() {
 		return this.toastService.toasts();
+	}
+	constructor() {
+		this.successIcon = Check;
+		this.errorIcon = X;
+		this.warningIcon = ALERT_GLYPH;
+		this.infoIcon = INFO_GLYPH;
+		this.closeIcon = X;
+		this.moreIcon = ChevronUp;
+		this.toastService = inject(AthToastService$1);
+		this.labels = injectAthLabels();
+		this.host = inject(ElementRef);
+		this.doc = inject(DOCUMENT);
+		this.injector = inject(Injector);
+		this.maxVisible = input(3, ...ngDevMode ? [{ debugName: "maxVisible" }] : /* istanbul ignore next */ []);
+		this.placement = input("bottom", ...ngDevMode ? [{ debugName: "placement" }] : /* istanbul ignore next */ []);
+		this.dismissLabel = input(null, ...ngDevMode ? [{ debugName: "dismissLabel" }] : /* istanbul ignore next */ []);
+		this.regionLabel = input(null, ...ngDevMode ? [{ debugName: "regionLabel" }] : /* istanbul ignore next */ []);
+		this.hovered = signal(false, ...ngDevMode ? [{ debugName: "hovered" }] : /* istanbul ignore next */ []);
+		this.focused = signal(false, ...ngDevMode ? [{ debugName: "focused" }] : /* istanbul ignore next */ []);
+		this.pinned = signal(false, ...ngDevMode ? [{ debugName: "pinned" }] : /* istanbul ignore next */ []);
+		this.returnFocus = null;
+		this.expanded = computed(() => this.hovered() || this.focused() || this.pinned(), ...ngDevMode ? [{ debugName: "expanded" }] : /* istanbul ignore next */ []);
+		this.collapsed = computed(() => {
+			const list = this.toastService.toasts();
+			const max = Math.max(1, this.maxVisible());
+			if (this.expanded() || list.length <= max) return /* @__PURE__ */ new Set();
+			return new Set(list.slice(0, list.length - max).map((t) => t.id));
+		}, ...ngDevMode ? [{ debugName: "collapsed" }] : /* istanbul ignore next */ []);
+		this.moreText = computed(() => formatAthLabel(this.labels.moreCount(), { count: this.collapsed().size }), ...ngDevMode ? [{ debugName: "moreText" }] : /* istanbul ignore next */ []);
+		this.regionText = computed(() => this.regionLabel() ?? this.labels.toastRegion(), ...ngDevMode ? [{ debugName: "regionText" }] : /* istanbul ignore next */ []);
+		this.politeText = signal("", ...ngDevMode ? [{ debugName: "politeText" }] : /* istanbul ignore next */ []);
+		this.assertiveText = signal("", ...ngDevMode ? [{ debugName: "assertiveText" }] : /* istanbul ignore next */ []);
+		this.announced = /* @__PURE__ */ new Set();
+		this.held = /* @__PURE__ */ new Set();
+		this.timers = /* @__PURE__ */ new Map();
+		this.announceTask = 0;
+		const destroyRef = inject(DestroyRef);
+		effect(() => {
+			const collapsed = this.collapsed();
+			untracked(() => {
+				for (const id of collapsed) {
+					if (!this.held.has(id)) this.toastService.hold(id);
+					this.held.add(id);
+				}
+				for (const id of [...this.held]) {
+					if (collapsed.has(id)) continue;
+					this.held.delete(id);
+					this.toastService.release(id);
+				}
+			});
+		});
+		effect(() => {
+			const list = this.toastService.toasts();
+			untracked(() => this.announce(list));
+		});
+		afterRenderEffect(() => {
+			const list = this.toastService.toasts();
+			this.toastService.paused();
+			this.collapsed();
+			untracked(() => {
+				this.syncTimers(list);
+				if (this.focused() && !this.host.nativeElement.contains(this.doc.activeElement)) this.leaveFocus();
+			});
+		});
+		const view = this.doc.defaultView;
+		const onVisibility = () => this.syncVisibility();
+		this.doc.addEventListener("visibilitychange", onVisibility);
+		this.syncVisibility();
+		destroyRef.onDestroy(() => {
+			this.doc.removeEventListener("visibilitychange", onVisibility);
+			for (const reason of [
+				HOVER,
+				FOCUS,
+				HIDDEN
+			]) this.toastService.resume(reason);
+			for (const id of this.held) this.toastService.release(id);
+			for (const anim of this.timers.values()) anim.cancel();
+			view?.clearTimeout(this.announceTask);
+		});
 	}
 	getIcon(variant) {
 		switch (variant) {
@@ -12113,10 +12196,125 @@ var AthToastContainerComponent = class AthToastContainerComponent {
 		}
 	}
 	dismiss(id) {
+		this.moveFocusFrom(id);
 		this.toastService.remove(id);
 	}
 	runAction(id) {
+		this.moveFocusFrom(id);
 		this.toastService.runAction(id);
+	}
+	closeLabel(toast) {
+		const text = toast.title ? `${toast.title}: ${toast.message}` : toast.message;
+		return formatAthLabel(this.dismissLabel() ?? this.labels.toastDismiss(), { message: text });
+	}
+	timed(toast) {
+		return (toast.duration ?? 0) > 0;
+	}
+	onPointerEnter() {
+		this.hovered.set(true);
+		this.toastService.pause(HOVER);
+	}
+	onPointerLeave() {
+		this.hovered.set(false);
+		this.toastService.resume(HOVER);
+		if (!this.focused()) this.pinned.set(false);
+	}
+	onFocusIn(event) {
+		if (!this.focused()) {
+			const from = event.relatedTarget;
+			this.returnFocus = from instanceof HTMLElement && !this.host.nativeElement.contains(from) ? from : null;
+		}
+		this.focused.set(true);
+		this.toastService.pause(FOCUS);
+	}
+	onFocusOut(event) {
+		const to = event.relatedTarget;
+		if (to instanceof Node && this.host.nativeElement.contains(to)) return;
+		this.leaveFocus();
+	}
+	onKeydown(event, id) {
+		if (event.key !== "Escape" || event.defaultPrevented) return;
+		event.preventDefault();
+		this.dismiss(id);
+	}
+	expand() {
+		this.pinned.set(true);
+		const first = this.toastService.toasts()[0];
+		if (first) afterNextRender(() => this.focusToast(first.id), { injector: this.injector });
+	}
+	leaveFocus() {
+		this.focused.set(false);
+		this.toastService.resume(FOCUS);
+		if (!this.hovered()) this.pinned.set(false);
+	}
+	moveFocusFrom(id) {
+		const el = this.toastElement(id);
+		const active = this.doc.activeElement;
+		if (!el || !active || !el.contains(active)) return;
+		const list = this.toastService.toasts();
+		const i = list.findIndex((t) => t.id === id);
+		const next = list[i + 1] ?? list[i - 1];
+		if (next && this.focusToast(next.id)) return;
+		const back = this.returnFocus;
+		this.returnFocus = null;
+		if (back?.isConnected) back.focus();
+		else active.blur();
+		if (!this.host.nativeElement.contains(this.doc.activeElement)) this.leaveFocus();
+	}
+	focusToast(id) {
+		const el = this.toastElement(id);
+		if (!el) return false;
+		el.focus();
+		return this.doc.activeElement === el;
+	}
+	toastElement(id) {
+		return this.host.nativeElement.querySelector(`.ath-toast[data-toast-id="${CSS.escape(id)}"]`);
+	}
+	syncVisibility() {
+		if (this.doc.visibilityState === "hidden") this.toastService.pause(HIDDEN);
+		else this.toastService.resume(HIDDEN);
+	}
+	announce(list) {
+		const fresh = list.filter((t) => !this.announced.has(t.id));
+		const ids = new Set(list.map((t) => t.id));
+		for (const id of [...this.announced]) if (!ids.has(id)) this.announced.delete(id);
+		if (fresh.length === 0) return;
+		for (const t of fresh) this.announced.add(t.id);
+		const view = this.doc.defaultView;
+		if (!view) return;
+		const text = (t) => t.title ? `${t.title}: ${t.message}` : t.message;
+		const errors = fresh.filter((t) => t.variant === "error").map(text);
+		const others = fresh.filter((t) => t.variant !== "error").map(text);
+		if (errors.length) this.assertiveText.set("");
+		if (others.length) this.politeText.set("");
+		view.clearTimeout(this.announceTask);
+		this.announceTask = view.setTimeout(() => {
+			if (errors.length) this.assertiveText.set(errors.join(". "));
+			if (others.length) this.politeText.set(others.join(". "));
+		}, ANNOUNCE_DELAY);
+	}
+	syncTimers(list) {
+		const ids = new Set(list.map((t) => t.id));
+		for (const [id, anim] of this.timers) {
+			if (ids.has(id)) continue;
+			anim.cancel();
+			this.timers.delete(id);
+		}
+		for (const toast of list) {
+			const remaining = this.toastService.remaining(toast.id);
+			const bar = this.toastElement(toast.id)?.querySelector(".ath-toast__timer");
+			const total = toast.duration ?? 0;
+			if (!bar || remaining === null || total <= 0 || typeof bar.animate !== "function") continue;
+			this.timers.get(toast.id)?.cancel();
+			const from = Math.min(1, remaining / total);
+			const anim = bar.animate([{ transform: `scaleX(${from})` }, { transform: "scaleX(0)" }], {
+				duration: Math.max(1, remaining),
+				easing: "linear",
+				fill: "forwards"
+			});
+			if (!this.toastService.isRunning(toast.id)) anim.pause();
+			this.timers.set(toast.id, anim);
+		}
 	}
 	static {
 		this.ɵfac = i0.ɵɵngDeclareFactory({
@@ -12135,9 +12333,39 @@ var AthToastContainerComponent = class AthToastContainerComponent {
 			type: AthToastContainerComponent,
 			isStandalone: true,
 			selector: "ath-toast-container",
+			inputs: {
+				maxVisible: {
+					classPropertyName: "maxVisible",
+					publicName: "maxVisible",
+					isSignal: true,
+					isRequired: false,
+					transformFunction: null
+				},
+				placement: {
+					classPropertyName: "placement",
+					publicName: "placement",
+					isSignal: true,
+					isRequired: false,
+					transformFunction: null
+				},
+				dismissLabel: {
+					classPropertyName: "dismissLabel",
+					publicName: "dismissLabel",
+					isSignal: true,
+					isRequired: false,
+					transformFunction: null
+				},
+				regionLabel: {
+					classPropertyName: "regionLabel",
+					publicName: "regionLabel",
+					isSignal: true,
+					isRequired: false,
+					transformFunction: null
+				}
+			},
 			ngImport: i0,
-			template: "<!-- data-ath-top-layer: kept above modal dialogs (AthOverlayStack.raiseTopLayer). -->\n<div class=\"ath-toast-container\" aria-live=\"polite\" data-ath-top-layer>\n  @for (toast of toasts; track toast.id) {\n    <div class=\"ath-toast\" [class]=\"'ath-toast ath-toast--' + toast.variant\">\n      <ath-icon [img]=\"getIcon(toast.variant)\" [size]=\"18\" class=\"ath-toast__icon\" />\n      <span class=\"ath-toast__message\">{{ toast.message }}</span>\n      @if (toast.action; as action) {\n        <button type=\"button\" class=\"ath-toast__action\" (click)=\"runAction(toast.id)\">\n          {{ action.label }}\n        </button>\n      }\n      <button\n        type=\"button\"\n        class=\"ath-toast__close\"\n        [attr.aria-label]=\"'Dismiss notification: ' + toast.message\"\n        (click)=\"dismiss(toast.id)\"\n      >\n        <ath-icon [img]=\"closeIcon\" [size]=\"14\" />\n      </button>\n    </div>\n  }\n</div>\n",
-			styles: [".ath-toast-container{position:fixed;top:var(--toast-offset-top);bottom:var(--toast-offset-bottom);right:var(--toast-offset-right);z-index:var(--z-toast);display:flex;flex-direction:column;gap:var(--space-2);max-width:420px;width:100%;pointer-events:none}.ath-toast{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-3) var(--space-4);background-color:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-3);pointer-events:auto;animation:ath-toast-in .2s ease}.ath-toast--success{border-left:3px solid var(--green)}.ath-toast--success .ath-toast__icon{color:var(--green)}.ath-toast--error{border-left:3px solid var(--red)}.ath-toast--error .ath-toast__icon{color:var(--red)}.ath-toast--warning{border-left:3px solid var(--amber)}.ath-toast--warning .ath-toast__icon{color:var(--amber)}.ath-toast--info{border-left:3px solid var(--blue)}.ath-toast--info .ath-toast__icon{color:var(--blue)}.ath-toast__icon{flex-shrink:0;margin-top:1px}.ath-toast__message{flex:1;font-size:var(--text-sm);color:var(--fg);line-height:var(--line-normal)}.ath-toast__action{flex-shrink:0;align-self:center;padding:2px 6px;margin:-2px 0;background:none;border:none;border-radius:var(--r-xs);color:var(--fg);font-family:inherit;font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer}.ath-toast__action:hover{text-decoration:underline;text-underline-offset:2px}.ath-toast__action:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-toast__close{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;color:var(--fg-3);background:none;border:none;border-radius:var(--r-sm);cursor:pointer;transition:color var(--t-fast)}.ath-toast__close:hover{color:var(--fg)}@keyframes ath-toast-in{0%{opacity:0;transform:translate(20px)}to{opacity:1;transform:translate(0)}}\n"],
+			template: "<!--\n  data-ath-top-layer: kept above modal dialogs (AthOverlayStack.raiseTopLayer).\n  The stack is a labelled region; new toasts are read out by the two live\n  regions at its end (the stack itself is not live, so nothing is read twice).\n-->\n<section\n  class=\"ath-toast-container\"\n  [class.ath-toast-container--top]=\"placement() === 'top'\"\n  [class.ath-toast-container--expanded]=\"expanded()\"\n  [attr.aria-label]=\"regionText()\"\n  data-ath-top-layer\n  (focusin)=\"onFocusIn($event)\"\n  (focusout)=\"onFocusOut($event)\"\n>\n  @if (collapsed().size > 0) {\n    <button\n      type=\"button\"\n      class=\"ath-toast-more\"\n      animate.enter=\"ath-toast-more--enter\"\n      (click)=\"expand()\"\n    >\n      <ath-icon [img]=\"moreIcon\" [size]=\"12\" [strokeWidth]=\"2.25\" />\n      {{ moreText() }}\n    </button>\n  }\n  <ol class=\"ath-toast-list\" (pointerenter)=\"onPointerEnter()\" (pointerleave)=\"onPointerLeave()\">\n    @for (toast of toasts; track toast.id) {\n      <li\n        class=\"ath-toast-slot\"\n        [class.ath-toast-slot--collapsed]=\"collapsed().has(toast.id)\"\n        [attr.inert]=\"collapsed().has(toast.id) ? '' : null\"\n        animate.enter=\"ath-toast-slot--enter\"\n        animate.leave=\"ath-toast-slot--leave\"\n      >\n        <div class=\"ath-toast-sizer\">\n          <div\n            class=\"ath-toast\"\n            [class]=\"'ath-toast ath-toast--' + toast.variant\"\n            [class.ath-toast--titled]=\"!!toast.title\"\n            [attr.data-toast-id]=\"toast.id\"\n            tabindex=\"-1\"\n            (keydown)=\"onKeydown($event, toast.id)\"\n          >\n            <span class=\"ath-toast__icon\" aria-hidden=\"true\">\n              <ath-icon [img]=\"getIcon(toast.variant)\" [size]=\"15\" [strokeWidth]=\"2.5\" />\n            </span>\n            <div class=\"ath-toast__body\">\n              @if (toast.title) {\n                <p class=\"ath-toast__title\">{{ toast.title }}</p>\n              }\n              <p class=\"ath-toast__message\">{{ toast.message }}</p>\n            </div>\n            @if (toast.action; as action) {\n              <button type=\"button\" class=\"ath-toast__action\" (click)=\"runAction(toast.id)\">\n                {{ action.label }}\n              </button>\n            }\n            <button\n              type=\"button\"\n              class=\"ath-toast__close\"\n              [attr.aria-label]=\"closeLabel(toast)\"\n              (click)=\"dismiss(toast.id)\"\n            >\n              <ath-icon [img]=\"closeIcon\" [size]=\"12\" [strokeWidth]=\"2.25\" />\n            </button>\n            @if (timed(toast)) {\n              <span class=\"ath-toast__timer\" aria-hidden=\"true\"></span>\n            }\n          </div>\n        </div>\n      </li>\n    }\n  </ol>\n  <div class=\"ath-toast-live\" aria-live=\"polite\" role=\"status\">{{ politeText() }}</div>\n  <div class=\"ath-toast-live\" aria-live=\"assertive\" role=\"alert\">{{ assertiveText() }}</div>\n</section>\n",
+			styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}.ath-toast-container{--_enter-y: 16px;position:fixed;inset-block:var(--toast-offset-top) var(--toast-offset-bottom);inset-inline-end:var(--toast-offset-right);z-index:var(--z-toast);display:flex;flex-direction:column-reverse;box-sizing:content-box;width:min(var(--toast-width),100vw - 2 * var(--toast-offset-right));max-height:calc(100dvh - 2 * var(--toast-offset-bottom));margin:-24px;padding:24px;overflow:hidden auto;scrollbar-width:none;pointer-events:none}.ath-toast-container--top{--_enter-y: -16px;inset-block:var(--toast-offset-bottom) auto;flex-direction:column}.ath-toast-list{display:flex;flex-direction:column;margin:0;padding:0;list-style:none;pointer-events:auto}.ath-toast-container--top .ath-toast-list{flex-direction:column-reverse}.ath-toast-slot{display:grid;grid-template-rows:1fr;padding-block:4px;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1),padding .28s cubic-bezier(.4,0,.2,1),opacity .2s cubic-bezier(0,0,.2,1),transform .28s cubic-bezier(.4,0,.2,1),visibility 0s}.ath-toast-slot>.ath-toast-sizer{display:flex;flex-direction:column;justify-content:flex-end;min-height:0}.ath-toast-container--top .ath-toast-slot>.ath-toast-sizer{justify-content:flex-start}.ath-toast-slot--collapsed{grid-template-rows:0fr;padding-block:0;opacity:0;transform:translateY(calc(var(--_enter-y) * -.5)) scale(.96);visibility:hidden;pointer-events:none;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1),padding .28s cubic-bezier(.4,0,.2,1),opacity .16s cubic-bezier(.4,0,1,1),transform .28s cubic-bezier(.4,0,.2,1),visibility 0s .28s}.ath-toast-slot--enter{animation:ath-toast-open .26s cubic-bezier(0,0,.2,1),ath-toast-in .46s cubic-bezier(.16,1,.3,1);animation:ath-toast-open .26s cubic-bezier(0,0,.2,1),ath-toast-in .46s linear(0,.206,.405,.578,.718,.824,.901,.953,.986,1.006,1.015,1.019,1.019,1.017,1.014,1.01,1.008,1.005,1.003,1.002,1)}.ath-toast-slot--leave{pointer-events:none;animation:ath-toast-out .18s cubic-bezier(.4,0,1,1) forwards,ath-toast-close .22s 60ms cubic-bezier(.4,0,.2,1) forwards}@keyframes ath-toast-open{0%{grid-template-rows:0fr;padding-block:0}}@keyframes ath-toast-in{0%{opacity:0;transform:translateY(var(--_enter-y)) scale(.96)}}@keyframes ath-toast-out{to{opacity:0;transform:scale(.96)}}@keyframes ath-toast-close{to{grid-template-rows:0fr;padding-block:0}}@keyframes ath-toast-fade-in{0%{opacity:0}}@keyframes ath-toast-fade-out{to{opacity:0}}.ath-toast{--_tone: var(--fg-3);--_glyph: var(--fg-2);position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;column-gap:var(--space-3);padding:10px 12px;border:1px solid var(--toast-border);border-radius:var(--r-xl);background:var(--toast-bg);box-shadow:var(--toast-shadow);-webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);color:var(--fg);font-family:var(--font-sans);outline:none}.ath-toast:focus-visible{box-shadow:var(--toast-shadow),var(--focus-ring-shadow)}.ath-toast--success{--_tone: var(--green);--_glyph: var(--green-text)}.ath-toast--error{--_tone: var(--red);--_glyph: var(--red-text)}.ath-toast--warning{--_tone: var(--amber);--_glyph: var(--amber-text)}.ath-toast--titled{align-items:start;padding-block:12px}.ath-toast--titled .ath-toast__action{align-self:center}.ath-toast__icon{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:var(--r-full);background:color-mix(in srgb,var(--_tone) var(--toast-tint-mix),transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--_tone) 14%,transparent);color:var(--_glyph)}.ath-toast__body{display:flex;flex-direction:column;gap:2px;min-width:0;padding-block:3px}.ath-toast__title,.ath-toast__message{margin:0;overflow-wrap:anywhere}.ath-toast__title{color:var(--fg);font-size:var(--control-font);font-weight:var(--weight-semibold);line-height:1.35;letter-spacing:-.005em}.ath-toast__message{color:var(--fg);font-size:var(--control-font);font-weight:var(--weight-medium);line-height:1.4;letter-spacing:-.003em}.ath-toast--titled .ath-toast__message{color:var(--fg-3);font-size:var(--text-sm);font-weight:var(--weight-normal);line-height:var(--line-normal);letter-spacing:0}.ath-toast__action{border:none;background:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer}.ath-toast__action:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-toast__action{height:26px;padding:0 10px;border-radius:var(--r-sm);background:var(--hover-strong);color:var(--fg);font-size:var(--control-font);font-weight:var(--weight-semibold);line-height:26px;white-space:nowrap;transition:background-color var(--t-fast),transform var(--t-fast)}.ath-toast__action:hover{background:color-mix(in srgb,var(--fg) 13%,transparent)}.ath-toast__action:active{transform:scale(.97)}.ath-toast__close{border:none;background:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer}.ath-toast__close:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-toast__close{position:absolute;top:-7px;inset-inline-end:-7px;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid var(--border);border-radius:var(--r-full);background:var(--surface);box-shadow:var(--shadow-1);color:var(--fg-3);opacity:0;transform:scale(.85);transition:opacity var(--t-base),transform var(--t-base),color var(--t-fast)}.ath-toast__close:before{content:\"\";position:absolute;inset:-5px;border-radius:inherit}.ath-toast__close:hover{color:var(--fg)}.ath-toast__close:focus-visible{opacity:1;transform:none}.ath-toast:hover .ath-toast__close,.ath-toast:focus-within .ath-toast__close{opacity:1;transform:none}@media(hover:none){.ath-toast__close{opacity:1;transform:none}}.ath-toast__timer{position:absolute;inset-inline:12px;bottom:0;height:2px;border-radius:var(--r-full);background:color-mix(in srgb,var(--_tone) 55%,transparent);transform-origin:left center;pointer-events:none}.ath-toast__timer:dir(rtl){transform-origin:right center}.ath-toast-more{border:none;background:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer}.ath-toast-more:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-toast-more{display:inline-flex;align-items:center;align-self:flex-end;order:1;gap:var(--space-1);height:24px;margin-block:2px;padding:0 10px;border:1px solid var(--toast-border);border-radius:var(--r-full);background:var(--toast-bg);box-shadow:var(--shadow-1);-webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);color:var(--fg-3);font-size:var(--text-sm);font-weight:var(--weight-medium);pointer-events:auto;transition:color var(--t-fast)}.ath-toast-more:hover{color:var(--fg)}.ath-toast-container--top .ath-toast-more ath-icon{transform:rotate(180deg)}.ath-toast-more--enter{animation:ath-toast-fade-in .2s cubic-bezier(0,0,.2,1)}.ath-toast-live{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}@media(max-width:599px){.ath-toast-container{inset-block:auto max(var(--space-2),env(safe-area-inset-bottom));inset-inline:max(var(--space-2),env(safe-area-inset-left)) max(var(--space-2),env(safe-area-inset-right));width:auto;max-height:calc(100dvh - 2 * var(--space-2))}.ath-toast-container--top{inset-block:max(var(--space-2),env(safe-area-inset-top)) auto}.ath-toast{padding-block:12px}}@media(prefers-reduced-motion:reduce){.ath-toast-slot{transition:opacity .12s linear,visibility 0s}.ath-toast-slot--collapsed{transform:none;transition:opacity .12s linear,visibility 0s .12s}.ath-toast-slot--enter{animation:ath-toast-fade-in .12s linear}.ath-toast-slot--leave{animation:ath-toast-fade-out .12s linear forwards}.ath-toast__action:active{transform:none}}\n"],
 			dependencies: [{
 				kind: "component",
 				type: AthIconComponent,
@@ -12166,10 +12394,45 @@ i0.ɵɵngDeclareClassMetadata({
 			selector: "ath-toast-container",
 			imports: [AthIconComponent],
 			changeDetection: ChangeDetectionStrategy.OnPush,
-			template: "<!-- data-ath-top-layer: kept above modal dialogs (AthOverlayStack.raiseTopLayer). -->\n<div class=\"ath-toast-container\" aria-live=\"polite\" data-ath-top-layer>\n  @for (toast of toasts; track toast.id) {\n    <div class=\"ath-toast\" [class]=\"'ath-toast ath-toast--' + toast.variant\">\n      <ath-icon [img]=\"getIcon(toast.variant)\" [size]=\"18\" class=\"ath-toast__icon\" />\n      <span class=\"ath-toast__message\">{{ toast.message }}</span>\n      @if (toast.action; as action) {\n        <button type=\"button\" class=\"ath-toast__action\" (click)=\"runAction(toast.id)\">\n          {{ action.label }}\n        </button>\n      }\n      <button\n        type=\"button\"\n        class=\"ath-toast__close\"\n        [attr.aria-label]=\"'Dismiss notification: ' + toast.message\"\n        (click)=\"dismiss(toast.id)\"\n      >\n        <ath-icon [img]=\"closeIcon\" [size]=\"14\" />\n      </button>\n    </div>\n  }\n</div>\n",
-			styles: [".ath-toast-container{position:fixed;top:var(--toast-offset-top);bottom:var(--toast-offset-bottom);right:var(--toast-offset-right);z-index:var(--z-toast);display:flex;flex-direction:column;gap:var(--space-2);max-width:420px;width:100%;pointer-events:none}.ath-toast{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-3) var(--space-4);background-color:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-3);pointer-events:auto;animation:ath-toast-in .2s ease}.ath-toast--success{border-left:3px solid var(--green)}.ath-toast--success .ath-toast__icon{color:var(--green)}.ath-toast--error{border-left:3px solid var(--red)}.ath-toast--error .ath-toast__icon{color:var(--red)}.ath-toast--warning{border-left:3px solid var(--amber)}.ath-toast--warning .ath-toast__icon{color:var(--amber)}.ath-toast--info{border-left:3px solid var(--blue)}.ath-toast--info .ath-toast__icon{color:var(--blue)}.ath-toast__icon{flex-shrink:0;margin-top:1px}.ath-toast__message{flex:1;font-size:var(--text-sm);color:var(--fg);line-height:var(--line-normal)}.ath-toast__action{flex-shrink:0;align-self:center;padding:2px 6px;margin:-2px 0;background:none;border:none;border-radius:var(--r-xs);color:var(--fg);font-family:inherit;font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer}.ath-toast__action:hover{text-decoration:underline;text-underline-offset:2px}.ath-toast__action:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-toast__close{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;color:var(--fg-3);background:none;border:none;border-radius:var(--r-sm);cursor:pointer;transition:color var(--t-fast)}.ath-toast__close:hover{color:var(--fg)}@keyframes ath-toast-in{0%{opacity:0;transform:translate(20px)}to{opacity:1;transform:translate(0)}}\n"]
+			template: "<!--\n  data-ath-top-layer: kept above modal dialogs (AthOverlayStack.raiseTopLayer).\n  The stack is a labelled region; new toasts are read out by the two live\n  regions at its end (the stack itself is not live, so nothing is read twice).\n-->\n<section\n  class=\"ath-toast-container\"\n  [class.ath-toast-container--top]=\"placement() === 'top'\"\n  [class.ath-toast-container--expanded]=\"expanded()\"\n  [attr.aria-label]=\"regionText()\"\n  data-ath-top-layer\n  (focusin)=\"onFocusIn($event)\"\n  (focusout)=\"onFocusOut($event)\"\n>\n  @if (collapsed().size > 0) {\n    <button\n      type=\"button\"\n      class=\"ath-toast-more\"\n      animate.enter=\"ath-toast-more--enter\"\n      (click)=\"expand()\"\n    >\n      <ath-icon [img]=\"moreIcon\" [size]=\"12\" [strokeWidth]=\"2.25\" />\n      {{ moreText() }}\n    </button>\n  }\n  <ol class=\"ath-toast-list\" (pointerenter)=\"onPointerEnter()\" (pointerleave)=\"onPointerLeave()\">\n    @for (toast of toasts; track toast.id) {\n      <li\n        class=\"ath-toast-slot\"\n        [class.ath-toast-slot--collapsed]=\"collapsed().has(toast.id)\"\n        [attr.inert]=\"collapsed().has(toast.id) ? '' : null\"\n        animate.enter=\"ath-toast-slot--enter\"\n        animate.leave=\"ath-toast-slot--leave\"\n      >\n        <div class=\"ath-toast-sizer\">\n          <div\n            class=\"ath-toast\"\n            [class]=\"'ath-toast ath-toast--' + toast.variant\"\n            [class.ath-toast--titled]=\"!!toast.title\"\n            [attr.data-toast-id]=\"toast.id\"\n            tabindex=\"-1\"\n            (keydown)=\"onKeydown($event, toast.id)\"\n          >\n            <span class=\"ath-toast__icon\" aria-hidden=\"true\">\n              <ath-icon [img]=\"getIcon(toast.variant)\" [size]=\"15\" [strokeWidth]=\"2.5\" />\n            </span>\n            <div class=\"ath-toast__body\">\n              @if (toast.title) {\n                <p class=\"ath-toast__title\">{{ toast.title }}</p>\n              }\n              <p class=\"ath-toast__message\">{{ toast.message }}</p>\n            </div>\n            @if (toast.action; as action) {\n              <button type=\"button\" class=\"ath-toast__action\" (click)=\"runAction(toast.id)\">\n                {{ action.label }}\n              </button>\n            }\n            <button\n              type=\"button\"\n              class=\"ath-toast__close\"\n              [attr.aria-label]=\"closeLabel(toast)\"\n              (click)=\"dismiss(toast.id)\"\n            >\n              <ath-icon [img]=\"closeIcon\" [size]=\"12\" [strokeWidth]=\"2.25\" />\n            </button>\n            @if (timed(toast)) {\n              <span class=\"ath-toast__timer\" aria-hidden=\"true\"></span>\n            }\n          </div>\n        </div>\n      </li>\n    }\n  </ol>\n  <div class=\"ath-toast-live\" aria-live=\"polite\" role=\"status\">{{ politeText() }}</div>\n  <div class=\"ath-toast-live\" aria-live=\"assertive\" role=\"alert\">{{ assertiveText() }}</div>\n</section>\n",
+			styles: ["@keyframes skeleton-shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}.ath-toast-container{--_enter-y: 16px;position:fixed;inset-block:var(--toast-offset-top) var(--toast-offset-bottom);inset-inline-end:var(--toast-offset-right);z-index:var(--z-toast);display:flex;flex-direction:column-reverse;box-sizing:content-box;width:min(var(--toast-width),100vw - 2 * var(--toast-offset-right));max-height:calc(100dvh - 2 * var(--toast-offset-bottom));margin:-24px;padding:24px;overflow:hidden auto;scrollbar-width:none;pointer-events:none}.ath-toast-container--top{--_enter-y: -16px;inset-block:var(--toast-offset-bottom) auto;flex-direction:column}.ath-toast-list{display:flex;flex-direction:column;margin:0;padding:0;list-style:none;pointer-events:auto}.ath-toast-container--top .ath-toast-list{flex-direction:column-reverse}.ath-toast-slot{display:grid;grid-template-rows:1fr;padding-block:4px;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1),padding .28s cubic-bezier(.4,0,.2,1),opacity .2s cubic-bezier(0,0,.2,1),transform .28s cubic-bezier(.4,0,.2,1),visibility 0s}.ath-toast-slot>.ath-toast-sizer{display:flex;flex-direction:column;justify-content:flex-end;min-height:0}.ath-toast-container--top .ath-toast-slot>.ath-toast-sizer{justify-content:flex-start}.ath-toast-slot--collapsed{grid-template-rows:0fr;padding-block:0;opacity:0;transform:translateY(calc(var(--_enter-y) * -.5)) scale(.96);visibility:hidden;pointer-events:none;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1),padding .28s cubic-bezier(.4,0,.2,1),opacity .16s cubic-bezier(.4,0,1,1),transform .28s cubic-bezier(.4,0,.2,1),visibility 0s .28s}.ath-toast-slot--enter{animation:ath-toast-open .26s cubic-bezier(0,0,.2,1),ath-toast-in .46s cubic-bezier(.16,1,.3,1);animation:ath-toast-open .26s cubic-bezier(0,0,.2,1),ath-toast-in .46s linear(0,.206,.405,.578,.718,.824,.901,.953,.986,1.006,1.015,1.019,1.019,1.017,1.014,1.01,1.008,1.005,1.003,1.002,1)}.ath-toast-slot--leave{pointer-events:none;animation:ath-toast-out .18s cubic-bezier(.4,0,1,1) forwards,ath-toast-close .22s 60ms cubic-bezier(.4,0,.2,1) forwards}@keyframes ath-toast-open{0%{grid-template-rows:0fr;padding-block:0}}@keyframes ath-toast-in{0%{opacity:0;transform:translateY(var(--_enter-y)) scale(.96)}}@keyframes ath-toast-out{to{opacity:0;transform:scale(.96)}}@keyframes ath-toast-close{to{grid-template-rows:0fr;padding-block:0}}@keyframes ath-toast-fade-in{0%{opacity:0}}@keyframes ath-toast-fade-out{to{opacity:0}}.ath-toast{--_tone: var(--fg-3);--_glyph: var(--fg-2);position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;column-gap:var(--space-3);padding:10px 12px;border:1px solid var(--toast-border);border-radius:var(--r-xl);background:var(--toast-bg);box-shadow:var(--toast-shadow);-webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);color:var(--fg);font-family:var(--font-sans);outline:none}.ath-toast:focus-visible{box-shadow:var(--toast-shadow),var(--focus-ring-shadow)}.ath-toast--success{--_tone: var(--green);--_glyph: var(--green-text)}.ath-toast--error{--_tone: var(--red);--_glyph: var(--red-text)}.ath-toast--warning{--_tone: var(--amber);--_glyph: var(--amber-text)}.ath-toast--titled{align-items:start;padding-block:12px}.ath-toast--titled .ath-toast__action{align-self:center}.ath-toast__icon{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:var(--r-full);background:color-mix(in srgb,var(--_tone) var(--toast-tint-mix),transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--_tone) 14%,transparent);color:var(--_glyph)}.ath-toast__body{display:flex;flex-direction:column;gap:2px;min-width:0;padding-block:3px}.ath-toast__title,.ath-toast__message{margin:0;overflow-wrap:anywhere}.ath-toast__title{color:var(--fg);font-size:var(--control-font);font-weight:var(--weight-semibold);line-height:1.35;letter-spacing:-.005em}.ath-toast__message{color:var(--fg);font-size:var(--control-font);font-weight:var(--weight-medium);line-height:1.4;letter-spacing:-.003em}.ath-toast--titled .ath-toast__message{color:var(--fg-3);font-size:var(--text-sm);font-weight:var(--weight-normal);line-height:var(--line-normal);letter-spacing:0}.ath-toast__action{border:none;background:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer}.ath-toast__action:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-toast__action{height:26px;padding:0 10px;border-radius:var(--r-sm);background:var(--hover-strong);color:var(--fg);font-size:var(--control-font);font-weight:var(--weight-semibold);line-height:26px;white-space:nowrap;transition:background-color var(--t-fast),transform var(--t-fast)}.ath-toast__action:hover{background:color-mix(in srgb,var(--fg) 13%,transparent)}.ath-toast__action:active{transform:scale(.97)}.ath-toast__close{border:none;background:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer}.ath-toast__close:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-toast__close{position:absolute;top:-7px;inset-inline-end:-7px;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid var(--border);border-radius:var(--r-full);background:var(--surface);box-shadow:var(--shadow-1);color:var(--fg-3);opacity:0;transform:scale(.85);transition:opacity var(--t-base),transform var(--t-base),color var(--t-fast)}.ath-toast__close:before{content:\"\";position:absolute;inset:-5px;border-radius:inherit}.ath-toast__close:hover{color:var(--fg)}.ath-toast__close:focus-visible{opacity:1;transform:none}.ath-toast:hover .ath-toast__close,.ath-toast:focus-within .ath-toast__close{opacity:1;transform:none}@media(hover:none){.ath-toast__close{opacity:1;transform:none}}.ath-toast__timer{position:absolute;inset-inline:12px;bottom:0;height:2px;border-radius:var(--r-full);background:color-mix(in srgb,var(--_tone) 55%,transparent);transform-origin:left center;pointer-events:none}.ath-toast__timer:dir(rtl){transform-origin:right center}.ath-toast-more{border:none;background:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer}.ath-toast-more:focus-visible{outline:none;box-shadow:var(--focus-ring-shadow)}.ath-toast-more{display:inline-flex;align-items:center;align-self:flex-end;order:1;gap:var(--space-1);height:24px;margin-block:2px;padding:0 10px;border:1px solid var(--toast-border);border-radius:var(--r-full);background:var(--toast-bg);box-shadow:var(--shadow-1);-webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);color:var(--fg-3);font-size:var(--text-sm);font-weight:var(--weight-medium);pointer-events:auto;transition:color var(--t-fast)}.ath-toast-more:hover{color:var(--fg)}.ath-toast-container--top .ath-toast-more ath-icon{transform:rotate(180deg)}.ath-toast-more--enter{animation:ath-toast-fade-in .2s cubic-bezier(0,0,.2,1)}.ath-toast-live{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}@media(max-width:599px){.ath-toast-container{inset-block:auto max(var(--space-2),env(safe-area-inset-bottom));inset-inline:max(var(--space-2),env(safe-area-inset-left)) max(var(--space-2),env(safe-area-inset-right));width:auto;max-height:calc(100dvh - 2 * var(--space-2))}.ath-toast-container--top{inset-block:max(var(--space-2),env(safe-area-inset-top)) auto}.ath-toast{padding-block:12px}}@media(prefers-reduced-motion:reduce){.ath-toast-slot{transition:opacity .12s linear,visibility 0s}.ath-toast-slot--collapsed{transform:none;transition:opacity .12s linear,visibility 0s .12s}.ath-toast-slot--enter{animation:ath-toast-fade-in .12s linear}.ath-toast-slot--leave{animation:ath-toast-fade-out .12s linear forwards}.ath-toast__action:active{transform:none}}\n"]
 		}]
-	}]
+	}],
+	ctorParameters: () => [],
+	propDecorators: {
+		maxVisible: [{
+			type: i0.Input,
+			args: [{
+				isSignal: true,
+				alias: "maxVisible",
+				required: false
+			}]
+		}],
+		placement: [{
+			type: i0.Input,
+			args: [{
+				isSignal: true,
+				alias: "placement",
+				required: false
+			}]
+		}],
+		dismissLabel: [{
+			type: i0.Input,
+			args: [{
+				isSignal: true,
+				alias: "dismissLabel",
+				required: false
+			}]
+		}],
+		regionLabel: [{
+			type: i0.Input,
+			args: [{
+				isSignal: true,
+				alias: "regionLabel",
+				required: false
+			}]
+		}]
+	}
 });
 var AthSpinnerComponent = class AthSpinnerComponent {
 	constructor() {

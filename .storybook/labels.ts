@@ -20,9 +20,11 @@ const DE: AthLabels = {
   removeItem: () => '{name} entfernen',
   moreCount: () => '{count} weitere',
   dueOverdue: () => '{count} T. überfällig',
+  dueOverdueOne: () => '{count} T. überfällig',
   dueToday: () => 'Heute',
   dueTomorrow: () => 'Morgen',
   dueInDays: () => '{count} T.',
+  dueOn: () => 'Fällig {date}',
   dueSprintEnd: () => 'Sprint-Ende',
   dueSprintTooltip: () => 'Fällig mit {sprint}',
   dueAfterSprint: () => 'Fällig nach dem Sprint-Ende',
@@ -70,6 +72,10 @@ const DE: AthLabels = {
   colorPurple: () => 'Lila',
   colorPink: () => 'Pink',
   roleLocked: () => 'Feste Rolle',
+  selectPlaceholder: () => 'Option wählen',
+  searchPlaceholder: () => 'Suchen…',
+  toastDismiss: () => 'Benachrichtigung schließen: {message}',
+  toastRegion: () => 'Benachrichtigungen',
 };
 
 export type LabelLocale = 'en' | 'de';

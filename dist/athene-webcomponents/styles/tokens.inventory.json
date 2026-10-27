@@ -726,6 +726,21 @@
       "type": "color"
     },
     {
+      "name": "--toast-bg",
+      "path": "color.toast.toast-bg",
+      "type": "color"
+    },
+    {
+      "name": "--toast-border",
+      "path": "color.toast.toast-border",
+      "type": "color"
+    },
+    {
+      "name": "--toast-tint-mix",
+      "path": "color.toast.toast-tint-mix",
+      "type": null
+    },
+    {
       "name": "--r-xs",
       "path": "radius.r-xs",
       "type": "dimension"
@@ -778,6 +793,11 @@
     {
       "name": "--shadow-drawer",
       "path": "shadow.shadow-drawer",
+      "type": "shadow"
+    },
+    {
+      "name": "--toast-shadow",
+      "path": "shadow.toast-shadow",
       "type": "shadow"
     },
     {
@@ -1093,6 +1113,11 @@
     {
       "name": "--toast-offset-right",
       "path": "layout.toast.toast-offset-right",
+      "type": "dimension"
+    },
+    {
+      "name": "--toast-width",
+      "path": "layout.toast.toast-width",
       "type": "dimension"
     },
     {

@@ -218,6 +218,30 @@ The Athene AI mark ("Perch"): a solid rounded A — Athene's A and a perched lit
 
 `variant`: info, success, warn (`warning` is an alias), error; `appearance`: `inline` (tinted box) or `banner` (full width, square, icon); `title`, `icon`, `dismissible` + `(dismissed)`, `retry: AthAction` (an `ath-button [action]`, busy while it runs), `retryLabel`, `dismissLabel`. Without a message (and nothing projected) it takes no space, so `[message]="error()"` can stay in the template. Errors and warnings are `role="alert"`, the others `role="status"`.
 
+### Toasts: `AthToastService`, `ath-toast-container` (W5-D)
+
+```ts
+const toast = inject(AthToastService); // from @athene/webcomponents/core
+toast.success('Saved');
+toast.info('Timer for TEST-1 discarded (under a minute)', { action: { label: 'Undo', run: undo } });
+toast.error('The server did not answer. Your text is kept.', {
+  title: 'Could not save the comment',
+});
+```
+
+```html
+<ath-toast-container />
+<!-- once, at the root; inputs: maxVisible (3), placement ('bottom' | 'top'), dismissLabel, regionLabel -->
+```
+
+- **Service** (unchanged calls keep working): `success` / `info` / `warning` / `error(message, durationMs | options)`, options `duration`, `action`, `title` (new: a short headline; the message becomes the detail line). The methods now return the toast's id. Defaults 4 s (success, info), 5 s (warning), 6 s (error); with an action at least 8 s; `duration: 0` stays. Lifetimes can stop: `pause(reason)` / `resume(reason)` (reasons stack), `hold(id)` / `release(id)` for one toast, `paused()`, `isRunning(id)`, `remaining(id)`, `clear()`.
+- **Variants**: the colour sits only in the icon disc and the time-left hairline. Success is green, info neutral (ink), warning amber, error red. Pick info for neutral outcomes: discarded, archived, copied, moved, anything with an undo. Success is for something the reader made or finished.
+- **Look**: tokens `--toast-bg` (90 % opaque, over a 16 px backdrop blur), `--toast-border`, `--toast-shadow`, `--toast-tint-mix`, `--toast-width` (380 px), theme-aware. The contrast gate checks `--fg` and `--fg-3` on `--toast-bg`. The action is a small soft button; the close button is a round badge on the corner, shown on hover and focus (always on touch screens) and always in the tab order. Below 600 px the stack is full width inside the safe area.
+- **Stack**: newest nearest the corner. At most `maxVisible` show; older ones collapse behind a "+N more" button (`ATH_LABELS.moreCount`), and their clocks stop until they show again. Pointer or focus on the stack shows them all.
+- **Time left**: a hairline at the foot of a timed toast (Web Animations, in step with the service clock). The clocks pause while the pointer or focus is on the stack and while the page is hidden.
+- **Motion**: in on a damped spring (460 ms, `linear()` easing, cubic-bezier fallback) while the row opens, so neighbours glide; out in 180 ms (ease-in), then the row closes. Under `prefers-reduced-motion`, fades only. Angular's `animate.enter` / `animate.leave`; specs that check the exit need `TestBed.configureTestingModule({ animationsEnabled: true })`.
+- **Accessibility**: the stack is a region named `ATH_LABELS.toastRegion` ("Notifications"). New toasts are read out by two hidden live regions, 100 ms after they appear (so the first toast is read even when the container mounts with it): errors assertive, the rest polite. The close button is named `ATH_LABELS.toastDismiss` ("Dismiss notification: {message}"), or the `dismissLabel` input. Escape closes the toast that has focus and marks the press handled (`preventDefault`), so `AthOverlayStack` does not also close a popover below; focus goes to the next toast or back to where it came from. Nothing traps focus.
+
 ### `ath-button [action]`
 
 ```html

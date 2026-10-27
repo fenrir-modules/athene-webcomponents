@@ -66,7 +66,9 @@ const ATH_DEFAULT_LABELS = {
 	colorPink: () => "Pink",
 	roleLocked: () => "Fixed role",
 	selectPlaceholder: () => "Select an option",
-	searchPlaceholder: () => "Search…"
+	searchPlaceholder: () => "Search…",
+	toastDismiss: () => "Dismiss notification: {message}",
+	toastRegion: () => "Notifications"
 };
 const ATH_LABELS = new InjectionToken("ATH_LABELS");
 const ATH_STATUS_LABELS = new InjectionToken("ATH_STATUS_LABELS");
@@ -77,18 +79,23 @@ var AthToastService = class AthToastService {
 	constructor() {
 		this.toastsSignal = signal([], ...ngDevMode ? [{ debugName: "toastsSignal" }] : /* istanbul ignore next */ []);
 		this.toasts = this.toastsSignal.asReadonly();
+		this.pausedSignal = signal(false, ...ngDevMode ? [{ debugName: "pausedSignal" }] : /* istanbul ignore next */ []);
+		this.paused = this.pausedSignal.asReadonly();
+		this.clocks = /* @__PURE__ */ new Map();
+		this.pauses = /* @__PURE__ */ new Set();
+		this.holds = /* @__PURE__ */ new Set();
 	}
 	success(message, options = 4e3) {
-		this.add("success", message, options, 4e3);
+		return this.add("success", message, options, 4e3);
 	}
 	error(message, options = 6e3) {
-		this.add("error", message, options, 6e3);
+		return this.add("error", message, options, 6e3);
 	}
 	warning(message, options = 5e3) {
-		this.add("warning", message, options, 5e3);
+		return this.add("warning", message, options, 5e3);
 	}
 	info(message, options = 4e3) {
-		this.add("info", message, options, 4e3);
+		return this.add("info", message, options, 4e3);
 	}
 	runAction(id) {
 		const toast = this.toastsSignal().find((t) => t.id === id);
@@ -96,7 +103,43 @@ var AthToastService = class AthToastService {
 		toast?.action?.run();
 	}
 	remove(id) {
+		const clock = this.clocks.get(id);
+		if (clock?.handle) clearTimeout(clock.handle);
+		this.clocks.delete(id);
+		this.holds.delete(id);
 		this.toastsSignal.update((toasts) => toasts.filter((t) => t.id !== id));
+	}
+	clear() {
+		for (const toast of this.toastsSignal()) this.remove(toast.id);
+	}
+	pause(reason = "api") {
+		this.pauses.add(reason);
+		if (this.pausedSignal()) return;
+		this.pausedSignal.set(true);
+		for (const id of this.clocks.keys()) this.stop(id);
+	}
+	resume(reason = "api") {
+		if (!this.pauses.delete(reason) || this.pauses.size > 0) return;
+		this.pausedSignal.set(false);
+		for (const id of this.clocks.keys()) this.sync(id);
+	}
+	hold(id) {
+		if (!this.toastsSignal().some((t) => t.id === id)) return;
+		this.holds.add(id);
+		this.stop(id);
+	}
+	release(id) {
+		if (!this.holds.delete(id)) return;
+		this.sync(id);
+	}
+	isRunning(id) {
+		return !!this.clocks.get(id)?.handle;
+	}
+	remaining(id) {
+		const clock = this.clocks.get(id);
+		if (!clock) return null;
+		if (clock.since === null) return clock.remaining;
+		return Math.max(0, clock.remaining - (Date.now() - clock.since));
 	}
 	add(variant, message, options, fallback) {
 		const opts = typeof options === "number" ? { duration: options } : options;
@@ -110,8 +153,35 @@ var AthToastService = class AthToastService {
 			duration,
 			action
 		};
+		if (opts.title) toast.title = opts.title;
 		this.toastsSignal.update((toasts) => [...toasts, toast]);
-		if (duration > 0) setTimeout(() => this.remove(id), duration);
+		if (duration > 0) {
+			this.clocks.set(id, {
+				remaining: duration,
+				since: null,
+				handle: null
+			});
+			this.sync(id);
+		}
+		return id;
+	}
+	sync(id) {
+		if (this.pausedSignal() || this.holds.has(id)) this.stop(id);
+		else this.start(id);
+	}
+	start(id) {
+		const clock = this.clocks.get(id);
+		if (!clock || clock.handle) return;
+		clock.since = Date.now();
+		clock.handle = setTimeout(() => this.remove(id), clock.remaining);
+	}
+	stop(id) {
+		const clock = this.clocks.get(id);
+		if (!clock?.handle) return;
+		clearTimeout(clock.handle);
+		clock.remaining = this.remaining(id) ?? 0;
+		clock.since = null;
+		clock.handle = null;
 	}
 	static {
 		this.ɵfac = i0.ɵɵngDeclareFactory({

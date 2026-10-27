@@ -380,6 +380,20 @@
       "bg": ["avatar-8-bg"],
       "min": 4.5,
       "why": "WCAG 1.4.3 — avatar initials"
+    },
+    {
+      "fg": "fg",
+      "bg": ["toast-bg"],
+      "over": ["bg-0", "surface"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — toast title and message (W5-D)"
+    },
+    {
+      "fg": "fg-3",
+      "bg": ["toast-bg"],
+      "over": ["bg-0", "surface"],
+      "min": 4.5,
+      "why": "WCAG 1.4.3 — toast detail line under a title (W5-D)"
     }
   ]
 }
