@@ -3,7 +3,8 @@ import { AthRoleBadgeComponent } from './role-badge.component';
 
 describe('AthRoleBadgeComponent', () => {
   let fixture: ComponentFixture<AthRoleBadgeComponent>;
-  const badge = () => (fixture.nativeElement as HTMLElement).querySelector('.ath-role-badge')!;
+  const badge = () =>
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('.ath-role-badge')!;
 
   function render(inputs: Record<string, unknown>) {
     fixture = TestBed.configureTestingModule({ imports: [AthRoleBadgeComponent] }).createComponent(
@@ -20,8 +21,18 @@ describe('AthRoleBadgeComponent', () => {
     expect(badge().textContent.trim()).toBe('Developer');
   });
 
+  it('draws a team colour (#RRGGBB) as it is', () => {
+    render({ name: 'Team Web', color: '#2f80ed' });
+    expect(badge().getAttribute('data-color')).toBe('custom');
+    expect(badge().style.getPropertyValue('--_dot')).toBe('#2f80ed');
+  });
+
   it('draws an unknown or missing colour neutral', () => {
-    render({ name: 'Gast', color: '#ff0000' });
+    render({ name: 'Gast', color: 'url(x)' });
+    expect(badge().getAttribute('data-color')).toBe('neutral');
+    expect(badge().style.getPropertyValue('--_dot')).toBe('');
+    fixture.componentRef.setInput('color', '#ff00');
+    fixture.detectChanges();
     expect(badge().getAttribute('data-color')).toBe('neutral');
     fixture.componentRef.setInput('color', null);
     fixture.detectChanges();

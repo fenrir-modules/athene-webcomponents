@@ -70,6 +70,7 @@ const ATH_DEFAULT_LABELS = {
 };
 const ATH_LABELS = new InjectionToken("ATH_LABELS");
 const ATH_STATUS_LABELS = new InjectionToken("ATH_STATUS_LABELS");
+const ATH_STATUS_TONES = new InjectionToken("ATH_STATUS_TONES");
 const ATH_PRIORITY_LABELS = new InjectionToken("ATH_PRIORITY_LABELS");
 const ACTION_MIN_DURATION = 8e3;
 var AthToastService = class AthToastService {
@@ -144,6 +145,6 @@ i0.ɵɵngDeclareClassMetadata({
 });
 const ATH_DATE_CONTEXT = new InjectionToken("ATH_DATE_CONTEXT");
 const ATH_MARKDOWN_PARSER = new InjectionToken("ATH_MARKDOWN_PARSER");
-export { ATH_DATE_CONTEXT, ATH_DEFAULT_LABELS, ATH_LABELS, ATH_MARKDOWN_PARSER, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, AthToastService };
+export { ATH_DATE_CONTEXT, ATH_DEFAULT_LABELS, ATH_LABELS, ATH_MARKDOWN_PARSER, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, ATH_STATUS_TONES, AthToastService };
 
 //# sourceMappingURL=athene-webcomponents-core.mjs.map

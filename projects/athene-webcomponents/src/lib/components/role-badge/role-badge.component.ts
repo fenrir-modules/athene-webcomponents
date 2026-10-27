@@ -10,16 +10,21 @@ import { Lock } from 'lucide';
 import { injectAthLabels } from '../../i18n/labels';
 import { isAthDecoColor } from '../color-swatch/deco-color';
 
+/** A colour as a team stores it. */
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+
 /** `ath-role-badge` sizes. */
 export type RoleBadgeSize = 'sm' | 'md';
 
 /**
- * A workspace role: a dot in the role's colour and its name. `locked`
+ * A workspace role (or team): a dot in its colour and its name. `locked`
  * adds a lock for the fixed roles (Owner, Admin), read out as "Fixed
- * role". An unknown colour draws the neutral dot.
+ * role". The colour is a palette token or a `#RRGGBB` colour (a team's);
+ * anything else draws the neutral dot.
  *
  * @example
  * <ath-role-badge name="Developer" color="blue" />
+ * <ath-role-badge name="Team Web" color="#2f80ed" size="sm" />
  * <ath-role-badge name="Owner" color="amber" [locked]="true" size="sm" />
  */
 @Component({
@@ -33,14 +38,20 @@ export class AthRoleBadgeComponent {
   private readonly labels = injectAthLabels();
 
   readonly name = input.required<string>();
-  /** A palette token (`AthDecoColor`); anything else is neutral. */
+  /** A palette token (`AthDecoColor`) or `#RRGGBB`; anything else is neutral. */
   readonly color = input<string | null | undefined>(null);
   readonly size = input<RoleBadgeSize>('md');
   readonly locked = input(false, { transform: booleanAttribute });
 
   protected readonly lockIcon = Lock;
+  /** `#RRGGBB` (a team's colour) as the dot's colour; `null` for a token. */
+  protected readonly hex = computed(() => {
+    const color = this.color();
+    return typeof color === 'string' && HEX_COLOR.test(color) ? color : null;
+  });
   protected readonly tone = computed(() => {
     const color = this.color();
+    if (this.hex()) return 'custom';
     return isAthDecoColor(color) ? color : 'neutral';
   });
   protected readonly lockedText = computed(() => this.labels.roleLocked());

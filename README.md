@@ -156,6 +156,14 @@ One colour rule from the `--due-*` tokens: overdue and **today red** (`--red-tex
 
 The Athene AI mark ("Perch"): a solid rounded A — Athene's A and a perched little owl — with two round eyes cut out and a four-point spark beside its head. `variant`: `color` (body in `currentColor`, spark in `--accent`; hints, rows), `mono` (all `currentColor`), `gradient` (`--ai-from` → `--ai-to`, for hero areas from 24 px). Two optical sizes from one 24-unit grid: up to 20 px the eyes sit wider apart and the spark grows (`AI_MARK_SMALL`), from 21 px the regular drawing (`AI_MARK_REGULAR`); the path data is exported for icon slots (a lucide-style icon of the app's nav). Decorative unless `label` is set; with `wordmark` the text is what screen readers read. Every gradient has its own id, so several marks on a page never share a paint server. Tokens of AI surfaces: `--ai-gradient`, `--ai-surface` (a ≤ 9% accent wash for hero cards), `--ai-border`.
 
+### Status pill: `ath-status-pill`
+
+`status` is a short code (`open`, `prog`, `review`, `blocked`, `done`, legacy `closed`) or any status key of the workspace (`in_progress`, `qa`; athene-contracts W4-F). The name comes from `[label]`, else the app's `ATH_STATUS_LABELS` resolver, else the English default (then the key itself). The dot's colour comes from `[tone]` (an `AthDecoColor` token), else the app's `ATH_STATUS_TONES` resolver, else the code's own colour; an unknown key without a tone is grey. Both resolvers are provided once at the root and may read signals (language, the workspace's statuses), so OnPush pills follow them.
+
+```html
+<ath-status-pill status="qa" label="QA" tone="purple" size="sm" />
+```
+
 ### Roles editor: `ath-permission-row`, `ath-tri-state`, `ath-save-bar`, `ath-color-swatch`, `ath-role-badge`
 
 ```html
@@ -190,7 +198,7 @@ The Athene AI mark ("Perch"): a solid rounded A — Athene's A and a perched lit
 - `ath-permission-row`: icon, name, one-line explanation (`--fg-3`, ellipsis), optional `inheritedHint`; the control is projected. With `interactive` a click anywhere on the row outside the control emits `activate` (a click on the control is left to it, so nothing toggles twice); the row adds no tab stop. `disabledReason` is the control's tooltip and is read out. Below 480 px the control moves under the text. `labelId` / `descriptionId` are public for `aria-describedby`.
 - `ath-tri-state`: _Deny · Inherit · Allow_ as a radio group (not `ath-segment`, a tab list): one tab stop, arrows move and choose (mirrored in RTL), Home/End, Space/Enter. `inherited` is read out with "Inherit (currently allowed)". `compact`, and phones, show icons only (each still named).
 - `ath-save-bar`: sticky at the bottom of its scroll container (`--selection-bar-*`), a named region whose appearance is announced (`aria-live="polite"`). `confirmDiscard`: _Discard_ asks first; Escape starts the question and focuses it, a second Escape takes it back; Escape is left to open overlays (`AthOverlayStack`). `saving` shows the spinner and blocks both buttons. Full width on phones.
-- `ath-color-swatch`, `ath-role-badge`, `ath-avatar [ring]`: the palette `AthDecoColor` (`neutral`, `blue`, `green`, `amber`, `red`, `purple`, `pink`; the same tokens as `TicketTypeColor` in athene-contracts), drawn with the `--<hue>-muted` deco tokens (`--grey-muted` for neutral). The swatch is a radio group with named swatches and a check on the picked one; an unknown token is neutral on a badge and no ring on an avatar. `ATH_DECO_COLORS`, `isAthDecoColor()` and `athDecoColorLabel()` are exported.
+- `ath-color-swatch`, `ath-role-badge`, `ath-avatar [ring]`: the palette `AthDecoColor` (`neutral`, `blue`, `green`, `amber`, `red`, `purple`, `pink`; the same tokens as `TicketTypeColor` in athene-contracts), drawn with the `--<hue>-muted` deco tokens (`--grey-muted` for neutral). The swatch is a radio group with named swatches and a check on the picked one; an unknown token is neutral on a badge and no ring on an avatar. `ath-role-badge` also takes a `#RRGGBB` colour (a team's, W4-F team queues) and draws it as it is. `ATH_DECO_COLORS`, `isAthDecoColor()` and `athDecoColorLabel()` are exported.
 - Words: the `AthLabels` `triState*`, `saveBar*`, `color*`, `colorPicker` and `roleLocked` (English defaults; the app translates them in its `ATH_LABELS` provider).
 
 ### `ath-chip`

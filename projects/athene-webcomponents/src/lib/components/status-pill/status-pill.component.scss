@@ -45,13 +45,15 @@
     color: var(--status-open);
   }
 }
-:host([data-status='prog']) {
+:host([data-status='prog']),
+:host([data-status='in_progress']) {
   .ath-status-pill__dot {
     background: var(--amber);
     color: var(--amber);
   }
 }
-:host([data-status='review']) {
+:host([data-status='review']),
+:host([data-status='in_review']) {
   .ath-status-pill__dot {
     background: var(--blue);
     color: var(--blue);
@@ -74,5 +76,28 @@
   .ath-status-pill__dot {
     background: var(--fg-4);
     color: var(--fg-4);
+  }
+}
+
+// A tone (a workspace's own status colour, or `[tone]`) wins over the
+// code's colour: the full hue of the palette token, as the built-in dots.
+$status-tones: (
+  'neutral': var(--status-open),
+  'blue': var(--blue),
+  'green': var(--green),
+  'amber': var(--amber),
+  'red': var(--red),
+  'purple': var(--purple),
+  'pink': var(--pink),
+);
+
+@each $name, $value in $status-tones {
+  :host([data-tone='#{$name}']) {
+    color: var(--fg-2);
+
+    .ath-status-pill__dot {
+      background: #{$value};
+      color: #{$value};
+    }
   }
 }

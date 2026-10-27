@@ -1,4 +1,9 @@
-<span class="ath-role-badge" [attr.data-color]="tone()" [attr.data-size]="size()">
+<span
+  class="ath-role-badge"
+  [attr.data-color]="tone()"
+  [attr.data-size]="size()"
+  [style.--_dot]="hex()"
+>
   <span class="ath-role-badge__dot" aria-hidden="true"></span>
   @if (locked()) {
     <ath-icon class="ath-role-badge__lock" [img]="lockIcon" [size]="11" aria-hidden="true" />

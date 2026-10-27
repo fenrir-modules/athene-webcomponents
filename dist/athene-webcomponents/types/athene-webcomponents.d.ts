@@ -2,7 +2,7 @@ import * as i0 from "@angular/core";
 import { AfterViewInit, ElementRef, InjectionToken, OnChanges, OnDestroy, Signal, SimpleChanges, TemplateRef } from "@angular/core";
 import { LucideIconData } from "@lucide/angular";
 import { IconNode } from "lucide";
-import { ATH_DATE_CONTEXT, ATH_DEFAULT_LABELS, ATH_LABELS, ATH_MARKDOWN_PARSER, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, AthDateContext, AthDateContext as AthDateContext$1, AthLabels, AthLabels as AthLabels$1, AthMarkdownParser, AthMarkdownParser as AthMarkdownParser$1, AthToastService, AthToastService as AthToastService$1, DueDateFormat, PriorityLabelResolver, StatusLabelResolver, TicketPriority, TicketPriority as TicketPriority$1, TicketStatus, TicketStatus as TicketStatus$1, ToastAction, ToastMessage, ToastOptions, ToastVariant, ToastVariant as ToastVariant$1 } from "@athene/webcomponents/core";
+import { ATH_DATE_CONTEXT, ATH_DEFAULT_LABELS, ATH_LABELS, ATH_MARKDOWN_PARSER, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, ATH_STATUS_TONES, AthDateContext, AthDateContext as AthDateContext$1, AthLabels, AthLabels as AthLabels$1, AthMarkdownParser, AthMarkdownParser as AthMarkdownParser$1, AthToastService, AthToastService as AthToastService$1, DueDateFormat, PriorityLabelResolver, StatusLabelResolver, StatusToneResolver, TicketPriority, TicketPriority as TicketPriority$1, TicketStatus, TicketStatus as TicketStatus$1, ToastAction, ToastMessage, ToastOptions, ToastVariant, ToastVariant as ToastVariant$1 } from "@athene/webcomponents/core";
 import { Params } from "@angular/router";
 import { Observable } from "rxjs";
 import { ControlValueAccessor } from "@angular/forms";
@@ -1635,25 +1635,48 @@ export declare class AthSparklineComponent {
     };
   }, {}, never, never, true, never>;
 }
+/**
+ * The decorative palette a user picks from (role colours, the badge and
+ * avatar ring of a role). The same tokens as athene-contracts
+ * `TicketTypeColor`, drawn with the `--<hue>-muted` deco tokens (`--grey-
+ * muted` for `neutral`), which are validated for both themes.
+ */
+export type AthDecoColor = 'neutral' | 'blue' | 'green' | 'amber' | 'red' | 'purple' | 'pink';
+/** Every palette token, in picker order. */
+export declare const ATH_DECO_COLORS: readonly AthDecoColor[];
+/** Whether a stored value is one of the palette tokens. */
+export declare function isAthDecoColor(value: unknown): value is AthDecoColor;
+/** The palette token's accessible name. */
+export declare function athDecoColorLabel(labels: AthLabels$1, color: AthDecoColor): string;
 export type StatusPillSize = 'sm' | 'md';
 /**
  * Status indicator for a ticket: colored inner-ring dot + label.
  *
+ * `status` is a short code (`prog`) or any status key of the workspace
+ * (`in_progress`, `qa`). The dot's colour is `tone` (a palette token), else
+ * the app's `ATH_STATUS_TONES` resolver, else the pill's own colour for a
+ * built-in code; an unknown status without a tone is grey.
+ *
  * @example
  * <ath-status-pill status="open" />
  * <ath-status-pill status="prog" [showLabel]="false" />
- * <ath-status-pill status="done" size="sm" />
+ * <ath-status-pill status="qa" tone="purple" label="QA" size="sm" />
  */
 export declare class AthStatusPillComponent {
-  readonly status: import("@angular/core").InputSignal<TicketStatus$1>;
+  readonly status: import("@angular/core").InputSignal<TicketStatus$1 | (string & {})>;
   readonly showDot: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
   readonly showLabel: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
   readonly size: import("@angular/core").InputSignal<StatusPillSize>;
   /** Optional override label (otherwise the app's resolver, then the English default). */
   readonly label: import("@angular/core").InputSignal<string | null>;
+  /** Optional palette token for the dot (otherwise the app's resolver, then the code's colour). */
+  readonly tone: import("@angular/core").InputSignal<AthDecoColor | (string & {}) | null>;
   private readonly resolveLabel;
+  private readonly resolveTone;
   /** The resolver reads a signal for the language (see `StatusLabelResolver`), so this follows it. */
   protected readonly computedLabel: import("@angular/core").Signal<string>;
+  /** A palette token, or `null` (the code's own colour). Unknown tokens are ignored. */
+  protected readonly computedTone: import("@angular/core").Signal<AthDecoColor | null>;
   static ɵfac: i0.ɵɵFactoryDeclaration<AthStatusPillComponent, never>;
   static ɵcmp: i0.ɵɵComponentDeclaration<AthStatusPillComponent, "ath-status-pill", never, {
     "status": {
@@ -1678,6 +1701,11 @@ export declare class AthStatusPillComponent {
     };
     "label": {
       "alias": "label";
+      "required": false;
+      "isSignal": true;
+    };
+    "tone": {
+      "alias": "tone";
       "required": false;
       "isSignal": true;
     };
@@ -3318,19 +3346,6 @@ export declare class AthFileDropComponent {
   }, never, ["*"], true, never>;
 }
 /**
- * The decorative palette a user picks from (role colours, the badge and
- * avatar ring of a role). The same tokens as athene-contracts
- * `TicketTypeColor`, drawn with the `--<hue>-muted` deco tokens (`--grey-
- * muted` for `neutral`), which are validated for both themes.
- */
-export type AthDecoColor = 'neutral' | 'blue' | 'green' | 'amber' | 'red' | 'purple' | 'pink';
-/** Every palette token, in picker order. */
-export declare const ATH_DECO_COLORS: readonly AthDecoColor[];
-/** Whether a stored value is one of the palette tokens. */
-export declare function isAthDecoColor(value: unknown): value is AthDecoColor;
-/** The palette token's accessible name. */
-export declare function athDecoColorLabel(labels: AthLabels$1, color: AthDecoColor): string;
-/**
  * A colour from the decorative palette, as a radio group (WAI-ARIA radio
  * pattern): one tab stop, the arrow keys move and pick, Home/End jump.
  * Each swatch is named for screen readers ("Blue"), the selected one also
@@ -3617,23 +3632,27 @@ export declare class AthSaveBarComponent {
 /** `ath-role-badge` sizes. */
 export type RoleBadgeSize = 'sm' | 'md';
 /**
- * A workspace role: a dot in the role's colour and its name. `locked`
+ * A workspace role (or team): a dot in its colour and its name. `locked`
  * adds a lock for the fixed roles (Owner, Admin), read out as "Fixed
- * role". An unknown colour draws the neutral dot.
+ * role". The colour is a palette token or a `#RRGGBB` colour (a team's);
+ * anything else draws the neutral dot.
  *
  * @example
  * <ath-role-badge name="Developer" color="blue" />
+ * <ath-role-badge name="Team Web" color="#2f80ed" size="sm" />
  * <ath-role-badge name="Owner" color="amber" [locked]="true" size="sm" />
  */
 export declare class AthRoleBadgeComponent {
   private readonly labels;
   readonly name: import("@angular/core").InputSignal<string>;
-  /** A palette token (`AthDecoColor`); anything else is neutral. */
+  /** A palette token (`AthDecoColor`) or `#RRGGBB`; anything else is neutral. */
   readonly color: import("@angular/core").InputSignal<string | null | undefined>;
   readonly size: import("@angular/core").InputSignal<RoleBadgeSize>;
   readonly locked: import("@angular/core").InputSignalWithTransform<boolean, unknown>;
   protected readonly lockIcon: import("lucide").IconNode;
-  protected readonly tone: import("@angular/core").Signal<import("@athene/webcomponents").AthDecoColor>;
+  /** `#RRGGBB` (a team's colour) as the dot's colour; `null` for a token. */
+  protected readonly hex: import("@angular/core").Signal<string | null>;
+  protected readonly tone: import("@angular/core").Signal<import("@athene/webcomponents").AthDecoColor | "custom">;
   protected readonly lockedText: import("@angular/core").Signal<string>;
   static ɵfac: i0.ɵɵFactoryDeclaration<AthRoleBadgeComponent, never>;
   static ɵcmp: i0.ɵɵComponentDeclaration<AthRoleBadgeComponent, "ath-role-badge", never, {
@@ -4738,7 +4757,7 @@ export declare class AthPanelGridComponent {
   readonly columns: import("@angular/core").InputSignal<PanelGridColumns>;
   readonly rows: import("@angular/core").InputSignal<PanelGridRows>;
   protected readonly templateColumns: import("@angular/core").Signal<string>;
-  protected readonly rowsMode: import("@angular/core").Signal<PanelGridRows | "custom">;
+  protected readonly rowsMode: import("@angular/core").Signal<"custom" | PanelGridRows>;
   protected readonly templateRows: import("@angular/core").Signal<PanelGridRows | null>;
   static ɵfac: i0.ɵɵFactoryDeclaration<AthPanelGridComponent, never>;
   static ɵcmp: i0.ɵɵComponentDeclaration<AthPanelGridComponent, "ath-panel-grid", never, {
@@ -5512,4 +5531,4 @@ export declare class AthSheetComponent implements OnChanges, OnDestroy {
 export declare function injectAthLabels(): AthLabels$1;
 /** Fills `{name}` placeholders of a label; unknown ones stay as written. */
 export declare function formatAthLabel(template: string, params: Readonly<Record<string, string | number>>): string;
-export { ATH_DATE_CONTEXT, ATH_DEFAULT_LABELS, ATH_LABELS, ATH_MARKDOWN_PARSER, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, type AthDateContext, type AthLabels, type AthMarkdownParser, type AthOverlayCloseReason as PopoverCloseReason, AthToastService, type DueDateFormat, type PriorityLabelResolver, type StatusLabelResolver, type TicketPriority, type TicketStatus, type ToastAction, type ToastMessage, type ToastOptions, type ToastVariant };
+export { ATH_DATE_CONTEXT, ATH_DEFAULT_LABELS, ATH_LABELS, ATH_MARKDOWN_PARSER, ATH_PRIORITY_LABELS, ATH_STATUS_LABELS, ATH_STATUS_TONES, type AthDateContext, type AthLabels, type AthMarkdownParser, type AthOverlayCloseReason as PopoverCloseReason, AthToastService, type DueDateFormat, type PriorityLabelResolver, type StatusLabelResolver, type StatusToneResolver, type TicketPriority, type TicketStatus, type ToastAction, type ToastMessage, type ToastOptions, type ToastVariant };
