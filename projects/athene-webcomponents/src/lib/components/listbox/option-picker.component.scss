@@ -39,8 +39,9 @@
     border-color: var(--accent-dim);
   }
 
+  // A field: the field's focus (border and halo), not the gap ring.
   &:focus-visible {
-    @include m.focus-ring;
+    @include m.field-focus;
   }
 
   &:disabled {

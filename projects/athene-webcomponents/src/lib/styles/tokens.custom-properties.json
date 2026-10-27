@@ -30,6 +30,7 @@
     "--accent-solid": "var(--accent)",
     "--focus-ring-color": "var(--accent)",
     "--focus-ring-shadow": "0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring-color)",
+    "--field-focus-shadow": "0 0 0 3px var(--accent-ring)",
     "--ink": "#17171a",
     "--ink-hover": "#2e2e34",
     "--action-primary-bg": "var(--accent-solid)",

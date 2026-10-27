@@ -87,6 +87,13 @@
       "before": null,
       "after": "1",
       "why": "single z-index scale: local lift (replaces literal z-index: 1)"
+    },
+    {
+      "selector": ":root",
+      "prop": "--field-focus-shadow",
+      "before": null,
+      "after": "0 0 0 3px var(--accent-ring)",
+      "why": "W4-C: form fields focus with one line (border in the focus colour + this soft halo), not the gap ring that read as a heavy double outline"
     }
   ],
   "ruleChanges": [
@@ -119,6 +126,11 @@
       "change": "added",
       "rule": "svg.lucide[stroke-width=\"2\"] { stroke-width: var(--icon-stroke) }",
       "why": "see above"
+    },
+    {
+      "change": "added",
+      "rule": ":where(input:not([type=checkbox], [type=radio], [type=range], [type=color], [type=file]), textarea, select):focus-visible { outline: 1px solid var(--focus-ring-color); outline-offset: -1px }",
+      "why": "W4-C: on text fields the global outline sits on the field’s own edge (1px), so it never doubles a field’s own focus border and halo"
     }
   ]
 }

@@ -38,6 +38,7 @@
   [attr.aria-labelledby]="ariaLabelledby()"
   [attr.aria-busy]="loading() || null"
   [attr.aria-activedescendant]="searchable() ? null : activeId()"
+  [attr.data-highlight]="highlight()"
   [style.max-height.px]="maxHeight()"
   (keydown)="handleKeydown($event)"
   (click)="onListClick($event)"

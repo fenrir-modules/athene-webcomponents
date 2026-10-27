@@ -2,6 +2,8 @@
 // ATH-SEARCH-INPUT STYLES
 // ===========================================
 
+@use '../../styles/mixins' as m;
+
 .ath-search-input {
   position: relative;
   display: flex;
@@ -39,10 +41,8 @@
       background-color: rgba(255, 255, 255, 0.03);
     }
 
-    &:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent);
+    &:focus-visible {
+      @include m.field-focus;
       background-color: var(--bg-1);
     }
 

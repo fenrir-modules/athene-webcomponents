@@ -85,6 +85,32 @@
   box-shadow: var(--focus-ring-shadow);
 }
 
+// Form fields (input, textarea, select, a picker's trigger, an editor box):
+// at rest a subtle 1px border; focused, that border turns --focus-ring-color
+// (the 3:1 indicator) with a soft accent halo outside it. One line — never
+// the gap ring above, which on a bordered field read as a heavy double
+// outline. Use it on :focus-visible (a text field matches it on any focus),
+// or on :focus-within for a box whose inner field has no edge of its own.
+@mixin field-focus {
+  outline: none;
+  border-color: var(--focus-ring-color);
+  box-shadow: var(--field-focus-shadow);
+}
+
+// The same for a field in its error state: the red edge stays.
+@mixin field-focus-error {
+  outline: none;
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--red) 20%, transparent);
+}
+
+// A row of a list or menu with keyboard focus: an inset ring, so a
+// scrolling panel never clips it. Pointer hover is a background only.
+@mixin focus-ring-inset {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--focus-ring-color);
+}
+
 @mixin button-reset {
   border: none;
   background: none;
@@ -120,9 +146,8 @@
     border-color: var(--border-strong);
   }
 
-  &:focus {
-    @include focus-ring;
-    border-color: var(--accent);
+  &:focus-visible {
+    @include field-focus;
   }
 
   &:disabled {

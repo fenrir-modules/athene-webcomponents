@@ -61,6 +61,9 @@ interface CreateRow {
 
 type Row<T> = OptionRow<T> | CreateRow;
 
+/** How the highlighted row shows (see `AthListboxComponent.highlight`). */
+export type ListboxHighlight = 'none' | 'soft' | 'ring';
+
 interface Section<T> {
   key: string;
   label: string | null;
@@ -157,6 +160,14 @@ export class AthListboxComponent<T = string> {
   private readonly searchRef = viewChild<ElementRef<HTMLInputElement>>('search');
   private readonly listRef = viewChild.required<ElementRef<HTMLElement>>('list');
   private readonly activeRaw = signal(-1);
+  /**
+   * How the highlighted row shows: `none` right after opening on a selected
+   * row (it keeps only its check mark), `soft` under the pointer, while
+   * typing or on the first row Enter would pick (a background), `ring` once
+   * the arrow keys moved it (the accent ring, the list's keyboard focus
+   * indicator).
+   */
+  readonly highlight = signal<ListboxHighlight>('soft');
   private readonly typeahead = new Typeahead();
 
   protected readonly searchText = computed(
@@ -275,6 +286,7 @@ export class AthListboxComponent<T = string> {
     const rows = this.rows();
     const selected = rows.findIndex((r) => r.kind === 'option' && r.selected);
     this.activeRaw.set(selected >= 0 ? selected : edgeIndex(rows.length, this.usable));
+    this.highlight.set(selected >= 0 ? 'none' : 'soft');
     this.scrollToActive();
   }
 
@@ -309,6 +321,7 @@ export class AthListboxComponent<T = string> {
     this.query.set((event.target as HTMLInputElement).value);
     // The best match is ready for Enter.
     this.activeRaw.set(edgeIndex(this.rows().length, this.usable));
+    this.highlight.set('soft');
     this.listRef().nativeElement.scrollTop = 0;
   }
 
@@ -366,6 +379,7 @@ export class AthListboxComponent<T = string> {
     event.preventDefault();
     if (next >= 0) {
       this.activeRaw.set(next);
+      this.highlight.set('ring');
       this.scrollToActive();
     }
   }
@@ -382,7 +396,9 @@ export class AthListboxComponent<T = string> {
 
   protected onListHover(event: MouseEvent): void {
     const index = this.rowIndexAt(event);
-    if (index >= 0 && index !== this.activeRaw() && this.usable(index)) this.activeRaw.set(index);
+    if (index < 0 || !this.usable(index)) return;
+    if (index !== this.activeRaw()) this.activeRaw.set(index);
+    this.highlight.set('soft');
   }
 
   private readonly usable = (i: number): boolean => {

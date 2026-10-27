@@ -151,6 +151,11 @@
       "type": "shadow"
     },
     {
+      "name": "--field-focus-shadow",
+      "path": "color.focus.field-focus-shadow",
+      "type": "shadow"
+    },
+    {
       "name": "--ink",
       "path": "color.role.ink.ink",
       "type": "color"

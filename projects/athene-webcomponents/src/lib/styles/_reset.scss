@@ -74,6 +74,21 @@ table {
   outline-offset: 2px;
 }
 
+// A text field draws its focus on its own edge: the outline above, 2px
+// outside a field that also turns its border and adds a halo, read as a
+// thick double outline. Here it is 1px on the border itself, so a field
+// without its own rule still shows the focus colour, and one with the
+// field treatment (mixin field-focus) shows a single line. Zero
+// specificity: a component's own focus rule always wins.
+:where(
+  input:not([type='checkbox'], [type='radio'], [type='range'], [type='color'], [type='file']),
+  textarea,
+  select
+):focus-visible {
+  outline: 1px solid var(--focus-ring-color);
+  outline-offset: -1px;
+}
+
 // Reduced motion
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -51,6 +51,7 @@
   // color.focus — Focus indicator (WCAG 2.4.7 / 1.4.11). The ring colour clears 3:1 against every surface in every theme and accent (contrast gate); --focus-ring-shadow adds a surface-coloured gap so it also reads on accent fills.
   --focus-ring-color: var(--accent); // Outline / ring colour for :focus-visible.
   --focus-ring-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring-color); // box-shadow focus ring: 2px gap + 2px ring. Pair with outline: none. (Not named --focus-ring: the app already reads var(--focus-ring, …) as an outline colour.)
+  --field-focus-shadow: 0 0 0 3px var(--accent-ring); // Form fields (input, textarea, select, pickers, editors): a soft accent halo outside the field's border, which turns --focus-ring-color and carries the 3:1 indicator. One line, never the gap ring of --focus-ring-shadow. Pair with outline: none (mixin field-focus).
 
   // color.role.ink
   --ink: #17171a;

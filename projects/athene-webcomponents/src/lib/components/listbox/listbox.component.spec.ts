@@ -121,6 +121,41 @@ describe('AthListboxComponent', () => {
     expect(host.value()).toBe('apple');
   });
 
+  it('shows a pointer highlight as a background and a keyboard one as a ring (2026-10-27)', () => {
+    host.searchable.set(true);
+    host.value.set('cherry');
+    fixture.detectChanges();
+    const listbox = fixture.debugElement.query((d) => d.name === 'ath-listbox')
+      .componentInstance as AthListboxComponent;
+    const list = q('[role=listbox]')!;
+    const input = q<HTMLInputElement>('input')!;
+    input.focus();
+    listbox.resetActive();
+    fixture.detectChanges();
+    // Opened on the selected row: its check mark only, no fill, no weight.
+    expect(list.dataset['highlight']).toBe('none');
+    const selected = options()[2];
+    expect(getComputedStyle(selected).backgroundColor).toBe('rgba(0, 0, 0, 0)');
+    expect(getComputedStyle(selected).boxShadow).toBe('none');
+    expect(getComputedStyle(selected).fontWeight).toBe(getComputedStyle(options()[0]).fontWeight);
+    // Hover: a background only.
+    options()[3].dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+    fixture.detectChanges();
+    expect(list.dataset['highlight']).toBe('soft');
+    expect(getComputedStyle(options()[3]).backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+    expect(getComputedStyle(options()[3]).boxShadow).toBe('none');
+    // Arrow keys: the ring, on the row the keys moved to.
+    press('ArrowUp', input);
+    expect(list.dataset['highlight']).toBe('ring');
+    expect(getComputedStyle(selected).boxShadow).toContain('inset');
+    // Typing: the best match, a background again.
+    type('a');
+    expect(list.dataset['highlight']).toBe('soft');
+    // The search field draws no ring of its own inside the popover.
+    const search = q('.ath-listbox__search')!;
+    expect(getComputedStyle(search).boxShadow).toBe('none');
+  });
+
   it('jumps by typeahead without a search field', () => {
     const list = q('[role=listbox]')!;
     press('d', list);

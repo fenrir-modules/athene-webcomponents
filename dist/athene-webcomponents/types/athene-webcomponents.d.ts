@@ -2857,6 +2857,8 @@ interface CreateRow {
   label: string;
 }
 type Row<T> = OptionRow<T> | CreateRow;
+/** How the highlighted row shows (see `AthListboxComponent.highlight`). */
+export type ListboxHighlight = 'none' | 'soft' | 'ring';
 interface Section<T> {
   key: string;
   label: string | null;
@@ -2929,6 +2931,14 @@ export declare class AthListboxComponent<T = string> {
   private readonly searchRef;
   private readonly listRef;
   private readonly activeRaw;
+  /**
+   * How the highlighted row shows: `none` right after opening on a selected
+   * row (it keeps only its check mark), `soft` under the pointer, while
+   * typing or on the first row Enter would pick (a background), `ring` once
+   * the arrow keys moved it (the accent ring, the list's keyboard focus
+   * indicator).
+   */
+  readonly highlight: import("@angular/core").WritableSignal<ListboxHighlight>;
   private readonly typeahead;
   protected readonly searchText: import("@angular/core").Signal<string>;
   protected readonly emptyText: import("@angular/core").Signal<string>;

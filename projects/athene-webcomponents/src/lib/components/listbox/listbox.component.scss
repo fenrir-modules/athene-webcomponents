@@ -24,9 +24,15 @@
   background: var(--surface-3);
   border: 1px solid transparent;
   border-radius: var(--r);
+  transition:
+    background-color var(--t-fast),
+    border-color var(--t-fast);
 
+  // The caret says where typing goes; inside a popover no ring on top of
+  // it (2026-10-27: it read as a heavy double outline). A quiet edge only.
   &:focus-within {
-    @include m.focus-ring;
+    background: var(--surface);
+    border-color: var(--border-strong);
   }
 }
 
@@ -70,7 +76,7 @@
 
   &:focus-visible {
     border-radius: var(--r-sm);
-    box-shadow: inset 0 0 0 2px var(--focus-ring-color);
+    @include m.focus-ring-inset;
   }
 }
 
@@ -106,15 +112,8 @@
   content-visibility: auto;
   contain-intrinsic-size: auto var(--space-8);
 
-  &--active {
-    color: var(--fg);
-    background: var(--hover-strong);
-  }
-
-  &--selected {
-    color: var(--fg);
-    font-weight: var(--weight-medium);
-  }
+  // The selected option is marked by its check mark only; no fill, no
+  // weight, so it never reads as a second highlight.
 
   &--disabled {
     color: var(--fg-4);
@@ -126,9 +125,19 @@
   }
 }
 
-// The active row is the focus indicator of the list (aria-activedescendant).
-:host(:has(:focus-visible)) .ath-listbox__option--active {
-  box-shadow: inset 0 0 0 2px var(--focus-ring-color);
+// The highlighted row (aria-activedescendant). Under the pointer, or the
+// best match while typing: a subtle background. Moved to with the arrow
+// keys while the list or its search field has keyboard focus: the accent
+// ring as well, the list's focus indicator. Right after opening nothing is
+// highlighted, so the selected row shows its check mark and nothing else.
+.ath-listbox__list:is([data-highlight='soft'], [data-highlight='ring'])
+  .ath-listbox__option--active:not(.ath-listbox__option--disabled) {
+  color: var(--fg);
+  background: var(--hover-strong);
+}
+
+:host(:has(:focus-visible)) .ath-listbox__list[data-highlight='ring'] .ath-listbox__option--active {
+  @include m.focus-ring-inset;
 }
 
 .ath-listbox__check {

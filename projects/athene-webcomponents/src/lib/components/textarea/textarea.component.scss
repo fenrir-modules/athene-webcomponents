@@ -2,6 +2,8 @@
 // ATH-TEXTAREA STYLES
 // ===========================================
 
+@use '../../styles/mixins' as m;
+
 .ath-textarea {
   display: flex;
   flex-direction: column;
@@ -40,10 +42,8 @@
       border-color: var(--border-strong);
     }
 
-    &:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-ring);
+    &:focus-visible {
+      @include m.field-focus;
     }
 
     &:disabled {
@@ -86,8 +86,8 @@
     .ath-textarea__field {
       border-color: var(--red);
 
-      &:focus {
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--red) 20%, transparent);
+      &:focus-visible {
+        @include m.field-focus-error;
       }
     }
   }
