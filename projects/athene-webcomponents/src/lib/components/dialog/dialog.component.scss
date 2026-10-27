@@ -97,6 +97,12 @@
   width: auto;
   height: auto;
   background: var(--scrim);
+
+  // Its scrim fades in as a modal's ::backdrop does, so a shell that dims
+  // the uncovered band itself (with `--t-slow`) dims in step with it.
+  &[open] {
+    animation: ath-dialog-backdrop-in var(--t-slow);
+  }
 }
 
 // The default slot of a bare dialog: no box of its own, so the content's
