@@ -4,9 +4,6 @@ import {
   DOCUMENT,
   DestroyRef,
   ElementRef,
-  Injector,
-  afterNextRender,
-  afterRenderEffect,
   computed,
   effect,
   inject,
@@ -16,6 +13,7 @@ import {
 } from '@angular/core';
 
 import { AthIconComponent, type AthIconData } from '../icon/icon.component';
+import { AthToastTimerDirective } from './toast-timer.directive';
 import { Check, ChevronUp, X } from 'lucide';
 import { AthToastService, type ToastMessage, type ToastVariant } from '@athene/webcomponents/core';
 import { formatAthLabel, injectAthLabels } from '../../i18n/labels';
@@ -82,9 +80,12 @@ const ANNOUNCE_DELAY = 100;
  * <router-outlet />
  * <ath-toast-container />
  */
+/** How long a removed toast stays while it leaves: `ath-toast-close` ends at 60 + 220 ms. */
+const LEAVE_MS = 300;
+
 @Component({
   selector: 'ath-toast-container',
-  imports: [AthIconComponent],
+  imports: [AthIconComponent, AthToastTimerDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './toast.component.html',
   styleUrl: './toast.component.scss',
@@ -101,7 +102,6 @@ export class AthToastContainerComponent {
   private readonly labels = injectAthLabels();
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly doc = inject(DOCUMENT);
-  private readonly injector = inject(Injector);
 
   /** How many toasts show at once; older ones collapse behind a counter (default 3). */
   readonly maxVisible = input(3);
@@ -118,6 +118,9 @@ export class AthToastContainerComponent {
   private readonly pinned = signal(false);
   /** Where focus was before it entered the stack. */
   private returnFocus: HTMLElement | null = null;
+
+  /** Read by the template, so a pause renders the view (and the hairlines sync). */
+  protected readonly paused = this.toastService.paused;
 
   protected readonly expanded = computed(() => this.hovered() || this.focused() || this.pinned());
 
@@ -140,11 +143,28 @@ export class AthToastContainerComponent {
 
   private readonly announced = new Set<string>();
   private readonly held = new Set<string>();
-  private readonly timers = new Map<string, Animation>();
 
-  get toasts() {
-    return this.toastService.toasts();
-  }
+  /**
+   * Toasts the service removed, shown a moment longer while they leave
+   * (`ath-toast-slot--leave`), at the place they had. CSS and a timer, not
+   * `animate.leave`: that would pull Angular's animation runtime into the
+   * initial bundle of every app that shows a toast.
+   */
+  private readonly leaving = signal<ReadonlyMap<string, { toast: ToastMessage; at: number }>>(
+    new Map()
+  );
+  private previous: readonly ToastMessage[] = [];
+
+  /** The rows of the stack: the service's toasts, and the ones leaving. */
+  protected readonly rows = computed(() => {
+    const list = this.toastService.toasts();
+    const rows = list.map((toast) => ({ toast, leaving: false }));
+    for (const { toast, at } of this.leaving().values()) {
+      if (list.some((t) => t.id === toast.id)) continue;
+      rows.splice(Math.min(at, rows.length), 0, { toast, leaving: true });
+    }
+    return rows;
+  });
 
   constructor() {
     const destroyRef = inject(DestroyRef);
@@ -165,23 +185,44 @@ export class AthToastContainerComponent {
       });
     });
 
-    // Announce each new toast once.
+    // Announce each new toast once; focus that went with a removed toast
+    // (no focusout fires then) is let go once the list has rendered.
     effect(() => {
       const list = this.toastService.toasts();
-      untracked(() => this.announce(list));
+      untracked(() => {
+        this.announce(list);
+        this.doc.defaultView?.requestAnimationFrame(() => {
+          if (this.focused() && !this.host.nativeElement.contains(this.doc.activeElement)) {
+            this.leaveFocus();
+          }
+        });
+      });
     });
 
-    // The time-left hairlines follow the service's clocks.
-    afterRenderEffect(() => {
+    // A removed toast stays a moment as a leaving row.
+    const leaveTimers = new Set<ReturnType<typeof setTimeout>>();
+    effect(() => {
       const list = this.toastService.toasts();
-      this.toastService.paused();
-      this.collapsed();
       untracked(() => {
-        this.syncTimers(list);
-        // Focus can vanish with a removed element without a focusout.
-        if (this.focused() && !this.host.nativeElement.contains(this.doc.activeElement)) {
-          this.leaveFocus();
-        }
+        const gone = this.previous
+          .map((toast, at) => ({ toast, at }))
+          .filter(({ toast }) => !list.some((t) => t.id === toast.id));
+        this.previous = list;
+        if (gone.length === 0) return;
+        this.leaving.update((map) => {
+          const next = new Map(map);
+          for (const g of gone) next.set(g.toast.id, g);
+          return next;
+        });
+        const timer = setTimeout(() => {
+          leaveTimers.delete(timer);
+          this.leaving.update((map) => {
+            const next = new Map(map);
+            for (const g of gone) next.delete(g.toast.id);
+            return next;
+          });
+        }, LEAVE_MS);
+        leaveTimers.add(timer);
       });
     });
 
@@ -194,8 +235,8 @@ export class AthToastContainerComponent {
       this.doc.removeEventListener('visibilitychange', onVisibility);
       for (const reason of [HOVER, FOCUS, HIDDEN]) this.toastService.resume(reason);
       for (const id of this.held) this.toastService.release(id);
-      for (const anim of this.timers.values()) anim.cancel();
       view?.clearTimeout(this.announceTask);
+      for (const timer of leaveTimers) clearTimeout(timer);
     });
   }
 
@@ -272,7 +313,14 @@ export class AthToastContainerComponent {
     this.pinned.set(true);
     const first = this.toastService.toasts()[0];
     // After the render that takes `inert` off the collapsed toasts.
-    if (first) afterNextRender(() => this.focusToast(first.id), { injector: this.injector });
+    // The oldest is still collapsed (inert, hidden) until the next render;
+    // give it the state that render gives it, then focus it.
+    const slot = first ? this.toastElement(first.id)?.closest('li') : null;
+    if (first && slot) {
+      slot.removeAttribute('inert');
+      slot.classList.remove('ath-toast-slot--collapsed');
+      this.focusToast(first.id);
+    }
   }
 
   // ---- Internals --------------------------------------------------------
@@ -350,27 +398,4 @@ export class AthToastContainerComponent {
    * Animations, not CSS: the global reduced-motion reset would end a CSS
    * animation at once, and the time left is information, not decoration.)
    */
-  private syncTimers(list: readonly ToastMessage[]): void {
-    const ids = new Set(list.map((t) => t.id));
-    for (const [id, anim] of this.timers) {
-      if (ids.has(id)) continue;
-      anim.cancel();
-      this.timers.delete(id);
-    }
-    for (const toast of list) {
-      const remaining = this.toastService.remaining(toast.id);
-      const bar = this.toastElement(toast.id)?.querySelector<HTMLElement>('.ath-toast__timer');
-      const total = toast.duration ?? 0;
-      if (!bar || remaining === null || total <= 0 || typeof bar.animate !== 'function') continue;
-      this.timers.get(toast.id)?.cancel();
-      const from = Math.min(1, remaining / total);
-      const anim = bar.animate([{ transform: `scaleX(${from})` }, { transform: 'scaleX(0)' }], {
-        duration: Math.max(1, remaining),
-        easing: 'linear',
-        fill: 'forwards',
-      });
-      if (!this.toastService.isRunning(toast.id)) anim.pause();
-      this.timers.set(toast.id, anim);
-    }
-  }
 }

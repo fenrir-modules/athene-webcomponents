@@ -3956,29 +3956,6 @@ export declare class AthDialogComponent implements OnChanges, OnDestroy {
 }
 /** Where the stack sits: at the bottom (newest at the bottom) or at the top (newest on top). */
 export type ToastPlacement = 'bottom' | 'top';
-/**
- * Athene Toast Container Component
- *
- * Renders global toast notifications. Place once in the root component.
- *
- * - Newest toast nearest the corner; at most `maxVisible` are shown, older
- *   ones collapse behind a "+N more" button and their clocks stop until
- *   they show again. Pointer or focus on the stack shows them all.
- * - A hairline at the foot of a timed toast shows the time left. Clocks
- *   stop while the pointer or focus is on the stack and while the page is
- *   hidden.
- * - New toasts are read out through two hidden live regions: errors
- *   assertive, everything else polite. The stack itself is a labelled
- *   region (`ATH_LABELS.toastRegion`), so a screen-reader user can find it.
- * - Escape closes the toast that has focus. Focus then moves to the next
- *   toast, or back to where it was before it entered the stack. Nothing
- *   traps focus.
- *
- * @example
- * <!-- app.component.html -->
- * <router-outlet />
- * <ath-toast-container />
- */
 export declare class AthToastContainerComponent {
   protected readonly successIcon: import("lucide").IconNode;
   protected readonly errorIcon: import("lucide").IconNode;
@@ -3990,7 +3967,6 @@ export declare class AthToastContainerComponent {
   private readonly labels;
   private readonly host;
   private readonly doc;
-  private readonly injector;
   /** How many toasts show at once; older ones collapse behind a counter (default 3). */
   readonly maxVisible: import("@angular/core").InputSignal<number>;
   /** `bottom` (default) or `top`; set `--toast-offset-top` / `-bottom` to match. */
@@ -4005,6 +3981,8 @@ export declare class AthToastContainerComponent {
   private readonly pinned;
   /** Where focus was before it entered the stack. */
   private returnFocus;
+  /** Read by the template, so a pause renders the view (and the hairlines sync). */
+  protected readonly paused: import("@angular/core").Signal<boolean>;
   protected readonly expanded: import("@angular/core").Signal<boolean>;
   /** Ids of the toasts collapsed behind the visible ones. */
   protected readonly collapsed: import("@angular/core").Signal<Set<string>>;
@@ -4015,8 +3993,19 @@ export declare class AthToastContainerComponent {
   protected readonly assertiveText: import("@angular/core").WritableSignal<string>;
   private readonly announced;
   private readonly held;
-  private readonly timers;
-  get toasts(): ToastMessage$1[];
+  /**
+   * Toasts the service removed, shown a moment longer while they leave
+   * (`ath-toast-slot--leave`), at the place they had. CSS and a timer, not
+   * `animate.leave`: that would pull Angular's animation runtime into the
+   * initial bundle of every app that shows a toast.
+   */
+  private readonly leaving;
+  private previous;
+  /** The rows of the stack: the service's toasts, and the ones leaving. */
+  protected readonly rows: import("@angular/core").Signal<{
+    toast: ToastMessage$1;
+    leaving: boolean;
+  }[]>;
   constructor();
   getIcon(variant: ToastVariant$1): AthIconData;
   dismiss(id: string): void;
@@ -4041,14 +4030,6 @@ export declare class AthToastContainerComponent {
   private syncVisibility;
   private announceTask;
   private announce;
-  /**
-   * One Web Animation per timed toast: the hairline shrinks from the time
-   * left to zero, running exactly while the service's clock runs. Rebuilt
-   * from `remaining()` on every change, so the two never drift. (Web
-   * Animations, not CSS: the global reduced-motion reset would end a CSS
-   * animation at once, and the time left is information, not decoration.)
-   */
-  private syncTimers;
   static ɵfac: i0.ɵɵFactoryDeclaration<AthToastContainerComponent, never>;
   static ɵcmp: i0.ɵɵComponentDeclaration<AthToastContainerComponent, "ath-toast-container", never, {
     "maxVisible": {

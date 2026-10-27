@@ -95,7 +95,11 @@ describe('AthToastContainerComponent', () => {
   let fixture: ComponentFixture<AthToastContainerComponent>;
   let service: AthToastService;
   const el = () => fixture.nativeElement as HTMLElement;
-  const toastEls = () => Array.from(el().querySelectorAll<HTMLElement>('.ath-toast'));
+  // A closed toast stays a moment as a leaving row; these are the live ones.
+  const toastEls = () =>
+    Array.from(
+      el().querySelectorAll<HTMLElement>('.ath-toast-slot:not(.ath-toast-slot--leave) .ath-toast')
+    );
   const slots = () => Array.from(el().querySelectorAll<HTMLElement>('.ath-toast-slot'));
 
   function create(providers: unknown[] = [], animationsEnabled = false): void {
@@ -368,7 +372,13 @@ describe('AthToastContainerComponent', () => {
       const leaving = slots().find((s) => s.classList.contains('ath-toast-slot--leave'));
       expect(leaving?.textContent?.trim()).toBe('First');
       expect(getComputedStyle(leaving as HTMLElement).animationName).toContain('ath-toast-out');
-      await vi.waitFor(() => expect(slots().length).toBe(1), { timeout: 2000 });
+      await vi.waitFor(
+        () => {
+          fixture.detectChanges();
+          expect(slots().length).toBe(1);
+        },
+        { timeout: 2000 }
+      );
       expect(slots()[0].textContent?.trim()).toBe('Second');
     });
   });
@@ -393,7 +403,12 @@ describe('AthToastContainerComponent', () => {
     }
     const pick = (cls: string) =>
       Object.entries(reduced).find(([selector]) => selector.includes(cls))?.[1];
-    expect(pick('ath-toast-slot--enter')).toContain('ath-toast-fade-in');
+    // The enter animation sits on the row itself (CSS on insertion, W5-C).
+    const exact = (selector: string) =>
+      Object.entries(reduced).find(
+        ([s]) => s.replace(/\[_ngcontent[^\]]*\]/g, '').trim() === selector
+      )?.[1];
+    expect(exact('.ath-toast-slot')).toContain('ath-toast-fade-in');
     expect(pick('ath-toast-slot--leave')).toContain('ath-toast-fade-out');
   });
 });

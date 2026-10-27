@@ -13,24 +13,19 @@
   (focusout)="onFocusOut($event)"
 >
   @if (collapsed().size > 0) {
-    <button
-      type="button"
-      class="ath-toast-more"
-      animate.enter="ath-toast-more--enter"
-      (click)="expand()"
-    >
+    <button type="button" class="ath-toast-more" (click)="expand()">
       <ath-icon [img]="moreIcon" [size]="12" [strokeWidth]="2.25" />
       {{ moreText() }}
     </button>
   }
   <ol class="ath-toast-list" (pointerenter)="onPointerEnter()" (pointerleave)="onPointerLeave()">
-    @for (toast of toasts; track toast.id) {
+    @for (row of rows(); track row.toast.id) {
+      @let toast = row.toast;
       <li
         class="ath-toast-slot"
         [class.ath-toast-slot--collapsed]="collapsed().has(toast.id)"
-        [attr.inert]="collapsed().has(toast.id) ? '' : null"
-        animate.enter="ath-toast-slot--enter"
-        animate.leave="ath-toast-slot--leave"
+        [class.ath-toast-slot--leave]="row.leaving"
+        [attr.inert]="row.leaving || collapsed().has(toast.id) ? '' : null"
       >
         <div class="ath-toast-sizer">
           <div
@@ -64,7 +59,12 @@
               <ath-icon [img]="closeIcon" [size]="12" [strokeWidth]="2.25" />
             </button>
             @if (timed(toast)) {
-              <span class="ath-toast__timer" aria-hidden="true"></span>
+              <span
+                class="ath-toast__timer"
+                aria-hidden="true"
+                [athToastTimer]="toast.id"
+                [running]="!paused() && !row.leaving && !collapsed().has(toast.id)"
+              ></span>
             }
           </div>
         </div>

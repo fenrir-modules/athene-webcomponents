@@ -105,6 +105,14 @@ $bleed: 24px;
   display: grid;
   grid-template-rows: 1fr;
   padding-block: 4px;
+  // Plays once, when the row is inserted (CSS, not `animate.enter`: that
+  // pulls Angular's animation runtime into every app's initial bundle).
+  animation:
+    ath-toast-open $open $ease-out,
+    ath-toast-in $enter $ease-spring-fallback;
+  animation:
+    ath-toast-open $open $ease-out,
+    ath-toast-in $enter $ease-spring;
   transition:
     grid-template-rows $shift $ease-standard,
     padding $shift $ease-standard,
@@ -137,15 +145,6 @@ $bleed: 24px;
       opacity 160ms $ease-in,
       transform $shift $ease-standard,
       visibility 0s $shift;
-  }
-
-  &--enter {
-    animation:
-      ath-toast-open $open $ease-out,
-      ath-toast-in $enter $ease-spring-fallback;
-    animation:
-      ath-toast-open $open $ease-out,
-      ath-toast-in $enter $ease-spring;
   }
 
   &--leave {
@@ -429,9 +428,8 @@ $bleed: 24px;
     transform: rotate(180deg);
   }
 
-  &--enter {
-    animation: ath-toast-fade-in 200ms $ease-out;
-  }
+  // Fades in once, when it appears.
+  animation: ath-toast-fade-in 200ms $ease-out;
 }
 
 .ath-toast-live {
@@ -464,6 +462,7 @@ $bleed: 24px;
 // -------------------------------------------
 @media (prefers-reduced-motion: reduce) {
   .ath-toast-slot {
+    animation: ath-toast-fade-in 120ms linear;
     transition:
       opacity 120ms linear,
       visibility 0s;
@@ -473,10 +472,6 @@ $bleed: 24px;
       transition:
         opacity 120ms linear,
         visibility 0s 120ms;
-    }
-
-    &--enter {
-      animation: ath-toast-fade-in 120ms linear;
     }
 
     &--leave {
