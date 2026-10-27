@@ -68,7 +68,9 @@
   padding: 0;
   overflow-y: auto;
   list-style: none;
-  overscroll-behavior: contain;
+  // No overscroll-behavior here: it would trap the wheel over a list that
+  // does not scroll at all. The component sets `overscroll-behavior-y:
+  // contain` while the list overflows (floating/scroll-contain.ts).
 
   &:focus {
     outline: none;

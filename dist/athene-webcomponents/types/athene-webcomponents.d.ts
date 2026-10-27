@@ -2968,6 +2968,7 @@ export declare class AthListboxComponent<T = string> {
    */
   readonly highlight: import("@angular/core").WritableSignal<ListboxHighlight>;
   private readonly typeahead;
+  constructor();
   protected readonly searchText: import("@angular/core").Signal<string>;
   protected readonly emptyText: import("@angular/core").Signal<string>;
   private readonly folded;

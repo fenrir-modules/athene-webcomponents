@@ -84,7 +84,16 @@ describe('floatPanel', () => {
     stop = floatPanel(panel, anchor);
     expect(panel.style.maxHeight).not.toBe('');
     expect(panel.style.overflowY).toBe('auto');
+    // Capped, it scrolls: the wheel stays in it (W5-R).
+    expect(panel.style.overscrollBehaviorY).toBe('contain');
     expect(panel.getBoundingClientRect().bottom).toBeLessThanOrEqual(window.innerHeight);
+  });
+
+  it('leaves the wheel to the page while it fits (W5-R)', () => {
+    const { anchor, panel } = setup('top:10px;left:20px', { w: 100, h: 40 });
+    stop = floatPanel(panel, anchor);
+    expect(panel.style.overflowY).toBe('');
+    expect(panel.style.overscrollBehaviorY).toBe('');
   });
 
   it('respects maxHeight', () => {

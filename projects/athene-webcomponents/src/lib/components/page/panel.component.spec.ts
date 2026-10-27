@@ -53,6 +53,14 @@ describe('AthPanelComponent', () => {
     expect(panel('loading').getAttribute('aria-busy')).toBe('true');
   });
 
+  it('lets the wheel go on to the page from its scrolling body (W5-R)', () => {
+    const body = panel('full').querySelector<HTMLElement>('.ath-panel__body--scroll')!;
+    const style = getComputedStyle(body);
+    expect(style.overflowY).toBe('auto');
+    // `contain` trapped the wheel over every panel, overflowing or not.
+    expect(style.overscrollBehaviorY).toBe('auto');
+  });
+
   it('uses the panel tokens for its frame', () => {
     const style = getComputedStyle(panel('full'));
     expect(style.borderTopLeftRadius).toBe('10px');

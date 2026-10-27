@@ -5,10 +5,12 @@ import {
   TemplateRef,
   booleanAttribute,
   computed,
+  effect,
   input,
   model,
   output,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
@@ -18,6 +20,7 @@ import { formatAthLabel, injectAthLabels } from '../../i18n/label-utils';
 import type { AthIconData } from '../floating/icon';
 import { Typeahead, edgeIndex, isTypeaheadKey, stepIndex } from '../floating/list-keys';
 import { focusSafely } from '../floating/focus';
+import { containScrollWhileOverflowing } from '../floating/scroll-contain';
 
 /** One choice of an `ath-listbox`. */
 export interface ListboxOption<T = string> {
@@ -169,6 +172,15 @@ export class AthListboxComponent<T = string> {
    */
   readonly highlight = signal<ListboxHighlight>('soft');
   private readonly typeahead = new Typeahead();
+
+  constructor() {
+    // DOM sync, no state: the wheel stays in the list only while the list
+    // scrolls; over a short one (three labels) it scrolls the page (W5-R).
+    effect((onCleanup) => {
+      const list = this.listRef().nativeElement;
+      onCleanup(untracked(() => containScrollWhileOverflowing(list)));
+    });
+  }
 
   protected readonly searchText = computed(
     () => this.searchPlaceholder() ?? this.labels.listboxSearch()

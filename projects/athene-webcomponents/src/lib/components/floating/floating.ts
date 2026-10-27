@@ -1,3 +1,5 @@
+import { chainWheelToAnchor } from './scroll-contain';
+
 /**
  * Which edge of the anchor a floating panel lines up with (`start` follows
  * `dir`); `center` centres the panel on the anchor (a toolbar over a text
@@ -124,6 +126,7 @@ export function floatPanel(
     // Its natural height, without an earlier cap.
     style.maxHeight = '';
     style.overflowY = '';
+    style.overscrollBehaviorY = '';
     const width = Math.min(panel.offsetWidth, vw - MARGIN * 2);
     const natural = panel.offsetHeight;
 
@@ -139,6 +142,9 @@ export function floatPanel(
     if (natural > room) {
       style.maxHeight = `${Math.floor(room)}px`;
       style.overflowY = 'auto';
+      // Capped, the panel scrolls: the wheel stays in it (W5-R). Uncapped it
+      // is no scroll container, and the wheel passes to the page.
+      style.overscrollBehaviorY = 'contain';
     }
 
     const rtl = getComputedStyle(anchorEl ?? panel).direction === 'rtl';
@@ -182,6 +188,8 @@ export function floatPanel(
   };
 
   window.addEventListener('resize', schedule);
+  // Out of the flow, its wheel would chain to the document: pass it on.
+  const unchain = chainWheelToAnchor(panel, anchorEl);
   // Capture: a scroll in any container moves the anchor.
   document.addEventListener('scroll', schedule, true);
   const resize =
@@ -195,6 +203,7 @@ export function floatPanel(
     window.removeEventListener('resize', schedule);
     document.removeEventListener('scroll', schedule, true);
     resize?.disconnect();
+    unchain();
     if (inTopLayer) demote(panel);
   };
   return Object.assign(stop, { update: place });

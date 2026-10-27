@@ -162,7 +162,8 @@
   min-height: 0;
   padding: var(--space-6);
   overflow-y: auto;
-  overscroll-behavior: contain;
+  // A modal's own pane (the page behind is locked): the wheel stays in it.
+  overscroll-behavior-y: contain;
 }
 
 .ath-dialog__footer {

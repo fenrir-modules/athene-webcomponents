@@ -253,6 +253,23 @@ describe('AthListboxComponent', () => {
     press('PageUp', list);
     expect(activeLabel()).toBe('Option 289');
   });
+
+  it('keeps the wheel only while the list scrolls (W5-R)', async () => {
+    const list = q('[role=listbox]')!;
+    // Four options fit: no containment, the wheel goes on to the page.
+    await vi.waitFor(() => expect(list.scrollHeight).toBeLessThanOrEqual(list.clientHeight));
+    expect(list.style.overscrollBehaviorY).toBe('');
+
+    host.options.set(
+      Array.from({ length: 60 }, (_, i) => ({ value: `v${i}`, label: `Option ${i}` }))
+    );
+    fixture.detectChanges();
+    await vi.waitFor(() => expect(list.style.overscrollBehaviorY).toBe('contain'));
+
+    host.options.set(FRUIT);
+    fixture.detectChanges();
+    await vi.waitFor(() => expect(list.style.overscrollBehaviorY).toBe(''));
+  });
 });
 
 @Component({

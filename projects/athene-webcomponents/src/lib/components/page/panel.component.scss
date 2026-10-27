@@ -60,9 +60,11 @@
   min-width: 0;
   min-height: 0;
 
+  // A panel is part of the page: when its body cannot scroll (or is at its
+  // end), the wheel goes on to the page. `overscroll-behavior: contain` here
+  // made every panel a wheel trap, overflowing or not (W5-R).
   &--scroll {
     overflow: auto;
-    overscroll-behavior: contain;
   }
 
   &--padded {
