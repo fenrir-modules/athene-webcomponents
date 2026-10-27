@@ -1,5 +1,5 @@
 import * as i0 from "@angular/core";
-import { ChangeDetectionStrategy, Component, DOCUMENT, DestroyRef, Directive, ElementRef, ErrorHandler, Injectable, InjectionToken, Injector, LOCALE_ID, NgZone, Renderer2, SecurityContext, TemplateRef, ViewEncapsulation, afterNextRender, booleanAttribute, computed, contentChild, contentChildren, effect, forwardRef, inject, input, model, numberAttribute, output, signal, untracked, viewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, DOCUMENT, DestroyRef, Directive, ElementRef, ErrorHandler, Injectable, InjectionToken, Injector, LOCALE_ID, Renderer2, SecurityContext, TemplateRef, ViewEncapsulation, afterNextRender, booleanAttribute, computed, contentChild, contentChildren, effect, forwardRef, inject, input, model, numberAttribute, output, signal, untracked, viewChild } from "@angular/core";
 import { LucideDynamicIcon } from "@lucide/angular";
 import { AlertCircle, AlertOctagon, AlertTriangle, Check, CheckCircle, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Copy, Eye, EyeOff, Info, Loader2, Lock, MoreHorizontal, PanelLeft, PanelLeftClose, Plus, Search, Slash, Upload, User, X, Zap } from "lucide";
 import { ATH_DATE_CONTEXT, ATH_DEFAULT_LABELS, ATH_DEFAULT_LABELS as ATH_DEFAULT_LABELS$1, ATH_LABELS, ATH_LABELS as ATH_LABELS$1, ATH_MARKDOWN_PARSER, ATH_MARKDOWN_PARSER as ATH_MARKDOWN_PARSER$1, ATH_PRIORITY_LABELS, ATH_PRIORITY_LABELS as ATH_PRIORITY_LABELS$1, ATH_STATUS_LABELS, ATH_STATUS_LABELS as ATH_STATUS_LABELS$1, AthToastService, AthToastService as AthToastService$1 } from "@athene/webcomponents/core";
@@ -889,7 +889,6 @@ var AthFloatingDirective = class AthFloatingDirective {
 		});
 		this.arrow = input(null, ...ngDevMode ? [{ debugName: "arrow" }] : /* istanbul ignore next */ []);
 		this.el = inject(ElementRef).nativeElement;
-		this.zone = inject(NgZone);
 		this.cleanup = null;
 		this.viewReady = false;
 	}
@@ -912,7 +911,7 @@ var AthFloatingDirective = class AthFloatingDirective {
 		this.cleanup = null;
 		const anchor = resolveFloatingTarget(this.anchor());
 		if (!anchor) return;
-		this.cleanup = this.zone.runOutsideAngular(() => floatPanel(this.el, anchor, {
+		this.cleanup = floatPanel(this.el, anchor, {
 			align: this.align(),
 			side: this.side(),
 			offset: this.offset(),
@@ -920,7 +919,7 @@ var AthFloatingDirective = class AthFloatingDirective {
 			maxHeight: this.maxHeight(),
 			topLayer: this.topLayer(),
 			arrow: this.arrow()
-		}));
+		});
 	}
 	static {
 		this.ɵfac = i0.ɵɵngDeclareFactory({

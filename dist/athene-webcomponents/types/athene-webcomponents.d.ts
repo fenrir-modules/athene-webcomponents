@@ -433,16 +433,6 @@ export declare class AthFloatingDirective implements AfterViewInit, OnChanges, O
   /** An arrow element inside the panel, kept pointing at the anchor's centre. */
   readonly arrow: import("@angular/core").InputSignal<HTMLElement | null>;
   private readonly el;
-  /**
-   * Only for `runOutsideAngular` below, a zone.js optimisation: `floatPanel`
-   * listens to every scroll, resize and size change while the panel is open
-   * and must not run the app's change detection each time. It changes no
-   * Angular state, so it is correct with and without zone.js; zoneless,
-   * `NgZone` is a no-op (angular.dev/guide/zoneless keeps `run` and
-   * `runOutsideAngular` for libraries that zone.js apps use). Drop it with
-   * zone.js (4.3).
-   */
-  private readonly zone;
   private cleanup;
   private viewReady;
   ngAfterViewInit(): void;
