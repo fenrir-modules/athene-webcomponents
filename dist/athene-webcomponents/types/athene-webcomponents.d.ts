@@ -1023,17 +1023,17 @@ export declare const AI_MARK_SMALL_MAX = 20;
  */
 export type AiMarkVariant = 'color' | 'mono' | 'gradient';
 /**
- * The Athene AI mark ("Perch"), optionally with the wordmark.
+ * The Athenos AI mark ("Perch"), optionally with the wordmark.
  *
  * Decorative unless it carries a `label` (then `role="img"` with that
- * name). With `wordmark`, the text "Athene AI" follows the mark and is
+ * name). With `wordmark`, the text "Athenos AI" follows the mark and is
  * what screen readers read; the mark itself is then hidden from them.
  *
  * @example
  * <ath-ai-mark />                                   <!-- 16 px, decorative -->
  * <ath-ai-mark [size]="48" variant="gradient" />
  * <ath-ai-mark [size]="20" wordmark />
- * <ath-ai-mark label="Athene AI" />
+ * <ath-ai-mark label="Athenos AI" />
  */
 export declare class AthAiMarkComponent {
   /** Edge length in px; the drawing switches to its small optical size up to 20. */
@@ -1041,7 +1041,7 @@ export declare class AthAiMarkComponent {
   readonly variant: import("@angular/core").InputSignal<AiMarkVariant>;
   /** Accessible name of the mark alone; empty = decorative. Ignored with `wordmark`. */
   readonly label: import("@angular/core").InputSignal<string>;
-  /** Show "Athene AI" next to the mark. */
+  /** Show "Athenos AI" next to the mark. */
   readonly wordmark: import("@angular/core").InputSignalWithTransform<boolean, boolean | "" | null | undefined>;
   /** Unique per instance: two gradients on one page must not share an id. */
   protected readonly gradientId: string;

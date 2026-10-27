@@ -149,12 +149,12 @@ One colour rule from the `--due-*` tokens: overdue and **today red** (`--red-tex
 <ath-ai-mark [size]="48" variant="gradient" />
 <!-- hero -->
 <ath-ai-mark [size]="20" wordmark />
-<!-- mark + "Athene AI" -->
-<ath-ai-mark label="Athene AI" />
+<!-- mark + "Athenos AI" -->
+<ath-ai-mark label="Athenos AI" />
 <!-- an image with a name -->
 ```
 
-The Athene AI mark ("Perch"): a solid rounded A — Athene's A and a perched little owl — with two round eyes cut out and a four-point spark beside its head. `variant`: `color` (body in `currentColor`, spark in `--accent`; hints, rows), `mono` (all `currentColor`), `gradient` (`--ai-from` → `--ai-to`, for hero areas from 24 px). Two optical sizes from one 24-unit grid: up to 20 px the eyes sit wider apart and the spark grows (`AI_MARK_SMALL`), from 21 px the regular drawing (`AI_MARK_REGULAR`); the path data is exported for icon slots (a lucide-style icon of the app's nav). Decorative unless `label` is set; with `wordmark` the text is what screen readers read. Every gradient has its own id, so several marks on a page never share a paint server. Tokens of AI surfaces: `--ai-gradient`, `--ai-surface` (a ≤ 9% accent wash for hero cards), `--ai-border`.
+The Athenos AI mark ("Perch"): a solid rounded A — Athenos' A and a perched little owl — with two round eyes cut out and a four-point spark beside its head. `variant`: `color` (body in `currentColor`, spark in `--accent`; hints, rows), `mono` (all `currentColor`), `gradient` (`--ai-from` → `--ai-to`, for hero areas from 24 px). Two optical sizes from one 24-unit grid: up to 20 px the eyes sit wider apart and the spark grows (`AI_MARK_SMALL`), from 21 px the regular drawing (`AI_MARK_REGULAR`); the path data is exported for icon slots (a lucide-style icon of the app's nav). Decorative unless `label` is set; with `wordmark` the text is what screen readers read. Every gradient has its own id, so several marks on a page never share a paint server. Tokens of AI surfaces: `--ai-gradient`, `--ai-surface` (a ≤ 9% accent wash for hero cards), `--ai-border`.
 
 ### Status pill: `ath-status-pill`
 

@@ -8,7 +8,7 @@ const meta: Meta<AthAiMarkComponent> = {
     variant: { control: 'select', options: ['color', 'mono', 'gradient'] },
     size: { control: { type: 'number', min: 12, max: 128 } },
   },
-  args: { size: 24, variant: 'color', label: 'Athene AI', wordmark: false },
+  args: { size: 24, variant: 'color', label: 'Athenos AI', wordmark: false },
 };
 
 export default meta;

@@ -18,17 +18,17 @@ export type AiMarkVariant = 'color' | 'mono' | 'gradient';
 let nextId = 0;
 
 /**
- * The Athene AI mark ("Perch"), optionally with the wordmark.
+ * The Athenos AI mark ("Perch"), optionally with the wordmark.
  *
  * Decorative unless it carries a `label` (then `role="img"` with that
- * name). With `wordmark`, the text "Athene AI" follows the mark and is
+ * name). With `wordmark`, the text "Athenos AI" follows the mark and is
  * what screen readers read; the mark itself is then hidden from them.
  *
  * @example
  * <ath-ai-mark />                                   <!-- 16 px, decorative -->
  * <ath-ai-mark [size]="48" variant="gradient" />
  * <ath-ai-mark [size]="20" wordmark />
- * <ath-ai-mark label="Athene AI" />
+ * <ath-ai-mark label="Athenos AI" />
  */
 @Component({
   selector: 'ath-ai-mark',
@@ -47,7 +47,7 @@ export class AthAiMarkComponent {
   readonly variant = input<AiMarkVariant>('color');
   /** Accessible name of the mark alone; empty = decorative. Ignored with `wordmark`. */
   readonly label = input('');
-  /** Show "Athene AI" next to the mark. */
+  /** Show "Athenos AI" next to the mark. */
   readonly wordmark = input(false, {
     transform: (v: boolean | '' | null | undefined) => v === '' || !!v,
   });

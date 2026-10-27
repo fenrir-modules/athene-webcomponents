@@ -15,7 +15,7 @@ const meta: Meta<AthSidebarComponent> = {
     template: `
       <div style="height:480px;display:flex">
         <ath-sidebar [collapsed]="collapsed" (collapsedChange)="collapsed = $event">
-          <div slot="header" style="padding:12px;font-weight:600">Athene</div>
+          <div slot="header" style="padding:12px;font-weight:600">Athenos</div>
           <ath-nav-item [icon]="Home" label="Home" route="/home" [compact]="collapsed" />
           <ath-nav-item [icon]="Inbox" label="Inbox" route="/inbox" [badge]="3" [compact]="collapsed" />
           <ath-nav-item [icon]="Calendar" label="Calendar" route="/calendar" [compact]="collapsed" />

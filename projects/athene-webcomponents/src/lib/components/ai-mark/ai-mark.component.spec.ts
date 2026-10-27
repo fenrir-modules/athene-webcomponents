@@ -35,10 +35,10 @@ describe('AthAiMarkComponent', () => {
     expect(svg.getAttribute('aria-hidden')).toBe('true');
     expect(svg.getAttribute('role')).toBeNull();
 
-    fixture.componentInstance.label.set('Athene AI');
+    fixture.componentInstance.label.set('Athenos AI');
     fixture.detectChanges();
     expect(svg.getAttribute('role')).toBe('img');
-    expect(svg.getAttribute('aria-label')).toBe('Athene AI');
+    expect(svg.getAttribute('aria-label')).toBe('Athenos AI');
     expect(svg.getAttribute('aria-hidden')).toBeNull();
   });
 
@@ -68,7 +68,7 @@ describe('AthAiMarkComponent', () => {
 
   it('with the wordmark, the text is what is read', () => {
     const { q } = render();
-    expect(q('.w .ath-ai-mark__word').textContent?.replace(/\s+/g, ' ').trim()).toBe('Athene AI');
+    expect(q('.w .ath-ai-mark__word').textContent?.replace(/\s+/g, ' ').trim()).toBe('Athenos AI');
     expect(q('.w svg').getAttribute('aria-hidden')).toBe('true');
     expect(q('.w svg').getAttribute('aria-label')).toBeNull();
   });
