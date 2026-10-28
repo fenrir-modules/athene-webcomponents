@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { extname, join } from 'node:path';
 
-const root = new URL('../projects/athene-webcomponents/src/lib/components/', import.meta.url);
+const root = new URL('../projects/athenos-webcomponents/src/lib/components/', import.meta.url);
 const templateFiles = collectFiles(root.pathname).filter((file) => extname(file) === '.html');
 const violations = [];
 

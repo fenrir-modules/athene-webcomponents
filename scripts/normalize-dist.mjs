@@ -11,7 +11,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const file = resolve(ROOT, 'dist/athene-webcomponents/.npmignore');
+const file = resolve(ROOT, 'dist/athenos-webcomponents/.npmignore');
 
 if (existsSync(file)) {
   const lines = readFileSync(file, 'utf8').split('\n');

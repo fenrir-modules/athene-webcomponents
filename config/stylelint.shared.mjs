@@ -1,7 +1,7 @@
-// Shared Stylelint config for the Athene frontend (quality steps 1.5 + 1.3).
+// Shared Stylelint config for the Athenos frontend (quality steps 1.5 + 1.3).
 //
-// CANONICAL COPY: athene-webcomponents/config/stylelint.shared.mjs
-// athene-web keeps a byte-identical copy (drift check: `npm run lint:shared`).
+// CANONICAL COPY: athenos-webcomponents/config/stylelint.shared.mjs
+// athenos-web keeps a byte-identical copy (drift check: `npm run lint:shared`).
 //
 // Guardrails from the token pipeline (1.5):
 //  - every var(--x) must be a generated token (or declared in the same file /
@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url';
 import { inlineStyleRanges } from '../scripts/stylelint/angular-inline-styles.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const TOKEN_PLUGIN = join(here, '../scripts/stylelint/athene-tokens.mjs');
+const TOKEN_PLUGIN = join(here, '../scripts/stylelint/athenos-tokens.mjs');
 const INLINE_SYNTAX = join(here, '../scripts/stylelint/angular-inline-styles.mjs');
 
 /**
@@ -32,7 +32,7 @@ const INLINE_SYNTAX = join(here, '../scripts/stylelint/angular-inline-styles.mjs
  * @param {string[]} [o.ignoreFiles]
  * @param {boolean} [o.inlineStyles]   also lint `styles: [`…`]` in *.ts (read-only syntax)
  */
-export function atheneStylelint({
+export function athenosStylelint({
   tokens,
   importFrom = [],
   componentFiles,
@@ -47,9 +47,9 @@ export function atheneStylelint({
     rules: {
       'csstools/value-no-unknown-custom-properties': [true, { importFrom: defined }],
       // csstools accepts var(--unknown, x) once a fallback exists; these don't.
-      'athene/no-unknown-custom-property-with-fallback': [true, { importFrom: defined }],
-      'athene/no-fallback-on-token': [true, { importFrom: tokens }],
-      'athene/no-retired-alias': true,
+      'athenos/no-unknown-custom-property-with-fallback': [true, { importFrom: defined }],
+      'athenos/no-fallback-on-token': [true, { importFrom: tokens }],
+      'athenos/no-retired-alias': true,
       'declaration-property-value-allowed-list': [
         { 'z-index': ['auto', '0', '/^var\\(--z-[a-z]+\\)$/', '/^calc\\(var\\(--z-[a-z]+\\)/'] },
         {

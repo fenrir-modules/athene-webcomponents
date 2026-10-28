@@ -1,4 +1,4 @@
-# Quality gates of @athene/webcomponents (Athene quality overhaul, step 1.8b).
+# Quality gates of @athenos/webcomponents (Athenos quality overhaul, step 1.8b).
 # Release packaging lives in release.yml, which calls this workflow first.
 name: CI
 

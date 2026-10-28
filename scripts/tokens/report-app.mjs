@@ -6,7 +6,7 @@
 // regex pass over templates / TS strings (`[style.x]="'var(--y)'"` etc.).
 //
 //   node scripts/tokens/report-app.mjs [appSrc] [--json out.json] [--strict]
-//   npm run tokens:report-app            (defaults to ../athene-web/src)
+//   npm run tokens:report-app            (defaults to ../athenos-web/src)
 //
 // A custom property counts as defined when it is a lib token or the app
 // declares it somewhere (`--x:` in styles, `[style.--x]`, setProperty('--x'),
@@ -18,14 +18,14 @@ import { tmpdir } from 'node:os';
 import stylelint from 'stylelint';
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../../..');
-const STYLES = join(ROOT, 'projects/athene-webcomponents/src/lib/styles');
+const STYLES = join(ROOT, 'projects/athenos-webcomponents/src/lib/styles');
 const args = process.argv.slice(2);
 const flag = (n) => args.includes(n);
 const opt = (n) => (args.includes(n) ? args[args.indexOf(n) + 1] : undefined);
 const positional = args.filter(
   (a, i) => !a.startsWith('--') && !(i > 0 && args[i - 1].startsWith('--json'))
 );
-const APP = resolve(positional[0] ?? join(ROOT, '../athene-web/src'));
+const APP = resolve(positional[0] ?? join(ROOT, '../athenos-web/src'));
 
 const tokens = JSON.parse(
   readFileSync(join(STYLES, 'tokens.custom-properties.json'), 'utf8')
@@ -99,7 +99,7 @@ for (const s of sources) {
 const isKnown = (name) => name in tokens || declared.has(name);
 
 // --- 2. Stylelint: the lib's rule, over SCSS + inline styles
-const importFile = join(tmpdir(), `athene-app-declared-${process.pid}.json`);
+const importFile = join(tmpdir(), `athenos-app-declared-${process.pid}.json`);
 writeFileSync(
   importFile,
   JSON.stringify({
@@ -110,7 +110,7 @@ const config = {
   customSyntax: 'postcss-scss',
   plugins: [
     'stylelint-value-no-unknown-custom-properties',
-    join(ROOT, 'scripts/stylelint/athene-tokens.mjs'),
+    join(ROOT, 'scripts/stylelint/athenos-tokens.mjs'),
   ],
   rules: {
     'csstools/value-no-unknown-custom-properties': [
@@ -118,7 +118,7 @@ const config = {
       { importFrom: [join(STYLES, 'tokens.custom-properties.json'), importFile] },
     ],
     // csstools lets var(--unknown, x) pass; the lib's strict rule does not.
-    'athene/no-unknown-custom-property-with-fallback': [
+    'athenos/no-unknown-custom-property-with-fallback': [
       true,
       { importFrom: [join(STYLES, 'tokens.custom-properties.json'), importFile] },
     ],

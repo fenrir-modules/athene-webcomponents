@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Knip with a baseline (quality step 1.3, FE-14). Shared between
-// athene-webcomponents (canonical) and athene-web (copy, `npm run lint:shared`).
+// athenos-webcomponents (canonical) and athenos-web (copy, `npm run lint:shared`).
 //
 // Runs knip (config: knip.json) and compares every finding — unused file,
 // export, type, enum member, dependency, unlisted/unresolved import — with

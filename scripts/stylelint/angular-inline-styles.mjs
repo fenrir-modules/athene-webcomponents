@@ -1,6 +1,6 @@
 // Stylelint custom syntax for Angular inline component styles (READ-ONLY).
 //
-// Shared between athene-webcomponents (canonical) and athene-web (copy, see
+// Shared between athenos-webcomponents (canonical) and athenos-web (copy, see
 // `npm run lint:shared`).
 //
 // Lints the template literals of `styles: `…`` / `styles: [`…`, `…`]` in a
@@ -48,14 +48,14 @@ export function parse(css, opts) {
   const original = String(css);
   const masked = maskToInlineStyles(original);
   const root = postcssScss.parse(masked, opts);
-  root.raws.atheneInline = { original, masked };
+  root.raws.athenosInline = { original, masked };
   return root;
 }
 
 // PostCSS always stringifies; an unchanged root gives back the original .ts
 // text (so nothing is ever rewritten), a changed one (a --fix) throws.
 export function stringify(node, builder) {
-  const inline = node.type === 'root' ? node.raws.atheneInline : undefined;
+  const inline = node.type === 'root' ? node.raws.athenosInline : undefined;
   if (!inline) return postcssScss.stringify(node, builder);
   let out = '';
   postcssScss.stringify(node, (part) => {

@@ -1,10 +1,10 @@
 # Fenrir Module Configuration
-# Module: athene-webcomponents (UI Library)
+# Module: athenos-webcomponents (UI Library)
 
 [module]
-id = "athene-webcomponents"
-name = "Athene Web Components"
-description = "Athene Ticketing System UI Component Library"
+id = "athenos-webcomponents"
+name = "Athenos Web Components"
+description = "Athenos Ticketing System UI Component Library"
 
 [compatibility]
 fenrir_min_version = "0.1.0"

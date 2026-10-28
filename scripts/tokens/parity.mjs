@@ -18,7 +18,7 @@ const ROOT = resolve(fileURLToPath(import.meta.url), '../../..');
 const require = createRequire(join(ROOT, 'package.json'));
 const sass = require('sass');
 const postcss = require('postcss');
-const STYLES = 'projects/athene-webcomponents/src/lib/styles';
+const STYLES = 'projects/athenos-webcomponents/src/lib/styles';
 
 const arg = (name, dflt) => {
   const i = process.argv.indexOf(name);

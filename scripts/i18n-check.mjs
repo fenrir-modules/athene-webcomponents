@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// i18n check for @athene/webcomponents (quality step 1.3). Part of `npm run lint`.
+// i18n check for @athenos/webcomponents (quality step 1.3). Part of `npm run lint`.
 //
 // The lib ships no translation files: the few words it puts on screen are
 // `AthLabels` in core/src/labels.ts, with English defaults the app overrides
-// through ATH_LABELS (athene-web: core/i18n/ath-labels.provider.ts, whose keys
+// through ATH_LABELS (athenos-web: core/i18n/ath-labels.provider.ts, whose keys
 // the app's own i18n check verifies). This check fails when
 //   - an AthLabels member has no default, or a default has no AthLabels member
 //   - a default is empty
@@ -14,8 +14,8 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const LABELS = join(ROOT, 'projects/athene-webcomponents/core/src/labels.ts');
-const COMPONENTS = join(ROOT, 'projects/athene-webcomponents/src/lib/components');
+const LABELS = join(ROOT, 'projects/athenos-webcomponents/core/src/labels.ts');
+const COMPONENTS = join(ROOT, 'projects/athenos-webcomponents/src/lib/components');
 
 const src = readFileSync(LABELS, 'utf8');
 const block = (re) => src.match(re)?.[1] ?? '';

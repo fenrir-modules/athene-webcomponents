@@ -1,0 +1,1020 @@
+{
+  "color": {
+    "$description": "Colour tokens. Light values here; [data-theme=\"dark\"] overrides live in themes/dark.json, accent presets in accents/*.json.",
+    "surface": {
+      "$description": "Surfaces — neutral, calm. Hierarchy: bg-0 (canvas) → bg-1 (chrome) → surface (cards) → bg-2 (fill).",
+      "$type": "color",
+      "bg-0": {
+        "$value": "#f4f4f6",
+        "$description": "App background — subtle cool off-white"
+      },
+      "bg-1": {
+        "$value": "#ffffff",
+        "$description": "Sidebar / topbar / chrome — clean white"
+      },
+      "bg-2": {
+        "$value": "#efeff2",
+        "$description": "Hover fills, section heads, segmented bg"
+      },
+      "surface": {
+        "$value": "#ffffff",
+        "$description": "Cards / panels / modals"
+      },
+      "surface-2": {
+        "$value": "#f9f9fb",
+        "$description": "Recessed within cards — table heads"
+      },
+      "surface-3": {
+        "$value": "#eaeaed",
+        "$description": "Deep wells — inputs, kbd, inner fills"
+      },
+      "hover": {
+        "$value": "#00000009",
+        "$description": "3.5% black overlay for hover"
+      },
+      "hover-strong": {
+        "$value": "#00000013",
+        "$description": "7% black overlay for active"
+      },
+      "selected": {
+        "$value": "#4f46e50e",
+        "$description": "Subtle accent tint for selected rows"
+      },
+      "scrim": {
+        "$value": "#00000066",
+        "$description": "Backdrop behind modal dialogs and sheets (::backdrop of ath-dialog)."
+      }
+    },
+    "border": {
+      "$description": "Borders — hairlines, soft.",
+      "$type": "color",
+      "border": {
+        "$value": "#e2e2e6"
+      },
+      "border-strong": {
+        "$value": "#ccccd0"
+      },
+      "border-faint": {
+        "$value": "#ebebee"
+      },
+      "rule": {
+        "$value": "#e2e2e6"
+      }
+    },
+    "text": {
+      "$description": "Text hierarchy — no pure black. fg-3/fg-4/fg-label carry real small text, so they clear 4.5:1 on white, the canvas (bg-0) and surface-2 (checked by the contrast gate in tokens.config.json).",
+      "$type": "color",
+      "fg": {
+        "$value": "#1a1a1e"
+      },
+      "fg-2": {
+        "$value": "#3c3c44"
+      },
+      "fg-3": {
+        "$value": "#5c5c65",
+        "$description": "6.6:1 white · 6.0 canvas · 5.8 bg-2"
+      },
+      "fg-4": {
+        "$value": "#6c6c76",
+        "$description": "5.2:1 white · 4.7 canvas · 4.5 bg-2"
+      },
+      "fg-label": {
+        "$value": "#6e6e73",
+        "$description": "Tertiary label grey: section labels, weekday names, time-gutter labels, card keys. Was #8b8b90 (3.4:1); now 5.1:1 white · 4.6 canvas · 4.8 surface-2 so it may carry text (WCAG 1.4.3)."
+      },
+      "fg-disabled": {
+        "$value": "#c8c8d0"
+      }
+    },
+    "accent": {
+      "$description": "Accent — default violet (overridden per data-accent, see accents/*.json).",
+      "$type": "color",
+      "accent": {
+        "$value": "#4f46e5"
+      },
+      "accent-2": {
+        "$value": "#4338ca"
+      },
+      "accent-3": {
+        "$value": "#6366f1"
+      },
+      "accent-dim": {
+        "$value": "#818cf8"
+      },
+      "accent-text": {
+        "$value": "{color.accent.accent}",
+        "$description": "Accent that carries text (links, mentions, active labels on an accent tint). Violet --accent clears 4.5:1 here; the blue, green and orange presets and dark use --accent-2, the step further from the surface (contrast gate)."
+      },
+      "accent-faint": {
+        "$value": "#4f46e50f"
+      },
+      "accent-ring": {
+        "$value": "#4f46e526",
+        "$description": "Soft accent halo. Decorative only (≈1.3:1): use it next to a border that turns --accent, never as the only focus indicator — that is --focus-ring-shadow / --focus-ring-color."
+      },
+      "accent-solid": {
+        "$value": "{color.accent.accent}",
+        "$description": "Light: the accent fill under a white label (primary button). Violet and blue use --accent; the green and orange presets step down to --accent-2 so white clears 4.5:1. Dark's primary reads --accent directly, so this step only matters in light."
+      }
+    },
+    "focus": {
+      "$description": "Focus indicator (WCAG 2.4.7 / 1.4.11). The ring colour clears 3:1 against every surface in every theme and accent (contrast gate); --focus-ring-shadow adds a surface-coloured gap so it also reads on accent fills.",
+      "focus-ring-color": {
+        "$value": "{color.accent.accent}",
+        "$type": "color",
+        "$description": "Outline / ring colour for :focus-visible."
+      },
+      "focus-ring-shadow": {
+        "$value": "0 0 0 2px {color.surface.surface}, 0 0 0 4px {color.focus.focus-ring-color}",
+        "$type": "shadow",
+        "$description": "box-shadow focus ring: 2px gap + 2px ring. Pair with outline: none. (Not named --focus-ring: the app already reads var(--focus-ring, …) as an outline colour.)"
+      },
+      "field-focus-shadow": {
+        "$value": "0 0 0 3px {color.accent.accent-ring}",
+        "$type": "shadow",
+        "$description": "Form fields (input, textarea, select, pickers, editors): a soft accent halo outside the field's border, which turns --focus-ring-color and carries the 3:1 indicator. One line, never the gap ring of --focus-ring-shadow. Pair with outline: none (mixin field-focus)."
+      }
+    },
+    "role": {
+      "$description": "Semantic roles — what a component reaches for instead of the raw accent. Both themes point the interactive roles at the accent (dark only re-values what differs): the primary button fills with --accent-solid in light and --accent in dark; checked controls, progress, indicators and active borders use --accent; selection and active states use accent tints with --accent-text on top. The neutral preset keeps the monochrome light look (ink CTAs, grey selection) through accents/neutral.light-roles.json.",
+      "ink": {
+        "$type": "color",
+        "ink": {
+          "$value": "#17171a"
+        },
+        "ink-hover": {
+          "$value": "#2e2e34"
+        }
+      },
+      "action-primary": {
+        "action-primary-bg": {
+          "$value": "{color.accent.accent-solid}",
+          "$type": "color"
+        },
+        "action-primary-bg-hover": {
+          "$value": "color-mix(in srgb, {color.accent.accent-solid} 86%, #000)",
+          "$type": "color"
+        },
+        "action-primary-bg-active": {
+          "$value": "color-mix(in srgb, {color.accent.accent-solid} 74%, #000)",
+          "$type": "color"
+        },
+        "action-primary-fg": {
+          "$value": "#ffffff",
+          "$type": "color"
+        },
+        "action-primary-disabled-bg": {
+          "$value": "{color.role.action-primary.action-primary-bg}",
+          "$type": "color"
+        },
+        "action-primary-disabled-fg": {
+          "$value": "{color.role.action-primary.action-primary-fg}",
+          "$type": "color"
+        },
+        "action-primary-disabled-border": {
+          "$value": "{color.role.action-primary.action-primary-bg}",
+          "$type": "color"
+        },
+        "action-primary-disabled-opacity": {
+          "$value": 0.38,
+          "$type": "number"
+        }
+      },
+      "action-danger": {
+        "$type": "color",
+        "action-danger-bg": {
+          "$value": "{color.status.red}",
+          "$description": "Solid destructive button (ath-button variant=\"danger\"). White label 4.8:1."
+        },
+        "action-danger-bg-hover": {
+          "$value": "color-mix(in srgb, {color.role.action-danger.action-danger-bg} 86%, #000)",
+          "$description": "Deepened fill on hover, in both themes."
+        },
+        "action-danger-fg": {
+          "$value": "#ffffff"
+        }
+      },
+      "nav": {
+        "$type": "color",
+        "nav-active-bg": {
+          "$value": "color-mix(in srgb, {color.accent.accent} 12%, transparent)",
+          "$description": "12% accent — a tinted pill on the chrome, as in dark"
+        },
+        "nav-active-bg-hover": {
+          "$value": "color-mix(in srgb, {color.accent.accent} 18%, transparent)"
+        },
+        "nav-active-fg": {
+          "$value": "{color.accent.accent-text}"
+        },
+        "nav-active-icon": {
+          "$value": "{color.accent.accent-text}"
+        },
+        "nav-active-indicator": {
+          "$value": "{color.accent.accent}"
+        },
+        "nav-badge-bg": {
+          "$value": "color-mix(in srgb, {color.accent.accent} 14%, transparent)"
+        },
+        "nav-badge-fg": {
+          "$value": "{color.accent.accent-text}"
+        }
+      },
+      "tab": {
+        "$type": "color",
+        "tab-active-fg": {
+          "$value": "{color.accent.accent-text}"
+        },
+        "tab-active-indicator": {
+          "$value": "{color.accent.accent}"
+        },
+        "segment-track-bg": {
+          "$value": "{color.surface.bg-2}"
+        },
+        "segment-active-bg": {
+          "$value": "{color.surface.surface}"
+        },
+        "segment-active-fg": {
+          "$value": "{color.text.fg}"
+        },
+        "segment-count-active-bg": {
+          "$value": "{color.accent.accent-faint}"
+        },
+        "segment-count-active-fg": {
+          "$value": "{color.accent.accent-text}"
+        },
+        "progress-fill": {
+          "$value": "{color.accent.accent}"
+        },
+        "progress-track": {
+          "$value": "{color.border.border}"
+        }
+      },
+      "chip-active": {
+        "$type": "color",
+        "chip-active-bg": {
+          "$value": "{color.accent.accent-faint}"
+        },
+        "chip-active-fg": {
+          "$value": "{color.accent.accent-text}"
+        },
+        "chip-active-border": {
+          "$value": "{color.accent.accent}"
+        }
+      },
+      "action-outline": {
+        "$type": "color",
+        "action-outline-fg": {
+          "$value": "{color.accent.accent-text}"
+        },
+        "action-outline-hover-bg": {
+          "$value": "{color.accent.accent-faint}"
+        },
+        "action-outline-hover-border": {
+          "$value": "{color.accent.accent}"
+        },
+        "action-outline-border": {
+          "$value": "{color.border.border-strong}"
+        }
+      },
+      "chip-primary": {
+        "$type": "color",
+        "chip-primary-bg": {
+          "$value": "{color.accent.accent-ring}"
+        },
+        "chip-primary-fg": {
+          "$value": "{color.accent.accent-text}"
+        },
+        "chip-primary-border": {
+          "$value": "color-mix(in srgb, {color.accent.accent} 30%, transparent)"
+        }
+      },
+      "control": {
+        "$type": "color",
+        "control-checked": {
+          "$value": "{color.accent.accent}"
+        },
+        "control-mark": {
+          "$value": "{color.role.control.control-checked}",
+          "$description": "Marks that were ink before the accent presets reached light (a done task box, an editor checkbox, a pressed toggle's border, an ink focus outline): the checked-control colour in light, so ink under neutral; ink in dark, which keeps its look."
+        }
+      },
+      "selection-bar": {
+        "$type": "color",
+        "selection-bar-bg": {
+          "$value": "{color.accent.accent-faint}"
+        },
+        "selection-bar-border": {
+          "$value": "{color.accent.accent}"
+        },
+        "selection-bar-fg": {
+          "$value": "{color.accent.accent-text}"
+        },
+        "row-selected-bg": {
+          "$value": "color-mix(in srgb, {color.accent.accent} 7%, transparent)"
+        }
+      },
+      "brand-mark": {
+        "$type": "color",
+        "brand-mark-bg": {
+          "$value": "#0a0a0b"
+        },
+        "brand-mark-fg": {
+          "$value": "#ffffff"
+        }
+      },
+      "action-create": {
+        "$type": "color",
+        "action-create-bg": {
+          "$value": "#3b825f",
+          "$description": "Topbar \"+ New\" (ref 01: green, not ink). Was #43946c (white text 3.7:1); darkened to 4.6:1. Page-head primaries stay ink; this is the one global \"make something\" button."
+        },
+        "action-create-bg-hover": {
+          "$value": "#327353"
+        },
+        "action-create-bg-active": {
+          "$value": "#2c644b"
+        },
+        "action-create-border": {
+          "$value": "#2c644b"
+        },
+        "action-create-fg": {
+          "$value": "#ffffff"
+        }
+      },
+      "notify": {
+        "$type": "color",
+        "notify-dot": {
+          "$value": "#43946c"
+        }
+      },
+      "rail": {
+        "$type": "color",
+        "rail-active-bg": {
+          "$value": "{color.role.nav.nav-active-bg}",
+          "$description": "The active nav item's pill (ath-nav-item, sidebar and settings nav): the accent tint, as in dark. Neutral keeps --bg-2."
+        },
+        "rail-tile-bg": {
+          "$value": "{color.surface.bg-2}"
+        }
+      }
+    },
+    "avatar": {
+      "$description": "Person avatars — deterministic per person (avatarTone()), muted mid-tones with white initials (all >= 4.5:1).",
+      "$type": "color",
+      "avatar-neutral-bg": {
+        "$value": "{color.surface.surface-3}"
+      },
+      "avatar-neutral-fg": {
+        "$value": "{color.text.fg-3}"
+      },
+      "avatar-1-bg": {
+        "$value": "#a95c25"
+      },
+      "avatar-1-fg": {
+        "$value": "#ffffff",
+        "$description": "clay"
+      },
+      "avatar-2-bg": {
+        "$value": "#b8466f"
+      },
+      "avatar-2-fg": {
+        "$value": "#ffffff",
+        "$description": "rose"
+      },
+      "avatar-3-bg": {
+        "$value": "#2f7f8f"
+      },
+      "avatar-3-fg": {
+        "$value": "#ffffff",
+        "$description": "teal"
+      },
+      "avatar-4-bg": {
+        "$value": "#6a52c4"
+      },
+      "avatar-4-fg": {
+        "$value": "#ffffff",
+        "$description": "violet"
+      },
+      "avatar-5-bg": {
+        "$value": "#3a7d55"
+      },
+      "avatar-5-fg": {
+        "$value": "#ffffff",
+        "$description": "green"
+      },
+      "avatar-6-bg": {
+        "$value": "#3d64b8"
+      },
+      "avatar-6-fg": {
+        "$value": "#ffffff",
+        "$description": "blue"
+      },
+      "avatar-7-bg": {
+        "$value": "#94509e"
+      },
+      "avatar-7-fg": {
+        "$value": "#ffffff",
+        "$description": "plum"
+      },
+      "avatar-8-bg": {
+        "$value": "#5b6474"
+      },
+      "avatar-8-fg": {
+        "$value": "#ffffff",
+        "$description": "slate"
+      }
+    },
+    "status": {
+      "$description": "Status — muted, used as dots + subtle fills. Where a status colour carries text, use its *-text variant: a darker (light) or lighter (dark) shade of the same hue that clears 4.5:1 on the surfaces and on its own tint (contrast gate).",
+      "$type": "color",
+      "red": {
+        "$value": "#dc2626",
+        "$description": "Icons, dots, fills and borders. Text uses --red-text (--red is 4.0:1 on its tint)."
+      },
+      "red-text": {
+        "$value": "#c31f1f",
+        "$description": "Red that carries text (overdue, errors, danger items): 5.9:1 white · 5.4 canvas · 5.0 on --red-tint."
+      },
+      "amber": {
+        "$value": "#cc7c2e",
+        "$description": "Measured on the reference's in-progress icons. Icons, dots and fills only (3.2:1 on white) — text uses --amber-text."
+      },
+      "amber-text": {
+        "$value": "#935921",
+        "$description": "Amber that carries text (due \"soon\", warnings): 5.7:1 white · 5.2 canvas · 4.9 on --amber-tint. Was #9e6024 (4.35 on its tint)."
+      },
+      "blue": {
+        "$value": "#2563eb",
+        "$description": "Icons, dots, fills and borders. Text uses --blue-text (--blue is 4.35:1 on its tint)."
+      },
+      "blue-text": {
+        "$value": "#1a5bea",
+        "$description": "Blue that carries text (info): 5.6:1 white · 5.1 canvas · 4.7 on --blue-tint."
+      },
+      "green": {
+        "$value": "#16a34a",
+        "$description": "Icons, dots, fills and borders. Text uses --green-text (--green is 3.3:1 on white)."
+      },
+      "green-text": {
+        "$value": "#107937",
+        "$description": "Green that carries text (success, met, trend up): 5.5:1 white · 5.0 canvas · 4.7 on --green-tint."
+      },
+      "purple": {
+        "$value": "#7c3aed"
+      },
+      "purple-text": {
+        "$value": "{color.status.purple}",
+        "$description": "Purple that carries text. Light --purple already clears 4.5:1 (5.7 white · 5.2 canvas · 4.8 on --purple-tint); dark has its own shade."
+      },
+      "pink": {
+        "$value": "#db2777"
+      },
+      "status-open": {
+        "$value": "color-mix(in srgb, {color.status.blue} 30%, {color.text.fg-2})",
+        "$description": "The \"Open\" status: a quiet grey-blue, not red. Red is overdue, errors and Blocked (UX-037). Resolves in each theme: light 9.0:1 surface · 6.7 on its 18% tint, dark 6.7 · 4.85."
+      }
+    },
+    "status-tint": {
+      "$type": "color",
+      "red-tint": {
+        "$value": "#dc26260f"
+      },
+      "amber-tint": {
+        "$value": "#cc7c2e0f"
+      },
+      "blue-tint": {
+        "$value": "#2563eb0f"
+      },
+      "green-tint": {
+        "$value": "#16a34a0f"
+      },
+      "purple-tint": {
+        "$value": "#7c3aed0f"
+      },
+      "pink-tint": {
+        "$value": "#db27770f"
+      }
+    },
+    "due": {
+      "$description": "Due-date text (ath-due-label). One rule: overdue and today red, the next two days amber, later muted, finished work muted.",
+      "$type": "color",
+      "due-overdue": {
+        "$value": "{color.status.red-text}"
+      },
+      "due-today": {
+        "$value": "{color.status.red-text}",
+        "$description": "today is red, as in the reference screens (04-mywork, 05-tickets)"
+      },
+      "due-soon": {
+        "$value": "{color.status.amber-text}",
+        "$description": "tomorrow and the day after"
+      },
+      "due-later": {
+        "$value": "{color.text.fg-3}"
+      },
+      "due-none": {
+        "$value": "{color.text.fg-4}",
+        "$description": "placeholder without a date"
+      }
+    },
+    "chip": {
+      "$description": "ath-chip.",
+      "$type": "color",
+      "chip-type-fg": {
+        "$value": "#ffffff",
+        "$description": "glyph on a type square (the square carries the type colour), white in both themes"
+      }
+    },
+    "tone-text": {
+      "$description": "Text in a colour the app passes in (a project colour: calendar blocks, the board's project key): color-mix(in srgb, <colour> var(--tone-text-mix), var(--fg)). Mixing towards --fg gives a darker shade of the same hue in light and a lighter one in dark, so the project palette (--accent in every preset, --blue, --green, --amber, --purple) clears 4.5:1 on its own 7% tint (light ≥ 4.9, dark ≥ 4.7). A very light custom colour (yellow) can still fall short.",
+      "tone-text-mix": {
+        "$value": "65%",
+        "$description": "share of the passed colour; the rest is --fg"
+      }
+    },
+    "deco": {
+      "$description": "Decorative status marks (board column bars, ticket-group dots, sidebar project-key chips): the status hue at ~60% strength over the surface. Status icons and due text keep the full colour.",
+      "deco-mix": {
+        "$value": "60%"
+      },
+      "red-muted": {
+        "$value": "color-mix(in srgb, {color.status.red} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "amber-muted": {
+        "$value": "color-mix(in srgb, {color.status.amber} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "blue-muted": {
+        "$value": "color-mix(in srgb, {color.status.blue} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "green-muted": {
+        "$value": "color-mix(in srgb, {color.status.green} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "purple-muted": {
+        "$value": "color-mix(in srgb, {color.status.purple} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "pink-muted": {
+        "$value": "color-mix(in srgb, {color.status.pink} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "grey-muted": {
+        "$value": "color-mix(in srgb, {color.text.fg-4} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      },
+      "status-open-muted": {
+        "$value": "color-mix(in srgb, {color.status.status-open} {color.deco.deco-mix}, {color.surface.surface})",
+        "$type": "color"
+      }
+    },
+    "selection": {
+      "$type": "color",
+      "selection-bg": {
+        "$value": "rgba(23, 23, 26, 0.16)"
+      },
+      "selection-fg": {
+        "$value": "inherit"
+      }
+    },
+    "ai": {
+      "$description": "Athenos AI surfaces (AI1): the mark's hero gradient and the hero card behind it. Built from the accent steps, so every accent preset and both themes follow. Decorative only: text on these keeps --fg / --accent-text.",
+      "ai-from": {
+        "$value": "{color.accent.accent-dim}",
+        "$type": "color",
+        "$description": "Gradient start (the lighter accent step in light, the deeper one in dark)."
+      },
+      "ai-to": {
+        "$value": "{color.accent.accent-2}",
+        "$type": "color",
+        "$description": "Gradient end."
+      },
+      "ai-gradient": {
+        "$value": "linear-gradient(135deg, {color.ai.ai-from} 0%, {color.ai.ai-to} 100%)",
+        "$description": "The accent gradient of AI surfaces: the hero mark, a thin hero rule. Not behind text."
+      },
+      "ai-surface": {
+        "$value": "linear-gradient(135deg, color-mix(in srgb, {color.accent.accent} 9%, transparent) 0%, color-mix(in srgb, {color.accent.accent-dim} 4%, transparent) 55%, transparent 100%)",
+        "$description": "A barely tinted wash for the Athenos AI hero card, over --surface. Text on it keeps its contrast (≤ 9% accent)."
+      },
+      "ai-border": {
+        "$value": "color-mix(in srgb, {color.accent.accent} 22%, {color.border.border})",
+        "$type": "color",
+        "$description": "Border of an Athenos AI card: the hairline, warmed towards the accent."
+      }
+    },
+    "toast": {
+      "$description": "Toast notifications (W5-D): a calm, slightly translucent surface over a light backdrop blur, a hairline edge and a soft layered shadow. The variant shows only in the icon disc and the time-left hairline.",
+      "toast-bg": {
+        "$value": "color-mix(in srgb, {color.surface.surface} 90%, transparent)",
+        "$type": "color",
+        "$description": "90% opaque: text keeps its contrast over any page; the rest is the blurred page behind."
+      },
+      "toast-border": {
+        "$value": "rgba(15, 23, 42, 0.08)",
+        "$type": "color"
+      },
+      "toast-tint-mix": {
+        "$value": "13%",
+        "$description": "Strength of the variant colour in the icon disc."
+      }
+    }
+  },
+  "radius": {
+    "$description": "Radii — Linear-class, small & precise.",
+    "$type": "dimension",
+    "r-xs": {
+      "$value": "4px"
+    },
+    "r-sm": {
+      "$value": "6px"
+    },
+    "r": {
+      "$value": "8px"
+    },
+    "r-lg": {
+      "$value": "10px"
+    },
+    "r-xl": {
+      "$value": "12px"
+    },
+    "r-2xl": {
+      "$value": "16px"
+    },
+    "r-full": {
+      "$value": "9999px"
+    }
+  },
+  "shadow": {
+    "$description": "Shadows — restrained.",
+    "$type": "shadow",
+    "shadow-1": {
+      "$value": "0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03)"
+    },
+    "shadow-2": {
+      "$value": "0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04)"
+    },
+    "shadow-3": {
+      "$value": "0 16px 40px -12px rgba(15, 23, 42, 0.18), 0 4px 12px -2px rgba(15, 23, 42, 0.06)"
+    },
+    "shadow-drawer": {
+      "$value": "6px 0 20px -6px rgba(15, 23, 42, 0.12)"
+    },
+    "toast-shadow": {
+      "$value": "0 0 0 0.5px rgba(15, 23, 42, 0.02), 0 1px 2px rgba(15, 23, 42, 0.05), 0 8px 20px -6px rgba(15, 23, 42, 0.1), 0 24px 44px -16px rgba(15, 23, 42, 0.18)",
+      "$description": "Toasts: a contact shadow, a near layer and a wide soft one."
+    }
+  },
+  "font": {
+    "$description": "Type.",
+    "family": {
+      "$type": "fontFamily",
+      "font-sans": {
+        "$value": "\"Geist\", -apple-system, BlinkMacSystemFont, \"Inter\", \"Segoe UI\", system-ui, sans-serif"
+      },
+      "font-mono": {
+        "$value": "\"Geist Mono\", \"JetBrains Mono\", ui-monospace, \"SF Mono\", Menlo, monospace"
+      },
+      "font-serif": {
+        "$value": "{font.family.font-sans}",
+        "$description": "alias — no serif"
+      }
+    },
+    "size": {
+      "$type": "dimension",
+      "text-xs": {
+        "$value": "11px"
+      },
+      "text-sm": {
+        "$value": "12px"
+      },
+      "text-base": {
+        "$value": "13.5px"
+      },
+      "text-md": {
+        "$value": "14px"
+      },
+      "text-lg": {
+        "$value": "16px"
+      },
+      "text-xl": {
+        "$value": "18px"
+      },
+      "text-2xl": {
+        "$value": "22px"
+      },
+      "text-3xl": {
+        "$value": "28px"
+      },
+      "text-4xl": {
+        "$value": "36px"
+      }
+    },
+    "weight": {
+      "$type": "number",
+      "weight-normal": {
+        "$value": 400
+      },
+      "weight-medium": {
+        "$value": 500
+      },
+      "weight-semibold": {
+        "$value": 600
+      },
+      "weight-bold": {
+        "$value": 700
+      }
+    },
+    "line-height": {
+      "$type": "number",
+      "line-tight": {
+        "$value": 1.2
+      },
+      "line-normal": {
+        "$value": 1.5
+      },
+      "line-relaxed": {
+        "$value": 1.7
+      }
+    }
+  },
+  "density": {
+    "$description": "Scale & density — measured from the reference screens at 1110×760. Pages read these instead of hard-coding their own heights, so the whole product moves together when the density changes.",
+    "page": {
+      "$type": "dimension",
+      "page-title-size": {
+        "$value": "17px",
+        "$description": "H1, semibold"
+      },
+      "page-meta-size": {
+        "$value": "12px",
+        "$description": "muted meta line under the title"
+      },
+      "page-head-gap": {
+        "$value": "4px",
+        "$description": "title → meta"
+      },
+      "page-head-pad-bottom": {
+        "$value": "12px",
+        "$description": "meta → hairline"
+      },
+      "page-head-rule": {
+        "$value": "{color.border.border-faint}"
+      },
+      "content-pad-top": {
+        "$value": "16px"
+      },
+      "content-pad-x": {
+        "$value": "28px"
+      },
+      "section-gap": {
+        "$value": "16px"
+      },
+      "content-pad-bottom": {
+        "$value": "32px",
+        "$description": "stage padding under the page; the shell reads it, ath-page trims it to --content-pad-top"
+      },
+      "page-max-w": {
+        "$value": "1680px",
+        "$description": "widest a page body grows (ath-page)"
+      }
+    },
+    "control": {
+      "$type": "dimension",
+      "control-h-xs": {
+        "$value": "26px",
+        "$description": "topbar \"+ New\" (ref 25–26px)"
+      },
+      "control-h-sm": {
+        "$value": "28px"
+      },
+      "control-h": {
+        "$value": "32px"
+      },
+      "control-h-lg": {
+        "$value": "40px"
+      },
+      "field-h-sm": {
+        "$value": "33px",
+        "$description": "compact form field (settings rows)"
+      },
+      "control-font": {
+        "$value": "13px"
+      }
+    },
+    "panel": {
+      "$type": "dimension",
+      "panel-radius": {
+        "$value": "{radius.r-lg}"
+      },
+      "panel-pad-x": {
+        "$value": "16px"
+      },
+      "panel-pad-y": {
+        "$value": "12px"
+      },
+      "panel-head-h": {
+        "$value": "40px",
+        "$description": "title row of a panel"
+      },
+      "panel-title-size": {
+        "$value": "14px"
+      },
+      "table-head-h": {
+        "$value": "36px"
+      },
+      "table-head-bg": {
+        "$value": "{color.surface.bg-2}",
+        "$description": "filled grey band (ref 01 focus table)"
+      },
+      "table-head-size": {
+        "$value": "12.5px"
+      },
+      "row-h": {
+        "$value": "44px",
+        "$description": "body row in a panel table"
+      },
+      "row-h-compact": {
+        "$value": "36px",
+        "$description": "agenda / member lists"
+      }
+    },
+    "chip": {
+      "$type": "dimension",
+      "chip-h": {
+        "$value": "20px"
+      },
+      "chip-radius": {
+        "$value": "{radius.r-xs}"
+      },
+      "chip-font": {
+        "$value": "11.5px"
+      }
+    }
+  },
+  "size": {
+    "avatar": {
+      "$type": "dimension",
+      "avatar-xs": {
+        "$value": "20px",
+        "$description": "topbar, dense rows (ref 20px)"
+      },
+      "avatar-sm": {
+        "$value": "22px",
+        "$description": "row avatar, assignee column"
+      },
+      "avatar-md": {
+        "$value": "36px",
+        "$description": "lists with a second line (members, comments)"
+      },
+      "avatar-lg": {
+        "$value": "44px"
+      },
+      "avatar-xl": {
+        "$value": "56px",
+        "$description": "profile header"
+      },
+      "avatar-font-xs": {
+        "$value": "9px",
+        "$description": "initials in an xs avatar"
+      },
+      "avatar-font-sm": {
+        "$value": "9.5px",
+        "$description": "initials in an sm avatar"
+      },
+      "avatar-font-md": {
+        "$value": "{font.size.text-sm}"
+      },
+      "avatar-font-lg": {
+        "$value": "{font.size.text-md}"
+      },
+      "avatar-font-xl": {
+        "$value": "{font.size.text-lg}"
+      }
+    },
+    "icon": {
+      "icon-stroke": {
+        "$value": 1.5,
+        "$type": "number"
+      },
+      "icon-size-nav": {
+        "$value": "14px",
+        "$type": "dimension"
+      }
+    }
+  },
+  "layout": {
+    "toast": {
+      "$type": "dimension",
+      "toast-offset-top": {
+        "$value": "auto"
+      },
+      "toast-offset-bottom": {
+        "$value": "16px"
+      },
+      "toast-offset-right": {
+        "$value": "16px"
+      },
+      "toast-width": {
+        "$value": "380px",
+        "$description": "Toast width from 600px up; below that the stack is full width."
+      }
+    }
+  },
+  "space": {
+    "$description": "Spacing scale.",
+    "$type": "dimension",
+    "space-0": {
+      "$value": "0"
+    },
+    "space-1": {
+      "$value": "4px"
+    },
+    "space-2": {
+      "$value": "8px"
+    },
+    "space-3": {
+      "$value": "12px"
+    },
+    "space-4": {
+      "$value": "16px"
+    },
+    "space-5": {
+      "$value": "20px"
+    },
+    "space-6": {
+      "$value": "24px"
+    },
+    "space-8": {
+      "$value": "32px"
+    },
+    "space-10": {
+      "$value": "40px"
+    },
+    "space-12": {
+      "$value": "48px"
+    },
+    "space-16": {
+      "$value": "64px"
+    }
+  },
+  "motion": {
+    "$description": "Motion.",
+    "$type": "transition",
+    "t-fast": {
+      "$value": "100ms ease"
+    },
+    "t-base": {
+      "$value": "150ms ease"
+    },
+    "t-slow": {
+      "$value": "250ms ease"
+    }
+  },
+  "z-index": {
+    "$description": "The one z-index scale. Every stacking value in the lib and the app is one of these (or a calc() on one); no raw numbers, no fallbacks.",
+    "$type": "number",
+    "z-base": {
+      "$value": 0,
+      "$description": "In-flow content."
+    },
+    "z-raised": {
+      "$value": 1,
+      "$description": "Local lift inside a component (an overlapping avatar, a timeline dot over its line)."
+    },
+    "z-dropdown": {
+      "$value": 1000,
+      "$description": "Menus and dropdown panels anchored to a control."
+    },
+    "z-sticky": {
+      "$value": 1020,
+      "$description": "Sticky headers / toolbars."
+    },
+    "z-fixed": {
+      "$value": 1030,
+      "$description": "Fixed shell chrome."
+    },
+    "z-overlay": {
+      "$value": 1040,
+      "$description": "Dialog / drawer backdrop."
+    },
+    "z-modal": {
+      "$value": 1050,
+      "$description": "Dialogs and drawers."
+    },
+    "z-popover": {
+      "$value": 1060,
+      "$description": "Floating panels (floating.ts) — above dialogs so a picker inside a dialog is not clipped."
+    },
+    "z-tooltip": {
+      "$value": 1070,
+      "$description": "Tooltips."
+    },
+    "z-toast": {
+      "$value": 1080,
+      "$description": "Toasts — always on top."
+    }
+  }
+}

@@ -3,23 +3,23 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "athene-webcomponents": {
+    "athenos-webcomponents": {
       "projectType": "library",
-      "root": "projects/athene-webcomponents",
-      "sourceRoot": "projects/athene-webcomponents/src",
+      "root": "projects/athenos-webcomponents",
+      "sourceRoot": "projects/athenos-webcomponents/src",
       "prefix": "ath",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/athene-webcomponents/ng-package.json"
+            "project": "projects/athenos-webcomponents/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/athene-webcomponents/tsconfig.lib.prod.json"
+              "tsConfig": "projects/athenos-webcomponents/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/athene-webcomponents/tsconfig.lib.json"
+              "tsConfig": "projects/athenos-webcomponents/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -27,9 +27,9 @@
         "test-build": {
           "builder": "@angular/build:application",
           "options": {
-            "tsConfig": "projects/athene-webcomponents/tsconfig.spec.json",
+            "tsConfig": "projects/athenos-webcomponents/tsconfig.spec.json",
             "polyfills": ["zone.js"],
-            "styles": ["projects/athene-webcomponents/src/lib/styles/main.scss"],
+            "styles": ["projects/athenos-webcomponents/src/lib/styles/main.scss"],
             "aot": false,
             "optimization": false,
             "extractLicenses": false
@@ -45,24 +45,24 @@
           "options": {
             "runner": "vitest",
             "buildTarget": ":test-build",
-            "tsConfig": "projects/athene-webcomponents/tsconfig.spec.json",
+            "tsConfig": "projects/athenos-webcomponents/tsconfig.spec.json",
             "browsers": ["chromiumHeadless"],
             "browserViewport": "800x600",
             "splitting": false,
-            "setupFiles": ["projects/athene-webcomponents/src/test-setup.ts"],
+            "setupFiles": ["projects/athenos-webcomponents/src/test-setup.ts"],
             "reporters": ["default"]
           },
           "configurations": {
             "zoneless": {
               "buildTarget": ":test-build:zoneless",
-              "providersFile": "projects/athene-webcomponents/src/test-providers-zoneless.ts"
+              "providersFile": "projects/athenos-webcomponents/src/test-providers-zoneless.ts"
             }
           }
         },
         "storybook": {
           "builder": "@storybook/angular:start-storybook",
           "options": {
-            "browserTarget": "athene-webcomponents:build:development",
+            "browserTarget": "athenos-webcomponents:build:development",
             "configDir": ".storybook",
             "tsConfig": ".storybook/tsconfig.json",
             "compodoc": false,
@@ -75,7 +75,7 @@
               "node_modules/@fontsource/geist-mono/400.css",
               "node_modules/@fontsource/geist-mono/500.css",
               "node_modules/@fontsource/geist-mono/600.css",
-              "projects/athene-webcomponents/src/lib/styles/main.scss"
+              "projects/athenos-webcomponents/src/lib/styles/main.scss"
             ],
             "port": 6006
           }
@@ -83,7 +83,7 @@
         "build-storybook": {
           "builder": "@storybook/angular:build-storybook",
           "options": {
-            "browserTarget": "athene-webcomponents:build:development",
+            "browserTarget": "athenos-webcomponents:build:development",
             "configDir": ".storybook",
             "tsConfig": ".storybook/tsconfig.json",
             "compodoc": false,
@@ -96,7 +96,7 @@
               "node_modules/@fontsource/geist-mono/400.css",
               "node_modules/@fontsource/geist-mono/500.css",
               "node_modules/@fontsource/geist-mono/600.css",
-              "projects/athene-webcomponents/src/lib/styles/main.scss"
+              "projects/athenos-webcomponents/src/lib/styles/main.scss"
             ],
             "outputDir": "storybook-static"
           }

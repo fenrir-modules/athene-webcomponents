@@ -1,0 +1,41 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  booleanAttribute,
+  computed,
+  input,
+} from '@angular/core';
+
+/**
+ * Badge variant types
+ */
+export type BadgeVariant = 'default' | 'success' | 'warning' | 'error' | 'info' | 'muted';
+
+/**
+ * Athenos Badge Component
+ *
+ * Status badges for tables, lists and inline indicators.
+ *
+ * @example
+ * <ath-badge variant="success">Active</ath-badge>
+ * <ath-badge variant="error">Revoked</ath-badge>
+ */
+@Component({
+  selector: 'ath-badge',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './badge.component.html',
+  styleUrl: './badge.component.scss',
+})
+export class AthBadgeComponent {
+  /** Badge variant */
+  readonly variant = input<BadgeVariant>('default');
+
+  /** Show dot indicator */
+  readonly dot = input(false, { transform: booleanAttribute });
+
+  protected readonly badgeClasses = computed(() =>
+    ['ath-badge', `ath-badge--${this.variant()}`, this.dot() ? 'ath-badge--dot' : '']
+      .filter(Boolean)
+      .join(' ')
+  );
+}

@@ -1,0 +1,4 @@
+{
+  "module": "../fesm2022/athenos-webcomponents-icons.mjs",
+  "typings": "../types/athenos-webcomponents-icons.d.ts"
+}

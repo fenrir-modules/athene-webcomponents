@@ -1,0 +1,4 @@
+{
+  "module": "../fesm2022/athenos-webcomponents-core.mjs",
+  "typings": "../types/athenos-webcomponents-core.d.ts"
+}

@@ -1,12 +1,12 @@
 // @ts-check
-// Shared ESLint flat config for the Athene frontend (quality step 1.3).
+// Shared ESLint flat config for the Athenos frontend (quality step 1.3).
 //
-// CANONICAL COPY: athene-webcomponents/config/eslint.shared.mjs
-// athene-web keeps a byte-identical copy at the same path; `npm run lint:shared`
+// CANONICAL COPY: athenos-webcomponents/config/eslint.shared.mjs
+// athenos-web keeps a byte-identical copy at the same path; `npm run lint:shared`
 // (scripts/shared-config.mjs) fails when the two drift. Edit it here, in the
-// lib, then copy it over: `node scripts/shared-config.mjs --copy-to ../athene-web`.
+// lib, then copy it over: `node scripts/shared-config.mjs --copy-to ../athenos-web`.
 //
-// Each repo's eslint.config.mjs calls atheneEslint({...}) with its own prefix,
+// Each repo's eslint.config.mjs calls athenosEslint({...}) with its own prefix,
 // boundary elements and restricted-syntax groups. Existing violations are
 // frozen in eslint-suppressions.json (ESLint bulk suppressions); see
 // artifacts/quality/phase1/LINT.md for the burn-down workflow.
@@ -39,12 +39,12 @@ export const RESTRICTED_SYNTAX = {
     selector:
       "Decorator[expression.callee.name=/^(Component|Directive)$/] Property[key.name='selector'] > Literal[value=/(^|[\\s,(:\\[])ath-|\\[ath[A-Z]/]",
     message:
-      'The `ath-` prefix belongs to @athene/webcomponents; app selectors use `app-` (FE-13, codemod in 2.0).',
+      'The `ath-` prefix belongs to @athenos/webcomponents; app selectors use `app-` (FE-13, codemod in 2.0).',
   },
 };
 
 /**
- * `athene/no-instant-in-computed` (FE-08, ADR 1.9a rule 6): a `computed()`
+ * `athenos/no-instant-in-computed` (FE-08, ADR 1.9a rule 6): a `computed()`
  * that calls `translate.instant(…)` reads no signal for the language, so its
  * label stays in the old language after a switch. Use `t()` from
  * `injectT()` (@core/i18n), which tracks the loaded language.
@@ -163,9 +163,9 @@ const noInstantInComputed = {
   },
 };
 
-/** Athene's own lint rules. */
-export const athenePlugin = {
-  meta: { name: 'athene' },
+/** Athenos's own lint rules. */
+export const athenosPlugin = {
+  meta: { name: 'athenos' },
   rules: { 'no-instant-in-computed': noInstantInComputed },
 };
 
@@ -184,7 +184,7 @@ export const athenePlugin = {
  * @param {object[]} [o.fileCategories] eslint-plugin-boundaries file categories (boundaries/files)
  * @param {object[]} [o.policies]      eslint-plugin-boundaries policies (default: allow)
  */
-export function atheneEslint({
+export function athenosEslint({
   rootDir,
   prefix,
   selectorSeverity = 'error',
@@ -207,7 +207,7 @@ export function atheneEslint({
       languageOptions: {
         parserOptions: { projectService: true, tsconfigRootDir: rootDir },
       },
-      plugins: { boundaries, athene: athenePlugin },
+      plugins: { boundaries, athenos: athenosPlugin },
       settings: {
         'import/resolver': {
           typescript: { alwaysTryTypes: true, project: `${rootDir}/tsconfig.json` },
@@ -242,7 +242,7 @@ export function atheneEslint({
         'boundaries/dependencies': ['error', { default: 'allow', policies }],
 
         // Translations in computed() follow the language (FE-08).
-        'athene/no-instant-in-computed': 'error',
+        'athenos/no-instant-in-computed': 'error',
       },
     },
     ...restrictedSyntax.map(({ files: groupFiles, ignores: groupIgnores, use }) => ({

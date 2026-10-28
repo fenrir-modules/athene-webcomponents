@@ -1,0 +1,15 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/athenos-webcomponents",
+  "lib": {
+    "entryFile": "src/public-api.ts"
+  },
+  "assets": [
+    {
+      "glob": "**/*",
+      "input": "src/lib/styles",
+      "output": "styles"
+    }
+  ],
+  "allowedNonPeerDependencies": ["@lucide/angular", "lucide"]
+}

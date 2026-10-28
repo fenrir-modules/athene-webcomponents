@@ -22,9 +22,9 @@
     // specs' globals, for editors and ESLint (tsconfig.lib.json sets []).
     "types": ["vitest/globals"],
     "paths": {
-      "@athene/webcomponents": ["./projects/athene-webcomponents/src/public-api.ts"],
-      "@athene/webcomponents/core": ["./projects/athene-webcomponents/core/src/public-api.ts"],
-      "@athene/webcomponents/*": ["./projects/athene-webcomponents/src/*"]
+      "@athenos/webcomponents": ["./projects/athenos-webcomponents/src/public-api.ts"],
+      "@athenos/webcomponents/core": ["./projects/athenos-webcomponents/core/src/public-api.ts"],
+      "@athenos/webcomponents/*": ["./projects/athenos-webcomponents/src/*"]
     }
   },
   "angularCompilerOptions": {

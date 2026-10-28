@@ -20,7 +20,7 @@ import {
 } from './lib.mjs';
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../../..');
-const CONFIG = resolve(ROOT, 'projects/athene-webcomponents/tokens/tokens.config.json');
+const CONFIG = resolve(ROOT, 'projects/athenos-webcomponents/tokens/tokens.config.json');
 
 export function generate(configPath = CONFIG) {
   const { config, dir, loadJson } = loadConfig(configPath);

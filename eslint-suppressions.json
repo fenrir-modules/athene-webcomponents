@@ -1,5 +1,5 @@
 {
-  "projects/athene-webcomponents/src/lib/components/input/input.component.spec.ts": {
+  "projects/athenos-webcomponents/src/lib/components/input/input.component.spec.ts": {
     "@typescript-eslint/no-unsafe-assignment": {
       "count": 1
     },
@@ -10,22 +10,22 @@
       "count": 5
     }
   },
-  "projects/athene-webcomponents/src/lib/components/kbd/kbd.component.spec.ts": {
+  "projects/athenos-webcomponents/src/lib/components/kbd/kbd.component.spec.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
       "count": 1
     }
   },
-  "projects/athene-webcomponents/src/lib/components/page-header/page-header.component.spec.ts": {
+  "projects/athenos-webcomponents/src/lib/components/page-header/page-header.component.spec.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
       "count": 1
     }
   },
-  "projects/athene-webcomponents/src/lib/components/segment/segment.component.html": {
+  "projects/athenos-webcomponents/src/lib/components/segment/segment.component.html": {
     "@angular-eslint/template/eqeqeq": {
       "count": 1
     }
   },
-  "projects/athene-webcomponents/src/lib/components/table/table.component.spec.ts": {
+  "projects/athenos-webcomponents/src/lib/components/table/table.component.spec.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
       "count": 1
     },
@@ -36,7 +36,7 @@
       "count": 1
     }
   },
-  "projects/athene-webcomponents/src/lib/components/tabs/tabs.component.html": {
+  "projects/athenos-webcomponents/src/lib/components/tabs/tabs.component.html": {
     "@angular-eslint/template/eqeqeq": {
       "count": 1
     }

@@ -1,7 +1,7 @@
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, withHashLocation } from '@angular/router';
 import { applicationConfig, type Decorator, type Preview } from '@storybook/angular';
-import { ATH_DATE_CONTEXT } from '@athene/webcomponents';
+import { ATH_DATE_CONTEXT } from '@athenos/webcomponents';
 import { labelLocale, provideStorybookLabels, type LabelLocale } from './labels';
 
 // Global styles (fonts, main.scss with the generated tokens) come from the

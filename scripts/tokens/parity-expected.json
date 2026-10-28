@@ -183,7 +183,7 @@
     {
       "change": "removed",
       "rule": "svg.lucide[stroke-width=\"2\"] { stroke-width: var(--icon-stroke, 1.5) }",
-      "why": "no fallback on a defined token (athene/no-fallback-on-token); token value is 1.5"
+      "why": "no fallback on a defined token (athenos/no-fallback-on-token); token value is 1.5"
     },
     {
       "change": "added",

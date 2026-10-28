@@ -1,11 +1,11 @@
-# @athene/webcomponents
+# @athenos/webcomponents
 
-Athene's Angular component library: design tokens, global styles and the `ath-*` presentational primitives. No HTTP, no domain words. `athene-web` uses it through `npm run deps:sync`.
+Athenos's Angular component library: design tokens, global styles and the `ath-*` presentational primitives. No HTTP, no domain words. `athenos-web` uses it through `npm run deps:sync`.
 
 Angular 22 and TypeScript 6.0; the Angular CLI needs Node ^22.22.3 or ^24.15 (CI: 24.15.0).
 
 ```sh
-npm run build:lib        # tokens:build, then ng build athene-webcomponents → dist/
+npm run build:lib        # tokens:build, then ng build athenos-webcomponents → dist/
 npm run check:dist       # build:lib, then fail if dist/ differs from the commit (CI runs it)
 npm test                 # unit tests: Vitest in headless Chromium, with zone.js
 npm run test:zoneless    # the same specs without zone.js (see "Signal APIs and zoneless")
@@ -16,13 +16,13 @@ npm run build-storybook  # static catalogue → storybook-static/
 npm run test:storybook   # axe + screenshots over storybook-static/ (see "Component catalogue")
 ```
 
-**Git installs ship the committed `dist/`.** The app installs this package from a git commit, and that commit carries the built `dist/athene-webcomponents/`. So `package.json` has no `build`, `prepare`, `prepack` or `(pre|post)install` script: with any of them npm runs a full `npm install` with every devDependency (Storybook, ng-packagr, Playwright, Vitest) in the clone, in every consumer's CI. Build with `npm run build:lib` and commit `dist/` together with the source change; `npm run check:dist` and CI (`scripts/check-package.mjs --dist`) fail when the committed `dist/` is not byte for byte what the sources build to, or when one of those scripts comes back.
+**Git installs ship the committed `dist/`.** The app installs this package from a git commit, and that commit carries the built `dist/athenos-webcomponents/`. So `package.json` has no `build`, `prepare`, `prepack` or `(pre|post)install` script: with any of them npm runs a full `npm install` with every devDependency (Storybook, ng-packagr, Playwright, Vitest) in the clone, in every consumer's CI. Build with `npm run build:lib` and commit `dist/` together with the source change; `npm run check:dist` and CI (`scripts/check-package.mjs --dist`) fail when the committed `dist/` is not byte for byte what the sources build to, or when one of those scripts comes back.
 
 ## Design tokens
 
 ### One source of truth
 
-All design tokens live in **DTCG JSON** under `projects/athene-webcomponents/tokens/`:
+All design tokens live in **DTCG JSON** under `projects/athenos-webcomponents/tokens/`:
 
 | File                                                    | Contents                                                                                                             |
 | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -62,18 +62,18 @@ All design tokens live in **DTCG JSON** under `projects/athene-webcomponents/tok
 - **Status text:** `--red`, `--amber`, `--green`, `--blue`, `--purple` are for icons, dots, fills and borders; text uses `--red-text`, `--amber-text`, `--green-text`, `--blue-text`, `--purple-text`, a darker (light) or lighter (dark) shade of the same hue. Accent-coloured text uses `--accent-text`; a colour the app passes in (a project colour) is mixed towards `--fg` with `--tone-text-mix`. The solid danger button reads `--action-danger-bg`, `-bg-hover` and `-fg`.
 - **z-index:** only the scale `--z-base`, `--z-raised`, `--z-dropdown`, `--z-sticky`, `--z-fixed`, `--z-overlay`, `--z-modal`, `--z-popover`, `--z-tooltip`, `--z-toast` (or a `calc()` on one of them).
 - **No fallbacks on tokens:** tokens are always defined, so a fallback is dead code that drifts.
-- **No `--ath-*` and no `--gold`.** These legacy aliases were removed in quality step 2.7 (each pointed to one token: `--ath-text-primary` → `--fg`, `--ath-border-color` → `--border`, `--ath-space-3` → `--space-3`, `--ath-transition-fast` → `--t-fast`, `--gold` → `--accent`; the full map is in `artifacts/quality/phase2/p27/alias-map.json`). The token build rejects the names, and Stylelint (`athene/no-retired-alias`) rejects any `--ath-*` / `--gold` custom property, declared or read, in both repos; a component's own variable takes a plain name (`--panel-grid-columns`).
+- **No `--ath-*` and no `--gold`.** These legacy aliases were removed in quality step 2.7 (each pointed to one token: `--ath-text-primary` → `--fg`, `--ath-border-color` → `--border`, `--ath-space-3` → `--space-3`, `--ath-transition-fast` → `--t-fast`, `--gold` → `--accent`; the full map is in `artifacts/quality/phase2/p27/alias-map.json`). The token build rejects the names, and Stylelint (`athenos/no-retired-alias`) rejects any `--ath-*` / `--gold` custom property, declared or read, in both repos; a component's own variable takes a plain name (`--panel-grid-columns`).
 
 ### Guardrails
 
 - `npm run lint:styles` runs Stylelint (`stylelint.config.mjs`) with these rules:
   - `csstools/value-no-unknown-custom-properties`, fed by the generated list
-  - `athene/no-unknown-custom-property-with-fallback` and `athene/no-fallback-on-token` (`scripts/stylelint/athene-tokens.mjs`). The csstools rule lets `var(--unknown, x)` through; these two don't.
-  - `athene/no-retired-alias`: no `--ath-*` / `--gold` custom property (declared or read)
+  - `athenos/no-unknown-custom-property-with-fallback` and `athenos/no-fallback-on-token` (`scripts/stylelint/athenos-tokens.mjs`). The csstools rule lets `var(--unknown, x)` through; these two don't.
+  - `athenos/no-retired-alias`: no `--ath-*` / `--gold` custom property (declared or read)
   - z-index only from the scale
   - in component styles: no hex, named or `rgb()`/`hsl()` colours, and no `data-theme`/`.ath-light|dark` selectors
 - Existing violations are recorded in `stylelint-suppressions.json` (Stylelint bulk suppressions), so only new ones fail. After fixing something, run `npm run lint:styles:baseline` to shrink the file. Never grow it by hand.
-- `npm run tokens:report-app [path/to/app/src]` reports on `athene-web` (default `../athene-web/src`) and never edits it. It runs the same rules over the app's SCSS and inline `styles`, plus a pass over templates and TS strings. It reports undefined tokens, fallbacks that disagree with the token value, dead theme selectors and use of deprecated tokens (none today). With `--strict` it exits 1 when it finds undefined tokens.
+- `npm run tokens:report-app [path/to/app/src]` reports on `athenos-web` (default `../athenos-web/src`) and never edits it. It runs the same rules over the app's SCSS and inline `styles`, plus a pass over templates and TS strings. It reports undefined tokens, fallbacks that disagree with the token value, dead theme selectors and use of deprecated tokens (none today). With `--strict` it exits 1 when it finds undefined tokens.
 - `npm run tokens:parity [-- --ref <git-ref>]` compiles `main.scss` at a ref and in the working tree and diffs every custom property per selector, plus all other rules. Any difference that is not listed in `scripts/tokens/parity-expected.json` fails.
 
 ### Why a small generator instead of Style Dictionary
@@ -89,18 +89,18 @@ Style Dictionary 5 brings 13 runtime dependencies: prettier, colorjs.io, tinycol
 
 The generator is about 450 lines of plain Node with no dependencies and is covered by `scripts/tokens/tokens.test.mjs`. The sources follow DTCG, so switching to Style Dictionary later only means writing a format; the JSON doesn't change.
 
-## Icons: `ath-icon` and `@athene/webcomponents/icons` (W4-A)
+## Icons: `ath-icon` and `@athenos/webcomponents/icons` (W4-A)
 
 ```ts
-import { AthIconComponent } from '@athene/webcomponents';
-import { Users } from '@athene/webcomponents/icons';
+import { AthIconComponent } from '@athenos/webcomponents';
+import { Users } from '@athenos/webcomponents/icons';
 ```
 
 ```html
 <ath-icon [img]="Users" [size]="16" />
 ```
 
-- `@athene/webcomponents/icons` re-exports every icon of the framework-free `lucide` package as plain data (`AthIconData`), under the names `lucide-angular` used. It has no code of its own, so a bundle gets exactly the icons it imports, in the chunk that imports them.
+- `@athenos/webcomponents/icons` re-exports every icon of the framework-free `lucide` package as plain data (`AthIconData`), under the names `lucide-angular` used. It has no code of its own, so a bundle gets exactly the icons it imports, in the chunk that imports them.
 - `ath-icon` replaces `lucide-angular`'s `<lucide-icon>` (deprecated, Angular up to 21 only) with the same shape and inputs: an inline host with the `<svg>` inside; `img`, `size`, `strokeWidth`, `color`, `absoluteStrokeWidth`; a static `class` lands on the host and the svg. Host styles, toggled host classes, `role`, `aria-label` and `title` work as before.
 - The svg is drawn by `LucideDynamicIcon` from `@lucide/angular` and is always `aria-hidden`; name the host when the icon carries meaning. Not used: the per-icon components of `@lucide/angular`, each with its own copy of the template (2–3 kB per icon in a bundle).
 - An icon of your own is `{ name, node }`; the svg gets the class `lucide-<name>`. `LucideDynamicIcon` passes only a fixed set of attributes to the paths (no `fill-rule`); set such a property in CSS on `svg.lucide-<name>`.
@@ -158,7 +158,7 @@ The Athenos AI mark ("Perch"): a solid rounded A — Athenos' A and a perched li
 
 ### Status pill: `ath-status-pill`
 
-`status` is a short code (`open`, `prog`, `review`, `blocked`, `done`, legacy `closed`) or any status key of the workspace (`in_progress`, `qa`; athene-contracts W4-F). The name comes from `[label]`, else the app's `ATH_STATUS_LABELS` resolver, else the English default (then the key itself). The dot's colour comes from `[tone]` (an `AthDecoColor` token), else the app's `ATH_STATUS_TONES` resolver, else the code's own colour; an unknown key without a tone is grey. Both resolvers are provided once at the root and may read signals (language, the workspace's statuses), so OnPush pills follow them.
+`status` is a short code (`open`, `prog`, `review`, `blocked`, `done`, legacy `closed`) or any status key of the workspace (`in_progress`, `qa`; athenos-contracts W4-F). The name comes from `[label]`, else the app's `ATH_STATUS_LABELS` resolver, else the English default (then the key itself). The dot's colour comes from `[tone]` (an `AthDecoColor` token), else the app's `ATH_STATUS_TONES` resolver, else the code's own colour; an unknown key without a tone is grey. Both resolvers are provided once at the root and may read signals (language, the workspace's statuses), so OnPush pills follow them.
 
 ```html
 <ath-status-pill status="qa" label="QA" tone="purple" size="sm" />
@@ -198,7 +198,7 @@ The Athenos AI mark ("Perch"): a solid rounded A — Athenos' A and a perched li
 - `ath-permission-row`: icon, name, one-line explanation (`--fg-3`, ellipsis), optional `inheritedHint`; the control is projected. With `interactive` a click anywhere on the row outside the control emits `activate` (a click on the control is left to it, so nothing toggles twice); the row adds no tab stop. `disabledReason` is the control's tooltip and is read out. Below 480 px the control moves under the text. `labelId` / `descriptionId` are public for `aria-describedby`.
 - `ath-tri-state`: _Deny · Inherit · Allow_ as a radio group (not `ath-segment`, a tab list): one tab stop, arrows move and choose (mirrored in RTL), Home/End, Space/Enter. `inherited` is read out with "Inherit (currently allowed)". `compact`, and phones, show icons only (each still named).
 - `ath-save-bar`: sticky at the bottom of its scroll container (`--selection-bar-*`), a named region whose appearance is announced (`aria-live="polite"`). `confirmDiscard`: _Discard_ asks first; Escape starts the question and focuses it, a second Escape takes it back; Escape is left to open overlays (`AthOverlayStack`). `saving` shows the spinner and blocks both buttons. Full width on phones.
-- `ath-color-swatch`, `ath-role-badge`, `ath-avatar [ring]`: the palette `AthDecoColor` (`neutral`, `blue`, `green`, `amber`, `red`, `purple`, `pink`; the same tokens as `TicketTypeColor` in athene-contracts), drawn with the `--<hue>-muted` deco tokens (`--grey-muted` for neutral). The swatch is a radio group with named swatches and a check on the picked one; an unknown token is neutral on a badge and no ring on an avatar. `ath-role-badge` also takes a `#RRGGBB` colour (a team's, W4-F team queues) and draws it as it is. `ATH_DECO_COLORS`, `isAthDecoColor()` and `athDecoColorLabel()` are exported.
+- `ath-color-swatch`, `ath-role-badge`, `ath-avatar [ring]`: the palette `AthDecoColor` (`neutral`, `blue`, `green`, `amber`, `red`, `purple`, `pink`; the same tokens as `TicketTypeColor` in athenos-contracts), drawn with the `--<hue>-muted` deco tokens (`--grey-muted` for neutral). The swatch is a radio group with named swatches and a check on the picked one; an unknown token is neutral on a badge and no ring on an avatar. `ath-role-badge` also takes a `#RRGGBB` colour (a team's, W4-F team queues) and draws it as it is. `ATH_DECO_COLORS`, `isAthDecoColor()` and `athDecoColorLabel()` are exported.
 - Words: the `AthLabels` `triState*`, `saveBar*`, `color*`, `colorPicker` and `roleLocked` (English defaults; the app translates them in its `ATH_LABELS` provider).
 
 ### `ath-chip`
@@ -221,7 +221,7 @@ The Athenos AI mark ("Perch"): a solid rounded A — Athenos' A and a perched li
 ### Toasts: `AthToastService`, `ath-toast-container` (W5-D)
 
 ```ts
-const toast = inject(AthToastService); // from @athene/webcomponents/core
+const toast = inject(AthToastService); // from @athenos/webcomponents/core
 toast.success('Saved');
 toast.info('Timer for TEST-1 discarded (under a minute)', { action: { label: 'Undo', run: undo } });
 toast.error('The server did not answer. Your text is kept.', {
@@ -260,7 +260,7 @@ While the action runs the button is busy: disabled, spinner, `aria-busy`, furthe
 <ath-markdown [text]="ticket.description" />
 ```
 
-The app provides its parser once (`{ provide: ATH_MARKDOWN_PARSER, useValue: renderMarkdown }`) or per instance (`[parse]`). Every path, including `[html]`, ends in Angular's HTML sanitizer: no `bypassSecurityTrust*` anywhere (SEC-14). Without a parser the text shows as escaped paragraphs. The typography is the `content` mixin in `styles/_markdown.scss`, which an editor can include to look the same (`@use '@athene/webcomponents/styles/markdown' as md;`).
+The app provides its parser once (`{ provide: ATH_MARKDOWN_PARSER, useValue: renderMarkdown }`) or per instance (`[parse]`). Every path, including `[html]`, ends in Angular's HTML sanitizer: no `bypassSecurityTrust*` anywhere (SEC-14). Without a parser the text shows as escaped paragraphs. The typography is the `content` mixin in `styles/_markdown.scss`, which an editor can include to look the same (`@use '@athenos/webcomponents/styles/markdown' as md;`).
 
 ### `ath-kpi-strip`, `ath-kpi-tile`, `ath-sparkline`
 
@@ -477,7 +477,7 @@ Every component and directive uses the signal APIs and is `OnPush`; the lib does
 
 ## Component catalogue (quality step 1.8)
 
-Storybook 10 with the Angular builder: the targets `athene-webcomponents:storybook` and `:build-storybook` in `angular.json` carry the global styles (Geist from `@fontsource`, `main.scss` with the tokens) and `.storybook/tsconfig.json`. The toolbar sets **Theme** (`data-theme`), **Accent** (`data-accent`), **Direction** (`dir`) and **Labels** (`ATH_LABELS` English defaults or German, `.storybook/labels.ts`) on `<html>` before the story renders, as the app's theme boot does.
+Storybook 10 with the Angular builder: the targets `athenos-webcomponents:storybook` and `:build-storybook` in `angular.json` carry the global styles (Geist from `@fontsource`, `main.scss` with the tokens) and `.storybook/tsconfig.json`. The toolbar sets **Theme** (`data-theme`), **Accent** (`data-accent`), **Direction** (`dir`) and **Labels** (`ATH_LABELS` English defaults or German, `.storybook/labels.ts`) on `<html>` before the story renders, as the app's theme boot does.
 
 ### Adding a story
 

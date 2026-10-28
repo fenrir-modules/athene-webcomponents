@@ -1,5 +1,5 @@
 import { signal, type Provider } from '@angular/core';
-import { ATH_DEFAULT_LABELS, ATH_LABELS, type AthLabels } from '@athene/webcomponents/core';
+import { ATH_DEFAULT_LABELS, ATH_LABELS, type AthLabels } from '@athenos/webcomponents/core';
 
 /**
  * `ATH_LABELS` for the catalogue: the toolbar's "Labels" global switches

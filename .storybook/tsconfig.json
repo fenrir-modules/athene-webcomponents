@@ -7,5 +7,5 @@
     "resolveJsonModule": true
   },
   "exclude": ["../projects/**/*.spec.ts"],
-  "include": ["../projects/athene-webcomponents/src/**/*.stories.ts", "./preview.ts"]
+  "include": ["../projects/athenos-webcomponents/src/**/*.stories.ts", "./preview.ts"]
 }

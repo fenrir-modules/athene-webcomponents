@@ -1,4 +1,4 @@
-name: Release Athene Webcomponents Module
+name: Release Athenos Webcomponents Module
 
 on:
   push:
@@ -43,7 +43,7 @@ jobs:
       # Unit tests run in ci.yml (no continue-on-error any more, QA-16).
 
       - name: Build Angular library
-        run: node node_modules/@angular/cli/bin/ng.js build athene-webcomponents --configuration production
+        run: node node_modules/@angular/cli/bin/ng.js build athenos-webcomponents --configuration production
         env:
           NODE_ENV: production
 
@@ -123,12 +123,12 @@ jobs:
 
           mkdir -p artifacts/package
 
-          if [ ! -d "dist/athene-webcomponents" ]; then
-            echo "::error::Angular build output not found at dist/athene-webcomponents"
+          if [ ! -d "dist/athenos-webcomponents" ]; then
+            echo "::error::Angular build output not found at dist/athenos-webcomponents"
             exit 1
           fi
 
-          cp -R dist/athene-webcomponents artifacts/package/dist
+          cp -R dist/athenos-webcomponents artifacts/package/dist
 
           if [ -d ".fenrir" ]; then
             cp -R .fenrir artifacts/package/.fenrir
@@ -219,7 +219,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: athene-webcomponents-${{ steps.git_version.outputs.full_version }}
+          name: athenos-webcomponents-${{ steps.git_version.outputs.full_version }}
           path: |
             artifacts/*.tar.gz
             artifacts/manifest.json

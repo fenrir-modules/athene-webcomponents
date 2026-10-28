@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Packaging hygiene for git installs of @athene/webcomponents.
+// Packaging hygiene for git installs of @athenos/webcomponents.
 //
 // The app installs this package from a git commit, and that commit carries
 // the built dist/. npm (pacote) runs a full `npm install` with every

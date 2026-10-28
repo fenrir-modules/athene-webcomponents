@@ -1,9 +1,9 @@
 {
-  "name": "@athene/webcomponents",
+  "name": "@athenos/webcomponents",
   "version": "0.7.6",
-  "description": "Athene UI Component Library",
-  "module": "dist/athene-webcomponents/fesm2022/athene-webcomponents.mjs",
-  "typings": "dist/athene-webcomponents/types/athene-webcomponents.d.ts",
+  "description": "Athenos UI Component Library",
+  "module": "dist/athenos-webcomponents/fesm2022/athenos-webcomponents.mjs",
+  "typings": "dist/athenos-webcomponents/types/athenos-webcomponents.d.ts",
   "sideEffects": [
     "*.css",
     "*.scss"
@@ -13,26 +13,26 @@
       "default": "./package.json"
     },
     ".": {
-      "types": "./dist/athene-webcomponents/types/athene-webcomponents.d.ts",
-      "default": "./dist/athene-webcomponents/fesm2022/athene-webcomponents.mjs"
+      "types": "./dist/athenos-webcomponents/types/athenos-webcomponents.d.ts",
+      "default": "./dist/athenos-webcomponents/fesm2022/athenos-webcomponents.mjs"
     },
     "./core": {
-      "types": "./dist/athene-webcomponents/types/athene-webcomponents-core.d.ts",
-      "default": "./dist/athene-webcomponents/fesm2022/athene-webcomponents-core.mjs"
+      "types": "./dist/athenos-webcomponents/types/athenos-webcomponents-core.d.ts",
+      "default": "./dist/athenos-webcomponents/fesm2022/athenos-webcomponents-core.mjs"
     },
     "./icons": {
-      "types": "./dist/athene-webcomponents/types/athene-webcomponents-icons.d.ts",
-      "default": "./dist/athene-webcomponents/fesm2022/athene-webcomponents-icons.mjs"
+      "types": "./dist/athenos-webcomponents/types/athenos-webcomponents-icons.d.ts",
+      "default": "./dist/athenos-webcomponents/fesm2022/athenos-webcomponents-icons.mjs"
     },
     "./styles": {
-      "default": "./dist/athene-webcomponents/styles/main.scss"
+      "default": "./dist/athenos-webcomponents/styles/main.scss"
     },
     "./styles/*": {
-      "default": "./dist/athene-webcomponents/styles/*"
+      "default": "./dist/athenos-webcomponents/styles/*"
     }
   },
   "files": [
-    "dist/athene-webcomponents/**"
+    "dist/athenos-webcomponents/**"
   ],
   "scripts": {
     "ng": "ng",
@@ -41,7 +41,7 @@
     "tokens:check": "node scripts/tokens/build.mjs --check",
     "tokens:parity": "node scripts/tokens/parity.mjs",
     "tokens:report-app": "node scripts/tokens/report-app.mjs",
-    "build:lib": "npm run tokens:build && ng build athene-webcomponents && node scripts/normalize-dist.mjs",
+    "build:lib": "npm run tokens:build && ng build athenos-webcomponents && node scripts/normalize-dist.mjs",
     "check:dist": "npm run build:lib && node scripts/check-package.mjs --dist",
     "prepublishOnly": "npm run build:lib",
     "watch": "ng build --watch --configuration development",
@@ -51,7 +51,7 @@
     "lint": "npm run lint:shared && npm run lint:es && npm run lint:styles && npm run lint:i18n && npm run lint:ts && npm run lint:a11y && npm run tokens:check && npm run format:check && npm run lint:knip",
     "lint:shared": "node scripts/shared-config.mjs",
     "lint:es": "eslint \"projects/**/*.{ts,html}\" --max-warnings=0",
-    "lint:ts": "tsc -p projects/athene-webcomponents/tsconfig.lib.json --noEmit && tsc -p projects/athene-webcomponents/tsconfig.spec.json --noEmit",
+    "lint:ts": "tsc -p projects/athenos-webcomponents/tsconfig.lib.json --noEmit && tsc -p projects/athenos-webcomponents/tsconfig.spec.json --noEmit",
     "lint:a11y": "node scripts/lint-a11y.mjs",
     "lint:styles": "stylelint \"projects/**/*.scss\"",
     "lint:styles:baseline": "stylelint \"projects/**/*.scss\" --suppress",
@@ -61,8 +61,8 @@
     "lint:baseline:prune": "eslint \"projects/**/*.{ts,html}\" --prune-suppressions && stylelint \"projects/**/*.scss\" && stylelint \"projects/**/*.scss\" --suppress && node scripts/knip-check.mjs --prune",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
-    "storybook": "ng run athene-webcomponents:storybook",
-    "build-storybook": "ng run athene-webcomponents:build-storybook --quiet",
+    "storybook": "ng run athenos-webcomponents:storybook",
+    "build-storybook": "ng run athenos-webcomponents:build-storybook --quiet",
     "test:storybook": "playwright test -c tests/storybook/playwright.config.ts",
     "test:storybook:update": "playwright test -c tests/storybook/playwright.config.ts --update-snapshots=all",
     "test:storybook:a11y-baseline": "SB_VISUAL=off SB_A11Y_BASELINE=update playwright test -c tests/storybook/playwright.config.ts"

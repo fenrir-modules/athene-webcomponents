@@ -1,9 +1,9 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": [
-    "projects/athene-webcomponents/src/public-api.ts",
-    "projects/athene-webcomponents/core/src/public-api.ts",
-    "projects/athene-webcomponents/icons/src/public-api.ts",
+    "projects/athenos-webcomponents/src/public-api.ts",
+    "projects/athenos-webcomponents/core/src/public-api.ts",
+    "projects/athenos-webcomponents/icons/src/public-api.ts",
     "projects/**/*.spec.ts",
     "projects/**/*.stories.ts",
     ".storybook/*.ts",

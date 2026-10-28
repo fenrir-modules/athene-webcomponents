@@ -1,4 +1,4 @@
-// Athene design-token pipeline — pure functions (no I/O except loadConfig).
+// Athenos design-token pipeline — pure functions (no I/O except loadConfig).
 //
 // Source format: DTCG (Design Tokens Community Group) JSON — groups, `$value`,
 // `$type` (inherited from the group), `$description`, `$deprecated`

@@ -1,10 +1,10 @@
 {
-  "projects/athene-webcomponents/src/lib/components/search-input/search-input.component.scss": {
+  "projects/athenos-webcomponents/src/lib/components/search-input/search-input.component.scss": {
     "function-disallowed-list": {
       "count": 2
     }
   },
-  "projects/athene-webcomponents/src/lib/components/toggle/toggle.component.scss": {
+  "projects/athenos-webcomponents/src/lib/components/toggle/toggle.component.scss": {
     "color-no-hex": {
       "count": 1
     }

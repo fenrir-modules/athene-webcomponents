@@ -1,0 +1,51 @@
+// The Athenos AI mark: colours from tokens only, so both themes and every
+// accent preset follow. `fill` stays on the paths' attributes only for the
+// gradient (an SVG paint server cannot come from a custom property).
+:host {
+  // Set per instance from `size` (host style binding).
+  --ai-mark-size: 16px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--ai-mark-size) * 0.4);
+  flex-shrink: 0;
+  color: inherit;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.ath-ai-mark__svg {
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+:host(:not([data-variant='gradient'])) .ath-ai-mark__body,
+:host(:not([data-variant='gradient'])) .ath-ai-mark__spark {
+  fill: currentcolor;
+}
+
+:host([data-variant='color']) .ath-ai-mark__spark {
+  fill: var(--accent);
+}
+
+.ath-ai-mark__from {
+  stop-color: var(--ai-from);
+}
+
+.ath-ai-mark__to {
+  stop-color: var(--ai-to);
+}
+
+.ath-ai-mark__word {
+  font-family: var(--font-sans);
+  font-size: calc(var(--ai-mark-size) * 0.82);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  white-space: nowrap;
+}
+
+.ath-ai-mark__ai {
+  color: var(--accent-text);
+}
